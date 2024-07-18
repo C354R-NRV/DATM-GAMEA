@@ -1,0 +1,144 @@
+/* :root {
+	background: -webkit-linear-gradient(top, #19232b 0%, #131621 100%);
+	height: 100vh;
+}  */
+.containerBotones {
+	width: 80%;
+	margin: 0 auto; 
+	text-align: center;
+	right: 0; 
+} 
+/* .boton-icono:hover {
+	background-color: white;  
+	color: #333; 
+}
+
+
+/* .bodyBotones {
+	background: #333;
+}
+.aBotones {
+	color: white;
+	text-decoration: none;
+}
+.h1Botones,
+.h2Botones {
+	color: white; 
+	font-weight: normal;
+}
+.h2Botones {
+	font-size: 14px;
+	margin-bottom: 30px;
+	color: #24E2B8;
+}
+.oneBotones,
+.twoBotones,
+.threeBotones,
+.fourBotones,
+.fiveBotones {
+	border: none;
+	border-radius: 50%; 
+	overflow: hidden; 
+	margin-bottom: 20px;
+	font-size: 20px;
+	position: relative;
+	color: white;
+	outline: none;
+	cursor: pointer;
+	width: 50%;
+	-webkit-transition: background-position .7s, box-shadow .4s;
+	transition: background-position .7s, box-shadow .4s;
+	background-size: 90%; 
+	height: 5em;
+	font-size: 1.5em;
+	background-size: cover;
+	text-align: center;
+	vertical-align: middle;
+}
+.oneBotones img,
+.twoBotones img,
+.threeBotones img,
+.fourBotones img,
+.fiveBotones img 
+{
+	max-height:4rem;  
+}
+
+.oneBotones:hover img,
+.twoBotones:hover img,
+.threeBotones:hover img,
+.fourBotones:hover img,
+.fiveBotones:hover img 
+{
+	max-height:4.1rem; 
+}
+.oneBotones:hover,
+.twoBotones:hover,
+.threeBotones:hover,
+.four:hover,
+.five:hover {
+	background-position: 0% 30%; 
+} 
+.oneBotones:hover:after,
+.twoBotones:hover:after,
+.threeBotones:hover:after,
+.four:hover:after,
+.five:hover:after {
+	right: -40px;
+	-webkit-transition: right .4s, -webkit-transform 30s .2s linear;
+	transition: right .4s, -webkit-transform 30s .2s linear;
+	transition: right .4s, transform 30s .2s linear;
+	transition: right .4s, transform 30s .2s linear, -webkit-transform 30s .2s linear;
+}
+
+.oneBotones:before,
+.twoBotones:before,
+.threeBotones:before, 
+.oneBotones:after,
+.twoBotones:after,
+.threeBotones:after { 
+	display: block;
+	position: absolute;
+}
+.oneBotones:before,
+.twoBotones:before,
+.threeBotones:before  {
+	-webkit-transition: all 1s;
+	transition: all 1s;
+	font-size: 30px;
+	left: 25px;
+	top: 19px;
+}
+.oneBotones:after,
+.twoBotones:after,
+.threeBotones:after {
+	-webkit-transition: right .4s, -webkit-transform .2s;
+	transition: right .4s, -webkit-transform .2s;
+	transition: right .4s, transform .2s;
+	transition: right .4s, transform .2s, -webkit-transform .2s;
+	font-size: 100px;
+	opacity: .3;
+	right: -120px;
+	top: -17px;
+}
+.oneBotones { 
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#00BDEC), to(rgba(1, 150, 219)));
+	background-image: linear-gradient(to bottom, #00BDEC, rgba(0, 153, 224));
+	
+} 
+.oneBotones b {
+	color: #ffffff;
+	font-weight: 700;
+}
+.twoBotones { 
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#ff9c00), to(rgba(211, 128, 3)));
+	background-image: linear-gradient(to bottom, #ff9c00, rgba(211, 128, 3));
+} 
+.twoBotones b {
+	color: #ffffff;
+	font-weight: 700;
+}
+.threeBotones { 
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#6c757d), to(rgba(66, 85, 94)));
+	background-image: linear-gradient(to bottom, #6c757d, rgba(66, 85, 94));
+}   */
