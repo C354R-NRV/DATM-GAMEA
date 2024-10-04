@@ -1,18 +1,32 @@
  
-                <div class="navbar-nav ms-auto">
-                    <a href="home.php" class="nav-item nav-link active">Acceso Ia</a> 
-                    <a href="compendio.php" class="nav-item nav-link ">Digital</a>
-                    <a href="#" class="nav-item nav-link">ASFI Enlace</a> 
-                    <a href="ver.php?id=e2c39295b134a9c6efb1d8851c36d940" class="nav-item nav-link">Verif pago</a>
-                    <a href="#" class="nav-item nav-link">Predial Adm</a>
+                <div class="navbar-nav ms-auto"> 
+                    <a href="home.php" class="nav-item nav-link active">iA</a> 
                     <div class="nav-item dropdown">
-                        <a href="index.php#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Reportes</a>
+                        <a href="index.php#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">UAJ</a>
                         <div class="dropdown-menu bg-light mt-2">
-                            <a href="#" class="dropdown-item">Recaudaciones</a>
-                            <a href="#" class="dropdown-item">Modificaciones</a>
-                            <a href="#" class="dropdown-item">Congelados</a>
+                            <a onclick="showEdictos()" class="dropdown-item">- Notificaciones por edicto</a>
+                            <a href="sirefoList.php" class="dropdown-item">- Remision SIREFO</a>
                         </div>
                     </div>
-                    <a class="nav-item nav-link" style="cursor:pointer;" href="logout.php"><i class="fa fa-sign-out"></i> Logout</a>
+                    
+                    <div class="nav-item dropdown">
+                        <a href="index.php#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">UAA</a>
+                        <div class="dropdown-menu bg-light mt-2">
+                            <a href="./consultaTramite.php" class="dropdown-item">- Seguimiento a tu trámite</a>
+                            <a onclick="proformaRuat()" class="dropdown-item">- Proformas RUAT</a>
+                            <a href="compendio.php" class="dropdown-item ">- Digital</a>
+                            <a href="ver.php?id=e2c39295b134a9c6efb1d8851c36d940" class="dropdown-item">- Verif pago</a>
+                            <a onclick="simatSiim()" class="dropdown-item">- SIMAT/SIIM</a>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="nav-item dropdown">
+                        <a href="index.php#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">UFC</a>
+                        <div class="dropdown-menu bg-light mt-2"> 
+                            <a href="#" class="dropdown-item">- Predial Adm</a>
+                        </div>
+                    </div>                     
+                    <a class="nav-item nav-link" style="cursor:pointer;" href="logout.php"><i class="fa fa-sign-out"></i></a>
                     <input type="hidden" id="swLogin" value="{{datSesion.swlogin}}"/>
                 </div> 

@@ -16,7 +16,7 @@ $cons = $conn->conectar();
 
 try {
 
-    $query = "select * from inmueble_univ where \"DOCUMENTO_IDENTIDAD\" like '$ci_' and \"NUMERO_INMUEBLE\" like '$numInmueble_' ";  
+    $query = "select * from inmueble_univ where documento_identidad like '$ci_' and numero_inmueble like '$numInmueble_' ";  
     $stmt = $cons->query($query); 
 
     $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -51,7 +51,7 @@ try {
                 <div style='text-align: justify;'>
                     <p>Mediante la presente tengo a bien a dirigirme a su autoridad deseándole éxitos en  las funciones que desempeña.</p> 
                     <p>El objetivo de La presente es solicitarle muy respetuosamente que por el área que corresponda se de curso y realice la 
-                    <b>REGULARIZACIÓN DE PROPIEDAD MAS TRANSFERENCIA EN ACCIONES Y DERECHOS</b> del bien inmueble con REGISTRO TRIBUTARIO No. <b> ".$row['NUMERO_INMUEBLE']."</b>.</p>
+                    <b>REGULARIZACIÓN DE PROPIEDAD MAS TRANSFERENCIA EN ACCIONES Y DERECHOS</b> del bien inmueble con REGISTRO TRIBUTARIO No. <b> ".$row['numero_inmueble']."</b>.</p>
                     <p>Sin otro particular, esperando una respuesta positiva me despido de usted muy atentamente,</p>
                     <p></p>
                     </div>

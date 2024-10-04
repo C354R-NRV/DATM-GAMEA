@@ -126,6 +126,33 @@ h5 {
   padding: 2rem; 
 }
 
-.form-group{
-  
+.itemSolicitud{
+  padding: 2rem;
+  background-color: #e4f4ff;
+} 
+.cabeceraSolicitud{ 
+  background-color: #d6ffdf;
+}
+
+.form-controlSelect{
+  display: block; 
+  width: 100%;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #555;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  -webkit-appearance: auto !important;
+  -moz-appearance:auto;
+  appearance: auto;
+  border-radius: 10px;
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  cursor: pointer;
+}
+
+.itemSolicitud h3{
+  color: #86a8bd;
 }

@@ -16,7 +16,7 @@ try {
     /* $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC); */
     $row = array();
     $row['nombre_rsocial'] = $nombre_;
-    $row['NUMERO_INMUEBLE'] = $numInmueble_;
+    $row['numero_inmueble'] = $numInmueble_;
     $row['LOTE_PLANO'] = $numlote_;
     $row['MANZANO_PLANO'] = $manzano_;
     $row['DIRECCION_DESCRIPTIVA'] = $ubicacion_;
@@ -54,7 +54,7 @@ try {
                     <p>Mediante la presente carta, me dirijo a su autoridad, para solicitar de acuerdo a derecho el empadronamiento del lote de terreno o bien inmueble:</p>
 
                     <ul class='main'>
-                        <li>Número de inmueble: " . $row['NUMERO_INMUEBLE'] . "</li>
+                        <li>Número de inmueble: " . $row['numero_inmueble'] . "</li>
                         <li>Número lote: " . ($row['LOTE_PLANO'] ? $row['MANZANO_PLANO'] : $row['DIRECCION_DESCRIPTIVA']) . "</li>
                         <li>Manzano: " . ($row['MANZANO_PLANO'] ? $row['MANZANO_PLANO'] : 'NN') . "</li>
                         <li>Superficie terreno: " . $row['SUPERFICIE_TERRENO'] . "[m2]</li>

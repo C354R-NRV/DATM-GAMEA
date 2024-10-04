@@ -9,7 +9,7 @@ foreach ($_POST as $clave => $valor) {
 $conn = new Conexion();
 $cons = $conn->conectar();  
 
-    $query = "select * from usuario u where u.usuario like UPPER('$u_')  and u.password like MD5('$p_'); ";  
+    $query = "select * from datm_usuario u where u.usuario like UPPER('$u_')  and u.password like MD5('$p_'); ";  
     $stmt = $cons->query($query); 
 
     $rs  = array();
@@ -18,13 +18,14 @@ $cons = $conn->conectar();
     $sw = 0;
     $obs = '';
     $nombre = '';
-    $_SESSION['cargo'] = '';
+    $_SESSION['rol'] = '';
     $_SESSION['swlogin'] = '0';
     foreach ($resultados as $row) {
         $_SESSION['swlogin'] = $sw = '1';
         if($row['estado'] == 'DESBLOQUEADO'){
+            $_SESSION['idusuario'] = $row['id'] ;
             $_SESSION['usuario'] = $row['usuario'] ;
-            $_SESSION['cargo'] = $row['cargo'] ;
+            $_SESSION['rol'] = $row['rol'] ;
             $_SESSION['nombreUsuario']  = $nombre = $row['nombres'].' '.$row['primer_apellido'].' '.$row['segundo_apellido'];
         }else{
             $obs = 'Su USUARIO se encuentra bloqueado, favor comuniquese con el area de sistemas';
@@ -35,7 +36,7 @@ $cons = $conn->conectar();
     } 
     $rs['sw'] = $sw;
     $rs['obs'] = $obs;
-    $rs['cargo'] = $_SESSION['cargo'];
+    $rs['rol'] = $_SESSION['rol'];
     $rs['nombre'] = $nombre; 
     $dat = json_encode($rs);
     echo $dat; 

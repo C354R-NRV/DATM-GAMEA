@@ -16,7 +16,7 @@ $cons = $conn->conectar();
 
 try {
 
-    $query = "select * from inmueble_univ where \"DOCUMENTO_IDENTIDAD\" like '$ci_' and \"NUMERO_INMUEBLE\" like '$numInmueble_' ";  
+    $query = "select * from inmueble_univ where documento_identidad like '$ci_' and numero_inmueble like '$numInmueble_' ";  
     $stmt = $cons->query($query); 
 
     $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);

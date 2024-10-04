@@ -87,7 +87,7 @@ if (!$_SESSION['swlogin']) {
                                 </div>
                             </div>
                             <?php
-                            if ($_SESSION['cargo'] == 'JEFATURA') {
+                            if ($_SESSION['rol'] == 'JEFATURA' or $_SESSION['rol'] == 'DIRECCION' ) {
                             ?>
                                 <div class="box-itemIa">
                                     <div class="flip-boxIa">

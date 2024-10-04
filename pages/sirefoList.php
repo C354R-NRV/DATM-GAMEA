@@ -15,13 +15,84 @@ if (!$_SESSION['swlogin']) {
 <html lang="es">
 
 <head>
-    <title>Compendio</title>
+    <title>SIREFO</title>
     <?php
     echo $twig->render('linkStyle.twig');
     ?>
     <link href="../css/styleRecursoIa.css" rel="stylesheet">
     <link href="../vendor/bootstrap-table-master/dist/bootstrap-table.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .containerDetalleSolicitud {
+            width: 98%;
+
+            margin: auto;
+            /* border: 1px solid #000; */
+            border-radius: 10px;
+            padding: 1rem;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .headerDetalleSolicitud {
+            display: flex;
+            justify-content: space-between;
+            border: 1px solid #fff;
+            /* padding: 10px; */
+            /* margin-bottom: 20px; */
+            border-radius: 5px;
+        }
+
+        .headerDetalleSolicitud p {
+            margin: 5px 0;
+        }
+
+        .striped-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .striped-table th,
+        .striped-table td {
+            border: 1px solid #fff;
+            text-align: left;
+            padding: 8px;
+        }
+
+
+        .striped-table th:first-child {
+            border-top-left-radius: 10px;
+        }
+
+        .striped-table th:last-child {
+            border-top-right-radius: 10px;
+        }
+
+        /* Borde redondeado para las esquinas inferiores de la tabla */
+        .striped-table td:first-child {
+            border-bottom-left-radius: 10px;
+        }
+
+        .striped-table td:last-child {
+            border-bottom-right-radius: 10px;
+        }
+
+        .striped-table th {
+            background-color: #055807;
+            color: #f9f9f9;
+        }
+
+        .striped-table tbody tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+
+        .striped-table tbody tr:nth-child(even) {
+            background-color: #e9e9e9;
+        }
+    </style>
 </head>
 
 <body>
@@ -47,97 +118,67 @@ if (!$_SESSION['swlogin']) {
     echo $twig->render('prebodyltIni.twig');
     ?>
     <li class="breadcrumb-item"><a class="text-white" href="index.php">Home</a></li>
-    <li class="breadcrumb-item"><a class="text-white">Digitaliza</a></li>
-    <li class="breadcrumb-item text-white active" aria-current="page">Compendio</li>
+    <li class="breadcrumb-item"><a class="text-white">UAJ</a></li>
+    <li class="breadcrumb-item text-white active" aria-current="page"> <a class="text-white" href="sirefoList.php">SIREFO</a></li>
     <?php
     echo $twig->render('prebodyltFin.twig');
     ?>
     <!-- Hero End -->
 
     <!-- About Start -->
-
     <div class="contenedorDigitaliza">
-
         <div class="form-group d-flex flex-column flex-md-row">
             <div class="row">
                 <div class="col-md-1 mb-3">
-                    <a class="btn btn-success" onclick="formActuado()" role="button"><i class="fa fa-plus"></i></a>
+                    <a class="btn btn-success" href="sirefoAddSolicitud.php" role="button"><i class="fa fa-plus"></i></a>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <input type="text" class="form-control" value="" placeholder="Patente, Placa, Num. Inmueble">
+                    <input type="text" class="form-control" value="" id="filtroCodigoSolicitud" placeholder="Codigo de solicitud">
                 </div>
                 <div class="col-md-3 mb-3">
-                    <input type="text" class="form-control datepicker" value="" placeholder="Fecha ini">
+                    <input type="text" class="form-control datepicker" value="" id="filtroFechaIni" placeholder="Fecha ini">
                 </div>
                 <div class="col-md-3 mb-3">
-                    <input type="text" class="form-control datepicker" value="" placeholder="Fecha fin">
+                    <input type="text" class="form-control datepicker" value="" id="filtroFechaFin" placeholder="Fecha fin">
                 </div>
                 <div class="col-md-1 mb-3">
-                    <button class="btn btn-primary">consultar</button>
+                    <button class="btn btn-primary" onclick="getSolicitudes()">consultar</button>
                 </div>
             </div>
         </div>
         <hr>
         <div>
-
-
-            <table id="tableCompendio" data-toggle="table" data-search="true" data-show-toggle="true" data-show-fullscreen="true" data-show-columns="true" data-show-columns-toggle-all="true" data-show-export="true" data-click-to-select="true" data-pagination="true" data-page-list="[10, 25, 50, 100, all]" data-locale="es-ES" class="table table-striped" data-sort-name="id" data-sort-order="asc">
+            <table id="tableCompendio"
+                data-toggle="table"
+                data-search="true"
+                data-show-toggle="true"
+                data-show-fullscreen="true"
+                data-show-columns="true"
+                data-show-columns-toggle-all="true"
+                data-show-export="true"
+                data-click-to-select="true"
+                data-pagination="true"
+                data-page-list="[10, 25, 50, 100, all]"
+                data-locale="es-ES"
+                class="table table-striped"
+                data-sort-name="id_cabecera_solicitud"
+                data-sort-order="desc"
+                data-show-refresh="true"
+                data-url="../php/sirefoGetSolicitudes.php"
+                data-query-params="filtrosDataTable">
                 <thead>
-                    <th>No Registro</th>
-                    <th>Usuario</th>
-                    <th>Tot. Fojas</th>
-                    <th data-sortable="true">Rubro</th>
-                    <th>Identificador</th>
-                    <th data-sortable="true">Fecha Ini</th>
-                    <th data-sortable="true">Fecha Fin</th>
-                    <th style="text-align: center;">Acciones</th>
+                    <th data-field="id_cabecera_solicitud" data-sortable="true">Proceso</th>
+                    <th data-field="tipo_proceso" data-sortable="true">Tipo</th>
+                    <th data-field="codigo_solicitud" data-sortable="true">Cod. solicitud</th>
+                    <th data-field="detalle_cantidad" data-sortable="true">Cantidad</th>
+                    <th data-field="fecha_envio" data-sortable="true">Fecha envio</th>
+                    <th data-field="estado_envio" data-sortable="true">Estado envio</th>
+                    <th data-field="fecha_circular" data-sortable="true">Fecha Circular</th>
+                    <th data-field="estado_solicitud" data-sortable="true">Estado solicitud</th>
+                    <th data-field="usuario" data-sortable="true">Usuario</th>
+                    <th data-field="acciones">Acciones</th>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>10000001</td>
-                        <td>IQUISPE.SIAT</td>
-                        <td>30</td>
-                        <td>Vehiculos</td>
-                        <td>SGE122</td>
-                        <td>10/02/2024</td>
-                        <td>10/06/2024</td>
-                        <td style="text-align: center;">
-                            <a class="btn btn-primary " href="detalleRegistro.php?nreg=10000001" role="button"><i class="fa fa-search"></i></a> |
-                            <a class="btn btn-success " onclick="cargaUbicacion(321)" role="button"><i class="fa fa-map-marker"></i></a> |
-                            <a class="btn btn-warning " onclick="formActuado(321)" role="button"><i class="fa fa-edit"></i></a> |
-                            <a class="btn btn-danger " onclick="borrarCompendio()" role="button"><i class="fa fa-trash-o"></i></a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>10000001</td>
-                        <td>ATUSCO.SIAT</td>
-                        <td>22</td>
-                        <td>Vehiculos</td>
-                        <td>SGE122</td>
-                        <td>10/06/2024</td>
-                        <td>10/07/2024</td>
-                        <td style="text-align: center;">
-                            <a class="btn btn-primary " href="detalleRegistro.php?nreg=10000001" role="button"><i class="fa fa-search"></i></a> |
-                            <a class="btn btn-success " onclick="cargaUbicacion(321)" role="button"><i class="fa fa-map-marker"></i></a> |
-                            <a class="btn btn-warning " onclick="formActuado(321)" role="button"><i class="fa fa-edit"></i></a> |
-                            <a class="btn btn-danger " onclick="borrarCompendio()" role="button"><i class="fa fa-trash-o"></i></a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>10000002</td>
-                        <td>MSALAZAR.SIAT</td>
-                        <td>2</td>
-                        <td>Inmuebles</td>
-                        <td>15005255252</td>
-                        <td>01/03/2024</td>
-                        <td>07/04/2024</td>
-                        <td style="text-align: center;">
-                            <a class="btn btn-primary " href="detalleRegistro.php?nreg=10000002" role="button"><i class="fa fa-search"></i></a> |
-                            <a class="btn btn-success " onclick="cargaUbicacion(321)" role="button"><i class="fa fa-map-marker"></i></a> |
-                            <a class="btn btn-warning " onclick="formActuado(4321)" role="button"><i class="fa fa-edit"></i></a> |
-                            <a class="btn btn-danger " onclick="borrarCompendio()" role="button"><i class="fa fa-trash-o"></i></a>
-                        </td>
-                    </tr>
+                <tbody id="tbodyItems">
                 </tbody>
             </table>
         </div>
@@ -159,9 +200,161 @@ if (!$_SESSION['swlogin']) {
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     $(".datepicker").flatpickr();
+    /*   $(document).ready(function($) {
+          getSolicitudes();
+      }); */
+
+    function filtrosDataTable(p) {
+        console.log("en filtrosDataTable");
+        return {
+            filtroCodigoSolicitud: $('#filtroCodigoSolicitud').val(),
+            filtroFechaIni: $('#filtroFechaIni').val(),
+            filtroFechaFin: $('#filtroFechaFin').val(),
+            offset: p.offset,
+            limit: p.limit,
+            sort: p.sort,
+            order: p.order,
+            search: p.search
+        }
+    }
+
+    function getSolicitudes() {
+
+        $.ajax({
+            async: true,
+            type: 'POST',
+            data: {
+                filtroCodigoSolicitud: $('#filtroCodigoSolicitud').val(),
+                filtroFechaIni: $('#filtroFechaIni').val(),
+                filtroFechaFin: $('#filtroFechaFin').val()
+            },
+            url: '../php/sirefoGetSolicitudes.php',
+            beforeSend: function() {
+                console.log("LOADING");
+            },
+            success: function(dat) {
+                console.log(dat)
+                $('#tbodyItems').empty();
+                dat = $.parseJSON(dat);
+                console.log(dat.query);
+                // Iterar sobre los datos recibidos y agregarlos al tbody
+                $.each(dat.info, function(index, item) {
+                    var fila = `
+                    <tr>
+                        <td>${item.id_cabecera_solicitud}</td>
+                        <td>${item.tipo_proceso}</td>
+                        <td>${item.codigo_solicitud}</td>
+                        <td>${item.detalle_cantidad}</td>
+                        <td>${item.fecha_envio}</td>
+                        <td>${item.estado_envio}</td>
+                        <td>${item.fecha_circular}</td>
+                        <td>${item.estado_solicitud}</td>
+                        <td>${item.usuario}</td>
+                        <td>${item.acciones}</td>
+                    </tr>
+                `;
+                    $('#tbodyItems').append(fila);
+                });
+
+                // Recargar la tabla para que Bootstrap Table detecte los nuevos datos
+                console.log("previo resfrescar")
+                $('#tableCompendio').bootstrapTable('refresh');
+                console.log("resfrescamos")
+
+            },
+            timeout: 16000,
+            error: function(xhr, status, error) {
+                alert('Error: ' + error);
+            }
+        });
+    }
+
+    function actualizaEstados(idsolicitud, codigoSolicitud) {
+
+
+        $.ajax({
+            async: true,
+            type: 'POST',
+            data: {
+                idsolicitud: idsolicitud
+            },
+            url: '../php/sirefoGetDetalleSolicitud.php',
+            beforeSend: function() {
+                console.log("LOADING");
+            },
+            success: function(dat) {
+                console.log(dat);
+                dat = $.parseJSON(dat);
+                console.log(dat.html);
+
+                $.confirm({
+                    title: "Solicitar actualización de estado",
+                    type: "green",
+                    content: "Confirme la solicitud de actualización de estado a SIREFO para:" + dat.html,
+                    typeAnimated: true,
+                    containerFluid: true,
+                    columnClass: "col-md-8 col-md-offset-8 col-xs-8 col-xs-offset-8",
+                    buttons: {
+                        confirmar: {
+                            text: "Confirmar",
+                            btnClass: "btn-green",
+                            action: function() {
+
+                                $.ajax({
+                                    async: true,
+                                    type: 'POST',
+                                    data: {
+                                        idsolicitud: idsolicitud
+                                    },
+                                    url: '../php/sirefoEnviaSolicitud.php',
+                                    beforeSend: function() {
+                                        console.log("LOADING");
+                                    },
+                                    success: function(dat) {
+
+                                        $.confirm({
+                                            title: "Resp",
+                                            type: "black",
+                                            content: dat,
+                                            columnClass: "col-md-8 col-md-offset-8 col-xs-8 col-xs-offset-8",
+                                            buttons: {
+                                                cancel: {
+                                                    text: "Cerrar",
+                                                    action: function() {}
+                                                }
+                                            }
+                                        });
+
+                                    },
+                                    timeout: 16000,
+                                    error: function(xhr, status, error) {
+                                        alert('Error: ' + error);
+                                    }
+                                });
+
+                            }
+                        },
+                        cancel: {
+                            text: "Cerrar",
+                            action: function() {}
+                        }
+                    }
+                });
+            },
+            timeout: 16000,
+            error: function(xhr, status, error) {
+                alert('Error: ' + error);
+            }
+        });
+
+
+
+
+
+    }
 
     function cargaUbicacion(idregistro) {
-        if (idregistro) { 
+        if (idregistro) {
             var content_ = `
         <div class="form-group" >
             <div class="row" style="margin-right:0 !important;">
@@ -230,7 +423,7 @@ if (!$_SESSION['swlogin']) {
                         btnClass: "btn-blue",
                         action: function() {
                             var formSubmitButton = this.buttons.formSubmit;
-                            datos = 
+                            datos =
                                 "&estante_=" + $("#estante_").val() +
                                 "&seccion_=" + $("#seccion_").val() +
                                 "&idregistro=" + idregistro +
@@ -381,8 +574,54 @@ if (!$_SESSION['swlogin']) {
         });
     }
 
-    function borrarCompendio() {
-        $.confirm('Borrando actuado');
+    function borrarCompendio(idsolicitud, codigoSolicitud) {
+        $.confirm({
+            title: "Eliminación de solicitud",
+            type: "red",
+            content: "Confirme la eliminacion de la solicitud: <b>" + idsolicitud + "</b>, con codigo de solicitud: <b>" + codigoSolicitud + "</b> y detalle brevemente la(s) razon(es):<br> <textarea id='observacion' rows='6' cols='40' class= 'form-control' placeholder='Escribe aquí el detalle...'></textarea><br><br>",
+            buttons: {
+                confirmar: {
+                    text: "Confirmar",
+                    btnClass: "btn-red",
+                    action: function() {
+
+                        var datos = {
+                            idsolicitud: idsolicitud,
+                            observacion: $('#observacion').val(),
+
+                        };
+                        console.log(datos);
+                        $.ajax({
+                            async: true,
+                            type: 'POST',
+                            data: datos,
+                            url: '../php/sirefoBajaSolicitud.php',
+                            beforeSend: function() {
+                                console.log("LOADING");
+                            },
+                            success: function(dat) {
+                                console.log(dat);
+                                //AGREAGAR NOTIFICACION DE GUARDADO CORRECTO 
+                                dat = $.parseJSON(dat);
+                                console.log(dat.log);
+                                window.location.href = './sirefoList.php';
+
+                            },
+                            timeout: 16000,
+                            error: function(xhr, status, error) {
+                                alert('Error: ' + error);
+                            }
+                        });
+
+
+                    }
+                },
+                cancel: {
+                    text: "Cerrar",
+                    action: function() {}
+                }
+            }
+        });
     }
 </script>
 

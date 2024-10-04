@@ -35,19 +35,19 @@ function login(){
             data: datos,
             beforeSend: function () {  
             },
-            success: function (e) {  
-				console.log(e);
+            success: function (e) {   
                 dat = $.parseJSON(e);
                 if(dat.obs == ''){  
-                    var url = 'biblioteca.php'; 
-                    if(dat.cargo == 'JEFATURA')
-                        url = 'home.php';  
+                    var url = 'index.php';
+                    /* var url = 'biblioteca.php'; 
+                    if(dat.rol == 'JEFATURA')
+                        url = 'home.php';   */
 					window.location.href = url;
                 }else{ 
 					$('#err').html(dat.obs); 
                 }
             },
-            timeout: 1600,
+            timeout: 16000,
             error: function () {
             }
         });

@@ -20,12 +20,12 @@ var sw_ = true;
     if ($(this).scrollTop() > 300) {
       $(".sticky-top").addClass("bg-primary shadow-sm").css("top", "0px");
       $("#logodinamico_").html(
-        '<img src="../img/logoDATM.png" style="max-width: 8rem;">'
+        '<img src="../img/gamea_.png" style="max-width: 12rem; padding-right: 1rem;"><img src="../img/logoDATM.png" style="max-width: 6rem;">'
       );
     } else {
       $(".sticky-top").removeClass("bg-primary shadow-sm").css("top", "-150px");
       $("#logodinamico_").html(
-        '<img src="../img/SMAF_.png" style="max-width: 8rem;">'
+        '<img src="../img/gamea_.png" style="max-width: 12rem; padding-right: 1rem;"><img src="../img/SMAF_.png" style="max-width: 6rem;">'
       );
     }
   });
@@ -69,6 +69,132 @@ var sw_ = true;
   });
 })(jQuery);
 
+function proformaRuat() {
+  $.confirm({
+    title: "<div style='width:100%;text-align:center;'>De que rubro desea generar la proforma de deuda?</div>",
+    type: "blue",
+    typeAnimated: true,
+    containerFluid: true,
+    content: ` 
+              <div class='rubrosInfo'>
+                  <div class='row align-items-center'>   
+                  <div class='col-md-6'>
+                      <a href="https://www.ruat.gob.bo/inmuebles/consultageneral/InicioBusquedaInmueble.jsf" target="blank_" class="btn btn-sm"><img src='../img/casa2_.png' alt='Inmuebles'></a>
+                  </div>                     
+                      <div class='col-md-6'>
+                          <a href="https://www.ruat.gob.bo/inmuebles/consultageneral/InicioBusquedaInmueble.jsf" target="blank_" class="btn btn-sm">
+                              <span style='color: #054665;'>Inmuebles</span></a>
+                      </div>
+                  </div>
+                  <hr>            
+                  <div class='row align-items-center'>   
+                  <div class='col-md-6'>
+                      <a href="https://www.ruat.gob.bo/vehiculos/consultageneral/InicioBusquedaVehiculo.jsf" target="blank_" class="btn btn-sm">
+                      <img src='../img/coche2_.png' alt='Vehiculo'></a>
+                  </div>                     
+                      <div class='col-md-6'>
+                          <a href="https://www.ruat.gob.bo/vehiculos/consultageneral/InicioBusquedaVehiculo.jsf" target="blank_" class="btn btn-sm">
+                          <span style='color: #8c6404;'>Vehiculos</span></a>
+                      </div>                     
+                  </div>          
+                  <hr>                       
+                  <div class='row align-items-center'>   
+                  <div class='col-md-6'>
+                      <a href="https://www.ruat.gob.bo/actividadeseconomicas/consultageneral/InicioBusquedaActividadesEconomicas.jsf" target="blank_" class="btn btn-sm"><img src='../img/caseta2_.png' alt='Actividad Economica'></a>
+                  </div>                     
+                      <div class='col-md-6'>
+                          <a href="https://www.ruat.gob.bo/actividadeseconomicas/consultageneral/InicioBusquedaActividadesEconomicas.jsf" target="blank_" class="btn btn-sm">
+                          <span style='color: #555555;'>Actividad Económica</span></a>
+                      </div>                     
+                  </div>    
+              </div>   
+              `,
+    buttons: {
+      cancel: {
+        text: "Cerrar",
+        action: function () { },
+      },
+    },
+  });
+}
+
+function simatSiim() {
+  $.confirm({
+    title: "<div style='width:100%;text-align:center;'>Ingrese el CI/NIT/RUC ó PMC ANTIGUO:</div>",
+    type: "green",
+    typeAnimated: true,
+    containerFluid: true,
+    content: ` 
+            <div class='rubrosInfo'>
+                <div class='row align-items-center'>                      
+                    <div class='col-md-12'>
+                        <input type='text' id='ci_' class='form-control' value='440546'>
+                    </div>
+                </div> 
+            </div>   
+            `,
+    buttons: {
+      formSubmit: {
+        text: "Buscar info",
+        btnClass: "btn-blue",
+        action: function () {
+          var formSubmitButton = this.buttons.formSubmit;
+          var ci_ = $("#ci_").val();
+          datos =
+            "&ci_=" + ci_;
+          $.ajax({
+            async: true,
+            type: "POST",
+            dataType: "html",
+            contentType: "application/x-www-form-urlencoded",
+            url: "../php/verifSimatSiim.php",
+            data: datos,
+            beforeSend: function () {
+              formSubmitButton.setText('Procesando...');
+              formSubmitButton.disable();
+              loadGralOn();
+            },
+            success: function (e) {
+              loadGralOff();
+              console.log(e);
+              dat = JSON.parse(e)
+              if (dat.existeInmueble) {
+                window.open("../php/rptSimatSiim.php?id="+ci_, "_blank");
+              }
+              else {
+                $.confirm({
+                  title: "Error...",
+                  content: "No se encontro ningun registro relacionado a " + ci_ + ", revise el dato y vuelva a intentarlo.",
+                  type: "red",
+                  typeAnimated: true,
+                  containerFluid: true,
+                  buttons: {
+                    cancel: {
+                      text: "Cerrar",
+                      action: function () {
+                        simatSiim();
+                      },
+                    },
+                  }
+                });
+              }
+            },
+            timeout: 16000,
+            error: function () { },
+          });
+
+        },
+      },
+      cancel: {
+        text: "Cerrar",
+        action: function () { },
+      },
+    },
+    onOpenBefore: function () {
+      $('.jconfirm-title-c').css('text-align', 'center');
+    }
+  });
+}
 function checkEndOfPage() {
   // Si la posición de desplazamiento más la altura de la ventana es igual a la altura del documento, entonces estamos en el pie de página
 
@@ -76,7 +202,12 @@ function checkEndOfPage() {
     $(window).scrollTop() + $(window).height() >= $(document).height() &&
     !$("#swLogin").val()
   ) {
-    var contenido = `<div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
+    showPromos();
+  }
+}
+
+function showPromos() {
+  var contenido = `<div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-indicators">
         <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
         <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button> 
@@ -84,7 +215,7 @@ function checkEndOfPage() {
         <div class="carousel-inner">
             <div class="carousel-item active">  
                 <div class="bd-placeholder-img text-center">
-                    <img src="../img/anuncios/20_descuento.jpg">
+                    <img src="../img/anuncios/10_descuento.jpg">
                     <div class="container text-center">
                         <div class="carousel-caption text-start"> 
                             <p><a class="btn btn-lg btn-warning" href="#"><i class="fa fa-facebook-f"></i> <span style="font-size:0.7rem;">Más info aquí</a></p>
@@ -94,7 +225,7 @@ function checkEndOfPage() {
             </div>  
             <div class="carousel-item text-end">  
                 <div class="bd-placeholder-img text-center">
-                    <img src="../img/anuncios/20_descuento.jpg">
+                    <img src="../img/anuncios/10_descuento.jpg">
                     <div class="container text-center">
                         <div class="carousel-caption text-start"> 
                             <p><a class="btn btn-lg btn-warning" href="#"><i class="fa fa-facebook-f"></i> <span style="font-size:0.7rem;">Más info aquí</a></p>
@@ -112,16 +243,88 @@ function checkEndOfPage() {
         <span class="visually-hidden">Next</span>
         </button>
         </div>`;
-    let dialog = bootbox.dialog({
-      message: contenido,
-      size: "large",
-    });
-  }
+  let dialog = bootbox.dialog({
+    message: contenido,
+    size: "large",
+  });
+}
+
+function showEdictos() {
+  var contenido = `<div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+    <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button> 
+    <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button> 
+    <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button> 
+  </div>
+  <div class="carousel-inner">
+      <div class="carousel-item active">  
+          <div class="bd-placeholder-img text-center">
+              <img src="../img/anuncios/edicto12072024.jpg">
+              <div class="container text-center">
+                  <div class="carousel-caption text-start"> 
+                      <p><a class="btn btn-lg btn-warning" href="../img/anuncios/edicto12072024.pdf" target="_blank"><i class="fa fa-cloud-download"></i> <span style="font-size:0.7rem;">Descargar edicto | 12/07/24 [14Mb]</a></p>
+                  </div>
+              </div>
+          </div>
+      </div>     
+      <div class="carousel-item text-end">  
+          <div class="bd-placeholder-img text-center"> 
+              <img src="../img/anuncios/edicto19072024.jpg">
+              <div class="container text-center">
+                  <div class="carousel-caption text-start"> 
+                      <p><a class="btn btn-lg btn-warning" href="../img/anuncios/edicto19072024.pdf" target="_blank"><i class="fa fa-cloud-download"></i> <span style="font-size:0.7rem;">Descargar edicto  | 19/07/24 [14Mb]</a></p>
+                  </div>
+              </div>
+          </div>
+      </div>   
+      <div class="carousel-item text-end">  
+          <div class="bd-placeholder-img text-center"> 
+              <img src="../img/anuncios/edicto2021.jpg">
+              <div class="container text-center">
+                  <div class="carousel-caption text-start"> 
+                      <p><a class="btn btn-lg btn-warning" href="../img/anuncios/edicto2021_1.pdf" target="_blank"><i class="fa fa-cloud-download"></i> <span style="font-size:0.7rem;">Descargar edicto [Part1]  | GESTION 2021 [620Mb]</a></p>
+                  </div>
+              </div>
+          </div>
+      </div>   
+      <div class="carousel-item text-end">  
+          <div class="bd-placeholder-img text-center"> 
+              <img src="../img/anuncios/edicto2021.jpg">
+              <div class="container text-center">
+                  <div class="carousel-caption text-start"> 
+                      <p><a class="btn btn-lg btn-warning" href="../img/anuncios/edicto2021_2.pdf" target="_blank"><i class="fa fa-cloud-download"></i> <span style="font-size:0.7rem;">Descargar edicto [Part2]  | GESTION 2021 [600Mb]</a></p>
+                  </div>
+              </div>
+          </div>
+      </div>   
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+  <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+  <span class="visually-hidden">Next</span>
+  </button>
+  </div>`;
+  let dialog = bootbox.dialog({
+    title: "<span style='font-size:1rem;'>Notificación por edicto, conforme a los Articulos 21, 66, y 100 de la Ley del Código Tributario Boliviano</span>",
+    message: contenido,
+    size: "large",
+  });
 }
 
 $("#mensajeWtsp").keydown(detectarTecla);
 $(".mensajeWtspBtn").click(detectarTecla);
 $(".miRegistroBtn").click(formVerificaRegistros);
+
+$(".mensajeProformaBtn").click(() => {
+  proformaRuat();
+});
+$(".mensajeTramitepBtn").click(() => {
+  window.open("./consultaTramite.php");
+});
 
 function formVerificaRegistros() {
 
@@ -143,7 +346,7 @@ function formVerificaRegistros() {
   var content_ = `
         <div class="form-group" >
             <div class="row" style="margin-right:0 !important;">
-                <label>CI/NIT</label>
+                <label>CI/NIT (sin extensión)</label>
                 <div class="col-md-4">
                     <select id="tipodoc_" class="form-control">
                         <option selected value="CI">CI</option>
@@ -151,9 +354,9 @@ function formVerificaRegistros() {
                         <option value="NIT">NIT</option>
                         <option value="OD">OD</option>
                     </select>
-                </div>
+                </div>  
                 <div class="col-md-8">
-                    <input type="text" id="ci_" placeholder="CI/NIT" class="form-control" value="5725577" required />
+                    <input type="text" id="ci_" placeholder="Ejemplo:6062063" class="form-control" value="1283250" required />
                 </div>
             </div>
             ${sinLogin} 
@@ -181,7 +384,6 @@ function formVerificaRegistros() {
             "&tipodoc_=" + $("#tipodoc_").val() +
             "&ci_=" + $("#ci_").val() +
             "&pin_=" + $("#pin_").val();
-
           $.ajax({
             async: true,
             type: "POST",
@@ -196,6 +398,7 @@ function formVerificaRegistros() {
 
             },
             success: function (e) {
+              console.log(e);
               loadGralOff();
               formSubmitButton.setText('Consultar');
               formSubmitButton.enable();
@@ -306,7 +509,7 @@ function formRegistroContri(tipo_, ci_) {
                 </div>
                 <div class="col-md-6">    
                     <label>Correo</label>
-                    <input type="email" id="correo_" placeholder="Correo electronico" class="form-control" value="cesar.nrv@gmail.com" required />
+                    <input type="email" id="correo_" placeholder="Correo electronico" class="form-control" value="tilular@gmail.com" required />
                 </div>
             </div>
             <hr>
@@ -421,7 +624,6 @@ function getEstructuraContenido(elemt, color) {
     beforeSend: function () { },
     success: function (e) {
       dat = $.parseJSON(e);
-      console.log(dat.query);
       contenido = dat.html;
 
       mainDialog1 = $.confirm({
@@ -439,7 +641,7 @@ function getEstructuraContenido(elemt, color) {
         },
       });
     },
-    timeout: 1600,
+    timeout: 16000,
     error: function () { },
   });
 }
@@ -453,7 +655,7 @@ function getcontenido(elemt, color, subelemt, descr, documento = false) {
             <label>Contacto</label>
             <input type="text" id="contacto_" placeholder="Numero de celular" value="68110661"  class="form-control" required />
             <label>Correo</label>
-            <input type="email" id="correo_" placeholder="Correo electrónico" value="cesar.nrv@gmail.com"  class="form-control" required />`;
+            <input type="email" id="correo_" placeholder="Correo electrónico" value="tilular@gmail.com"  class="form-control" required />`;
 
   if (documento) {
     // aca ver como generar diferentes docuemntos para cada caso
@@ -569,10 +771,10 @@ function getcontenido(elemt, color, subelemt, descr, documento = false) {
       content_ = `
                 <div class="form-group">
                     <label>Número de placa</label>
-                    <input type="text" id="num_placa_" placeholder="No.inmueble" class="form-control" value="1229EKF" required />
+                    <input type="text" id="num_placa_" placeholder="No.inmueble" class="form-control" value="747UND" required />
                     
                     <label>Cedula de Identidad</label>
-                    <input type="text" id="ci_" placeholder="C.I." class="form-control" value="2025873" required />
+                    <input type="text" id="ci_" placeholder="C.I." class="form-control" value="1005779028" required />
                     
                     ${datosContactos}
                 </div>
@@ -583,10 +785,10 @@ function getcontenido(elemt, color, subelemt, descr, documento = false) {
       content_ = `
                 <div class="form-group">
                   <label>Número de placa</label>
-                  <input type="text" id="num_placa_" placeholder="No.inmueble" class="form-control" value="2977IEK" required />
+                  <input type="text" id="num_placa_" placeholder="No.inmueble" class="form-control" value="1224ADF" required />
                   
                   <label>Cedula de Identidad/NIT</label>
-                  <input type="text" id="ci_" placeholder="CI/NIT" class="form-control" value="5725577" required />
+                  <input type="text" id="ci_" placeholder="CI/NIT" class="form-control" value="4921878" required />
                   
                   <label>De Gestión</label>
                   <input type="text" id="gestionIni_" placeholder="2023" class="form-control" value="2021" required />
@@ -667,6 +869,7 @@ function getcontenido(elemt, color, subelemt, descr, documento = false) {
           btnClass: "btn-" + color,
           action: function () {
             var imageUrl = "../img/requisitos/" + elemt + "/" + subelemt + ".jpg";
+            console.log("en if:" + imageUrl);
             var link = $("<a>")
               .attr("href", imageUrl)
               .attr("download", subelemt + ".jpg")
@@ -696,7 +899,8 @@ function getcontenido(elemt, color, subelemt, descr, documento = false) {
           text: "Descargar requisitos",
           btnClass: "btn-" + color,
           action: function () {
-            var imageUrl = src_;
+            var imageUrl = '../' + src_;
+            console.log("en Else:" + imageUrl);
             var link = $("<a>")
               .attr("href", imageUrl)
               .attr("download", subelemt + ".jpg")
@@ -844,96 +1048,13 @@ function verifNum4dig(value) {
   }
   return false;
 }
-function generarSolicitud(elemt,
-  subelemt, ci_, numInmueble_, nombre_,
-  numlote_, manzano_, superficie_,
-  ubicacion_, nuevonombre_, tipodoc_,
-  gestion_, contacto_, correo_,
-  num_placa_, gestionIni_, gestionFin_,
-  num_act_
-) {
-  //subelemt == 'inm_20'
-  datos =
-    "&ci_=" + ci_ + "&numInmueble_=" + numInmueble_ + "&nombre_=" + nombre_ +
-    "&numlote_=" + numlote_ + "&manzano_=" + manzano_ + "&superficie_=" + superficie_ +
-    "&ubicacion_=" + ubicacion_ + "&nuevonombre_=" + nuevonombre_ + "&tipodoc_=" + tipodoc_ +
-    "&gestion_=" + gestion_ + "&contacto_=" + contacto_ + "&correo_=" + correo_ +
-    "&num_placa_=" + num_placa_ + "&gestionIni_=" + gestionIni_ + "&gestionFin_=" + gestionFin_ + "&num_act_=" + num_act_
-    ;
 
-  mainDialog1.close();
-  $.ajax({
-    async: true,
-    type: "POST",
-    dataType: "html",
-    contentType: "application/x-www-form-urlencoded",
-    url: "../php/prevSolicitud.php",
-    data: datos,
-    beforeSend: function () {
-      loadGralOn();
-    },
-    success: function (e) {
-      loadGralOff(); 
-      dat = $.parseJSON(e);
-      if (dat.rsp || subelemt == 'inm_3') {
-        var url_ = "../php/rpt" + subelemt + ".php?" + datos;
-        $.ajax({
-          url: url_,
-          type: 'HEAD',
-          success: function () {
-            window.open(url_, "_blank");
-          },
-          error: function () {
-            $.confirm({
-              title: "Documento no encontrado!",
-              type: "red",
-              content:
-                "No se ha logrado encontrar el documento solicitado, estamos trabajando en la actualización del recurso.",
-              buttons: {
-                cancel: {
-                  text: "Cerrar",
-                  action: function () { },
-                },
-              },
-            });
-          }
-        });
-
-      } else {
-        var numid = numInmueble_;
-        var tit_ = 'inmueble';
-        if (elemt == 'vehiculos') {
-          numid = num_placa_;
-          tit_ = 'placa de vehiculo';
-        }
-        if (elemt == 'mercados') {
-          numid = num_act_;
-          tit_ = 'actividad económica';
-        }
-        $.confirm({
-          title: "No se encontraron registros!",
-          type: "red",
-          content:
-            "El C.I.:<b>" + ci_ + "</b>, con el número de " + tit_ + ": <b>" + numid + "</b>, no se encuentra en la base de datos, asegurese de ingresar correctamente la información.",
-          buttons: {
-            cancel: {
-              text: "Cerrar",
-              action: function () { },
-            },
-          },
-        });
-      }
-    },
-    timeout: 1600,
-    error: function () { },
-  });
-}
 
 function loadGralOn() {
   $(".loadGral").addClass("loadGralOn");
   $(".loadGral").removeClass("loadGralOff");
   $(".loadGral").html("<img src='../img/ia.gif'>");
-  
+
 }
 function loadGralOff() {
   $(".loadGral").removeClass("loadGralOn");

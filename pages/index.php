@@ -17,6 +17,24 @@ $twig = new Environment($loader);
     <?php
     echo $twig->render('linkStyle.twig');
     ?>
+    <style>
+        .rubrosInfo {
+            text-align: center;
+        }
+
+        .rubrosInfo .row {
+            margin-right: 0 !important;
+        }
+
+        .rubrosInfo img {
+            height: 3.5rem !important;
+        }
+
+        .rubrosInfo span {
+            text-align: center;
+            font-size: 1.3rem !important; 
+        }
+    </style>
 </head>
 
 <body>
@@ -94,8 +112,9 @@ $twig = new Environment($loader);
                             </div>
                         </div>
                         <br>
-                        <div class="btn btn-sm rounded-pill px-3 mb-3 mensajeWtspBtn"><b><i class="fa fa-whatsapp fs-4"></i> Whatsapp</b></div><span style="padding: 1rem;"></span>
-                        <div class="btn btn-sm rounded-pill px-3 mb-3 miRegistroBtn"><b><i class="fa fa-database fs-4"></i> Tus bienes</b></div>
+                        <div class="btn btn-sm rounded-pill px-3 mb-3 mensajeProformaBtn"><b><i class="fa fa-file-text-o fs-5"></i> Proformas</b></div><span style="padding: 1rem;"></span>
+                        <div class="btn btn-sm rounded-pill px-3 mb-3 mensajeTramitepBtn"><b><i class="fa fa-folder-open-o  fs-5"></i> Tramites</b></div><span style="padding: 1rem;"></span>
+                        <div class="btn btn-sm rounded-pill px-3 mb-3 miRegistroBtn"><b><i class="fa fa-database fs-5"></i> Tus bienes</b></div>
                     </div>
                 </div>
             </div>
@@ -139,7 +158,8 @@ $twig = new Environment($loader);
                     </div>
                 </div>
                 <div class="col-lg-6 wow fadeIn" data-wow-delay="0.4s">
-                    <div class="trnsp-img2" style="text-align: center; margin-bottom: 3rem;"><span style="color:#ffff;">DESCARGA LA APP</span><br>
+                    <div style="text-align: center; margin-bottom: 3rem; color: #4fd2cf; cursor:pointer;">
+                        <a onclick="verEnlacesQr()" target="_blank"> PAGOS QR RUAT </a><br>
                         <img class="img-fluid" src="../img/qr_codew.png" style="height: 13rem;" alt="">
                     </div>
                 </div>
@@ -277,7 +297,7 @@ $twig = new Environment($loader);
                         <div class="accordion-item wow fadeIn" data-wow-delay="0.2s">
                             <h2 class="accordion-header" id="heading4">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
-                                    ¿Mi es de la tercera edad, tengo algún descuento?
+                                    ¿Soy de la tercera edad, tengo algún descuento?
                                 </button>
                             </h2>
                             <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="heading4" data-bs-parent="#accordionFAQ1">
@@ -289,7 +309,7 @@ $twig = new Environment($loader);
                         <div class="accordion-item wow fadeIn" data-wow-delay="0.2s">
                             <h2 class="accordion-header" id="heading5">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5" aria-expanded="false" aria-controls="collapse5">
-                                    ¿porque me hicieron la retención de cuentas de una casa que la vendí hace años?
+                                    ¿Porque me hicieron la retención de cuentas de una casa que la vendí hace años?
                                 </button>
                             </h2>
                             <div id="collapse5" class="accordion-collapse collapse" aria-labelledby="heading5" data-bs-parent="#accordionFAQ1">
@@ -431,7 +451,7 @@ $twig = new Environment($loader);
     <script>
         $(document).ready(function($) {
             var requisitoGet = $('#requisito_get').val();
-            console.log("requisitoGet:"+requisitoGet);
+            console.log("requisitoGet:" + requisitoGet);
             if (requisitoGet > 0 && requisitoGet <= 3) {
                 var modulo_ = 'inmuebles';
                 var color_ = 'blue';
@@ -446,10 +466,153 @@ $twig = new Environment($loader);
                         color_ = 'dark';
                         break;
                     }
-                } 
+                }
                 getEstructuraContenido(modulo_, color_);
-            }  
+            }
         });
+
+        function verEnlacesQr() {
+            $.confirm({
+                title: "<div style='width:100%;text-align:center;'>De que rubro desea generar el QR de pago?</div>",
+                type: "blue",
+                typeAnimated: true,
+                containerFluid: true,
+                content: ` 
+                        <div class='rubrosInfo'>
+                            <div class='row align-items-center'>   
+                                <div class='col-md-6'>
+                                    <a href="https://www.ruat.gob.bo/pagosqr/InicioBusquedaInm.jsf?SDG3WF24=2" target="blank_" class="btn btn-sm">
+                                        <span style='color: #054665;'>Inmuebles</span></a>
+                                </div>
+                                <div class='col-md-6'>
+                                    <a href="https://www.ruat.gob.bo/pagosqr/InicioBusquedaInm.jsf?SDG3WF24=2" target="blank_" class="btn btn-sm"><img src='../img/casa2_.png' alt='Inmuebles'></a>
+                                </div>                     
+                            </div>
+                            <hr>            
+                            <div class='row align-items-center'>   
+                                <div class='col-md-6'>
+                                    <a href="https://www.ruat.gob.bo/pagosqr/InicioBusquedaVehiculo.jsf?SDG3WF24=1" target="blank_" class="btn btn-sm">
+                                    <span style='color: #8c6404;'>Vehiculos</span></a>
+                                </div>                     
+                                <div class='col-md-6'>
+                                    <a href="https://www.ruat.gob.bo/pagosqr/InicioBusquedaVehiculo.jsf?SDG3WF24=1" target="blank_" class="btn btn-sm"><img src='../img/coche2_.png' alt='Vehiculo'></a>
+                                </div>                     
+                            </div>          
+                            <hr>                       
+                            <div class='row align-items-center'>   
+                                <div class='col-md-6'>
+                                    <a href="https://www.ruat.gob.bo/pagosqr/InicioBusquedaActEco.jsf?SDG3WF24=4" target="blank_" class="btn btn-sm">
+                                    <span style='color: #555555;'>Actividad Económica</span></a>
+                                </div>                     
+                                <div class='col-md-6'>
+                                    <a href="https://www.ruat.gob.bo/pagosqr/InicioBusquedaActEco.jsf?SDG3WF24=4" target="blank_" class="btn btn-sm"><img src='../img/caseta2_.png' alt='Actividad Economica'></a>
+                                </div>                     
+                            </div>    
+                        </div>   
+                        `,
+                buttons: {
+                    cancel: {
+                        text: "Cerrar",
+                        action: function() {},
+                    },
+                },
+            });
+        } 
+
+        function generarSolicitud(elemt,
+            subelemt, ci_, numInmueble_, nombre_,
+            numlote_, manzano_, superficie_,
+            ubicacion_, nuevonombre_, tipodoc_,
+            gestion_, contacto_, correo_,
+            num_placa_, gestionIni_, gestionFin_,
+            num_act_
+        ) {
+            //subelemt == 'inm_20'
+            datos =
+                "&ci_=" + ci_ + "&numInmueble_=" + numInmueble_ + "&nombre_=" + nombre_ +
+                "&numlote_=" + numlote_ + "&manzano_=" + manzano_ + "&superficie_=" + superficie_ +
+                "&ubicacion_=" + ubicacion_ + "&nuevonombre_=" + nuevonombre_ + "&tipodoc_=" + tipodoc_ +
+                "&gestion_=" + gestion_ + "&contacto_=" + contacto_ + "&correo_=" + correo_ +
+                "&num_placa_=" + num_placa_ + "&gestionIni_=" + gestionIni_ + "&gestionFin_=" + gestionFin_ + "&num_act_=" + num_act_;
+
+            mainDialog1.close();
+            $.ajax({
+                async: true,
+                type: "POST",
+                dataType: "html",
+                contentType: "application/x-www-form-urlencoded",
+                url: "../php/prevSolicitud.php",
+                data: datos,
+                beforeSend: function() {
+                    loadGralOn();
+                },
+                success: function(e) {
+                    loadGralOff();
+                    dat = $.parseJSON(e);
+                    if (dat.rsp || subelemt == 'inm_3') {
+                        var url_ = "../php/rpt" + subelemt + ".php?" + datos;
+                        $.ajax({
+                            url: url_,
+                            type: 'HEAD',
+                            success: function() {
+                                window.open(url_, "_blank");
+                            },
+                            error: function() {
+                                $.confirm({
+                                    title: "Documento no encontrado!",
+                                    type: "red",
+                                    content: "No se ha logrado encontrar el documento solicitado, estamos trabajando en la actualización del recurso.",
+                                    buttons: {
+                                        cancel: {
+                                            text: "Cerrar",
+                                            action: function() {},
+                                        },
+                                    },
+                                });
+                            }
+                        });
+
+                    } else {
+                        var numid = numInmueble_;
+                        var tit_ = 'inmueble';
+                        if (elemt == 'vehiculos') {
+                            numid = num_placa_;
+                            tit_ = 'placa de vehiculo';
+                        }
+                        if (elemt == 'mercados') {
+                            numid = num_act_;
+                            tit_ = 'actividad económica';
+                        }
+                        $.confirm({
+                            title: "No se encontraron registros!",
+                            type: "red",
+                            content: "El C.I.:<b>" + ci_ + "</b>, con el número de " + tit_ + ": <b>" + numid + "</b>, no se encuentra en la base de datos, asegurese de ingresar correctamente la información.",
+                            buttons: {
+                                cancel: {
+                                    text: "Cerrar",
+                                    action: function() {},
+                                },
+                            },
+                        });
+                    }
+                },
+                timeout: 16000,
+                error: function(th) {
+                    $.confirm({
+                        title: "Ocurrio un error",
+                        type: "red",
+                        content: th,
+                        buttons: {
+                            cancel: {
+                                text: "Cerrar",
+                                action: function() {},
+                            },
+                        },
+                    });
+
+                },
+            });
+        }
     </script>
 </body>
 

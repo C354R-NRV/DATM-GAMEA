@@ -12,10 +12,10 @@ foreach ($_POST as $clave => $valor) {
 $conn = new Conexion();
 $cons = $conn->conectar();
 try {
-    
+
     if ($numInmueble_ && $numInmueble_ != 'undefined')
-        $query = "select * from inmueble_univ where (documento_identidad ilike '$ci_' OR documento_identidad_apo ilike '$ci_') and \"NUMERO_INMUEBLE\"  ilike '$numInmueble_' ";
-    
+        $query = "select * from inmueble_univ where (documento_identidad ilike '$ci_' OR documento_identidad_apo ilike '$ci_') and numero_inmueble  ilike '$numInmueble_' ";
+
     if ($num_placa_ && $num_placa_ != 'undefined')
         $query = "select * from vehiculo_univ where (documento_identidad ilike '$ci_' OR documento_identidad_apo ilike '$ci_') and \"NRO_PTA\"  ilike '$num_placa_' ";
 
@@ -23,14 +23,13 @@ try {
         $query = "select * from actividad_univ where (documento_identidad ilike '$ci_' OR documento_identidad_apo ilike '$ci_') and \"NUMERO_ACTIVIDAD\"  ilike '$num_act_' ";
 
     $stmt = $cons->query($query);
-    /* $err['sql'] = $query . "=num_act_:" . $num_act_ . "=num_placa_:" . $num_placa_ . "=numInmueble_:" . $numInmueble_; */
+    $err['sql'] = $query;
     $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
     /* $err['sql'] .= "=====".json_encode($resultados); */
     if ($resultados) {
         $err['rsp'] = 1;
     } else
         $err['rsp'] = 0;
-    
 } catch (PDOException $e) {
     $err['err']  = "Error al ejecutar la consulta: " . $e->getMessage();
 }

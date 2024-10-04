@@ -174,7 +174,7 @@ function sendMessage() {
             }, 100); // Pausa para permitir que el DOM se actualice
 
         },
-        timeout: 1600,
+        timeout: 16000,
         error: function () { }
     });
     $('#user-input').val('');

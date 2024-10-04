@@ -16,7 +16,7 @@ $cons = $conn->conectar();
 
 try {
 
-    $query = "select * from inmueble_univ where \"DOCUMENTO_IDENTIDAD\" like '$ci_' and \"NUMERO_INMUEBLE\" like '$numInmueble_' ";  
+    $query = "select * from inmueble_univ where documento_identidad like '$ci_' and numero_inmueble like '$numInmueble_' ";  
     $stmt = $cons->query($query); 
 
     $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -51,7 +51,7 @@ try {
                 <div style='text-align: justify;'>
                     <p>Mediante la presente tengo a bien saludarle y desearle éxito en el cargo que desempeña.</p>
                     <p>El motivo de la misma es para solicitarle muy respetuosamente instruya por la unidad que corresponda,  
-                    a la <b>REGULARIZACIÓN DE PROPIEDAD, MÁS TRANSFERENCIA</b> del inmueble con REGISTRO TRIBUTARIO No. <b>".$row['NUMERO_INMUEBLE']."</b>, 
+                    a la <b>REGULARIZACIÓN DE PROPIEDAD, MÁS TRANSFERENCIA</b> del inmueble con REGISTRO TRIBUTARIO No. <b>".$row['numero_inmueble']."</b>, 
                     ya que se encuentra a nombre de <b>$nombre</b> y requiero que se regularice a <b>$nuevonombre_</b>.</p> 
                     <p>Adjunto todos los requisitos para dicha solicitud y no dudando de su gentil aceptación a la presente, sin otro particular, agradecido de antemano
                     me despido con las consideraciones que el caso amerita.</p>

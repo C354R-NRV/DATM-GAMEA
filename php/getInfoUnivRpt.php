@@ -1,7 +1,7 @@
 <?php
 function getInfoInmuebleRpt($cons, $ci_, $numInmueble_)
 {
-    $query = "select *, TRIM(replace(replace(replace(\"UBICACION_NIVEL2\", 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) as \"AUXDIRECCION\"  from inmueble_univ where documento_identidad like '$ci_' and \"NUMERO_INMUEBLE\" like '$numInmueble_' ";
+    $query = "select *, TRIM(replace(replace(replace(ubicacion_nivel2, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) as auxdireccion  from inmueble_univ where documento_identidad like '$ci_' and numero_inmueble like '$numInmueble_' ";
     $stmt = $cons->query($query);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }

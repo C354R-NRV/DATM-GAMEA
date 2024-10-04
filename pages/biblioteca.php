@@ -295,12 +295,24 @@ if (!$_SESSION['swlogin']) {
                             <!-- Paris, France -->
                         </p>
                     </div>
-                </div>
+                </div> 
                 <div class="swiper-slide swiper-slide--three" id="lm513" onclick="abrirRecurso(this.id)">
                     <div>
                         <div class="contItemSlide">
                             <div> <span class="titleCenter" style="font-size: 2rem !important;">Ley Municipal 513</span></div>
                             <div><span class="detalle" style="font-size: 0.9rem;padding: 0.5rem;">Restricción Administrativa Licencias De Funcionamiento Act. Eco. de Bebidas Alcoholicas</span></div>
+                        </div>
+                        <p>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            </svg>
+                        </p>
+                    </div>
+                </div>
+                <div class="swiper-slide swiper-slide--three" id="ra006" onclick="abrirRecurso(this.id)">
+                    <div>
+                        <div class="contItemSlide">
+                            <div> <span class="titleCenter" style="font-size: 2rem !important;">R.A. 006/2022</span></div>
+                            <div><span class="detalle" style="font-size: 1rem;padding: 0.5rem;">Requisitos para tramites tributarios del GAMEA</span></div>
                         </div>
                         <p>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">

@@ -16,7 +16,7 @@ $cons = $conn->conectar();
 
 try {
 
-    $query = "select * from inmueble_univ where \"DOCUMENTO_IDENTIDAD\" like '$ci_' and \"NUMERO_INMUEBLE\" like '$numInmueble_' ";  
+    $query = "select * from inmueble_univ where documento_identidad like '$ci_' and numero_inmueble like '$numInmueble_' ";  
     $stmt = $cons->query($query); 
 
     $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -50,7 +50,7 @@ try {
                 </div>
                 <div style='text-align: justify;'>
                     <p>De mi consideracion,</p>
-                    <p>Mediante la presente, solicito a su digna autoridad, otorgarnos la liquidación <b>valor en libros</b> del inmueble con numero de REGISTRO TRIBUTARIO: ".$row['NUMERO_INMUEBLE'].", 
+                    <p>Mediante la presente, solicito a su digna autoridad, otorgarnos la liquidación <b>valor en libros</b> del inmueble con numero de REGISTRO TRIBUTARIO: ".$row['numero_inmueble'].", 
                     perteneciente a $nombre con número de documento de identidad ".$row['tipo_documento'].":$ci_.
                     </p>
                     <p>Sin otro particular, me despido de usted muy atentamente,</p>
