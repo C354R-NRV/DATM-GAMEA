@@ -83,7 +83,7 @@ function proformaRuat() {
                   </div>                     
                       <div class='col-md-6'>
                           <a href="https://www.ruat.gob.bo/inmuebles/consultageneral/InicioBusquedaInmueble.jsf" target="blank_" class="btn btn-sm">
-                              <span style='color: #054665;'>Inmuebles</span></a>
+                              <span style='color: #1BA9D0;'>Inmuebles</span></a>
                       </div>
                   </div>
                   <hr>            
@@ -94,7 +94,7 @@ function proformaRuat() {
                   </div>                     
                       <div class='col-md-6'>
                           <a href="https://www.ruat.gob.bo/vehiculos/consultageneral/InicioBusquedaVehiculo.jsf" target="blank_" class="btn btn-sm">
-                          <span style='color: #8c6404;'>Vehiculos</span></a>
+                          <span style='color: #1BA9D0;'>Vehiculos</span></a>
                       </div>                     
                   </div>          
                   <hr>                       
@@ -104,7 +104,7 @@ function proformaRuat() {
                   </div>                     
                       <div class='col-md-6'>
                           <a href="https://www.ruat.gob.bo/actividadeseconomicas/consultageneral/InicioBusquedaActividadesEconomicas.jsf" target="blank_" class="btn btn-sm">
-                          <span style='color: #555555;'>Actividad Económica</span></a>
+                          <span style='color: #1BA9D0;'>Actividad Económica</span></a>
                       </div>                     
                   </div>    
               </div>   
@@ -159,7 +159,7 @@ function simatSiim() {
               console.log(e);
               dat = JSON.parse(e)
               if (dat.existeInmueble) {
-                window.open("../php/rptSimatSiim.php?id="+ci_, "_blank");
+                window.open("../php/rptSimatSiim.php?id=" + ci_, "_blank");
               }
               else {
                 $.confirm({
@@ -250,6 +250,8 @@ function showPromos() {
 }
 
 function showEdictos() {
+
+
   var contenido = `<div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-indicators">
     <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
@@ -315,6 +317,93 @@ function showEdictos() {
   });
 }
 
+function impvaAnotado() {
+
+  datos = "&impvaAnotado=" + '1';
+
+  $.ajax({
+    async: true,
+    type: "POST",
+    dataType: "html",
+    contentType: "application/x-www-form-urlencoded",
+    url: "../php/getDeudasImpv.php",
+    data: datos,
+    beforeSend: function () { 
+      loadGralOn();
+    },
+    success: function (e) { 
+      loadGralOff();
+      dat = JSON.parse(e);
+      $.confirm({
+        title: "DEUDORES DEL IMPUESTO IMPVA PARA ANOTACIÓN PREVENTIVA EN TRÁNSITO",
+        content: dat.html,
+        type: "red",
+        typeAnimated: true,
+        columnClass: "col-md-10 col-md-offset-10 col-xs-12 col-xs-offset-12",
+        buttons: {
+          cancel: {
+            text: "Cerrar",
+            action: function () { 
+            },
+          },
+        },
+        onOpenBefore: function () {
+          $('.jconfirm-title-c').css('text-align', 'center');
+        }
+      }); 
+      
+    },
+    timeout: 16000,
+    error: function () { },
+  }); 
+
+
+
+
+}
+function impvaNoAnotado() {
+  
+  datos = "&impvaAnotado=" + '0';
+
+  $.ajax({
+    async: true,
+    type: "POST",
+    dataType: "html",
+    contentType: "application/x-www-form-urlencoded",
+    url: "../php/getDeudasImpv.php",
+    data: datos,
+    beforeSend: function () { 
+      loadGralOn();
+    },
+    success: function (e) { 
+      loadGralOff();
+      dat = JSON.parse(e);
+      $.confirm({
+        title: "DEUDORES DEL IMPUESTO IMPVA PARA ANOTACIÓN PREVENTIVA EN TRÁNSITO",
+        content: dat.html,
+        type: "red",
+        typeAnimated: true,
+        columnClass: "col-md-10 col-md-offset-10 col-xs-12 col-xs-offset-12",
+        buttons: {
+          cancel: {
+            text: "Cerrar",
+            action: function () { 
+            },
+          },
+        },
+        onOpenBefore: function () {
+          $('.jconfirm-title-c').css('text-align', 'center');
+        }
+      }); 
+      
+    },
+    timeout: 16000,
+    error: function () { },
+  }); 
+}
+
+
+
 $("#mensajeWtsp").keydown(detectarTecla);
 $(".mensajeWtspBtn").click(detectarTecla);
 $(".miRegistroBtn").click(formVerificaRegistros);
@@ -343,6 +432,7 @@ function formVerificaRegistros() {
   if ($("#swLogin").val()) {
     sinLogin = '';
   }
+  
   var content_ = `
         <div class="form-group" >
             <div class="row" style="margin-right:0 !important;">

@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 require_once("../conexionmysql.php");
 
 foreach ($_POST as $clave => $valor) {
@@ -21,6 +23,7 @@ try {
     if ($result->num_rows > 0) {
         // Salida de datos de cada fila
         while ($row = $result->fetch_assoc()) {
+            $documento = ($_SESSION['idusuario']>0?"<br>Documento: ".$row["documento"]."":"");
             $aux_ = '';
             $auxProceso =  $row["estado"];
             $auxFuncionario = '';
@@ -29,7 +32,7 @@ try {
                 $aux_ = '<tr>
                         <td><img src="../img/consulta_tramite/user.svg" style="max-width:2.5rem;" ></td>
                         <td> <b>REGISTRO TRIBUTARIO:</b></td>
-                        <td class="text-muted" id="destinatario">' . $row["rubro"] . ': ' . $row["registro_tributario"] . '</td>
+                        <td class="text-muted" id="destinatario">' . $row["rubro"] . ': ' . $row["registro_tributario"] .$documento. '</td>
                     </tr>';
             }
             /* if (strpos($row["estado"], 'HOJA DE RUTA ANEXADO A LA HOJA DE RUTA PRINCIPAL') !== false) {

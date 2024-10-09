@@ -32,9 +32,10 @@ $twig = new Environment($loader);
 
         .rubrosInfo span {
             text-align: center;
-            font-size: 1.3rem !important; 
+            font-size: 1.3rem !important;
         }
     </style>
+    <link href="../vendor/bootstrap-table-master/dist/bootstrap-table.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -142,8 +143,6 @@ $twig = new Environment($loader);
     </div> -->
     <!-- Full Screen Search End -->
 
-
-
     <!-- Feature Start -->
     <div class="container-fluid feature pt-5" style="background-color: #424f53  !important;">
         <div class="container pt-5">
@@ -164,8 +163,32 @@ $twig = new Environment($loader);
                     </div>
                 </div>
             </div>
+        
         </div>
     </div>
+
+    <!-- Feature Start -->
+    <div class="container-fluid feature  " style="background-color: #1f2527  !important;">
+        <div class="container pt-5">
+            <div class="row g-5">
+
+                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.4s">
+                    <div style="text-align: center; margin-bottom: 3rem; color: #4fd2cf; cursor:pointer;">
+                        <br><br><br><br>
+                        <a href = "https://prensa.evacopa.bo/" target="_blank"><img class="img-fluid" src="../img/obras.png" style="max-width: 24rem;" alt=""></a>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 align-self-center mb-md-5 pb-md-5 wow fadeIn" style="text-align: right;" data-wow-delay="0.3s">
+                    <h1 class="text-white mb-4">¡Paga tus impuestos a tiempo y contribuye al crecimiento de El Alto!</h1>
+                    <!-- <div class="btn btn-sm border rounded-pill text-white px-3 mb-3"><span style="color:#c3d3d8"> Tu municipio</span></div> -->
+                    <p class="text-light mb-4" style="text-align: rigth;">Tus aportes se traducen en más obras y mejores servicios para todos. ¿Te gustaría hacer seguimiento al progreso de las obras? Haz clic en el enlace a continuación para estar al tanto de cada avance:</p><a href = "https://obras.evacopa.bo/" target="_blank"> Ver obras </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <!-- Feature End -->
 
 
@@ -390,8 +413,7 @@ $twig = new Environment($loader);
                 </div>
             </div>
         </div>
-    </div>
-    <!-- FAQs Start -->
+    </div> 
 
 
     <!-- Team Start -->
@@ -448,6 +470,7 @@ $twig = new Environment($loader);
     <?php
     echo $twig->render('linkJs.twig');
     ?>
+    <script src="../vendor/bootstrap-table-master/dist/bootstrap-table.min.js"></script>
     <script>
         $(document).ready(function($) {
             var requisitoGet = $('#requisito_get').val();
@@ -482,7 +505,7 @@ $twig = new Environment($loader);
                             <div class='row align-items-center'>   
                                 <div class='col-md-6'>
                                     <a href="https://www.ruat.gob.bo/pagosqr/InicioBusquedaInm.jsf?SDG3WF24=2" target="blank_" class="btn btn-sm">
-                                        <span style='color: #054665;'>Inmuebles</span></a>
+                                        <span style='color: #1BA9D0;'>Inmuebles</span></a>
                                 </div>
                                 <div class='col-md-6'>
                                     <a href="https://www.ruat.gob.bo/pagosqr/InicioBusquedaInm.jsf?SDG3WF24=2" target="blank_" class="btn btn-sm"><img src='../img/casa2_.png' alt='Inmuebles'></a>
@@ -492,7 +515,7 @@ $twig = new Environment($loader);
                             <div class='row align-items-center'>   
                                 <div class='col-md-6'>
                                     <a href="https://www.ruat.gob.bo/pagosqr/InicioBusquedaVehiculo.jsf?SDG3WF24=1" target="blank_" class="btn btn-sm">
-                                    <span style='color: #8c6404;'>Vehiculos</span></a>
+                                    <span style='color: #1BA9D0;'>Vehiculos</span></a>
                                 </div>                     
                                 <div class='col-md-6'>
                                     <a href="https://www.ruat.gob.bo/pagosqr/InicioBusquedaVehiculo.jsf?SDG3WF24=1" target="blank_" class="btn btn-sm"><img src='../img/coche2_.png' alt='Vehiculo'></a>
@@ -502,7 +525,7 @@ $twig = new Environment($loader);
                             <div class='row align-items-center'>   
                                 <div class='col-md-6'>
                                     <a href="https://www.ruat.gob.bo/pagosqr/InicioBusquedaActEco.jsf?SDG3WF24=4" target="blank_" class="btn btn-sm">
-                                    <span style='color: #555555;'>Actividad Económica</span></a>
+                                    <span style='color: #1BA9D0;'>Actividad Económica</span></a>
                                 </div>                     
                                 <div class='col-md-6'>
                                     <a href="https://www.ruat.gob.bo/pagosqr/InicioBusquedaActEco.jsf?SDG3WF24=4" target="blank_" class="btn btn-sm"><img src='../img/caseta2_.png' alt='Actividad Economica'></a>
@@ -517,7 +540,7 @@ $twig = new Environment($loader);
                     },
                 },
             });
-        } 
+        }
 
         function generarSolicitud(elemt,
             subelemt, ci_, numInmueble_, nombre_,
