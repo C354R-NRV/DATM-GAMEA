@@ -10,7 +10,8 @@ require 'php/PHPMailer/src/Exception.php';
 
 $destino = "cesar.nrv@gmail.com";
 $nombres = "Cesar Rojas";
-$pin = "5443";
+$pin = "5443"; 
+
 $mail = new PHPMailer(true);
 try {
     $mail->isSMTP();

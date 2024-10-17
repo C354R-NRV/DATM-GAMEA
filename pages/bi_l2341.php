@@ -78,7 +78,8 @@ if (!$_SESSION['swlogin']) {
                     <br>Por cuanto, el Honorable Congreso Nacional, ha sancionado la siguiente Ley:
                     <br>EL HONORABLE CONGRESO NACIONAL,
                     <br>DECRETA:
-                    <br>LEY DE PROCEDIMIENTO ADMINISTRATIVO TITULO PRELIMINAR
+                    <input type="hidden" id="recurso_" value="l2341">
+                    <h1><span id="tituloPrincipal">LEY DE PROCEDIMIENTO ADMINISTRATIVO</span></h1>
                     <br>DISPOSICIONES GENERALES
                     <br> 
                     <br>

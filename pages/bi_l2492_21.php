@@ -73,8 +73,8 @@ if (!$_SESSION['swlogin']) {
 
 
                     <h1>LEY 2492 (2021)</h1>
-
-                    <h2>CODIGO TRIBUTARIO BOLIVIANO</h2>
+                    <input type="hidden" id="recurso_" value="l2492_21">
+                    <h2><span id="tituloPrincipal">CODIGO TRIBUTARIO BOLIVIANO - 2021</span></h2>
 
                     <h2>Y DECRETOS REGLAMENTARIOS TEXTO ORDENADO, COMPLEMENTADO Y ACTUALIZADO AL 31/03/2021</h2>
 

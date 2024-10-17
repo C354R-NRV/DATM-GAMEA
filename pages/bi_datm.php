@@ -15,7 +15,7 @@ if (!$_SESSION['swlogin']) {
 <html lang="es">
 
 <head>
-    <title>R.A. 006/22</title>
+    <title>DATM-iA</title>
     <?php
     echo $twig->render('linkStyle.twig');
     ?>
@@ -47,7 +47,7 @@ if (!$_SESSION['swlogin']) {
     <li class="breadcrumb-item"><a class="text-white" href="home.php">Home</a></li>
     <li class="breadcrumb-item"><a class="text-white" href="home.php">Acceso IA</a></li>
     <li class="breadcrumb-item"><a class="text-white" href="biblioteca.php">Biblioteca</a></li>
-    <li class="breadcrumb-item text-white active" aria-current="page">Resolucion Administrativa 006/22</li>
+    <li class="breadcrumb-item text-white active" aria-current="page">DATM - generalidades</li>
     <?php
     echo $twig->render('prebodyltFin.twig');
     ?>
@@ -72,7 +72,315 @@ if (!$_SESSION['swlogin']) {
                 <div class="contenidoRecurso main-content-container" id="contenidoRecurso">
 
 
-                    <h1><span id="tituloPrincipal">RESOLUCION ADMINISTRATIVA DRPT No. 006/2022 de requisitos para tramites tributarios del GOBIERNO AUTÓNOMO MUNICIPAL DE EL ALTO</span></h1>
+                <h1><span id="tituloPrincipal">Generalidades de la DATM</span></h1>
+                            La DATM es la direccion administrativa tributaria municipal de El Alto, pertenciente a la Secretaria municipal de administracion y finanzas - SMAF, del gobierno autonomo municipal de el alto.
+
+                            <p>
+                                Misión: Garantizar una gestión tributaria eficiente y transparente, orientada a la recaudación equitativa y oportuna de los tributos impositivos en el Municipio de El Alto.
+                                Trabajamos con compromiso y responsabilidad para promover una cultura tributaria sólida, brindando servicios de calidad y asesoramiento a los contribuyentes, para lograr un desarrollo sostenible al bienestar de la comunidad.
+                            </p>
+                            <p>
+                                Visión: Ser una institución reconocida por su excelencia en la administración tributaria, caracterizada por la innovación, la integridad y el servicio al ciudadano. Nos esforzamos por ser líderes en la implementación de políticas y tecnologías tributarias modernas, así como en la promoción de la transparencia y la participación ciudadana en el proceso tributario.
+                                Aspiramos a ser un motor de desarrollo económico y social en El Alto, contribuyendo al fortalecimiento de la autonomía municipal y al progreso de nuestra ciudad.
+                            </p>
+                            <p>
+                                
+                                La Ubicación y horarios de atención son: Nuestra dirección está en la Zona Villa Bolivar B, Terminal Metropolitana de El Alto,La Paz Bolivia, el horario de atención es de Lunes a Viernes de 8:00 a 16:00., Ubicación: https://maps.app.goo.gl/RSHmPufwraJnA1vx8.
+                            </p>
+                            <p>
+                                
+                                La ubicación de la alcaldia central es: Avenida Costanera, Nro: 5022 Urbanización Libertad, entre calle J.J. Torrez y calle Hernán Siles Zuaso (Jacha Uta) ( https://maps.app.goo.gl/qUyGq2fRMLmPCrfZ8 )
+                            </p> 
+
+
+                            <br>La alcadeza municipal de la ciudad de el alto es Mónica Eva Copa Murga, quien es la maxima autoridad de la ciudad de el alto, nació en la ciudad de El Alto, departamento de La Paz, proveniente de una familia aymara, sus padres, Ignacio Copa (Q.E.P.D) y Clementina Murga, inculcaron en la joven alteña los valores de la perseverancia, compromiso y lealtad con la gente más humilde. Copa es la sexta hija de siete hermanos, mostrando desde niña capacidad de liderazgo, lo que la llevó a encabezar diferentes espacios de lucha desde su colegio, la universidad, hasta ocupar la Presidencia del Senado y de la Asamblea Legislativa Plurinacional. La Unidad Educativa Fiscal Luis Espinal Camps, la cobijo, lugar de donde salió bachiller, años en los cuales reemplazó a su padre en las reuniones de su zona forjando su liderazgo. Concluido sus estudios de bachillerato ingresó a la carrera de Trabajo Social en la Universidad Pública de El Alto (UPEA).
+                            <br>El secretario del SMAF - secretaria municipal de administracion y finanzas, es el Lic. Carlos Marca Marca.
+                            <br>El Director de la DATM - direccion administrativa tributaria municipal tambien conocido como Recaudaciones o tributacion municipal, es el Lic. Jhon Jaime Villalba Camacho.
+                            <br>El jefe de la unidad de fiscalizacion es el Abg. Ivan Remberto Tiñini Villa.
+                            <br>El jefe de la unidad de ingresos es el Abg. Juan Carlos Callisaya Quispe.
+                            <br>El jefe de la unidad de la unidad juridica es la Abg. Nadia D. Avendaño Miranda.
+
+                            <br>La jerarquia en la ciudad de el alto en relacion a los cargos es el siguiente: 1. alcaldeza, 2. secretario del SMAF, 3. Director de la DATM, 4. jefe de unidad de fiscalizacion, 5. jefe de la unidad de ingresos y 6. jefa de la unidad de asuntos juridicos.
+
+                            <br>La promoción de descuento de impuestos o también conocido como rebajita tributaria, es del 10 porciento de impuestos municipales, culmina este diciembre 2024.
+
+                            <br>Anteriormente hubo el descuento del 15% para impuestos municipales, que estaba vigente entre el 1 de mayo al 31 de agosto de 2024.
+
+
+                            <br>En el siguiente enlace se encuentran cada uno de los requisitos que puedas necesitar, además puedes generar tus notas de solicitud de forma sencilla automática y rápida de Requisitos para inmuebles: https://datm.elalto.gob.bo/pages/index.php?r=1.
+                                <br>En el siguiente enlace se encuentran cada uno de los requisitos que puedas necesitar, además puedes generar tus notas de solicitud de forma sencilla automática y rápida de Requisitos para vehículos: https://datm.elalto.gob.bo/pages/index.php?r=2.
+                                    <br>En el siguiente enlace se encuentran cada uno de los requisitos que puedas necesitar, además puedes generar tus notas de solicitud de forma sencilla automática y rápida de Requisitos para actividades económicas: https://datm.elalto.gob.bo/pages/index.php?r=3.
+
+                                        <br>El siguiente enlace permite acceder al pago via qr de impuestos de inmuebles https://www.ruat.gob.bo/pagosqr/InicioBusquedaInm.jsf?SDG3WF24=2
+                                        <br>El siguiente enlace permite acceder al pago via qr de impuestos de vehiculos https://www.ruat.gob.bo/pagosqr/InicioBusquedaVehiculo.jsf?SDG3WF24=1
+                                        <br>El siguiente enlace permite acceder al pago via qr de impuestos de actividades economicas o negocios https://www.ruat.gob.bo/pagosqr/InicioBusquedaActEco.jsf?SDG3WF24=4
+
+                                        <br>Como se puede puede realizar Pagos de los impuestos o tributos por QR o de forma digital?, Si tienes un iPhone descarga la App para pagar por QR desde acá: Tu Municipio 24/7 en App Store (apple.com), Si tienes un Android descarga la App para pagar por QR desde acá: Tu Municipio 24/7 - Apps en Google Play
+
+                                        <br>¿Porque continúo pagando impuestos de una casa que la vendí hace varios años? Estimado contribuyente, usted continua generando el impuesto municipal a la propiedad de bienes inmueble IMPBI con su nombre, pues al momento de vender su bien, no se cumplió con el deber formal de realizar el tramite administrativo de transferencia del bien inmueble en cuestión, omitiendo el pago del impuesto municipal a las transferencias (IMT), o el impuesto Municipal a las Transferencias Onerosas (IMTO). Cabe señalar que el tramite de transferencia lo puede realizar el vendedor, el comprador o el apoderado legal.
+
+                                        <br>¿Si soy de la tercera edad, si soy mayor de edad, tengo algún descuento? Los descuentos son aplicados a los titulares, a solicitud de parte cumpliendo con los requisitos de la Resolución Administrativa 006/2022 descuento de 20%.
+
+                                        <br>¿Porque me hicieron la retención de cuentas de una casa que la vendí hace años? Debido a no concluir con la transferencia de su bien inmueble, ahora bien, por un tema de levantamiento, el contribuyente tendría que cancelar las gestiones fiscalizadas y posteriormente solicitar la baja del registro tributario.
+
+                                        <br>¿Porque aumentó tanto el impuesto de mi inmueble si solo subí, contrui, edifique un piso? Esto suele suceder en los casos en que el contribuyente no realizo efectivamente la actualización de los datos técnicos de su bien inmueble (aplicaciones, mejoras en servicios, zona de valor, tipo de construcción, material de vía, superficie de construcción, superficie de terreno), esta acción provoca una acumulación monetaria relacionada a los datos técnicos rectificados. Si tiene dudas, siéntase libre de solicitar un INSPECCIÓN EN SITIO, y un experto de ATP realizara la verificación INSITU para evaluar posibles observaciones. Considere que los cálculos de los montos monetarios por concepto de impuestos, están sujetos a la Ley 2492 y la Ordenanza Municipal 215/2007.
+
+                                        <br>¿Porque debo pagar impuestos?, tus impuestos ayudan a tu municipio, generan mayor progreso con obras para la ciudad de el alto, puedes revisar este enlace para verlos: https://prensa.evacopa.bo/
+                            
+                                        <br>pregunta:Si mi vehículo no circula y está parado ya hace tiempo, ¿porque se me sigue cobrando impuestos?
+                                        <br>respuesta: El impuesto aplicado a los vehículos automotores, es aplicado hacia la propiedad de los mismos, indistintamente de si estos son utilizados o no por su propietario. Si usted como propietario ya no desea realizar el pago de estos tributos,
+                            Si realice la venta de mi vehículo y también hice mi tramite de transferencia, ¿porque aun el vehículo figura como de mi propiedad?
+                            Tras realizarse el tramite de transferencia en DATM, es necesario que se realice el pago efectivo de 3% estipulado en …., con la finalidad de concluir correctamente la transferencia.
+
+                            <br>pregunta: Si deseo realizar el pago de impuestos de mi vehículo en la ciudad de El Alto, ¿que tramite debo de realizar?
+                            <br>respuesta: La DATM realiza cobros por concepto de impuestos a la propiedad de vehículos automotores, solo en los casos en que estos se encuentren con ratificatoria en el GAM de El Alto, en caso de que usted haya migrado a la ciudad de El Alto, deberá realizar el tramite de CAMBIO DE RADICATORIA, este tramite da inicio en DERECHOS REALES.
+
+                            <br>Si deseo cerrar mi negocio por razones de fuerza mayor, ¿qué tengo que hacer para que ya no se calculen impuestos a ese negocio?, Inicialmente, su negocio tiene que tener los pagos de impuestos al día, es decir no contar con deudas pendientes, debido a que el sistema RUAT, no permitirá el cambio de estado a cerrado, seguidamente, tras evidenciarse los pagos completos, se procederá a notificar el cierre ante RUAT en la plataforma de atención al contribuyente en DATM.
+
+                            <br>Si deseo ampliar el rubro de mi negocio, ¿qué tramite debo de realizar?, Con fines de no incurrir en observaciones posteriores, es necesario que el contribuyente se apersone a DATM y al SIN, para notificar la ampliación del rubro a fin de que en ambas instituciones se realice la actualización y/o cambio de ACTIVIDAD ECONOMICA.
+
+                            <br>Estas son las Redes Sociales de la DATM o direccion administrativa tributaria municipal o recaudaciones:
+                            <br>Página web: https://www.datm.elalto.gob.bo.
+                            <br>Facebook: https://www.facebook.com/direccion.de.administracion.tributaria.m.
+                            <br>TikTok: https://www.tiktok.com/@datm_gamea.
+
+                            <br>pregunta: si tengo una deuda de varios años atras de mi inmueble, como hago para poder pagarlo? que facilidades me brinda el municipio la alcaldia?
+                            <br>respuesta: "
+                            1. Contacta al municipio o alcaldía:
+                            Identifica el departamento responsable: Busca en la página web del municipio o alcaldía el departamento encargado de la recaudación de impuestos inmobiliarios o deudas similares.
+                            Comunícate directamente: Llama o visita la oficina personalmente. Pregunta por la cantidad total que debes, incluyendo intereses y multas acumuladas.
+                            Explica tu situación: Se honesto y transparente sobre tu situación financiera y tu deseo de saldar la deuda.
+
+                            2. Infórmate sobre las opciones de pago:
+                            Planes de pago: Pregunta si ofrecen planes de pago a plazos para saldar la deuda gradualmente.
+                            Descuentos: Averigua si existen descuentos por pago total o por pronto pago.
+                            Recursos de ayuda: Consulta si calificas para algún programa de asistencia financiera del gobierno local o si existen organizaciones sin fines de lucro que puedan ayudarte.
+
+                            3. Negocia un acuerdo:
+                            Propón un plan de pago: Basándote en tus posibilidades financieras, propón un plan de pago realista que puedas cumplir.
+                            Documenta el acuerdo: Asegura que cualquier acuerdo al que llegues con el municipio o la alcaldía quede por escrito y firmado por ambas partes.
+                            Recomendaciones adicionales:
+                            No ignores la deuda: Ignorar la situación solo empeorará las cosas, ya que pueden acumularse más intereses y multas, e incluso podrían iniciar un proceso legal para embargar tu propiedad.
+                            Busca asesoría profesional: Un asesor financiero o un abogado especializado en derecho inmobiliario pueden brindarte orientación personalizada y ayudarte a negociar un acuerdo favorable.
+                            Recuerda que la información aquí proporcionada es solo una guía general. Es fundamental que te comuniques directamente con el municipio o alcaldía correspondiente para obtener información precisa y actualizada sobre tu caso."
+
+                            <br>pregunta: me estan por embargar mi vehiculo debido a deudas de gestiones pasadas, como tengo que gestionar o evitar el embargo?
+                            <br>respuesta: "
+
+                            1. No ignores la situación:
+                            Comunícate con el acreedor: Ponte en contacto con la entidad o persona a la que debes el dinero (acreedor) tan pronto como sea posible. Explícales tu situación financiera actual y tu deseo de llegar a un acuerdo.
+                            2. Busca una solución amistosa:
+                            Negocia un plan de pagos: Intenta negociar un plan de pagos que se ajuste a tu presupuesto. Esto puede incluir reducir las cuotas mensuales, extender el plazo de pago o incluso una reducción del monto total de la deuda.
+                            Ofrece un pago único parcial: Si puedes reunir una suma considerable de dinero, ofrécela como un pago único para reducir la deuda significativamente.
+                            3. Considera alternativas legales:
+                            Solicita un período de gracia: En algunos casos, puedes solicitar al acreedor un período de gracia para reorganizar tus finanzas y evitar el embargo.
+                            Presente una declaración de insolvencia: Si tu situación financiera es insostenible, podrías considerar declararte en bancarrota o insolvencia (dependiendo de las leyes de tu país). Esto puede detener el embargo temporal o permanentemente, pero tiene consecuencias a largo plazo en tu historial crediticio.
+                            4. Busca ayuda profesional:
+                            Consulta con un abogado especializado en deudas: Un profesional legal te puede asesorar sobre tus derechos, las mejores opciones para tu situación particular, y representarte legalmente ante el acreedor.
+                            Busca asesoramiento financiero: Un asesor financiero puede ayudarte a crear un presupuesto, negociar con tus acreedores y explorar otras opciones para mejorar tu situación económica.
+                            Información adicional:
+                            Lee la documentación del embargo: Si ya recibiste una notificación de embargo, asegúrate de leerla detenidamente y comprender las fechas límite y los procedimientos.
+                            Guarda toda la documentación: Mantén un registro de todas las comunicaciones, acuerdos, pagos y documentos relacionados con la deuda y el posible embargo.
+                            Actúa con rapidez: Cuanto antes actúes, mayores serán las posibilidades de evitar el embargo de tu vehículo."
+
+                            <h2>Resumen Conciso de Normativas Tributarias para Contribuyentes del Municipio de El Alto:</h2>
+                            Este resumen se basa en el Código Tributario Boliviano (Ley N° 2492) y sus Decretos Reglamentarios, y está dirigido a los contribuyentes del Municipio de El Alto.
+                            <br>Principios Fundamentales:
+                            <br>Legalidad: Solo la Ley puede crear, modificar o suprimir tributos, definir sus elementos, otorgar exenciones, condonaciones, etc. (Art. 6).
+                            <br>Territorialidad: Las normas tributarias se aplican dentro del territorio que corresponde a la entidad que las emite (Art. 2).
+                            <br>No Retroactividad: Las normas tributarias no se aplican retroactivamente, salvo si benefician al contribuyente (Art. 150).
+                            <br>Obligaciones Tributarias:
+                            <br>Inscripción: Debe inscribirse en los registros tributarios municipales y mantener actualizada su información (Art. 70).
+                            <br>Domicilio Tributario: Fijar un domicilio tributario dentro del Municipio de El Alto (Arts. 37 y 38).
+                            <br>Declaración y Pago: Declarar y pagar correctamente los tributos municipales en la forma, plazo y lugar establecidos (Art. 70).
+                            <br>Documentación: Respaldar sus actividades con libros, registros, facturas y demás documentación contable y legal según corresponda (Art. 70).
+                            <br>Colaboración: Facilitar la labor de la Administración Tributaria Municipal en sus funciones de control, fiscalización y recaudación (Art. 70).
+                            <br><br>Principales Tributos Municipales:
+                            <br>Impuesto a la Propiedad de Bienes Inmuebles: Grava la propiedad de bienes inmuebles ubicados en el Municipio de El Alto.
+                            <br>Impuesto a la Propiedad de Vehículos Automotores: Grava la propiedad de vehículos automotores registrados en el Municipio de El Alto.
+                            <br>Impuesto Municipal a las Transferencias: Grava la transferencia de bienes inmuebles y vehículos automotores ubicados en el Municipio de El Alto.
+                            <br>Patentes Municipales: Se paga anualmente por el ejercicio de actividades económicas dentro del Municipio de El Alto.
+                            <br>Tasas Municipales: Se pagan por la prestación de servicios o la realización de actividades específicas por parte del Municipio.
+                            <br>Determinación de la Deuda Tributaria:
+                            <br>Autodeterminación: El contribuyente calcula y declara su deuda tributaria en las declaraciones juradas.
+                            <br>Determinación de Oficio: La Administración Tributaria Municipal puede determinar la deuda del contribuyente mediante fiscalización. En este caso, se notificará al contribuyente una Vista de Cargo (Art. 96).
+                            <br>Procedimientos de Impugnación:
+                            <br>Descargos: Ante una Vista de Cargo, tiene 30 días para presentar descargos (Art. 98).
+                            <br>Resolución Determinativa: La Administración Tributaria Municipal emitirá una Resolución Determinativa, que puede ser impugnada (Art. 99).
+                            <br>Recurso de Alzada: Puede interponer este recurso ante la Autoridad Regional de Impugnación Tributaria en 20 días desde la notificación (Art. 143).
+                            <br>Recurso Jerárquico: Si no está conforme con la resolución del Recurso de Alzada, puede interponer este recurso ante la Autoridad General de Impugnación Tributaria en 20 días (Art. 144).
+                            <br>Proceso Contencioso Administrativo: Agotada la vía administrativa, puede iniciar este proceso ante el Tribunal Supremo de Justicia (Art. 147).
+                            <br><br>Ilícitos Tributarios:
+                            <br>Contravenciones: Infracciones a las normas tributarias que se sancionan con multas, clausura, etc. (Art. 160).
+                            <br>Delitos: Conductas más graves, como la defraudación tributaria, que se sancionan con penas privativas de libertad (Art. 175).
+                            <br>Sanciones por Contravenciones:
+                            <br>Omisión de Pago: Multa del 60% del tributo omitido actualizado (Art. 165).
+                            <br>No Emisión de Factura: Clausura del establecimiento (Art. 164).
+                            <br>Omisión de Inscripción: Clausura del establecimiento (Art. 163).
+                            <br>Reducción de Sanciones:
+                            <br>Arrepentimiento Eficaz: Exención de la multa por omisión de pago si se cancela la deuda tributaria dentro de los 20 días de la notificación de la Vista de Cargo (Art. 157).
+                            <br>Pago después de la Vista de Cargo: Reducción del 80% de la multa si se paga antes de la Resolución Determinativa (Art. 156).
+                            <br><br>Facilidades de Pago:
+                            <br>La Administración Tributaria Municipal puede conceder facilidades de pago a solicitud del contribuyente (Art. 55).
+                            <br>Información Adicional:
+                                <br>Puede obtener información y asistencia sobre sus obligaciones tributarias en la Administración Tributaria Municipal de El Alto.
+                                <br>Es importante mantenerse informado sobre las normas tributarias, las cuales pueden ser modificadas.
+                                <br>El cumplimiento de las obligaciones tributarias es fundamental para el desarrollo del Municipio de El Alto.
+                                <br>Importante: Este resumen es informativo. Para una interpretación precisa y completa de la normativa, se recomienda consultar el texto completo de la Ley N° 2492 y sus Decretos Reglamentarios.
+                                <br><br>
+
+
+                            LEY N°812
+                            LEY DE 30 DE JUNIO DE 2016
+                            PRESIDENTE CONSTITUCIONAL DEL ESTADO PLURINACIONAL DE BOLIVIA
+                            Por cuanto, la Asamblea Legislativa Plurinacional, ha sancionado la siguiente Ley:
+                            LA ASAMBLEA LEGISLATIVA PLURINACIONAL,
+                            DECRETA:
+
+                            <br>Artículo 1. (OBJETO)
+                            . La presente Ley tiene por objeto modificar la Ley N°2492 de 2 de agosto de 2003, "Código Tributario Boliviano".
+                            Artículo 2. (MODIFICACIONES).
+                            I. Se modifica el Artículo 47° de la Ley N°2492 de 2 de agosto de 2003, "Código Tributario Boliviano", con el siguiente texto:
+                            "Artículo 47°. (COMPONENTES DE LA DEUDA TRIBUTARIA).
+                            I. La Deuda Tributaria (DT) es el tributo omitido expresado en Unidades de Fomento de Vivienda más intereses (I) que debe pagar el sujeto pasivo después de vencido el plazo para el cumplimiento de la obligación tributaria, sin la necesidad de intervención o requerimiento alguno de la Administración Tributaria, de acuerdo a la siguiente fórmula:
+                            DT = TO + I
+                            Donde:
+                            I = TO *((1+r/360) **n – 1)
+                            El Tributo Omitido (TO) será expresado en Unidades de Fomento de Vivienda publicada por el Banco Central de Bolivia, del día de vencimiento de pago de la obligación tributaria.
+                            La tasa de interés (r) podrá variar de acuerdo a los días de mora (n: n1, n2, n3) y será:
+                            1. Del cuatro por ciento (4%) anual, desde el día siguiente al vencimiento del plazo para el pago de la obligación tributaria, hasta el último día del cuarto año o hasta la fecha de pago dentro de este periodo, según corresponda ( ).
+                            2. Del seis por ciento (6%) anual, desde el primer día del quinto año de mora, hasta el último día del séptimo año o hasta la fecha de pago dentro de este periodo, según corresponda ( ).
+                            3. Del diez por ciento (10%) anual, desde el primer día del octavo año de mora, hasta la fecha de pago ( ).
+                            El total de la deuda tributaria estará constituido por el Tributo Omitido actualizado en Unidades de Fomento de Vivienda, más los intereses aplicados en cada uno de los períodos de tiempo de mora descritos precedentemente, hasta el día de pago.
+
+                            <br>II. La deuda tributaria expresada en Unidades de Fomento de Vivienda, al momento del pago deberá ser convertida en moneda nacional, utilizando la Unidad de Fomento de Vivienda de la fecha de pago.
+
+                            <br>III. Los pagos parciales una vez transformados a Unidades de Fomento de Vivienda, serán convertidos a valor presente a la fecha de vencimiento de la obligación tributaria, utilizando como factor de conversión para el cálculo de intereses, la relación descrita en el Parágrafo I del presente Artículo, y se deducirán del total de la deuda tributaria sin intereses.
+
+                            <br>IV. Los montos indebidamente devueltos por la Administración Tributaria, serán restituidos por el beneficiario según la variación de la Unidad de Fomento de Vivienda e intereses, de acuerdo a lo previsto en el presente Artículo, calculados a partir de la fecha de la devolución indebida hasta la fecha de pago."
+
+
+                            <br>III. Se modifica el Artículo 83° de la Ley N°2492 de 2 de agosto de 2003, "Código Tributario Boliviano", con el siguiente texto:
+                            "Artículo 83°. (MEDIOS DE NOTIFICACIÓN).
+                            I. Los actos y actuaciones de la Administración Tributaria se notificarán por uno de los siguientes medios, según corresponda:
+                            1. Por medios electrónicos;
+                            2. Personalmente;
+                            3. Por Cédula;
+                            4. Por Edicto;
+                            5. Por correspondencia postal certificada, efectuada mediante correo público o privado o por sistemas de comunicación electrónicos, facsímiles o similares;
+                            6. Tácitamente;
+                            7. Masiva;
+                            8. En Secretaría.
+                            II. Es nula toda notificación que no se ajuste a las formas anteriormente descritas. Con excepción de las notificaciones por correspondencia, edictos y masivas, todas las notificaciones se practicarán en días y horas hábiles administrativos, de oficio o a pedido de parte. Siempre por motivos fundados, la autoridad administrativa competente podrá habilitar días y horas extraordinarias."
+
+
+                            <br>V. Se modifica el Primer Párrafo del Artículo 157° de la Ley N° 2492 de 2 de agosto de 2003, "Código Tributario Boliviano", con el siguiente texto:
+                            "Artículo 157°. (ARREPENTIMIENTO EFICAZ). Quedará automáticamente extinguida la sanción pecuniaria por contravención de omisión de pago, cuando el sujeto pasivo o tercero responsable pague la deuda tributaria hasta el décimo día de notificada la Vista de Cargo o Auto Inicial, o hasta antes del inicio de la ejecución tributaria de las declaraciones juradas que determinen tributos y no hubiesen sido pagados totalmente."
+
+                            <br>Artículo 3. (INCORPORACIONES).
+                            I. Se incorpora el Artículo 83° Bis, a la Ley N°2492 de 2 de agosto de 2003, "Código Tributario Boliviano", con el siguiente texto:
+
+                            "Artículo 83° Bis. (NOTIFICACIÓN POR MEDIOS ELECTRÓNICOS).
+                            I. Para los casos en que el contribuyente o tercero responsable señale un correo electrónico o éste le sea asignado por la Administración Tributaria, la vista de cargo, auto inicial de sumario, resolución determinativa, resolución sancionatoria, resolución definitiva y cualquier otra actuación de la Administración Tributaria, podrá ser notificado por correo electrónico, oficina virtual u otros medios electrónicos disponibles. La notificación realizada por estos medios tendrá la misma validez y eficacia que la notificación personal. En las notificaciones practicadas en esta forma, los plazos se computarán de acuerdo al Artículo 4 del presente Código Tributario.
+                            II. La Administración Tributaria contará con los medios electrónicos necesarios para garantizar la notificación a los contribuyentes. Los contribuyentes que proporcionen a la Administración Tributaria su correo electrónico, número de celular o teléfono fijo, recibirán comunicados por estos medios."
+                            II. Se incorpora como Sexto Párrafo del Artículo 157° de la Ley N°2492 de 2 de agosto de 2003, "Código Tributario Boliviano", el siguiente texto:
+                            "Cuando el tributo pagado con el beneficio previsto en el presente Artículo sea objeto de una fiscalización o determinación posterior, en caso de existir diferencias a favor del Fisco, la sanción aplicable sólo será respecto al tributo por determinarse de oficio."
+
+
+                            <br>El incumplimiento de las facilidades de pago, dará lugar a la pérdida de los beneficios establecidos en la presente Disposición Transitoria de la LEY N°812.
+
+
+
+                            -------------------------------------------------------------------------------------------------------------------------------------
+
+                            <br>PROMOCIONES TRIBUTARIAS DEL MUNICIPIO DE EL ALTO por GESTION
+
+                            <br>en caso de que te pidan el detalle de las promociones que hubo, puedes desplegar la siguiente informacion:
+
+                                <br>Gestión: 2015
+                            Promoción Tributaria: Descuento escalonado
+                            Rango de Fechas: Todo el año
+                            Descripción: Descuentos aplicados a bienes inmuebles y vehículos.
+                            Ley o Normativa que la Respalda: Resoluciones internas municipales
+                            Objetivo de la Promoción: Incentivar el pago de impuestos atrasados
+                            Segmentación de Contribuyentes: Dueños de inmuebles, vehículos
+
+                            <br>Gestión: 2016
+                            Promoción Tributaria: Descuento del 10%
+                            Rango de Fechas: Todo el año
+                            Descripción: Aplicado a actividades económicas.
+                            Ley o Normativa que la Respalda: Resoluciones internas municipales
+                            Objetivo de la Promoción: Fomentar el cumplimiento tributario
+                            Segmentación de Contribuyentes: Comerciantes
+
+                            <br>Gestión: 2017
+                            Promoción Tributaria: "Perdonazo"
+                            Rango de Fechas: 90 días (inicio) y 30 días (extensión)
+                            Descripción: Condonación del 100% de multas e intereses, luego 70%.
+                            Ley o Normativa que la Respalda: Ley Municipal N° 424 de 2017
+                            Objetivo de la Promoción: Recuperar deudas tributarias y mejorar el registro técnico de construcciones
+                            Segmentación de Contribuyentes: Todos los contribuyentes
+
+                            <br>Gestión: 2018
+                            Promoción Tributaria: Regularización de construcciones
+                            Rango de Fechas: 60 días y 30 días adicionales
+                            Descripción: Condonación de multas por actualización de datos técnicos.
+                            Ley o Normativa que la Respalda: Ley Municipal N° 495 de 2018
+                            Objetivo de la Promoción: Actualizar datos técnicos de propiedades
+                            Segmentación de Contribuyentes: Dueños de inmuebles
+
+                            <br>Gestión: 2019
+                            Promoción Tributaria: Descuento del 10%
+                            Rango de Fechas: Todo el año
+                            Descripción: Aplicado a vehículos y bienes inmuebles.
+                            Ley o Normativa que la Respalda: Resoluciones internas municipales
+                            Objetivo de la Promoción: Promover la puntualidad en el pago de impuestos
+                            Segmentación de Contribuyentes: Dueños de inmuebles, vehículos
+
+                            <br>Gestión: 2020
+                            Promoción Tributaria: "Perdonazo Tributario"
+                            Rango de Fechas: 90 días y 30 días adicionales
+                            Descripción: Condonación total de multas e intereses.
+                            Ley o Normativa que la Respalda: Ley Municipal N° 570 de 2020
+                            Objetivo de la Promoción: Facilitar el cumplimiento tributario y actualizar registros
+                            Segmentación de Contribuyentes: Todos los contribuyentes
+
+                            <br>Gestión: 2021
+                            Promoción Tributaria: Descuento del 15%
+                            Rango de Fechas: Todo el año
+                            Descripción: Aplicado a bienes inmuebles y vehículos.
+                            Ley o Normativa que la Respalda: Ley Municipal N° 673 de 2021
+                            Objetivo de la Promoción: Incentivar el pago temprano de impuestos
+                            Segmentación de Contribuyentes: Dueños de inmuebles, vehículos
+
+                            <br>Gestión: 2022
+                            Promoción Tributaria: Regularización de construcciones
+                            Rango de Fechas: Todo el año
+                            Descripción: Incentivo para la actualización de datos técnicos de nuevas construcciones.
+                            Ley o Normativa que la Respalda: Ley Municipal N° 715 de 2022
+                            Objetivo de la Promoción: Actualizar registros técnicos de construcciones
+                            Segmentación de Contribuyentes: Dueños de inmuebles
+
+                            <br>Gestión: 2023
+                            Promoción Tributaria: Descuento escalonado
+                            Rango de Fechas: 4 meses con distintos porcentajes
+                            Descripción: Aplicado en bienes inmuebles y vehículos.
+                            Ley o Normativa que la Respalda: Ley Municipal N° 785 de 2023
+                            Objetivo de la Promoción: Incentivar el cumplimiento de obligaciones tributarias
+                            Segmentación de Contribuyentes: Dueños de inmuebles, vehículos
+
+                            <br>Gestión: 2024
+                            Promoción Tributaria: Descuento del 15% y 10%
+                            Rango de Fechas: Todo el año, hasta el 30 de agosto
+                            Descripción: 15% en inmuebles y vehículos; 10% en actividades económicas.
+                            Ley o Normativa que la Respalda: Ley Municipal N° 835 de 2024
+                            Objetivo de la Promoción: Aumentar la recaudación fiscal mediante descuentos
+                            Segmentación de Contribuyentes: Dueños de inmuebles, vehículos, comercios
+
+
+
+
+                            <h1>  RESOLUCION ADMINISTRATIVA DRPT No. 006/2022 de requisitos para tramites tributarios del GOBIERNO AUTÓNOMO MUNICIPAL DE EL ALTO</h1>
 
                     <br>CONSIDERANDO:
                     <br>
@@ -962,7 +1270,7 @@ if (!$_SESSION['swlogin']) {
                     <br>4. Resolución Administrativa (si corresponde)
                     <br>5. Proforma de liquidación
                     <br>6. Testimonio de constitución o documento de creación.
-                    <br>7. NIT (Si corresponde) 
+                    <br>7. NIT (Si corresponde)
 
                     <br><br>REQUISITOS PARA TRAMITES VARIOS GENERALES, PARA OTRAS CERTIFICACIONES
                     <br>1. Solicitud escrita del titular (Dirigida al Director de Administración Tributaria Municipal).

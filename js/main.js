@@ -128,7 +128,7 @@ function simatSiim() {
             <div class='rubrosInfo'>
                 <div class='row align-items-center'>                      
                     <div class='col-md-12'>
-                        <input type='text' id='ci_' class='form-control' value='440546'>
+                        <input type='text' id='ci_' class='form-control' value=''>
                     </div>
                 </div> 
             </div>   
@@ -328,10 +328,10 @@ function impvaAnotado() {
     contentType: "application/x-www-form-urlencoded",
     url: "../php/getDeudasImpv.php",
     data: datos,
-    beforeSend: function () { 
+    beforeSend: function () {
       loadGralOn();
     },
-    success: function (e) { 
+    success: function (e) {
       loadGralOff();
       dat = JSON.parse(e);
       $.confirm({
@@ -343,26 +343,26 @@ function impvaAnotado() {
         buttons: {
           cancel: {
             text: "Cerrar",
-            action: function () { 
+            action: function () {
             },
           },
         },
         onOpenBefore: function () {
           $('.jconfirm-title-c').css('text-align', 'center');
         }
-      }); 
-      
+      });
+
     },
     timeout: 16000,
     error: function () { },
-  }); 
+  });
 
 
 
 
 }
 function impvaNoAnotado() {
-  
+
   datos = "&impvaAnotado=" + '0';
 
   $.ajax({
@@ -372,10 +372,10 @@ function impvaNoAnotado() {
     contentType: "application/x-www-form-urlencoded",
     url: "../php/getDeudasImpv.php",
     data: datos,
-    beforeSend: function () { 
+    beforeSend: function () {
       loadGralOn();
     },
-    success: function (e) { 
+    success: function (e) {
       loadGralOff();
       dat = JSON.parse(e);
       $.confirm({
@@ -387,19 +387,19 @@ function impvaNoAnotado() {
         buttons: {
           cancel: {
             text: "Cerrar",
-            action: function () { 
+            action: function () {
             },
           },
         },
         onOpenBefore: function () {
           $('.jconfirm-title-c').css('text-align', 'center');
         }
-      }); 
-      
+      });
+
     },
     timeout: 16000,
     error: function () { },
-  }); 
+  });
 }
 
 
@@ -421,7 +421,7 @@ function formVerificaRegistros() {
     <div>
         <div class="col-md-12">
           <label>PIN<span style="color:red;">*</span></label>
-          <input type="password" id="pin_" class="form-control" placeholder="NUMERO PIN" value="6037"  required />
+          <input type="password" id="pin_" class="form-control" placeholder="NUMERO PIN" required />
         </div>
     </div>
     <hr>
@@ -432,7 +432,7 @@ function formVerificaRegistros() {
   if ($("#swLogin").val()) {
     sinLogin = '';
   }
-  
+
   var content_ = `
         <div class="form-group" >
             <div class="row" style="margin-right:0 !important;">
@@ -446,13 +446,14 @@ function formVerificaRegistros() {
                     </select>
                 </div>  
                 <div class="col-md-8">
-                    <input type="text" id="ci_" placeholder="Ejemplo:6062063" class="form-control" value="1283250" required />
+                    <input type="text" id="ci_" placeholder="Ejemplo:6062063" class="form-control" value="" required />
                 </div>
             </div>
             ${sinLogin} 
         </div>
         `;
   var errorContribuyente = true;
+
   $.confirm({
     title: "Por favor, ingrese la siguiente información:",
     type: "dark",
@@ -470,53 +471,63 @@ function formVerificaRegistros() {
         btnClass: "btn-blue",
         action: function () {
           var formSubmitButton = this.buttons.formSubmit;
+
+          if ( ($("#ci_").val()).length > 4 && ($("#pin_").length === 0 || $("#pin_").val().length > 3)) {
+            datos =
+            "&tipodoc_=" + $("#tipodoc_").val() +
+            "&ci_=" + $("#ci_").val() +
+            "&pin_=" + $("#pin_").val();
+            $.ajax({
+              async: true,
+              type: "POST",
+              dataType: "html",
+              contentType: "application/x-www-form-urlencoded",
+              url: "../php/getInfoGralContribuyente.php",
+              data: datos,
+              beforeSend: function () {
+                formSubmitButton.setText('Procesando...');
+                formSubmitButton.disable();
+                loadGralOn();
+
+              },
+              success: function (e) {
+                console.log(e);
+                loadGralOff();
+                formSubmitButton.setText('Consultar');
+                formSubmitButton.enable();
+                dat = JSON.parse(e);
+                if (dat.color_ != 'red') {
+                  errorContribuyente = true;
+                }
+                contenido = dat.html;
+                $.confirm({
+                  title: dat.titulo_,
+                  content: contenido,
+                  type: dat.color_,
+                  typeAnimated: true,
+                  containerFluid: true,
+                  buttons: {
+                    cancel: {
+                      text: "Cerrar",
+                      action: function () { },
+                    },
+                  },
+                  onOpenBefore: function () {
+                    $('.jconfirm-title-c').css('text-align', 'center');
+                  }
+                });
+              },
+              timeout: 16000,
+              error: function () { },
+            });
+          } else {
+            console.log('El CI y/o PIN no son correctos, revise e intente nuevamente por favor.');
+            return false;
+          }
           datos =
             "&tipodoc_=" + $("#tipodoc_").val() +
             "&ci_=" + $("#ci_").val() +
             "&pin_=" + $("#pin_").val();
-          $.ajax({
-            async: true,
-            type: "POST",
-            dataType: "html",
-            contentType: "application/x-www-form-urlencoded",
-            url: "../php/getInfoGralContribuyente.php",
-            data: datos,
-            beforeSend: function () {
-              formSubmitButton.setText('Procesando...');
-              formSubmitButton.disable();
-              loadGralOn();
-
-            },
-            success: function (e) {
-              console.log(e);
-              loadGralOff();
-              formSubmitButton.setText('Consultar');
-              formSubmitButton.enable();
-              dat = JSON.parse(e);
-              if (dat.color_ != 'red') {
-                errorContribuyente = true;
-              }
-              contenido = dat.html;
-              $.confirm({
-                title: dat.titulo_,
-                content: contenido,
-                type: dat.color_,
-                typeAnimated: true,
-                containerFluid: true,
-                buttons: {
-                  cancel: {
-                    text: "Cerrar",
-                    action: function () { },
-                  },
-                },
-                onOpenBefore: function () {
-                  $('.jconfirm-title-c').css('text-align', 'center');
-                }
-              });
-            },
-            timeout: 16000,
-            error: function () { },
-          });
         },
       },
       cancel: function () { },
@@ -575,17 +586,17 @@ function formRegistroContri(tipo_, ci_) {
             <div class="row" style="margin-right:0 !important;">
                 <div class="col-md-6">
                     <label>Nombre(s)/Razon Soc.</label>
-                    <input type="text" id="nombre_" placeholder="Nombres ó Razon Social" value="ROMELIO" class="form-control" required />
+                    <input type="text" id="nombre_" placeholder="Nombres ó Razon Social" value="" class="form-control" required />
                 </div>
                 <div class="col-md-6">
                     <label>Paterno/Sigla</label>
-                    <input type="text" id="paterno_" placeholder="Ap. paterno ó sigla" value="YAMPARA" class="form-control" required />
+                    <input type="text" id="paterno_" placeholder="Ap. paterno ó sigla" value="" class="form-control" required />
                 </div>
             </div>
             <div class="row" style="margin-right:0 !important;">
                 <div class="col-md-6">
                     <label>Materno</label>
-                    <input type="text" id="materno_" placeholder="Ap. Materno" value="CRUZ" class="form-control" required />
+                    <input type="text" id="materno_" placeholder="Ap. Materno" value="" class="form-control" required />
                 </div>
                 <div class="col-md-6">
                     <label>Ap. Casada</label>
@@ -595,17 +606,17 @@ function formRegistroContri(tipo_, ci_) {
             <div class="row" style="margin-right:0 !important;">
                 <div class="col-md-6">
                     <label>Num. Celular</label>
-                    <input type="text" id="cel_" placeholder="Celular" class="form-control" value="68110661"  required /> 
+                    <input type="text" id="cel_" placeholder="Celular" class="form-control" value=""  required /> 
                 </div>
                 <div class="col-md-6">    
                     <label>Correo</label>
-                    <input type="email" id="correo_" placeholder="Correo electronico" class="form-control" value="tilular@gmail.com" required />
+                    <input type="email" id="correo_" placeholder="Correo electronico" class="form-control" value="" required />
                 </div>
             </div>
             <hr>
             <label><span style="font-size:11px">* Se realizara una verificación interna de la información proporcionada previo a emitirle un numero PIN de acceso.</span></label>
             
-            <!-- <label>Fecha nacimiento</label> <input type="text" id="fnacimiento_" placeholder="dd/mm/AAAA"  value="13/05/2001" class="form-control" required /> -->
+            <!-- <label>Fecha nacimiento</label> <input type="text" id="fnacimiento_" placeholder="dd/mm/AAAA"  value="" class="form-control" required /> -->
             
         </div>
     `;
@@ -743,9 +754,9 @@ function getcontenido(elemt, color, subelemt, descr, documento = false) {
 
   var datosContactos = `<hr>
             <label>Contacto</label>
-            <input type="text" id="contacto_" placeholder="Numero de celular" value="68110661"  class="form-control" required />
+            <input type="text" id="contacto_" placeholder="Numero de celular" value=""  class="form-control" required />
             <label>Correo</label>
-            <input type="email" id="correo_" placeholder="Correo electrónico" value="tilular@gmail.com"  class="form-control" required />`;
+            <input type="email" id="correo_" placeholder="Correo electrónico" value=""  class="form-control" required />`;
 
   if (documento) {
     // aca ver como generar diferentes docuemntos para cada caso
@@ -767,21 +778,21 @@ function getcontenido(elemt, color, subelemt, descr, documento = false) {
                   </select>
               </div>
               <div class="col-md-8">
-                  <input type="text" id="ci_" placeholder="No." class="form-control" value="6062066" required />
+                  <input type="text" id="ci_" placeholder="No." class="form-control" value="" required />
               </div>
           </div>
           <label>Nombre completo</label>
-          <input type="text" id="nombre_" placeholder="Nombres Paterno Materno" value="Juan Poma Mamani" class="form-control" required />
+          <input type="text" id="nombre_" placeholder="Nombres Paterno Materno" value="" class="form-control" required />
           <label>Número de inmueble</label>
-          <input type="text" id="numinmueble_" placeholder="No.inmueble"  value="1510399000" class="form-control" required />
+          <input type="text" id="numinmueble_" placeholder="No.inmueble"  value="" class="form-control" required />
           <label>Número de lote</label>
-          <input type="text" id="numlote_" placeholder="Lote" class="form-control" value="24A"  required />
+          <input type="text" id="numlote_" placeholder="Lote" class="form-control" value=""  required />
           <label>Manzano</label>
-          <input type="text" id="manzano_" placeholder="Manzano" class="form-control" value="12" required />
+          <input type="text" id="manzano_" placeholder="Manzano" class="form-control" value="" required />
           <label>Superficie Terreno</label>
-          <input type="text" id="superficie_" placeholder="Superficie en metros cuadrados del terreno"value="250"  class="form-control" required />
+          <input type="text" id="superficie_" placeholder="Superficie en metros cuadrados del terreno"value=""  class="form-control" required />
           <label>Ubicación</label>
-          <input type="text" id="ubicacion_" placeholder="Zona, Calle, Puerta" value="Z. Los Rosales, Calle Carrasco, No 452"  class="form-control" required />
+          <input type="text" id="ubicacion_" placeholder="Zona, Calle, Puerta" value=""  class="form-control" required />
           
           ${datosContactos} 
       </div>
@@ -791,13 +802,13 @@ function getcontenido(elemt, color, subelemt, descr, documento = false) {
       content_ = `
                 <div class="form-group">
                     <label>Número de inmueble</label>
-                    <input type="text" id="numinmueble_" placeholder="No.inmueble" class="form-control" value="1510390126" required />
+                    <input type="text" id="numinmueble_" placeholder="No.inmueble" class="form-control" value="" required />
                     
                     <label>Cedula de Identidad</label>
-                    <input type="text" id="ci_" placeholder="C.I." class="form-control" value="3384517" required />
+                    <input type="text" id="ci_" placeholder="C.I." class="form-control" value="" required />
                     
                     <label>Nuevo nombre:</label>
-                    <input type="text" id="nuevonombre_" placeholder="Nuevo nombre" class="form-control"  value="JUAN ROJAS" required />
+                    <input type="text" id="nuevonombre_" placeholder="Nuevo nombre" class="form-control"  value="" required />
                     
                     ${datosContactos}
                 </div>
@@ -818,10 +829,10 @@ function getcontenido(elemt, color, subelemt, descr, documento = false) {
       content_ = `
                 <div class="form-group">
                     <label>Número de inmueble</label>
-                    <input type="text" id="numinmueble_" placeholder="No.inmueble" class="form-control" value="1510390126" required />
+                    <input type="text" id="numinmueble_" placeholder="No.inmueble" class="form-control" value="" required />
                     
                     <label>Cedula de Identidad</label>
-                    <input type="text" id="ci_" placeholder="C.I." class="form-control" value="3384517" required />  
+                    <input type="text" id="ci_" placeholder="C.I." class="form-control" value="" required />  
 
                     ${datosContactos}
                 </div>
@@ -831,10 +842,10 @@ function getcontenido(elemt, color, subelemt, descr, documento = false) {
       content_ = `
                 <div class="form-group">
                     <label>Número de inmueble</label>
-                    <input type="text" id="numinmueble_" placeholder="No.inmueble" class="form-control" value="1510390126" required />
+                    <input type="text" id="numinmueble_" placeholder="No.inmueble" class="form-control" value="" required />
                     
                     <label>Cedula de Identidad</label>
-                    <input type="text" id="ci_" placeholder="C.I." class="form-control" value="3384517" required />  
+                    <input type="text" id="ci_" placeholder="C.I." class="form-control" value="" required />  
 
                     <label>Gestion</label>
                     <select id="gestion_" class="form-control">
@@ -861,10 +872,10 @@ function getcontenido(elemt, color, subelemt, descr, documento = false) {
       content_ = `
                 <div class="form-group">
                     <label>Número de placa</label>
-                    <input type="text" id="num_placa_" placeholder="No.inmueble" class="form-control" value="747UND" required />
+                    <input type="text" id="num_placa_" placeholder="No.inmueble" class="form-control" value="" required />
                     
                     <label>Cedula de Identidad</label>
-                    <input type="text" id="ci_" placeholder="C.I." class="form-control" value="1005779028" required />
+                    <input type="text" id="ci_" placeholder="C.I." class="form-control" value="" required />
                     
                     ${datosContactos}
                 </div>
@@ -875,16 +886,16 @@ function getcontenido(elemt, color, subelemt, descr, documento = false) {
       content_ = `
                 <div class="form-group">
                   <label>Número de placa</label>
-                  <input type="text" id="num_placa_" placeholder="No.inmueble" class="form-control" value="1224ADF" required />
+                  <input type="text" id="num_placa_" placeholder="No.inmueble" class="form-control" value="" required />
                   
                   <label>Cedula de Identidad/NIT</label>
-                  <input type="text" id="ci_" placeholder="CI/NIT" class="form-control" value="4921878" required />
+                  <input type="text" id="ci_" placeholder="CI/NIT" class="form-control" value="" required />
                   
                   <label>De Gestión</label>
-                  <input type="text" id="gestionIni_" placeholder="2023" class="form-control" value="2021" required />
+                  <input type="text" id="gestionIni_" placeholder="2023" class="form-control" value="" required />
                   
                   <label>A Gestión</label>
-                  <input type="text" id="gestionFin_" placeholder="2024" class="form-control" value="2023" required />
+                  <input type="text" id="gestionFin_" placeholder="2024" class="form-control" value="" required />
                   
                   ${datosContactos}
 
@@ -896,10 +907,10 @@ function getcontenido(elemt, color, subelemt, descr, documento = false) {
       content_ = `
                 <div class="form-group">
                   <label>Número de patente</label>
-                  <input type="text" id="num_act_" placeholder="No. patente" class="form-control" value="1511079444" required />
+                  <input type="text" id="num_act_" placeholder="No. patente" class="form-control" value="" required />
                   
                   <label>Cedula de Identidad/NIT</label>
-                  <input type="text" id="ci_" placeholder="CI/NIT" class="form-control" value="1002831024" required />
+                  <input type="text" id="ci_" placeholder="CI/NIT" class="form-control" value="" required />
                   
                   ${datosContactos}
 
@@ -911,10 +922,10 @@ function getcontenido(elemt, color, subelemt, descr, documento = false) {
       content_ = `
                 <div class="form-group">
                   <label>Número de patente</label>
-                  <input type="text" id="num_act_" placeholder="No. patente" class="form-control" value="1511079444" required />
+                  <input type="text" id="num_act_" placeholder="No. patente" class="form-control" value="" required />
                   
                   <label>Cedula de Identidad/NIT</label>
-                  <input type="text" id="ci_" placeholder="CI/NIT" class="form-control" value="1002831024" required />
+                  <input type="text" id="ci_" placeholder="CI/NIT" class="form-control" value="" required />
                   
                   <label>De Gestión</label> 
                   <select id="gestionIni_" class="form-control">

@@ -73,7 +73,8 @@ if (!$_SESSION['swlogin']) {
 
                     <h1>Decreto Supremo N° 1347, de 10 de septiembre de 2012, </h1>
 
-                    Reglamento a la Ley N° 259 de Expendio y Consumo de bebidas alcohólicas
+                    <input type="hidden" id="recurso_" value="ds1347">
+                    <h1><span id="tituloPrincipal">Reglamento a la Ley N° 259 de Expendio y Consumo de bebidas alcohólicas</span></h1>
                     <br>
                     <br>EVO MORALES AYMA PRESIDENTE CONSTITUCIONAL DEL ESTADO PLURINACIONAL DE BOLIVIA
                     <br>

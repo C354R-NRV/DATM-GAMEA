@@ -75,7 +75,8 @@ if (!$_SESSION['swlogin']) {
                     <!-- =============================================================================================================== -->
 
                     <h1>LEY 843</h1>
-
+                    <input type="hidden" id="recurso_" value="l843">
+                    <h1><span id="tituloPrincipal">Ley General de tributacion</span></h1>
                     <h2>Y DECRETOS REGLAMENTARIOS</h2>
                     TEXTO ORDENADO, COMPLEMENTADO Y ACTUALIZADO AL 31/05/2023
 

@@ -116,7 +116,7 @@ function toggleVisionPanel() {
     if (swVision) {
         $('#contenBtnVision').html(' <img class="img-fluid" src="../img/sol.png" style="height: 2rem;" alt=""> ');
         $('.containermt-5').css({
-            'background-color': '#ededed', 
+            'background-color': '#ededed',
             'important': 'true'
         });
         $('#contenidoRecurso').css({
@@ -129,16 +129,16 @@ function toggleVisionPanel() {
             'important': 'true'
         });
         swVision = false;
-        
+
     } else {
         $('.containermt-5').css({
-            'background-color': '#19232b', 
+            'background-color': '#19232b',
         });
         $('#contenidoRecurso').css({
             'background-color': '#19232b',
             'color': '#cbcbcb',
             'important': 'true'
-        }); 
+        });
         $('#contenidoRecurso').find('h1, h2, h3, h4, h5').css({
             'color': '#cbcbcb',
             'important': 'true'
@@ -154,24 +154,36 @@ function sendMessage() {
     if (userInput === '') return;
 
     const $chatBox = $('#chat-box');
-    const userMessage = $('<div>').addClass('chat-message').text(`Usuario: ${userInput}`);
+    const userMessage = $('<div>').addClass('chat-message text-end').text(`${userInput}`);
 
     $chatBox.append(userMessage);
-    datos = '&prompt=' + userInput;
+    datos = '&promptUser=' + userInput + "&recurso=" + $('#recurso_').val() + "&tituloPrincipal=" + $('#tituloPrincipal').html();
+    console.log(datos);
+
     $.ajax({
         async: true,
         type: "POST",
         dataType: "html",
         contentType: "application/x-www-form-urlencoded",
-        url: "../php/groq.php",
+        url: "../php/apiGemini.php",
         data: datos,
-        beforeSend: function () { },
+        beforeSend: function () {
+            loadGralOn();
+            console.log("cargando...");
+        },
         success: function (response) {
-            const botMessage = $('<div>').addClass('chat-message text-end').text(`IA-DATM:${response}`);
+            console.log(response);
+
+            /*dat = $.parseJSON(response);
+            console.log(dat.promt);
+            console.log(dat.detalles); */
+            
+            loadGralOff();
+            const botMessage = $('<div>').addClass('chat-message').text(`${response}`);
             $chatBox.append(botMessage);
             setTimeout(function () {
                 $chatBox.scrollTop($chatBox.prop('scrollHeight'));
-            }, 100); // Pausa para permitir que el DOM se actualice
+            }, 100);
 
         },
         timeout: 16000,

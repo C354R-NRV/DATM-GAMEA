@@ -73,6 +73,9 @@ if (!$_SESSION['swlogin']) {
 
 
                     <h1>LEY MUNICIPAL Nº 458</h1>
+                    <input type="hidden" id="recurso_" value="l458">
+                    <h1><span id="tituloPrincipal">Ley de actividades clandestinas de expendio y consumo de bebidas alcoholicas</span></h1>
+
                     <h3>Sr. ANTIOCO CALA APAZA</h3>
                     <h3>PRESIDENTE DEL CONCEJO MUNICIPAL DE EL ALTO</h3>
 

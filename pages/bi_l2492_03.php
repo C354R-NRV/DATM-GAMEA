@@ -73,8 +73,8 @@ $twig = new Environment($loader);
                 
                 <div class="contenidoRecurso main-content-container" id="contenidoRecurso">
 
-
-                    <h1>Código Tributario Boliviano Ley Nº 2492 de 2 de Agosto de 2003</h1>
+                    <input type="hidden" id="recurso_" value="l2492_03">
+                    <h1><span id="tituloPrincipal">Código Tributario Boliviano Ley Nº 2492 de 2 de Agosto de 2003</span></h1>
 
                     <h2>GONZALO SANCHEZ DE LOZADA PRESIDENTE CONSTITUCIONAL DE LA REPUBLICA</h2>
 

@@ -65,8 +65,7 @@ if (!$_SESSION['swlogin']) {
                     </div>
                 </div> -->
                 <div class="rowFlex">
-                    <div class="columnFlex">
-
+                    <div class="columnFlex"> 
                         <div class="box-containerIa">
                             <div class="box-itemIa">
                                 <div class="flip-boxIa">

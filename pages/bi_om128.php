@@ -100,10 +100,12 @@ if (!$_SESSION['swlogin']) {
                 <div class="show-btn"><span onclick="toggleInfoPanel()" id="contenBtn"><img class="img-fluid" src="../img/ia.gif" style="height: 2rem;" alt=""></span></div>
                 <div class="contenidoRecurso main-content-container" id="contenidoRecurso">
                     <h1>RESOLUCION ADMINISTRATIVA No. DR/08/2005</h1>
+                    <input type="hidden" id="recurso_" value="l812">
+                    <h1><span id="tituloPrincipal">ARANCELES DE LA PATENTE MUNICIPAL</span></h1>
 
                     <br>
                     El Alto. 10 de mayo de 200
-
+        
                     <br>
                     VISTOS Y CONSIDERANDOS:
                     <br>

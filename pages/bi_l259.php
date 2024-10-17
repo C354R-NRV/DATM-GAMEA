@@ -82,7 +82,8 @@ if (!$_SESSION['swlogin']) {
 
                             <p>LA ASAMBLEA LEGISLATIVA PLURINACIONAL, D E C R E T A:</p>
 
-                            <h1>LEY DE CONTROL AL EXPENDIO Y CONSUMO DE BEBIDAS ALCOHÓLICAS </h1>
+                            <input type="hidden" id="recurso_" value="l259">
+                            <h1><span id="tituloPrincipal">LEY DE CONTROL AL EXPENDIO Y CONSUMO DE BEBIDAS ALCOHÓLICAS </span></h1>
 
                             <h3>CAPÍTULO I</h3> DISPOSICIONES GENERALES
 

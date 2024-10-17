@@ -74,7 +74,8 @@ if (!$_SESSION['swlogin']) {
                     <!-- ==================================================== -->
 
                     <h1>LEY 2492</h1>
-                    <h2>CODIGO TRIBUTARIO Y DECRETOS REGLAMENTARIOS</h2>
+                    <input type="hidden" id="recurso_" value="l2492">
+                    <h2><span id="tituloPrincipal">CODIGO TRIBUTARIO Y DECRETOS REGLAMENTARIOS - 2023</span></h2>
                     TEXTO ORDENADO, COMPLEMENTADO Y ACTUALIZADO AL 31/03/2023
 
                     <br><br>

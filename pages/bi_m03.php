@@ -91,11 +91,12 @@ ALCALDE MUNICIPAL DE EL ALTO
 <p>
 Por cuanto el H. Consejo Municipal de la Ciudad de El Alto ha sancionado la siguiente Ley Municipal Autonómica:
 </p>
-<h4>
+<input type="hidden" id="recurso_" value="m03">
+<h1><span id="tituloPrincipal">
 LEY MUNICIPAL N° 003
 DE CREACION DE IMPUESTOS MUNICIPALES
-EL ORGANO LEGISLATIVO DEL GOBIERNO AUTÓNOMO MUNICIPAL EL ALTO
-</h4>
+EL ORGANO LEGISLATIVO DEL GOBIERNO AUTÓNOMO MUNICIPAL EL ALTO</span>
+</h1>
 
 <h2>CAPITULO I</h2>
 

@@ -1,5 +1,4 @@
-<?php
-// Configuración de la conexión a la base de datos
+<?php 
 $tns = "
 (DESCRIPTION =
     (ADDRESS = (PROTOCOL = TCP)(HOST = mtab.ruat.net.bo)(PORT = 1533))
@@ -9,8 +8,8 @@ $tns = "
     )
 )";
 
-$username = 'SQLEALCROJAS'; // Usuario de la base de datos
-$password = 'Ces4rN1lt0n#20062024'; // Contraseña de la base de datos
+$username = 'SQLEALCROJAS'; 
+$password = 'Ces4rN1lt0n#20062024';  
 
 try {
     // Crear la conexión

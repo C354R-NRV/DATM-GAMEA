@@ -72,7 +72,9 @@ if (!$_SESSION['swlogin']) {
                 <div class="contenidoRecurso main-content-container" id="contenidoRecurso">
 
 
-                    <h1>Ley Municipal 291</h1>
+                    <h1>Ley Municipal 291</h1>  
+                    <input type="hidden" id="recurso_" value="l291">
+                    <h1><span id="tituloPrincipal">Ley de uso provisional de espacios de dominio público municipal y pago de patentes</span></h1>  
 
                     <h2>DEL USO PROVISIONAL DE ESPACIOS DE DOMINI0 PÚBLICO MUNICIPAL Y PAGO DE PATENTES</h2>
 

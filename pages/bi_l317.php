@@ -82,7 +82,8 @@ if (!$_SESSION['swlogin']) {
                     <br>Por cuanto, la Asamblea Legislativa Plurinacional, ha sancionado la siguiente Ley:<br>
                     LA ASAMBLEA LEGISLATIVA PLURINACIONAL,<br>
                     D E C R E T A:<br>
-                    <h1>LEY DEL PRESUPUESTO GENERAL DEL ESTADO - GESTIÓN 2013</h1>
+                    <input type="hidden" id="recurso_" value="l317">
+                    <h1><span id="tituloPrincipal">LEY DEL PRESUPUESTO GENERAL DEL ESTADO - GESTIÓN 2013</span></h1>
 
                     <h3>CAPÍTULO PRIMERO DISPOSICIONES GENERALES</h3>
                     <br>
