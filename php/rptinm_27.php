@@ -161,7 +161,7 @@ try {
         $html2pdf->writeHTML($documento);
         $html2pdf->Output();
     } else
-        echo "NH";
+        echo "No se logro recuperar los registros";
 } catch (PDOException $e) {
     echo "Error al ejecutar la consulta: " . $e->getMessage();
 }

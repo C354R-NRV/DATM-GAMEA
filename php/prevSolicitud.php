@@ -17,10 +17,10 @@ try {
         $query = "select * from inmueble_univ where (documento_identidad ilike '$ci_' OR documento_identidad_apo ilike '$ci_') and numero_inmueble  ilike '$numInmueble_' ";
 
     if ($num_placa_ && $num_placa_ != 'undefined')
-        $query = "select * from vehiculo_univ where (documento_identidad ilike '$ci_' OR documento_identidad_apo ilike '$ci_') and \"NRO_PTA\"  ilike '$num_placa_' ";
+        $query = "select * from vehiculo_univ where (documento_identidad ilike '$ci_' OR documento_identidad_apo ilike '$ci_') and nro_pta  ilike '$num_placa_' ";
 
     if ($num_act_ && $num_act_ != 'undefined')
-        $query = "select * from actividad_univ where (documento_identidad ilike '$ci_' OR documento_identidad_apo ilike '$ci_') and \"NUMERO_ACTIVIDAD\"  ilike '$num_act_' ";
+        $query = "select * from actividad_univ where (documento_identidad ilike '$ci_' OR documento_identidad_apo ilike '$ci_') and numero_actividad  ilike '$num_act_' ";
 
     $stmt = $cons->query($query);
     $err['sql'] = $query;

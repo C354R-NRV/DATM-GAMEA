@@ -27,7 +27,7 @@ try {
         $nombre = $row['nombre_rsocial'];
         $tipo_documento = $row['tipo_documento'];
         $ci_ = $row['documento_identidad'];
-        $detalleActividad .= '<tr><td ' . $cssAux_ . '>' . $row['NUMERO_ACTIVIDAD'] . '</td><td ' . $cssAux_ . '>:</td><td ' . $cssAux_ . '>' . $row['RUBRO'] . ', ' . $row['TIPO_ACTIVIDAD'] . ', ' . $row['ZONA_TRIBUTARIA'] . '</td></tr>';
+        $detalleActividad .= '<tr><td ' . $cssAux_ . '>' . $row['numero_actividad'] . '</td><td ' . $cssAux_ . '>:</td><td ' . $cssAux_ . '>' . $row['RUBRO'] . ', ' . $row['TIPO_ACTIVIDAD'] . ', ' . $row['ZONA_TRIBUTARIA'] . '</td></tr>';
         
         if ($row['DOCUMENTO_IDENTIDAD_APO'] != '' && $row['DOCUMENTO_IDENTIDAD_APO'])
             $nomAp = ', con ' . $row['TIPO_APODERADO'] . ': ' . $row['NOMBRE_APO'] . ' ' . $row['primer_apellido_apo'] . ' ' . $row['segundo_apellido_apo'] . ' con ' . $row['tipo_documento_APO'] . ':' . $row['DOCUMENTO_IDENTIDAD_APO'];

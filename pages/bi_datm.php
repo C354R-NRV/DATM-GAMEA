@@ -59,6 +59,8 @@ if (!$_SESSION['swlogin']) {
 
             <div class="col-6" id="main-content">
 
+                <div class="show-btn2"><span onclick="toggleVisionPanel()"   id="contenBtnVision"><img class="img-fluid" src="../img/luna.png" style="height: 2rem;" alt=""></span></div>
+
                 <div class="col-12" style="text-align: center;">
                     <div class="search-container col-4 mx-auto">
                         <div class="position-relative w-100 mt-3 mb-2" style="text-align:center;">
@@ -71,7 +73,7 @@ if (!$_SESSION['swlogin']) {
                 <div class="show-btn"><span onclick="toggleInfoPanel()" id="contenBtn"><img class="img-fluid" src="../img/ia.gif" style="height: 2rem;" alt=""></span></div>
                 <div class="contenidoRecurso main-content-container" id="contenidoRecurso">
 
-
+                <input type="hidden" id="recurso_" value="datm">
                 <h1><span id="tituloPrincipal">Generalidades de la DATM</span></h1>
                             La DATM es la direccion administrativa tributaria municipal de El Alto, pertenciente a la Secretaria municipal de administracion y finanzas - SMAF, del gobierno autonomo municipal de el alto.
 
@@ -140,7 +142,7 @@ if (!$_SESSION['swlogin']) {
                             <br>Si deseo ampliar el rubro de mi negocio, ¿qué tramite debo de realizar?, Con fines de no incurrir en observaciones posteriores, es necesario que el contribuyente se apersone a DATM y al SIN, para notificar la ampliación del rubro a fin de que en ambas instituciones se realice la actualización y/o cambio de ACTIVIDAD ECONOMICA.
 
                             <br>Estas son las Redes Sociales de la DATM o direccion administrativa tributaria municipal o recaudaciones:
-                            <br>Página web: https://www.datm.elalto.gob.bo.
+                            <br>Página web: https://datm.elalto.gob.bo.
                             <br>Facebook: https://www.facebook.com/direccion.de.administracion.tributaria.m.
                             <br>TikTok: https://www.tiktok.com/@datm_gamea.
 
@@ -1289,9 +1291,7 @@ if (!$_SESSION['swlogin']) {
 
                     <br><br>REQUISITOS PARA TRAMITES VARIOS GENERALES PARA LEGALIZACIONES:
                     <br>1. Solicitud escrita del titular (Dirigida al Director de Administración Tributaria Municipal).
-                    <br>2. Fotocopia nítida del documento que se pretende legalizar
-
-
+                    <br>2. Fotocopia nítida del documento que se pretende legalizar 
 
                 </div>
             </div>
@@ -1305,7 +1305,7 @@ if (!$_SESSION['swlogin']) {
                 <div class="position-relative w-100 mt-3 mb-2">
                     <input class="form-control border-0 rounded-pill w-100 ps-4 pe-5" type="text" id="user-input" placeholder="Escriba su consulta aca ..." style="height: 48px;">
                     <button type="button" class="btn shadow-none position-absolute top-0 end-0 mt-1 me-2 mensajeBtnIa"><i class="fa fa-paper-plane fs-4" style="color:#036b8b;"></i></button>
-                    <input type="hidden" id="recurso_" value="ra006">
+                    
                 </div>
             </div>
         </div>

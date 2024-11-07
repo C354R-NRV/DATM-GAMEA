@@ -102,11 +102,16 @@ function toggleInfoPanel() {
 
     } else {
         $('#contenBtn').html(' <img class="img-fluid" src="../img/ia.gif" style="height: 2rem;" alt=""> ');
-        $('.chat-box').html('');
+        //$('.chat-box').html('');
 
         $infoPanel.addClass('hidden');
         $mainContent.removeClass('col-6').addClass('col-12');
         $showBtn.addClass('hidden');
+
+        const $chatBox = $('#chat-box');
+        let tituloPrincipal = $('#tituloPrincipal').html();
+        const botMessage = $('<div>').addClass('chat-message').text(`Hola!, soy DATM inteligente, estoy lista para responder a tus consultas sobre: "${tituloPrincipal}"`);
+        $chatBox.append(botMessage);
     }
 }
 
@@ -177,7 +182,7 @@ function sendMessage() {
             /*dat = $.parseJSON(response);
             console.log(dat.promt);
             console.log(dat.detalles); */
-            
+
             loadGralOff();
             const botMessage = $('<div>').addClass('chat-message').text(`${response}`);
             $chatBox.append(botMessage);

@@ -113,7 +113,7 @@ $twig = new Environment($loader);
                             </div>
                         </div>
                         <br>
-                        <div class="btn btn-sm rounded-pill px-3 mb-3 mensajeProformaBtn"><b><i class="fa fa-file-text-o fs-5"></i> Proformas</b></div><span style="padding: 1rem;"></span>
+                        <div class="btn btn-sm rounded-pill px-3 mb-3 mensajeProformaBtn"><b><i class="fa fa-file-text-o fs-5"></i> Tus deudas</b></div><span style="padding: 1rem;"></span>
                         <div class="btn btn-sm rounded-pill px-3 mb-3 mensajeTramitepBtn"><b><i class="fa fa-folder-open-o  fs-5"></i> Tramites</b></div><span style="padding: 1rem;"></span>
                         <div class="btn btn-sm rounded-pill px-3 mb-3 miRegistroBtn"><b><i class="fa fa-database fs-5"></i> Tus bienes</b></div>
                     </div>
@@ -143,6 +143,28 @@ $twig = new Environment($loader);
     </div> -->
     <!-- Full Screen Search End -->
 
+
+        <!-- Newsletter Start -->
+        <div class="container-fluid bg-obscuro feature py-5">
+        <div class="container" id="contactanos_">
+            <div class="row g-5 align-items-center">
+                <div class="col-md-5 ps-lg-0 pt-5 pt-md-0 text-start wow fadeIn" data-wow-delay="0.3s">
+                    <img class="img-fluid" src="../img/newsletter.png" alt="">
+                </div>
+                <div class="col-md-7 py-5 newsletter-text wow fadeIn" data-wow-delay="0.5s">
+                    <div class="btn btn-sm border rounded-pill text-white px-3 mb-3">Contáctanos</div>
+                    <h1 class="text-white mb-4">Estamos listos para poder absorber tus dudas</h1>
+                    <div class="position-relative w-100 mt-3 mb-2">
+                        <input class="form-control border-0 rounded-pill w-100 ps-4 pe-5" type="text" id="mensajeWtsp" placeholder="Escribe tu mensaje acá" style="height: 48px;">
+                        <button type="button" class="btn shadow-none position-absolute top-0 end-0 mt-1 me-2 mensajeWtspBtn"><i class="fa fa-whatsapp fs-4" style="color: green;"></i></button>
+                    </div>
+                    <small class="text-white-50">Horarios de atención de lunes a viernes, de 08:00 a 16:00 en oficinas, atención de la iA 24/7</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Newsletter End -->
+
     <!-- Feature Start -->
     <div class="container-fluid feature pt-5" style="background-color: #424f53  !important;">
         <div class="container pt-5">
@@ -168,12 +190,12 @@ $twig = new Environment($loader);
     </div>
 
     <!-- Feature Start -->
-    <div class="container-fluid feature  " style="background-color: #1f2527  !important;">
+    <div class="container-fluid feature  " style="background-color: #c21810  !important;">
         <div class="container pt-5">
             <div class="row g-5">
 
                 <div class="col-lg-6 wow fadeIn" data-wow-delay="0.4s">
-                    <div style="text-align: center; margin-bottom: 3rem; color: #4fd2cf; cursor:pointer;">
+                    <div style="text-align: center; margin-bottom: 3rem; color: #d11717; cursor:pointer;">
                         <br><br><br><br>
                         <a href = "https://prensa.evacopa.bo/" target="_blank"><img class="img-fluid" src="../img/obras.gif" style="max-width: 24rem;" alt=""></a>
                     </div>
@@ -436,26 +458,7 @@ $twig = new Environment($loader);
         </div>
     </div>
     <!-- Team End -->
-    <!-- Newsletter Start -->
-    <div class="container-fluid bg-sandia newsletter py-5">
-        <div class="container" id="contactanos_">
-            <div class="row g-5 align-items-center">
-                <div class="col-md-5 ps-lg-0 pt-5 pt-md-0 text-start wow fadeIn" data-wow-delay="0.3s">
-                    <img class="img-fluid" src="../img/newsletter.png" alt="">
-                </div>
-                <div class="col-md-7 py-5 newsletter-text wow fadeIn" data-wow-delay="0.5s">
-                    <div class="btn btn-sm border rounded-pill text-white px-3 mb-3">Contáctanos</div>
-                    <h1 class="text-white mb-4">Estamos listos para poder absorber tus dudas</h1>
-                    <div class="position-relative w-100 mt-3 mb-2">
-                        <input class="form-control border-0 rounded-pill w-100 ps-4 pe-5" type="text" id="mensajeWtsp" placeholder="Mensaje via por whatsapp" style="height: 48px;">
-                        <button type="button" class="btn shadow-none position-absolute top-0 end-0 mt-1 me-2 mensajeWtspBtn"><i class="fa fa-whatsapp fs-4" style="color: green;"></i></button>
-                    </div>
-                    <small class="text-white-50">Horarios de atención de lunes a viernes, de 08:00 a 16:00</small>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Newsletter End -->
+
 
 
     <!-- Footer Start -->
@@ -492,6 +495,7 @@ $twig = new Environment($loader);
                 }
                 getEstructuraContenido(modulo_, color_);
             }
+            if(requisitoGet == 4) verEnlacesQr();
         });
 
         function verEnlacesQr() {
@@ -499,7 +503,7 @@ $twig = new Environment($loader);
                 title: "<div style='width:100%;text-align:center;'>De que rubro desea generar el QR de pago?</div>",
                 type: "blue",
                 typeAnimated: true,
-                containerFluid: true,
+                columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
                 content: ` 
                         <div class='rubrosInfo'>
                             <div class='row align-items-center'>   

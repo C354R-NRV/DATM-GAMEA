@@ -10,6 +10,7 @@ $tns = "
 
 $username = 'SQLEALCROJAS'; 
 $password = 'Ces4rN1lt0n#20062024';  
+//C3$4rN1lt0n#20062024
 
 try {
     // Crear la conexión

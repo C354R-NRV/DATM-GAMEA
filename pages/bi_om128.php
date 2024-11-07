@@ -87,7 +87,7 @@ if (!$_SESSION['swlogin']) {
         <div class="row position-relative">
 
             <div class="col-6" id="main-content">
-
+            <div class="show-btn2"><span onclick="toggleVisionPanel()"   id="contenBtnVision"><img class="img-fluid" src="../img/luna.png" style="height: 2rem;" alt=""></span></div>
                 <div class="col-12" style="text-align: center;">
                     <div class="search-container col-4 mx-auto">
                         <div class="position-relative w-100 mt-3 mb-2" style="text-align:center;">

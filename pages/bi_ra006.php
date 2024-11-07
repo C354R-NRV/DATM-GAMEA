@@ -58,7 +58,7 @@ if (!$_SESSION['swlogin']) {
         <div class="row position-relative">
 
             <div class="col-6" id="main-content">
-
+            <div class="show-btn2"><span onclick="toggleVisionPanel()"   id="contenBtnVision"><img class="img-fluid" src="../img/luna.png" style="height: 2rem;" alt=""></span></div>
                 <div class="col-12" style="text-align: center;">
                     <div class="search-container col-4 mx-auto">
                         <div class="position-relative w-100 mt-3 mb-2" style="text-align:center;">
@@ -378,6 +378,26 @@ if (!$_SESSION['swlogin']) {
                     <br>3. Folio Real (individual)
                     <br>4. Piano de lote (individual)
                     <br>Nota: En caso de SESION DE AREA adjuntar folio real y testimonio de sesión de superficie correspondiente
+
+                    <br><br>REQUISITOS PARA MODIFICACION DE ACCIONES Y DERECHO DE INMUEBLES A ÚNICA
+                    <br>Para persona natural:
+                    <br>1.  Cedula de identidad de las partes involucradas
+                    <br>2.  Comprobante de pago de impuesto (IMPBI)
+                    <br>3.  Testimonio de propiedad
+                    <br>4.  Folio real
+                    <br>5.  Plano de lote con codigo catastral
+                    <br>6.  dos timbres de ventanilla No.23
+                    <br>Nota: Terceras personas contar con poder notarioado original o fotocopia legalizada vigente (no mayor a un año) y cédula de identidad.
+
+                    <br><br>REGULARIZACION DE PROPIEDAD DE BIEN INMUEBLE
+                    <br>Para persona natural:
+                    <br>1.  Solicitud escrita dirigida al director de Administración Tributaria Municipal.
+                    <br>2.  Carnet de identidad del propietario + fotocopia
+                    <br>3.  Comprobante de impuesto
+                    <br>4.  folio real y/o tarjeta de propiedad
+                    <br>5.  testimonio de propiedad
+                    <br>6.  plano de lote (con codigo catastral)
+                    <br>Nota: presnetar los documentos en folder debidamente foleado
 
                     <br><br>REQUISITOS PARA OTROS TRAMITES DE CARACTER ADMINISTRATIVO AUTO AVALUO (PROPIEDAD RURAL)
                     <br>Para persona natural:
@@ -918,21 +938,26 @@ if (!$_SESSION['swlogin']) {
 
                     <br><br>REQUISITOS PARA TRAMITES DE ACTIVIDADES ECONOMICAS PARA BAJA DE LICENCIA DE FUNCIONAMIENTO
                     <br>1. Formulario FUTAE
-                    <br>2. Licencia de Funcionamiento (en caso de perdida de la Licencia adjuntar los originales de 2
-                    <br>3. publicaciones de dos días diferentes, marcando la publicación)
-                    <br>4. Comprobante de pago de la patente (PMPAE)
-                    <br>5. Comprobante de pago de publicidad (PMPPPE) (si corresponda con fotografía del retiro del letrero)
-                    <br>6. Certificación de No Tenencia de Numero De Identificación Tributaria o NIT Inactive
+                    <br>2. Licencia de Funcionamiento (en caso de perdida de la Licencia adjuntar los originales de 2 publicaciones de dos días diferentes, marcando la publicación)
+                    <br>3. Comprobante de pago de la patente (PMPAE)
+                    <br>4. Comprobante de pago de publicidad (PMPPPE) (si corresponda con fotografía del retiro del letrero)
+                    <br>5. Certificación de No Tenencia de Numero De Identificación Tributaria o NIT Inactive
 
                     <br><br>REQUISITOS PARA TRAMITES DE ACTIVIDADES ECONOMICAS PARA BAJA CON DEUDA DE ACTIVIDADES ECONÓMICAS
                     <br>1. Solicitud escrita del titular (Dirigida al Director de Administración Tributaria Municipal).
-                    <br>2. Licencia de Funcionamiento (en caso de perdida de la Licencia adjuntar los originales de 2
-                    <br>3. publicaciones de dos días diferentes, marcando la publicación)
-                    <br>4. Plano de ubicación o croquis de ubicación de la Actividad Económica.
-                    <br>5. Formulario FUTAE.
-                    <br>6. Proforma de liquidación.
-                    <br>7. Certificación de No Tenencia de Numero De Identificación Tributaria o NIT Inactive
-                    <br>8. Certificación o justificación del cierre de la actividad económica
+                    <br>2. Licencia de Funcionamiento (en caso de perdida de la Licencia adjuntar los originales de 2 publicaciones de dos días diferentes, marcando la publicación)
+                    <br>3. Plano de ubicación o croquis de ubicación de la Actividad Económica.
+                    <br>4. Formulario FUTAE.
+                    <br>5. Proforma de liquidación.
+                    <br>6. Certificación de No Tenencia de Numero De Identificación Tributaria o NIT Inactive
+                    <br>7. Certificación o justificación del cierre de la actividad económica
+                    
+                    <br><br>REQUISITOS PARA TRAMITES DE ACTIVIDADES ECONOMICAS PARA BAJA O CIERRE DE ACTIVIDADES ECONÓMICAS
+                    <br>1. Formulario FUTAE (proporcionado en oficinas DATM)
+                    <br>2. Original y fotocopia de cedula de identidad.
+                    <br>3. Devolucion de la licencia de funcionamiento original (en caso de extravio, adjuntar originales de 2 publicacion de dos dias diferentes marcando el aviso)
+                    <br>4. Fotocopia del utlimo pago de impuesto de la patente municipal.
+                    <br>5. fotocopia del ultimo comprobante de pago de publicidad (si corresponde, con fotografia del retiro del letrero).
 
                     <br><br>REQUISITOS PARA TRAMITES DE ACTIVIDADES ECONOMICAS PARA PRESCRIPCION DE ACTIVIDADES ECON6MICAS
                     <br>1. Solicitud escrita del titular (Dirigida al Director de Administración Tributaria Municipal).

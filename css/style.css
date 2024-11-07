@@ -753,6 +753,9 @@ width: 0%;
 .bg-sandia {
     background-color: #c11a1a !important;
 }
+.bg-obscuro {
+    background-color: #353535 !important;
+}
 .text-sandia {
     color: #ab1e1e !important;
 }

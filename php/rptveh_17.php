@@ -25,7 +25,7 @@ try {
         $nombre = $row['nombre_rsocial'];
         $tipo_documento = $row['tipo_documento'];
         $ci_ = $row['documento_identidad'];
-        $detalleVehiculo .= '<tr ><td ' . $cssAux_ . '>' . $row['NRO_PTA'] . '</td><td ' . $cssAux_ . '>:</td><td ' . $cssAux_ . '>' . $row['CLASE'] . ', ' . $row['TIPO_COMBUSTIBLE'] . ', ' . $row['MARCA'] . ' ' . $row['TIPO'] . '</td></tr>';
+        $detalleVehiculo .= '<tr ><td ' . $cssAux_ . '>' . $row['nro_pta'] . '</td><td ' . $cssAux_ . '>:</td><td ' . $cssAux_ . '>' . $row['CLASE'] . ', ' . $row['TIPO_COMBUSTIBLE'] . ', ' . $row['MARCA'] . ' ' . $row['TIPO'] . '</td></tr>';
         $auxCnt++;
     }
     $txtPlural = ' del vehiculo ';
@@ -34,6 +34,7 @@ try {
     $detalleVehiculo .= '</table>';
 
 
+    
     $documento = "
     <style type='text/css'>
         ul.main { width: 95%; list-style-type: square; }
@@ -178,7 +179,7 @@ try {
         $html2pdf->writeHTML($documento);
         $html2pdf->Output();
     } else
-        echo "NH";
+        echo "No se logro recuperar los registros";
 } catch (PDOException $e) {
     echo "Error al ejecutar la consulta: " . $e->getMessage();
 }

@@ -61,7 +61,7 @@ try {
                     <p>Por la presente, solicito muy respetuosamente se me extienda la <b>BAJA TEMPORAL TRIBUTARIA E INHABILITACION DEL SISTEMA RUAL POR ROBO DE VEHICULO AUTOMOTOR TERRESTRE</b> con las siguientes características:</p>
 
                     <ul class='main'>
-                        <li>Placa de control : " . $row['NRO_PTA'] . "</li>
+                        <li>Placa de control : " . $row['nro_pta'] . "</li>
                         <li>Servicio: " . $row['SERVICIO'] . "</li>
                         <li>Clase: " . $row['CLASE'] . "</li>
                         <li>Combustible: " . $row['TIPO_COMBUSTIBLE'] . "</li>

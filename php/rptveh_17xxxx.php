@@ -27,7 +27,7 @@ try {
         $nombre = $row['nombre_rsocial'];
         $tipo_documento = $row['tipo_documento'];
         $ci_ = $row['documento_identidad'];
-        $detalleVehiculo .= '<tr><td ' . $cssAux_ . '>' . $row['NRO_PTA'] . '</td><td ' . $cssAux_ . '>:</td><td ' . $cssAux_ . '>' . $row['CLASE'] . ', ' . $row['TIPO_COMBUSTIBLE'] . ', ' . $row['MARCA'] . ' ' . $row['TIPO'] . '</td></tr>';
+        $detalleVehiculo .= '<tr><td ' . $cssAux_ . '>' . $row['nro_pta'] . '</td><td ' . $cssAux_ . '>:</td><td ' . $cssAux_ . '>' . $row['CLASE'] . ', ' . $row['TIPO_COMBUSTIBLE'] . ', ' . $row['MARCA'] . ' ' . $row['TIPO'] . '</td></tr>';
         if ($row['DOCUMENTO_IDENTIDAD_APO'] != '' && $row['DOCUMENTO_IDENTIDAD_APO'])
             $nomAp = ', con apoderado: ' . $row['NOMBRE_APO'] . ' ' . $row['primer_apellido_apo'] . ' ' . $row['segundo_apellido_apo'] . ' con ' . $row['tipo_documento_APO'] . ':' . $row['DOCUMENTO_IDENTIDAD_APO'];
         $auxCnt++;

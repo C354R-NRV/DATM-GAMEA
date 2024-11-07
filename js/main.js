@@ -74,39 +74,39 @@ function proformaRuat() {
     title: "<div style='width:100%;text-align:center;'>De que rubro desea generar la proforma de deuda?</div>",
     type: "blue",
     typeAnimated: true,
-    containerFluid: true,
+    columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
     content: ` 
               <div class='rubrosInfo'>
-                  <div class='row align-items-center'>   
+                <div class='row align-items-center'>   
                   <div class='col-md-6'>
-                      <a href="https://www.ruat.gob.bo/inmuebles/consultageneral/InicioBusquedaInmueble.jsf" target="blank_" class="btn btn-sm"><img src='../img/casa2_.png' alt='Inmuebles'></a>
+                    <a href="https://www.ruat.gob.bo/inmuebles/consultageneral/InicioBusquedaInmueble.jsf" target="blank_" class="btn btn-sm"><img src='../img/casa2_.png' alt='Inmuebles'></a>
                   </div>                     
-                      <div class='col-md-6'>
-                          <a href="https://www.ruat.gob.bo/inmuebles/consultageneral/InicioBusquedaInmueble.jsf" target="blank_" class="btn btn-sm">
-                              <span style='color: #1BA9D0;'>Inmuebles</span></a>
-                      </div>
+                  <div class='col-md-6'>
+                    <a href="https://www.ruat.gob.bo/inmuebles/consultageneral/InicioBusquedaInmueble.jsf" target="blank_" class="btn btn-sm">
+                      <span style='color: #1BA9D0;'>Inmuebles</span></a>
                   </div>
-                  <hr>            
-                  <div class='row align-items-center'>   
+                </div>
+                <hr>            
+                <div class='row align-items-center'>
+                <div class='col-md-6'>
+                  <a href="https://www.ruat.gob.bo/vehiculos/consultageneral/InicioBusquedaVehiculo.jsf" target="blank_" class="btn btn-sm">
+                  <img src='../img/coche2_.png' alt='Vehiculo'></a>
+                </div>                     
                   <div class='col-md-6'>
-                      <a href="https://www.ruat.gob.bo/vehiculos/consultageneral/InicioBusquedaVehiculo.jsf" target="blank_" class="btn btn-sm">
-                      <img src='../img/coche2_.png' alt='Vehiculo'></a>
+                    <a href="https://www.ruat.gob.bo/vehiculos/consultageneral/InicioBusquedaVehiculo.jsf" target="blank_" class="btn btn-sm">
+                    <span style='color: #1BA9D0;'>Vehiculos</span></a>
                   </div>                     
-                      <div class='col-md-6'>
-                          <a href="https://www.ruat.gob.bo/vehiculos/consultageneral/InicioBusquedaVehiculo.jsf" target="blank_" class="btn btn-sm">
-                          <span style='color: #1BA9D0;'>Vehiculos</span></a>
-                      </div>                     
-                  </div>          
-                  <hr>                       
-                  <div class='row align-items-center'>   
+                </div>          
+                <hr>                       
+                <div class='row align-items-center'>
+                <div class='col-md-6'>
+                  <a href="https://www.ruat.gob.bo/actividadeseconomicas/consultageneral/InicioBusquedaActividadesEconomicas.jsf" target="blank_" class="btn btn-sm"><img src='../img/caseta2_.png' alt='Actividad Economica'></a>
+                </div>                     
                   <div class='col-md-6'>
-                      <a href="https://www.ruat.gob.bo/actividadeseconomicas/consultageneral/InicioBusquedaActividadesEconomicas.jsf" target="blank_" class="btn btn-sm"><img src='../img/caseta2_.png' alt='Actividad Economica'></a>
+                    <a href="https://www.ruat.gob.bo/actividadeseconomicas/consultageneral/InicioBusquedaActividadesEconomicas.jsf" target="blank_" class="btn btn-sm">
+                    <span style='color: #1BA9D0;'>Actividad Económica</span></a>
                   </div>                     
-                      <div class='col-md-6'>
-                          <a href="https://www.ruat.gob.bo/actividadeseconomicas/consultageneral/InicioBusquedaActividadesEconomicas.jsf" target="blank_" class="btn btn-sm">
-                          <span style='color: #1BA9D0;'>Actividad Económica</span></a>
-                      </div>                     
-                  </div>    
+                </div>    
               </div>   
               `,
     buttons: {
@@ -123,12 +123,12 @@ function simatSiim() {
     title: "<div style='width:100%;text-align:center;'>Ingrese el CI/NIT/RUC ó PMC ANTIGUO:</div>",
     type: "green",
     typeAnimated: true,
-    containerFluid: true,
+    columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
     content: ` 
             <div class='rubrosInfo'>
                 <div class='row align-items-center'>                      
                     <div class='col-md-12'>
-                        <input type='text' id='ci_' class='form-control' value=''>
+                        <input type='text' id='ci_' class='form-control' autocomplete='off' value=''>
                     </div>
                 </div> 
             </div>   
@@ -156,7 +156,7 @@ function simatSiim() {
             },
             success: function (e) {
               loadGralOff();
-              console.log(e);
+
               dat = JSON.parse(e)
               if (dat.existeInmueble) {
                 window.open("../php/rptSimatSiim.php?id=" + ci_, "_blank");
@@ -166,13 +166,107 @@ function simatSiim() {
                   title: "Error...",
                   content: "No se encontro ningun registro relacionado a " + ci_ + ", revise el dato y vuelva a intentarlo.",
                   type: "red",
-                  typeAnimated: true,
+                  columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
                   containerFluid: true,
                   buttons: {
                     cancel: {
                       text: "Cerrar",
                       action: function () {
                         simatSiim();
+                      },
+                    },
+                  }
+                });
+              }
+            },
+            timeout: 16000,
+            error: function () { },
+          });
+
+        },
+      },
+      cancel: {
+        text: "Cerrar",
+        action: function () { },
+      },
+    },
+    onOpenBefore: function () {
+      $('.jconfirm-title-c').css('text-align', 'center');
+    }
+  });
+}
+
+function detalleDeuda(aux = false) {
+
+  aux = (aux!=false?aux:'')
+  $.confirm({
+    title: "<div style='width:98%;text-align:center;'>Ingrese el CI/NIT/RUC ó PMC ANTIGUO:</div>",
+    type: "green",
+    typeAnimated: true,
+    columnClass: "col-md-10 col-md-offset-10 col-xs-8 col-xs-offset-8",
+    content: `                      
+                    <div class='col-md-12' style='padding:0.3rem 0 0.3rem 0'>
+                        <select id='tipoIdentificador_' class='form-control' >
+                          <option value='veh'>NRO PTA</option>
+                          <option value='ci' selected>CI/NIT/CEX/RUC/RUN</option>
+                          <option value='inm'>NRO. INMUEBLE</option>
+                          <option value='act'>NRO. ACTIVIDAD ECONOMICA</option>
+                        </select>
+                    </div>
+                    <div class='col-md-12' style='padding:0.3rem 0 0.3rem 0'>
+                        <input type='text' id='documento_' class='form-control' placeholder='Numero de documento' autocomplete='off' value='${aux}'>
+                    </div>
+                    <div class='col-md-12' style='padding:0.3rem 0 0.3rem 0'>
+                        <select id='tipoReporte_' class='form-control' >
+                          <option value='all' selected>TODOS LOS RUBROS</option>
+                          <option value='veh' >VEHICULOS</option>
+                          <option value='inm'>INMUEBLES</option>
+                          <option value='act'>ACTIVIDADES ECONOMICAS</option>
+                        </select>
+                    </div> 
+            `,
+    buttons: {
+      formSubmit: {
+        text: "Buscar info",
+        btnClass: "btn-blue",
+        action: function () {
+          var formSubmitButton = this.buttons.formSubmit;
+          var documento_ = ($("#documento_").val()).toUpperCase();
+          var tipo_ = $("#tipoIdentificador_").val();
+          var tipoReporte_ = $("#tipoReporte_").val();
+          datos = "&documento_=" + documento_+"&tipoIdentificador_=" + tipo_;
+          /* alert(datos); */
+          $.ajax({
+            async: true,
+            type: "POST",
+            dataType: "html",
+            contentType: "application/x-www-form-urlencoded",
+            url: "../php/verifExistenciaDocumentoEnMora.php",
+            data: datos,
+            beforeSend: function () {
+              formSubmitButton.setText('Procesando...');
+              formSubmitButton.disable();
+              loadGralOn();
+            },
+            success: function (e) { 
+              loadGralOff();
+
+              dat = JSON.parse(e)
+              if (dat.existe == '1') { 
+                window.open("../php/rptmora.php?id="+btoa(dat.info.documento_identidad)+"&t=" + tipoReporte_, "_blank");
+              }
+              else { 
+                $.confirm({
+                  title: "No encontrado...",
+                  content: "No se encontró ningun registro relacionado a " + documento_ + ", revise el dato y vuelva a intentarlo.",
+                  type: "red",
+                  typeAnimated: true,
+                  columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
+                  buttons: {
+                    cancel: {
+                      text: "Cerrar",
+                      action: function () {
+                        detalleDeuda(documento_);
                       },
                     },
                   }
@@ -339,7 +433,7 @@ function impvaAnotado() {
         content: dat.html,
         type: "red",
         typeAnimated: true,
-        columnClass: "col-md-10 col-md-offset-10 col-xs-12 col-xs-offset-12",
+        columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
         buttons: {
           cancel: {
             text: "Cerrar",
@@ -383,7 +477,7 @@ function impvaNoAnotado() {
         content: dat.html,
         type: "red",
         typeAnimated: true,
-        columnClass: "col-md-10 col-md-offset-10 col-xs-12 col-xs-offset-12",
+        columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
         buttons: {
           cancel: {
             text: "Cerrar",
@@ -421,7 +515,7 @@ function formVerificaRegistros() {
     <div>
         <div class="col-md-12">
           <label>PIN<span style="color:red;">*</span></label>
-          <input type="password" id="pin_" class="form-control" placeholder="NUMERO PIN" required />
+          <input type="password" id="pin_" class="form-control" placeholder="NUMERO PIN"  autocomplete="off" required />
         </div>
     </div>
     <hr>
@@ -446,7 +540,7 @@ function formVerificaRegistros() {
                     </select>
                 </div>  
                 <div class="col-md-8">
-                    <input type="text" id="ci_" placeholder="Ejemplo:6062063" class="form-control" value="" required />
+                    <input type="text" id="ci_" placeholder="Ejemplo:6062063" class="form-control" value="" autocomplete="off" required />
                 </div>
             </div>
             ${sinLogin} 
@@ -472,11 +566,11 @@ function formVerificaRegistros() {
         action: function () {
           var formSubmitButton = this.buttons.formSubmit;
 
-          if ( ($("#ci_").val()).length > 4 && ($("#pin_").length === 0 || $("#pin_").val().length > 3)) {
+          if (($("#ci_").val()).length > 4 && ($("#pin_").length === 0 || $("#pin_").val().length > 3)) {
             datos =
-            "&tipodoc_=" + $("#tipodoc_").val() +
-            "&ci_=" + $("#ci_").val() +
-            "&pin_=" + $("#pin_").val();
+              "&tipodoc_=" + $("#tipodoc_").val() +
+              "&ci_=" + $("#ci_").val() +
+              "&pin_=" + $("#pin_").val();
             $.ajax({
               async: true,
               type: "POST",
@@ -491,7 +585,7 @@ function formVerificaRegistros() {
 
               },
               success: function (e) {
-                console.log(e);
+
                 loadGralOff();
                 formSubmitButton.setText('Consultar');
                 formSubmitButton.enable();
@@ -505,7 +599,7 @@ function formVerificaRegistros() {
                   content: contenido,
                   type: dat.color_,
                   typeAnimated: true,
-                  containerFluid: true,
+                  columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
                   buttons: {
                     cancel: {
                       text: "Cerrar",
@@ -521,7 +615,23 @@ function formVerificaRegistros() {
               error: function () { },
             });
           } else {
-            console.log('El CI y/o PIN no son correctos, revise e intente nuevamente por favor.');
+            toastr.options = {
+              "closeButton": true,
+              "debug": false,
+              "progressBar": true,
+              "rtl": true,
+              "preventDuplicates": true,
+              "onclick": null,
+              "showDuration": 300,
+              "hideDuration": 1000,
+              "timeOut": 3000,
+              "extendedTimeOut": 1000,
+              "showEasing": "swing",
+              "hideEasing": "linear",
+              "showMethod": "fadeIn",
+              "hideMethod": "fadeOut"
+            };
+            toastr["warning"]('Error...', 'El CI y/o PIN no son correctos, revise e intente nuevamente por favor.');
             return false;
           }
           datos =
@@ -546,6 +656,125 @@ function formVerificaRegistros() {
     },
   });
 }
+
+
+
+function showRetencion() {
+
+  var content_ = `
+        <div class="form-group" >
+            <div class="row" style="margin-right:0 !important;">
+                <label>CI/NIT (sin extensión)</label> 
+                <div class="col-md-12">
+                    <input type="text" id="ci_" placeholder="Ejemplo:6062063" autocomplete="off" class="form-control" value="" required />
+                </div>
+            </div> 
+        </div>
+        `;
+  var errorContribuyente = true;
+
+  $.confirm({
+    title: "Por favor, ingrese la siguiente información:",
+    type: "dark",
+    content: content_,
+    buttons: {
+      formSubmit: {
+        text: "Consultar",
+        btnClass: "btn-blue",
+        action: function () {
+          var formSubmitButton = this.buttons.formSubmit;
+
+          if (($("#ci_").val()).length > 4) {
+            datos =
+              "&ci_=" + ($("#ci_").val()).trim().toUpperCase();
+            $.ajax({
+              async: true,
+              type: "POST",
+              dataType: "html",
+              contentType: "application/x-www-form-urlencoded",
+              url: "../php/getRetencionPorCI.php",
+              data: datos,
+              beforeSend: function () {
+                formSubmitButton.setText('Procesando...');
+                formSubmitButton.disable();
+                loadGralOn();
+
+              },
+              success: function (e) {
+                loadGralOff();
+                formSubmitButton.setText('Consultar');
+                formSubmitButton.enable();
+                dat = JSON.parse(e);
+                if (dat.color_ != 'red') {
+                  errorContribuyente = true;
+                }
+                contenido = dat.html;
+                $.confirm({
+                  title: dat.titulo_,
+                  content: contenido,
+                  type: dat.color_,
+                  typeAnimated: true,
+                  columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
+                  buttons: {
+                    cancel: {
+                      text: "Cerrar",
+                      action: function () { },
+                    },
+                  },
+                  onOpenBefore: function () {
+                    $('.jconfirm-title-c').css({
+                      'text-align': 'center',
+                      'font-size': '1rem'
+                    })
+                  }
+                });
+              },
+              timeout: 16000,
+              error: function () { },
+            });
+          } else {
+            toastr.options = {
+              "closeButton": true,
+              "debug": false,
+              "progressBar": true,
+              "rtl": false,
+              "preventDuplicates": true,
+              "onclick": null,
+              "showDuration": 450,
+              "hideDuration": 1000,
+              "timeOut": 3000,
+              "extendedTimeOut": 1000,
+              "showEasing": "swing",
+              "hideEasing": "linear",
+              "showMethod": "fadeIn",
+              "hideMethod": "fadeOut"
+            };
+            toastr["warning"]('Ingrese un numero de CI valido e intente nuevamente por favor.', 'Error');
+            return false;
+          }
+          datos =
+            "&ci_=" + $("#ci_").val() +
+            "&pin_=" + $("#pin_").val();
+        },
+      },
+      cancel: function () { },
+    },
+    onContentReady: function () {
+      var jc = this;
+      /* this.$content.find("form").on("submit", function (e) {
+        e.preventDefault();
+        jc.$$formSubmit.trigger("click");
+      }); */
+      $('#pin_').on('keypress', function (ev) {
+        if (ev.which === 13) {
+          jc.$$formSubmit.trigger('click');
+        }
+      });
+    },
+  });
+}
+
+
 function formRegistroContri(tipo_, ci_) {
   selectCI = "";
   selectCEX = "";
@@ -580,7 +809,7 @@ function formRegistroContri(tipo_, ci_) {
                     </select>
                 </div>
                 <div class="col-md-8">
-                    <input type="text" id="ci_" placeholder="No." class="form-control" value="${ci_}" required />
+                    <input type="text" id="ci_" placeholder="No." class="form-control" autocomplete="off" value="${ci_}" required />
                 </div>
             </div>
             <div class="row" style="margin-right:0 !important;">
@@ -658,7 +887,6 @@ function formRegistroContri(tipo_, ci_) {
             success: function (e) {
               loadGralOff();
               dat = $.parseJSON(e);
-              console.log(dat.sql);
               var respForm = $.confirm({
                 title: dat.titulo_,
                 content: dat.contenido_,
@@ -778,7 +1006,7 @@ function getcontenido(elemt, color, subelemt, descr, documento = false) {
                   </select>
               </div>
               <div class="col-md-8">
-                  <input type="text" id="ci_" placeholder="No." class="form-control" value="" required />
+                  <input type="text" id="ci_" placeholder="No." class="form-control" autocomplete="off" value="" required />
               </div>
           </div>
           <label>Nombre completo</label>
@@ -848,18 +1076,7 @@ function getcontenido(elemt, color, subelemt, descr, documento = false) {
                     <input type="text" id="ci_" placeholder="C.I." class="form-control" value="" required />  
 
                     <label>Gestion</label>
-                    <select id="gestion_" class="form-control">
-                        <option value="2015">2015</option>
-                        <option value="2016">2016</option>
-                        <option value="2017">2017</option>
-                        <option value="2018">2018</option>
-                        <option value="2019">2019</option>
-                        <option value="2020">2020</option>
-                        <option value="2021">2021</option>
-                        <option value="2022">2022</option>
-                        <option value="2023" selected>2023</option>
-                        <option value="2024">2024</option>
-                    </select> 
+                    <input id="gestion_" type="text" class="form-control" value="1996">
 
                     ${datosContactos}
 
@@ -872,7 +1089,7 @@ function getcontenido(elemt, color, subelemt, descr, documento = false) {
       content_ = `
                 <div class="form-group">
                     <label>Número de placa</label>
-                    <input type="text" id="num_placa_" placeholder="No.inmueble" class="form-control" value="" required />
+                    <input type="text" id="num_placa_" placeholder="No. de placa" class="form-control" value="" required />
                     
                     <label>Cedula de Identidad</label>
                     <input type="text" id="ci_" placeholder="C.I." class="form-control" value="" required />
@@ -886,7 +1103,7 @@ function getcontenido(elemt, color, subelemt, descr, documento = false) {
       content_ = `
                 <div class="form-group">
                   <label>Número de placa</label>
-                  <input type="text" id="num_placa_" placeholder="No.inmueble" class="form-control" value="" required />
+                  <input type="text" id="num_placa_" placeholder="No. de placa" class="form-control" value="" required />
                   
                   <label>Cedula de Identidad/NIT</label>
                   <input type="text" id="ci_" placeholder="CI/NIT" class="form-control" value="" required />
@@ -928,21 +1145,7 @@ function getcontenido(elemt, color, subelemt, descr, documento = false) {
                   <input type="text" id="ci_" placeholder="CI/NIT" class="form-control" value="" required />
                   
                   <label>De Gestión</label> 
-                  <select id="gestionIni_" class="form-control">
-                        <option value="2012">2012</option>
-                        <option value="2013">2013</option>
-                        <option value="2014">2014</option>
-                        <option value="2015">2015</option>
-                        <option value="2016">2016</option>
-                        <option value="2017">2017</option>
-                        <option value="2018">2018</option>
-                        <option value="2019">2019</option>
-                        <option value="2020">2020</option>
-                        <option value="2021">2021</option>
-                        <option value="2022">2022</option>
-                        <option value="2023" selected>2023</option>
-                        <option value="2024">2024</option>
-                    </select> 
+                  <input id="gestion_" type="text" class="form-control" value="1996">
                   
                   ${datosContactos}
 
@@ -970,7 +1173,7 @@ function getcontenido(elemt, color, subelemt, descr, documento = false) {
           btnClass: "btn-" + color,
           action: function () {
             var imageUrl = "../img/requisitos/" + elemt + "/" + subelemt + ".jpg";
-            console.log("en if:" + imageUrl);
+
             var link = $("<a>")
               .attr("href", imageUrl)
               .attr("download", subelemt + ".jpg")
@@ -1001,7 +1204,7 @@ function getcontenido(elemt, color, subelemt, descr, documento = false) {
           btnClass: "btn-" + color,
           action: function () {
             var imageUrl = '../' + src_;
-            console.log("en Else:" + imageUrl);
+
             var link = $("<a>")
               .attr("href", imageUrl)
               .attr("download", subelemt + ".jpg")
@@ -1019,7 +1222,7 @@ function getcontenido(elemt, color, subelemt, descr, documento = false) {
   }
 }
 function formGeneraPdf(content_, subelemt, elemt) {
-  console.log('formGeneraPdf | ', subelemt, ' | ', elemt);
+
 
   if (content_ != '' && content_) {
     $.confirm({
@@ -1033,7 +1236,7 @@ function formGeneraPdf(content_, subelemt, elemt) {
           action: function () {
             var ci_ = this.$content.find("#ci_").val();
 
-            console.log("==============>ci_:" + ci_);
+
 
             var num_act_ = this.$content.find("#num_act_").val();
             var numinmueble_ = this.$content.find("#numinmueble_").val();

@@ -91,9 +91,8 @@ try {
     }
 } catch (Exception $th) {
     $rs['titulo_'] = 'Ups...';
-    $rs['color_'] = 'red';
-    //$rs['contenido'] = $th;
-    $rs['contenido'] = "Hay mucho trafijo en este momento, intentalo más tarde por favor";
+    $rs['color_'] = 'red'; 
+    $rs['contenido'] = "Hay mucho trafico en este momento, intentalo más tarde por favor";
 }
 $dat = json_encode($rs);
 echo $dat;
