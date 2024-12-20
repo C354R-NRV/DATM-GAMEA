@@ -127,7 +127,14 @@ function simatSiim() {
     content: ` 
             <div class='rubrosInfo'>
                 <div class='row align-items-center'>                      
-                    <div class='col-md-12'>
+                    <div class='col-md-4'>
+                        <select id='tipo_'  class='form-control'>
+                          <option value='doc'>CI/NIT/RUC...</option>
+                          <option value='pmcAnt'>PMC ANTIGUO</option>
+                          <option value='numInm'>NUM. INMUEBLE</option>
+                        </select>
+                    </div>
+                    <div class='col-md-8'>
                         <input type='text' id='ci_' class='form-control' autocomplete='off' value=''>
                     </div>
                 </div> 
@@ -140,8 +147,9 @@ function simatSiim() {
         action: function () {
           var formSubmitButton = this.buttons.formSubmit;
           var ci_ = $("#ci_").val();
+          var tipo_ = $("#tipo_").val();
           datos =
-            "&ci_=" + ci_;
+            "&ci_=" + ci_+'&tipo_='+tipo_;
           $.ajax({
             async: true,
             type: "POST",
@@ -155,28 +163,47 @@ function simatSiim() {
               loadGralOn();
             },
             success: function (e) {
+              console.log(e);
               loadGralOff();
 
-              dat = JSON.parse(e)
-              if (dat.existeInmueble) {
-                window.open("../php/rptSimatSiim.php?id=" + ci_, "_blank");
-              }
-              else {
-                $.confirm({
-                  title: "Error...",
-                  content: "No se encontro ningun registro relacionado a " + ci_ + ", revise el dato y vuelva a intentarlo.",
-                  type: "red",
-                  columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
-                  containerFluid: true,
-                  buttons: {
-                    cancel: {
-                      text: "Cerrar",
-                      action: function () {
-                        simatSiim();
+              dat = JSON.parse(e);
+              if (dat.error == 'false' || !dat.error) {
+                if (dat.existeInmueble == '1') {
+                  window.open("../php/rptSimatSiim.php?id=" + ci_+"&tipo_="+tipo_, "_blank");
+                }
+                else {
+                  $.confirm({
+                    title: "Error...",
+                    content: "No se encontro ningun registro relacionado a " + ci_ + ", revise el dato y vuelva a intentarlo.",
+                    type: "red",
+                    columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
+                    containerFluid: true,
+                    buttons: {
+                      cancel: {
+                        text: "Cerrar",
+                        action: function () {
+                          simatSiim();
+                        },
                       },
-                    },
-                  }
-                });
+                    }
+                  });
+                }
+              }else{
+                $.confirm({
+                    title: "Error...",
+                    content: "Excepcion generada: " + dat.message,
+                    type: "red",
+                    columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
+                    containerFluid: true,
+                    buttons: {
+                      cancel: {
+                        text: "Cerrar",
+                        action: function () {
+                          simatSiim();
+                        },
+                      },
+                    }
+                  });
               }
             },
             timeout: 16000,
@@ -198,7 +225,7 @@ function simatSiim() {
 
 function detalleDeuda(aux = false) {
 
-  aux = (aux!=false?aux:'')
+  aux = (aux != false ? aux : '')
   $.confirm({
     title: "<div style='width:98%;text-align:center;'>Ingrese el CI/NIT/RUC ó PMC ANTIGUO:</div>",
     type: "green",
@@ -234,7 +261,7 @@ function detalleDeuda(aux = false) {
           var documento_ = ($("#documento_").val()).toUpperCase();
           var tipo_ = $("#tipoIdentificador_").val();
           var tipoReporte_ = $("#tipoReporte_").val();
-          datos = "&documento_=" + documento_+"&tipoIdentificador_=" + tipo_;
+          datos = "&documento_=" + documento_ + "&tipoIdentificador_=" + tipo_;
           /* alert(datos); */
           $.ajax({
             async: true,
@@ -248,14 +275,15 @@ function detalleDeuda(aux = false) {
               formSubmitButton.disable();
               loadGralOn();
             },
-            success: function (e) { 
+            success: function (e) {
+              console.log(e);
               loadGralOff();
 
               dat = JSON.parse(e)
-              if (dat.existe == '1') { 
-                window.open("../php/rptmora.php?id="+btoa(dat.info.documento_identidad)+"&t=" + tipoReporte_, "_blank");
+              if (dat.existe == '1') {
+                window.open("../php/rptmora.php?id=" + btoa(dat.info.documento_identidad) + "&t=" + tipoReporte_, "_blank");
               }
-              else { 
+              else {
                 $.confirm({
                   title: "No encontrado...",
                   content: "No se encontró ningun registro relacionado a " + documento_ + ", revise el dato y vuelva a intentarlo.",

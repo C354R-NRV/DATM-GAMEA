@@ -144,7 +144,7 @@ if (!$_SESSION['swlogin']) {
                 </div>
                 <input type="hidden" id="detalleCantidadAnterior">
                 <input type="hidden" id="id_cabecera_solicitud" value="<?php echo (isset($_GET['id']) ? $_GET['id'] : '') ?>">
-                <input type="hidden" id="swEdicionSolicitud" value="<?php echo ((isset($_GET['sw']) && $_GET['sw']==='1') ? 1 : 0) ?>">
+                <input type="hidden" id="swEdicionSolicitud" value="<?php echo ((isset($_GET['sw']) && $_GET['sw'] === '1') ? 1 : 0) ?>">
             </div>
             <div class="col-md-3 mb-3">
                 <label for="formFilePdf">Adjunto</label>
@@ -185,7 +185,7 @@ if (!$_SESSION['swlogin']) {
         $('#btn-guardar').on('click', function() {
             guardarSolicitud(true, 0);
         });
-        if($('#swEdicionSolicitud').val()){
+        if ($('#swEdicionSolicitud').val()) {
             verificaDB();
         }
     });
@@ -209,7 +209,7 @@ if (!$_SESSION['swlogin']) {
                         action: function() {
                             $.ajax({
                                 type: "POST",
-                                url: "../php/sirefoBajaItem.php", // Reemplaza con la ruta correcta
+                                url: "../php/sirefoBajaItem.php",  
                                 data: {
                                     id_item_solicitud: id_item_solicitud,
                                     swActualizaItems: 1
@@ -252,11 +252,10 @@ if (!$_SESSION['swlogin']) {
             var detalleCantidadAux = $('#detalleCantidad').val() - 1;
             console.log(" == no se tiene id_item_solicitud, nuevo detalleCantidadAux:" + detalleCantidadAux);
             $('#detalleCantidad').val(detalleCantidadAux);
-            cntItem = detalleCantidadAux;
-            //actualizamos valor en cabecera 
+            cntItem = detalleCantidadAux; 
             $.ajax({
                 type: "POST",
-                url: "../php/sirefoBajaItem.php", // Reemplaza con la ruta correcta
+                url: "../php/sirefoBajaItem.php",  
                 data: {
                     id_cabecera_solicitud: $('#id_cabecera_solicitud').val(),
                     detalleCantidad: detalleCantidadAux,
@@ -330,6 +329,7 @@ if (!$_SESSION['swlogin']) {
             $('#detalleCantidadAnterior').val(cnt);
         });
     }
+    let swValidacionPdf = true;
 
     function verificaDB() {
         console.log("verificaDB");
@@ -340,8 +340,8 @@ if (!$_SESSION['swlogin']) {
         var codigoSolicitud = $('#codigoSolicitud').val();
         if (swVerificaDb && $.trim(codigoSolicitud) != '') {
             swVerificaDb = false;
-            if (!isValidAlphanumeric(codigoSolicitud, 2)) {
-                errores.push(' -El campo numero de cite / codigo de solicitud, debe tener más de 2 caracteres.');
+            if (!isValidAlphanumeric(codigoSolicitud, 1)) {
+                errores.push(' -El campo numero de cite / codigo de solicitud, debe tener más de 1 caracteres.');
             }
             formData.append('cabecera_CodigoSolicitud', codigoSolicitud);
             formData.append('cabecera_TipoProceso', $('#tipoProceso').val());
@@ -375,7 +375,8 @@ if (!$_SESSION['swlogin']) {
                     $('#detalleCantidad').off('keyup');
                     $('#detalleCantidad').off('blur');
                     dat = $.parseJSON(e);
-                    if (dat.existeSolicitud) {
+                    if (dat.existeSolicitud != '0') {
+                        console.log("en verifica -> existe solicitud ");
                         $('#fileExistente').html(dat.info.adjunto_nombre);
                         if ($('#detalleCantidad').val() == dat.info.detalle_cantidad || $('#detalleCantidad').val() == '')
                             $('#detalleCantidad').val(dat.info.detalle_cantidad);
@@ -383,17 +384,25 @@ if (!$_SESSION['swlogin']) {
                         $('#id_cabecera_solicitud').val(dat.info.id_cabecera_solicitud);
 
                         if (dat.info.detalle_cantidad > 0) {
+                            console.log("en addItem autocompletar");
                             addItem('autocompletar', dat.infoItem);
                         }
+                    } else {
+                        swValidacionPdf = false;
+                        console.log("en detalleCantidadAnterior, podiendo a cero pues no existeSolicitud");
+                        $('#detalleCantidadAnterior').val('0');
                     }
                     $('#detalleCantidad').on('keyup', function() {
                         if (event.key === "Enter" || event.keyCode === 13) {
+                            console.log("en addItem false");
                             addItem(false, false);
                         }
                     });
+
                     $('#detalleCantidad').on('blur', function() {
                         guardarSolicitud(false, 0);
                     });
+
                 },
                 timeout: 16000,
                 error: function() {},
@@ -458,7 +467,6 @@ if (!$_SESSION['swlogin']) {
                                 i++;
                             });
                         }
-
                     },
                     timeout: 16000,
                     error: function() {},
@@ -519,12 +527,16 @@ if (!$_SESSION['swlogin']) {
         var formData = new FormData();
         var fileInput = $('#formFilePdf')[0];
         var errores = [];
-        if (fileInput.files.length > 0) {
-            formData.append('cabecera_archivoPdf', fileInput.files[0]);
-        } else {
-            if ($('#fileExistente').html().trim() == '')
-                errores.push(' -Tiene que agregar un documento adjunto en PDF segun el reglamento interno.');
+        if (swValidacionPdf) {
+            if (fileInput.files.length > 0) {
+                formData.append('cabecera_archivoPdf', fileInput.files[0]);
+            } else {
+                if ($('#fileExistente').html().trim() == '')
+                    errores.push(' -Tiene que agregar un documento adjunto en PDF segun el reglamento interno.');
 
+            }
+        } else {
+            swValidacionPdf = true;
         }
         var codigoSolicitud = $('#codigoSolicitud').val();
         if (!isValidAlphanumeric(codigoSolicitud, 2)) {
@@ -624,6 +636,20 @@ if (!$_SESSION['swlogin']) {
             });
             return;
         } else {
+
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "progressBar": true,
+                "rtl": true,
+                "preventDuplicates": true,
+                "onclick": null,
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+
             $.ajax({
                 async: true,
                 type: 'POST',
@@ -641,11 +667,16 @@ if (!$_SESSION['swlogin']) {
                     console.log(dat);
                     dat = $.parseJSON(dat);
                     console.log(dat.log);
+                    if (dat.err == '0') {
+                        toastr["success"]("Registros guardados correctamente", dat.log);
+                    } else {
+                        toastr["error"]("Ocurrio algun error.", dat.log);
+                    }
 
                 },
                 timeout: 16000,
                 error: function(xhr, status, error) {
-                    alert('Error: ' + error);
+                    toastr["error"]("Ocurrio algun error.", 'Error: ' + error);
                 }
             });
 
@@ -657,7 +688,7 @@ if (!$_SESSION['swlogin']) {
     }
 
     function isValidAlphanumeric(value, minLength) {
-        return /^[a-zA-Z0-9\s]+$/.test(value) && value.length >= minLength;
+        return /^[a-zA-Z0-9\s&'ñÑáéíóúÁÉÍÓÚüÜ]+$/.test(value) && value.length >= minLength;
     }
 </script>
 

@@ -86,8 +86,8 @@ for ($i = $cntItemAct; $i < ($cntItemAct + $cnt); $i++) {
         </div>
         <div class="col-md-3 mb-3">
             <label for="montoRetencionBs' . $i . '">Monto Retención</label>
-            <input type="number" id="montoRetencionBs' . $i . '" class="form-control" onblur="guardarSolicitud(true, ' . $i . ')" placeholder="En Bs.">
-            <input type="number" id="montoRetencionUFV' . $i . '" class="form-control" onblur="guardarSolicitud(true, ' . $i . ')" placeholder="En UFV\'s">
+            <input type="number" id="montoRetencionBs' . $i . '" class="form-control"  placeholder="En Bs.">
+            <input type="number" id="montoRetencionUFV' . $i . '" class="form-control"   placeholder="En UFV\'s">
         </div>
     </div>
     <div class="row">

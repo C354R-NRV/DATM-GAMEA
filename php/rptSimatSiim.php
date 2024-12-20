@@ -13,31 +13,7 @@ $cabecera = new stdClass();
 foreach ($_GET as $clave => $valor) {
     $$clave = addslashes(trim($valor));
 }
-
-$pjson = array();
-
-$query = "
-        select a.id, a.comun as  doc_identidad, c.pmc,  TRIM(
-			COALESCE(a.nombre, '') || 
-			CASE 
-				WHEN a.paterno IS NOT NULL AND a.nombre IS NOT NULL THEN ' ' ELSE '' END || 
-			COALESCE(a.paterno, '') || 
-			CASE 
-				WHEN a.materno IS NOT NULL AND (a.nombre IS NOT NULL OR a.paterno IS NOT NULL) THEN ' ' ELSE '' END || 
-			COALESCE(a.materno, '')
-		) AS nombre_completo,
-		b.barrio||', '||a.tipocalle||' '||a.nombrecall||' #'||a.numcasa as residencia
-        from simat_pm01cont  as a
-        left join simat_pmbarrio as b on b.codigo = a.cod_barrio
-        left join siim_satnombr as c on c.documento = a.comun
-        where a.comun = '$id' or c.pmc = '$id'; ";
-$stmt = $cons->query($query);
-$simatCabecera = $stmt->fetch(PDO::FETCH_ASSOC);
-$pjson['cabecera'] = $simatCabecera;
-
-$html = "
-
-<style type='text/css'>
+$html .= "<style type='text/css'>
     body {
         font-family: Arial, sans-serif; 
     }
@@ -109,18 +85,108 @@ $html = "
             <span class='spanTitulo'> INFORMACION HISTORICA DE SISTEMA SIMAT/SIIM</span>  
             <h3>DATOS REGISTRADOS - SISTEMA SIMAT</h3>
 
-            <div class='section-title'>DATOS CONTRIBUYENTE</div> 
+            ";
+            
+if ($tipo_ == 'numInm') {
+    $query = "  select * from simat_inmgen where numero = '$id';";
+    $stmt = $cons->query($query);
+    $simatCabecera = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $html .= " 
+        <div class='section-title'>DATOS CONTRIBUYENTE</div> 
 
             <table class='datosPersona'>
                 <tr>
-                    <td class='datosPersona' style='width: 48%;'><span>DOC_ID:</span> $id</td>
+                    <td class='datosPersona' style='width: 48%;'><span>DOC_ID:</span>  " . $simatCabecera['num_doc'] ." ". $simatCabecera['expedido'] .  "</td>
                     <td  class='datosPersona'style='width: 48%;'><span>PMC-ANT:</span>  " . $simatCabecera['pmc'] . "</td>
                 </tr>
                 <tr>
-                    <td  class='datosPersona' style='width: 48%;'><span>NOMBRE:</span> " . $simatCabecera['nombre_completo'] . "</td>
-                    <td  class='datosPersona' style='width: 48%;'><span>RESIDENCIA:</span> " . $simatCabecera['residencia'] . "</td>
+                    <td  class='datosPersona' style='width: 48%;'><span>NOMBRE:</span> " . $simatCabecera['nom_rsoc']." ".$simatCabecera['pat_sigla']."".$simatCabecera['materno'] . "</td>
+                    <td  class='datosPersona' style='width: 48%;'><span>RESIDENCIA:</span> " . $simatCabecera['zonar'].", ".$simatCabecera['nombrer']." #".$simatCabecera['numeror'] . "</td>
                 </tr>
-            </table>  
+            </table>
+
+        <div class='section-title'>DATOS TECNICOS INMUEBLE</div> 
+
+            <table class='datosPersona'>
+                <tr>
+                    <td class='datosPersona' style='width: 48%;'><span>NUM. INMUEBLE:</span>  " . $simatCabecera['numero'] . "</td>
+                    <td  class='datosPersona'style='width: 48%;'><span>INI IMPUESTO:</span>  " . $simatCabecera['ini_imp'] . "</td>
+                </tr>
+                <tr>
+                    <td  class='datosPersona' style='width: 48%;'><span>DIRECCION:</span> " . $simatCabecera['barrio'].", ".$simatCabecera['nom_lug']." #".$simatCabecera['num_lug'] . "</td>
+                    <td  class='datosPersona' style='width: 48%;'><span>COD. CATASTRAL:</span> " . $simatCabecera['cod_cat']." ".$simatCabecera['cod_cat1'] . "</td>
+                </tr>
+            </table> 
+        
+            <table>
+                <tr> 
+                    <th style='width: 20%;'>VIA</th>
+                    <th style='width: 6%;'>AG</th>
+                    <th style='width: 6%;'>LU</th>
+                    <th style='width: 6%;'>AL</th>
+                    <th style='width: 6%;'>FO</th>
+
+                    <th style='width: 18%;'>SUP_T</th>
+                    <th style='width: 6%;'>IN</th>
+                    <th style='width: 20%;'>TIPO CONS</th>
+                    <th style='width: 8%;'>SUP_C</th> 
+                </tr> 
+                <tr> 
+                    <td style='width: 20%;'>" . $simatCabecera['via'] . "</td>
+
+                    <td style='width: 6%;'>" . $simatCabecera['agua'] . "</td>
+                    <td style='width: 6%;'>" . $simatCabecera['luz'] . "</td>
+                    <td style='width: 6%;'>" . $simatCabecera['alcan'] . "</td>
+                    <td style='width: 6%;'>" . $simatCabecera['fono'] . "</td>
+
+                    <td style='width: 18%;'>" . $simatCabecera['sup_terr'] . "</td>
+                    <td style='width: 6%;'>" . $simatCabecera['inclinac'] . "</td>
+
+                    <td style='width: 20%;'>" . $simatCabecera['tipo_cons'] . "</td> 
+                    <td style='width: 8%;'>" . $simatCabecera['sup_cons'] . "</td>
+                </tr>
+            </table> 
+
+";
+
+
+} else { 
+    $pjson = array();
+    $query = "
+        select a.id, a.comun as  doc_identidad, c.pmc,  TRIM(
+			COALESCE(a.nombre, '') || 
+			CASE 
+				WHEN a.paterno IS NOT NULL AND a.nombre IS NOT NULL THEN ' ' ELSE '' END || 
+			COALESCE(a.paterno, '') || 
+			CASE 
+				WHEN a.materno IS NOT NULL AND (a.nombre IS NOT NULL OR a.paterno IS NOT NULL) THEN ' ' ELSE '' END || 
+			COALESCE(a.materno, '')
+		) AS nombre_completo,
+		b.barrio||', '||a.tipocalle||' '||a.nombrecall||' #'||a.numcasa as residencia
+        from simat_pm01cont  as a
+        left join simat_pmbarrio as b on b.codigo = a.cod_barrio
+        left join siim_satnombr as c on c.documento = a.comun
+        where a.comun = '$id' or c.pmc = '$id'; ";
+    $stmt = $cons->query($query);
+    $simatCabecera = $stmt->fetch(PDO::FETCH_ASSOC);
+    $pjson['cabecera'] = $simatCabecera;
+
+    $html .= " 
+
+            <div class='section-title'>DATOS CONTRIBUYENTE</div> 
+
+                <table class='datosPersona'>
+                    <tr>
+                        <td class='datosPersona' style='width: 48%;'><span>DOC_ID:</span> $id</td>
+                        <td  class='datosPersona'style='width: 48%;'><span>PMC-ANT:</span>  " . $simatCabecera['pmc'] . "</td>
+                    </tr>
+                    <tr>
+                        <td  class='datosPersona' style='width: 48%;'><span>NOMBRE:</span> " . $simatCabecera['nombre_completo'] . "</td>
+                        <td  class='datosPersona' style='width: 48%;'><span>RESIDENCIA:</span> " . $simatCabecera['residencia'] . "</td>
+                    </tr>
+                </table>
+
             <div class='section-title'>INMUEBLES REGISTRADOS</div> 
             <table>
                 <tr>
@@ -140,8 +206,8 @@ $html = "
                     <th style='width: 5%;'>EST</th>
                 </tr> 
 ";
-//buscamos datos de los items que tenga registrado para autocompletar 
-$query = "select var1, b.barrio||', '||a.tipocalle||' '||a.nombrecall||' #'||a.numcasa  as residencia, 
+    //buscamos datos de los items que tenga registrado para autocompletar 
+    $query = "select var1, b.barrio||', '||a.tipocalle||' '||a.nombrecall||' #'||a.numcasa  as residencia, 
                 zona, 
                 CASE mat_vias
                 WHEN '1' THEN 'ASFALTO'
@@ -168,11 +234,11 @@ $query = "select var1, b.barrio||', '||a.tipocalle||' '||a.nombrecall||' #'||a.n
         left join simat_pmbarrio as b on b.codigo = a.cod_barrio
         where a.comun = '" . $simatCabecera['doc_identidad'] . "';";
 
-$stmt = $cons->query($query);
-$inmuebles = $stmt->fetchAll(PDO::FETCH_ASSOC);
-$cnt = 1;
-foreach ($inmuebles as $row) {
-    $html .= "
+    $stmt = $cons->query($query);
+    $inmuebles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $cnt = 1;
+    foreach ($inmuebles as $row) {
+        $html .= "
         <tr>
             <td style='width: 4%;'>" . $cnt . "</td>
             <td style='width: 3%;'>" . $row['var1'] . "</td>
@@ -190,10 +256,10 @@ foreach ($inmuebles as $row) {
             <td style='width: 5%;'>" . $row['estado'] . "</td>
         </tr> 
     ";
-    $ctn++;
-} 
+        $ctn++;
+    }
 
-$html .= "
+    $html .= "
 </table> 
             <div class='section-title'>DATOS DE EMPADRONAMIENTO Y MODIFICACIONES</div>
             <table >
@@ -206,26 +272,27 @@ $html .= "
 ";
 
 
-$query =  "select  tip_form, lote, fech_lote, folio 
+    $query =  "select  tip_form, lote, fech_lote, folio 
             from simat_pmCONTRO where comun = '" . $simatCabecera['doc_identidad'] . "';";
 
-$stmt = $cons->query($query);
-$empadronamiento = $stmt->fetchAll(PDO::FETCH_ASSOC);
-foreach ($empadronamiento as $row) {
-    $html .= "
+    $stmt = $cons->query($query);
+    $empadronamiento = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($empadronamiento as $row) {
+        $html .= "
     <tr>
-        <td>". $row['tip_form']."</td>
-        <td>". $row['lote']."</td>
-        <td>". $row['fech_lote']."</td>
-        <td>". $row['folio']."</td>
+        <td>" . $row['tip_form'] . "</td>
+        <td>" . $row['lote'] . "</td>
+        <td>" . $row['fech_lote'] . "</td>
+        <td>" . $row['folio'] . "</td>
     </tr> 
     ";
-} 
+    }
 
-$html .= "</table>
-        </div>
+    $html .= "</table>";
+}
+$html .= "</div>
         <div style='text-align: right; font-size: 9px; padding-right:20px; '>
-            Usuario:".$_SESSION['usuario']."
+            Usuario:" . $_SESSION['usuario'] . "
         </div>
     </body> 
 </page>";

@@ -119,7 +119,9 @@ if (!$_SESSION['swlogin']) {
     ?>
     <li class="breadcrumb-item"><a class="text-white" href="index.php">Home</a></li>
     <li class="breadcrumb-item"><a class="text-white">UAJ</a></li>
-    <li class="breadcrumb-item text-white active" aria-current="page"> <a class="text-white" href="sirefoList.php">SIREFO</a></li>
+    <li class="breadcrumb-item text-white active" aria-current="page"> <a class="text-white" href="sirefoPanel.php">SIREFO</a></li>
+    <li class="breadcrumb-item text-white active" aria-current="page"> <a class="text-white" href="sirefoList.php">REMISION DE SOLICITUD</a></li>
+
     <?php
     echo $twig->render('prebodyltFin.twig');
     ?>
@@ -271,7 +273,6 @@ if (!$_SESSION['swlogin']) {
 
     function actualizaEstados(idsolicitud, codigoSolicitud) {
 
-
         $.ajax({
             async: true,
             type: 'POST',
@@ -283,10 +284,7 @@ if (!$_SESSION['swlogin']) {
                 console.log("LOADING");
             },
             success: function(dat) {
-                console.log(dat);
                 dat = $.parseJSON(dat);
-                console.log(dat.html);
-
                 $.confirm({
                     title: "Solicitar actualización de estado",
                     type: "green",
@@ -299,37 +297,61 @@ if (!$_SESSION['swlogin']) {
                             text: "Confirmar",
                             btnClass: "btn-green",
                             action: function() {
-
                                 $.ajax({
                                     async: true,
-                                    type: 'POST',
+                                    type: "POST",
+                                    dataType: "html",
+                                    url: "../php/preapi.php",
                                     data: {
-                                        idsolicitud: idsolicitud
+                                        endpoint: 'remitirSolicitud',
+                                        id: idsolicitud
                                     },
-                                    url: '../php/sirefoEnviaSolicitud.php',
                                     beforeSend: function() {
-                                        console.log("LOADING");
+                                        loadGralOn();
                                     },
-                                    success: function(dat) {
-
+                                    success: function(e) {
+                                        console.log(e);
+                                        loadGralOff();
+                                        data = JSON.parse(e);
+                                        auxData = data.message;
+                                        auxTitle = 'Atención...';
+                                        if (data.success) {
+                                            auxTitle = 'SIREFO - REMISION DE SOLICITUD';
+                                            auxData = displayAsTable(data.result);
+                                        }
                                         $.confirm({
-                                            title: "Resp",
-                                            type: "black",
-                                            content: dat,
-                                            columnClass: "col-md-8 col-md-offset-8 col-xs-8 col-xs-offset-8",
+                                            title: auxTitle,
+                                            content: auxData,
+                                            type: data.type,   
+                                            typeAnimated: true,
+                                            columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
                                             buttons: {
                                                 cancel: {
                                                     text: "Cerrar",
+                                                    action: function() {},
+                                                },
+                                            },
+                                            onOpenBefore: function() {
+                                                $('.jconfirm-title-c').css('text-align', 'center');
+                                            }
+                                        }); 
+                                    },
+                                    error: function(jqXHR, textStatus, errorThrown) {
+                                        console.error("Error en la solicitud AJAX:", textStatus, errorThrown);
+                                        loadGralOff();
+                                        $.confirm({
+                                            title: "Error",
+                                            content: "Hubo un problema al conectar con el servidor. Por favor, intenta de nuevo más tarde.",
+                                            type: "red",
+                                            buttons: {
+                                                ok: {
+                                                    text: "Aceptar",
                                                     action: function() {}
                                                 }
                                             }
                                         });
-
                                     },
-                                    timeout: 16000,
-                                    error: function(xhr, status, error) {
-                                        alert('Error: ' + error);
-                                    }
+                                    timeout: 16000
                                 });
 
                             }

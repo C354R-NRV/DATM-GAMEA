@@ -22,8 +22,9 @@ foreach ($_POST as $clave => $valor) {
     } */
 }
 
-$pjson['log'] =  " nroCite:" . $cabecera->codigo_solicitud . "<br>";
-
+/* $pjson['log'] =  " nroCite:" . $cabecera->codigo_solicitud . "<br>"; */
+$pjson['log'] =  "";
+$pjson['err'] = '0';
 $err = '';
 $fileName = '';
 $base64File = '';
@@ -34,18 +35,18 @@ where  codigo_solicitud = '" . $cabecera->codigo_solicitud . "' and tipo_proceso
 $stmt = $cons->query($query);
 $srfCabecera = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$fichero = $_SERVER['DOCUMENT_ROOT'];
-$uploadDir = '/static/sirefo/';
-if (isset($_FILES["cabecera_archivoPdf"]["tmp_name"])) {
-
+//$fichero = $_SERVER['DOCUMENT_ROOT'];
+$uploadDir = '../static/sirefo/';
+if (isset($_FILES["cabecera_archivoPdf"]["tmp_name"])) {  
     $fileName = 'srf_' . uniqid() . '.pdf';
     $fileTmpPath = $_FILES["cabecera_archivoPdf"]["tmp_name"];
 
-    if (!move_uploaded_file($fileTmpPath, $fichero . $uploadDir . $fileName)) {
+    if (!move_uploaded_file($fileTmpPath,   $uploadDir . $fileName)) {
         $err .= "Hubo un error al guardar el archivo en el directorio de destino.";
-        $pjson['log'] .= 'Hubo un error al guardar el archivo en el directorio de destino.<br>';
+        $pjson['err'] = '1';
+        $pjson['log'] .= '<p>[x] Hubo un error al guardar el archivo en el directorio de destino -'.  $uploadDir . $fileName.'-.</p><p>' . error_get_last()['message'] . '</p>';
     } else {
-        $pjson['log'] .= 'archivo subido correctamente.<br>';
+        $pjson['log'] .= '<p>- Archivo subido correctamente.</p>';
     }
     $pdfFile = file_get_contents($fichero . $uploadDir . $fileName);
     $sha1Hash = sha1($pdfFile);
@@ -81,20 +82,8 @@ $cabecera->entidad = $parametros[0]['sigla_entidad']; // POR CONSOLIDAR INFORMAC
 
 
 $cabecera->gerencia = $parametros[0]['nombre_entidad']; // POR CONSOLIDAR INFORMACION
-$pjson['log'] .= 'gerencia:' . $cabecera->gerencia . '.<br>';
-$cabecera->idusuario =  $_SESSION['idusuario'] ? $_SESSION['idusuario'] : 1;
-
-$texto = '';
-$texto .= !empty($cabecera->adjunto_nombre) ? $cabecera->adjunto_nombre : '';
-$texto .= !empty($cabecera->autoridad_cargo) ? $cabecera->autoridad_cargo : '';
-$texto .= !empty($cabecera->autoridad_solicitante) ? $cabecera->autoridad_solicitante : '';
-$texto .= !empty($cabecera->codigo_solicitud) ? $cabecera->codigo_solicitud : '';
-$texto .= !empty($cabecera->entidad) ? $cabecera->entidad : '';
-$texto .= !empty($cabecera->fecha_envio_ansi) ? $cabecera->fecha_envio_ansi : '';
-$texto .= !empty($cabecera->gerencia) ? $cabecera->gerencia : '';
-$texto .= !empty($cabecera->tipo_proceso) ? $cabecera->tipo_proceso : '';
-$cabecera->hash_datos = sha1($texto);
-$pjson['hash_datos'] = $cabecera->hash_datos;
+/* $pjson['log'] .= 'gerencia:' . $cabecera->gerencia . '.<br>'; */
+$cabecera->idusuario =  $_SESSION['idusuario'] ? $_SESSION['idusuario'] : 1; 
 
 
 $nErr = true;
@@ -102,15 +91,15 @@ $nErr = true;
 if (empty($srfCabecera)) {
 
     //no existe la cabecera
-    $pjson['log'] .= " cabecera no existente, creando. <br>";
+    /* $pjson['log'] .= " cabecera no existente, creando. <br>"; */
     $query = "INSERT INTO srf_cabecera_solicitud (
             adjunto,         adjunto_nombre,        autoridad_cargo,        autoridad_solicitante,        codigo_solicitud,
             detalle_cantidad,        entidad,        fecha_envio,        fecha_envio_ansi,        gerencia,         
-            hash_datos, hash_imagen,         tipo_proceso,        idusuario,        estado_
+            hash_imagen,         tipo_proceso,        idusuario,        estado_
         ) VALUES (
             :adjunto,        :adjunto_nombre,        :autoridad_cargo,        :autoridad_solicitante,        :codigo_solicitud,
             :detalle_cantidad,        :entidad,        :fecha_envio,        :fecha_envio_ansi,        :gerencia, 
-            :hash_datos, :hash_imagen,         :tipo_proceso,        :idusuario,        :estado_
+            :hash_imagen,         :tipo_proceso,        :idusuario,        :estado_
         )";
     $stmt = $cons->prepare($query);
     $stmt->bindParam(':adjunto', $cabecera->adjunto);
@@ -125,7 +114,7 @@ if (empty($srfCabecera)) {
     $stmt->bindParam(':tipo_proceso', $cabecera->tipo_proceso);
     $stmt->bindParam(':idusuario', $cabecera->idusuario);
     $stmt->bindParam(':hash_imagen', $cabecera->hash_imagen);
-    $stmt->bindParam(':hash_datos', $cabecera->hash_datos);
+    /* $stmt->bindParam(':hash_datos', $cabecera->hash_datos); */
 
     $stmt->bindParam(':estado_', $nErr);
     $stmt->bindParam(':fecha_envio', $cabecera->fecha_envio);
@@ -136,25 +125,56 @@ if (empty($srfCabecera)) {
                 where  codigo_solicitud = '" . $cabecera->codigo_solicitud . "' and tipo_proceso = '" . $cabecera->tipo_proceso . "' and estado_  ";
     $stmt = $cons->query($query);
     $srfCabecera = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $cabecera->IdSolicitud = $srfCabecera['id_cabecera_solicitud'];
+
+
+    $texto = '';
+    $texto .= !empty($cabecera->adjunto_nombre) ? $cabecera->adjunto_nombre : '';
+    $texto .= !empty($cabecera->autoridad_cargo) ? $cabecera->autoridad_cargo : '';
+    $texto .= !empty($cabecera->autoridad_solicitante) ? $cabecera->autoridad_solicitante : '';
+    $texto .= !empty($cabecera->codigo_solicitud) ? $cabecera->codigo_solicitud : '';
+    
+    $texto .= !empty($cabecera->detalle_cantidad) ? $cabecera->detalle_cantidad : '';
+
+    $texto .= !empty($cabecera->entidad) ? $cabecera->entidad : '';
+    $texto .= !empty($cabecera->fecha_envio_ansi) ? $cabecera->fecha_envio_ansi : '';
+    $texto .= !empty($cabecera->gerencia) ? $cabecera->gerencia : ''; 
+    $texto .= !empty($cabecera->IdSolicitud) ? $cabecera->IdSolicitud : ''; 
+    $texto .= !empty($cabecera->tipo_proceso) ? $cabecera->tipo_proceso : ''; 
+    $cabecera->hash_datos_txt = $texto;
+    
+    $cabecera->hash_datos = generarSha1DesdeCabecera($cabecera);
+
+    //$cabecera->hash_datos = sha1($texto);
+
+    $pjson['hash_datos'] = $cabecera->hash_datos;
+
+    $query = "UPDATE srf_cabecera_solicitud 
+            SET hash_datos = '" . $pjson['hash_datos'] . "',  
+            hash_datos_txt = '" . $cabecera->hash_datos_txt . "' 
+            WHERE id_cabecera_solicitud = " . $cabecera->IdSolicitud;
+    $stmt = $cons->prepare($query);
+    $err = $stmt->execute(); 
 }
 
 if ($nErr) { 
 
-    $pjson['log'] .= " Sin errores durante posible reigstro de cabecera <br>";
+    /* $pjson['log'] .= " Sin errores durante posible reigstro de cabecera <br>"; */
     $cabecera->IdSolicitud = $srfCabecera['id_cabecera_solicitud'];
 
     // ------------- items solicitud -------------------
     //, por un total de " . $cabecera->cntItem . "
-    $pjson['log'] .= " para guardar items de la solicitud<br>";
+    /* $pjson['log'] .= " para guardar items de la solicitud<br>"; */
     //item_detalleCantidad // vamos registrando los items listados
     $fechaEdita = new DateTime(date('Y-m-d H:i:s'));
     $fechaEdita = $fechaEdita->format('Y-m-d H:i:s');
 
     $cntValidos = 0;
-    $pjson['log'] .= " == para con == cabecera->detalle_cantidad:" . $cabecera->detalle_cantidad . "\n<br>";
+    /* $pjson['log'] .= " == para con == cabecera->detalle_cantidad:" . $cabecera->detalle_cantidad . "\n<br>"; */
     $detalle_cantidad_aux = $cabecera->detalle_cantidad;
     $cabecera->swItems = filter_var($cabecera->swItems, FILTER_VALIDATE_BOOLEAN);
-    $pjson['log'] .= " == cabecera->swItems:" . $cabecera->swItems . "\n<br>";
+    /* $pjson['log'] .= " == cabecera->swItems:" . $cabecera->swItems . "\n<br>"; */
     if ($cabecera->swItems) {
 
         $auxCntItem = $cabecera->cntItem;
@@ -162,7 +182,7 @@ if ($nErr) {
             $auxCntItem = $cabecera->nroitem + 1;
         }
 
-        $pjson['log'] .= " == previo para iterar cntItem: " . $auxCntItem . "\n<br>";
+        /* $pjson['log'] .= " == previo para iterar cntItem: " . $auxCntItem . "\n<br>"; */
         for ($i = 0; $i < $auxCntItem; $i++) {
             if (
                 isset($_POST['item_documentoIdentidadNumero' . $i]) and
@@ -173,7 +193,7 @@ if ($nErr) {
                 /* echo "\nProcesando para item_documentoIdentidadNumero:".$_POST['item_documentoIdentidadNumero' . $i]."\n"; */
 
                 $cntValidos++;
-                $pjson['log'] .= " ===> Agregando:$cntValidos\n<br>";
+                /* $pjson['log'] .= " ===> Agregando:$cntValidos\n<br>"; */
                 $item = new stdClass();
                 $item->tipo_persona = $_POST['item_tipo_persona' . $i];
                 $item->nombre = $_POST['item_nombre' . $i];
@@ -249,7 +269,7 @@ if ($nErr) {
                 // en caso de que datosActuales este vacio, se debera realizar un INSERT 0000000000000000000000000000
                 if (empty($datosActuales) and $item->documento_identidad_numero) {
                     //para: " . $item->documento_identidad_numero . " en idcabecera: " . $cabecera->IdSolicitud . ", creamos el item
-                    $pjson['log'] .= " no existe item <br>";
+                    $pjson['log'] .= "<p> - Item creado para documento:".$item->documento_identidad_numero."</p>";
                     //creamos el registro
                     $query = "INSERT INTO srf_item_solicitud (
                             tipo_persona,
@@ -310,7 +330,7 @@ if ($nErr) {
                     $stmt->execute();
                 } else {
                     //para: " . $item->documento_identidad_numero . " en idcabecera: " . $cabecera->IdSolicitud . ", vamos a verificar si hay cambios
-                    $pjson['log'] .= " Item existente .<br>";
+                    /* $pjson['log'] .= " Item existente .<br>"; */
 
                     $camposModificados = array();
                     /* echo "\n ============================ \n";
@@ -359,6 +379,7 @@ if ($nErr) {
 
                     if (!empty($camposModificados)) {
                         /* $pjson['log'] .= " -- Hubo cambios en el item, guardando cambios<br>"; */
+                        /* $pjson['log'] .= "<p> - Item modificado para documento:".$item->documento_identidad_numero."</p>"; */
                         foreach ($camposModificados as $campoModificado) {
                             $query = "INSERT INTO srf_item_solicitud_hst (
                             id_item_solicitud,
@@ -401,7 +422,7 @@ if ($nErr) {
     if ($cabecera->nroitem != 0) {
         $cabecera->detalle_cantidad = $detalle_cantidad_aux;
     }
-    $pjson['log'] .= " == cabecera->detalle_cantidad:" . $cabecera->detalle_cantidad . "\n<br>";
+    /* $pjson['log'] .= " == cabecera->detalle_cantidad:" . $cabecera->detalle_cantidad . "\n<br>"; */
     $query = "SELECT * FROM srf_cabecera_solicitud WHERE id_cabecera_solicitud = :IdSolicitud";
     $stmt = $cons->prepare($query);
     $stmt->bindParam(':IdSolicitud', $cabecera->IdSolicitud);
@@ -431,6 +452,7 @@ if ($nErr) {
     }
 
     if (!empty($camposModificados)) {
+        $pjson['log'] .= "<p>- Modificaciones registradas exitosamente</p>";
         foreach ($camposModificados as $campoModificado) {
             $query = "INSERT INTO srf_cabecera_solicitud_hst (
                     id_cabecera_solicitud,
@@ -461,16 +483,58 @@ if ($nErr) {
                             WHERE id_cabecera_solicitud = " . $cabecera->IdSolicitud . ";";
             $stmt = $cons->prepare($query);
             $err = $stmt->execute();
+
+            //DEBEMOS DE REHACER EL CAMPO HASH PARA CADA MODIFICACION
+
+
+            $query = "UPDATE srf_cabecera_solicitud 
+                            SET " . $campoModificado['campo'] . " = '" . $campoModificado['valor_nuevo'] . "'
+                            WHERE id_cabecera_solicitud = " . $cabecera->IdSolicitud . ";";
+            $stmt = $cons->prepare($query);
+            $err = $stmt->execute(); 
+
             /* $pjson['query_update_srf_cabecera_solicitud '] = $query; */
 
             /* $stmt->bindParam(':campoDinamico', $campoModificado['valor_nuevo']);
             $stmt->bindParam(':IdSolicitud', intval($cabecera->IdSolicitud)); */
             // $err = $stmt->execute();
         }
+
+        $cabecera->hash_datos = generarSha1DesdeCabecera($cabecera); 
+        $query = "UPDATE srf_cabecera_solicitud 
+        SET hash_datos= '". $cabecera->hash_datos . "',  hash_datos_txt= '". $cabecera->hash_datos_txt . "' 
+        WHERE id_cabecera_solicitud = " . $cabecera->IdSolicitud . ";";
+        $stmt = $cons->prepare($query);
+        $err = $stmt->execute();  
     }
 } else {
-    echo "Error saving cabecera: " . $stmt->errorInfo()[2];
-    $pjson['log'] .= " error al guardar la cabecera:" . $stmt->errorInfo()[2] . "<br>";
+    /* echo "Error saving cabecera: " . $stmt->errorInfo()[2]; */
+    $pjson['err'] = '1';
+    $pjson['log'] .= "<p class='rspIncorrecta'>[x] Error al guardar la cabecera:" . $stmt->errorInfo()[2] . "</p>";
 }
 $dat = json_encode($pjson);
-echo $dat;
+echo $dat; 
+
+function generarSha1DesdeCabecera($cabecera) {
+    // Construir el texto concatenado a partir de las propiedades del objeto cabecera
+    $texto = '';
+    $texto .= !empty($cabecera->adjunto_nombre) ? $cabecera->adjunto_nombre : '';
+    $texto .= !empty($cabecera->autoridad_cargo) ? $cabecera->autoridad_cargo : '';
+    $texto .= !empty($cabecera->autoridad_solicitante) ? $cabecera->autoridad_solicitante : '';
+    $texto .= !empty($cabecera->codigo_solicitud) ? $cabecera->codigo_solicitud : '';    
+    $texto .= !empty($cabecera->detalle_cantidad) ? $cabecera->detalle_cantidad : '';
+    $texto .= !empty($cabecera->entidad) ? $cabecera->entidad : '';
+    $texto .= !empty($cabecera->fecha_envio_ansi) ? $cabecera->fecha_envio_ansi : '';
+    $texto .= !empty($cabecera->gerencia) ? $cabecera->gerencia : '';
+    $texto .= !empty($cabecera->IdSolicitud) ? $cabecera->IdSolicitud : '';
+    $texto .= !empty($cabecera->tipo_proceso) ? $cabecera->tipo_proceso : '';
+
+    // Asignar el texto concatenado al objeto cabecera para referencia si es necesario
+    $cabecera->hash_datos_txt = $texto;
+
+    // Generar y retornar el hash SHA-1
+    $cabecera->hash_datos = sha1($texto);
+    return $cabecera->hash_datos;
+}  
+?>
+

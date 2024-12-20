@@ -28,7 +28,7 @@ $swIngresoSubtotal = false;
 if ($t == 'inm' or $t == 'all') {
     $sql = "select a.numero_inmueble, a.ubicacion_nivel1, a.documento_identidad, a.documento_identidad_apo, a.gestion, a.concepto, COALESCE(a.monto_total_deuda::TEXT, 'x') as monto_total_deuda,
     a.fecha_cargado, a.codigo_tributario, a.tipo_fiscalizacion, a.etapa_fiscalizacion, 
-    observacion_liquidacion, tramite
+    observacion_liquidacion 
     from ruat_inmueble_mora a 
     where a.documento_identidad = '$documento' OR a.documento_identidad_apo = '$documento'
     order by a.numero_inmueble, gestion, concepto";
@@ -88,9 +88,8 @@ if ($rspInm) {
         $filas++;
         $auxObs = ' <br>[OBSERVADA - VISITAR OFICINA DATM]';
         $auxMonto = '-';
-
-        if (
-            $row["tramite"] != 'REGISTRO OBSERVADOS' and (
+        # $row["tramite"] != 'REGISTRO OBSERVADOS' and 
+        if ((
                 ($row["monto_total_deuda"] != 'x')
                 or ($row["tipo_valuacion"] == 'VALOR TABLAS' and $row["observacion_liquidacion"] == 'OBSERVACION LEVANTADA'))
         ) {
