@@ -15,7 +15,7 @@ if (!$_SESSION['swlogin']) {
 <html lang="es">
 
 <head>
-    <title>SIREFO</title>
+    <title>CITES</title>
     <?php
     echo $twig->render('linkStyle.twig');
     ?>
@@ -92,6 +92,43 @@ if (!$_SESSION['swlogin']) {
         .striped-table tbody tr:nth-child(even) {
             background-color: #e9e9e9;
         }
+
+
+        .cite-detail {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .cite-detail h2 {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        .cite-detail ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .cite-detail li {
+            margin: 10px 0;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .cite-detail li:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #555;
+        }
     </style>
 </head>
 
@@ -119,9 +156,7 @@ if (!$_SESSION['swlogin']) {
     ?>
     <li class="breadcrumb-item"><a class="text-white" href="index.php">Home</a></li>
     <li class="breadcrumb-item"><a class="text-white">UAJ</a></li>
-    <li class="breadcrumb-item text-white active" aria-current="page"> <a class="text-white" href="sirefoPanel.php">SIREFO</a></li>
-    <li class="breadcrumb-item text-white active" aria-current="page"> <a class="text-white" href="sirefoList.php">REMISION DE SOLICITUD</a></li>
-
+    <li class="breadcrumb-item text-white active" aria-current="page"> <a class="text-white">CITE</a></li>
     <?php
     echo $twig->render('prebodyltFin.twig');
     ?>
@@ -132,10 +167,10 @@ if (!$_SESSION['swlogin']) {
         <div class="form-group d-flex flex-column flex-md-row">
             <div class="row">
                 <div class="col-md-1 mb-3">
-                    <a class="btn btn-success" href="sirefoAddSolicitud.php" role="button"><i class="fa fa-plus"></i></a>
+                    <a class="btn btn-success" onclick="solicitudCite()" role="button"><i class="fa fa-plus"></i></a>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <input type="text" class="form-control" value="" id="filtroCodigoSolicitud" placeholder="Codigo de solicitud">
+                    <input type="text" class="form-control" value="" id="filtroCodigoSolicitud" placeholder="Codigo de CITE">
                 </div>
                 <div class="col-md-3 mb-3">
                     <input type="text" class="form-control datepicker" value="" id="filtroFechaIni" placeholder="Fecha ini">
@@ -144,7 +179,7 @@ if (!$_SESSION['swlogin']) {
                     <input type="text" class="form-control datepicker" value="" id="filtroFechaFin" placeholder="Fecha fin">
                 </div>
                 <div class="col-md-1 mb-3">
-                    <button class="btn btn-primary" onclick="getSolicitudes()">consultar</button>
+                    <button class="btn btn-primary" onclick="getCites()">consultar</button>
                 </div>
             </div>
         </div>
@@ -158,26 +193,27 @@ if (!$_SESSION['swlogin']) {
                 data-show-columns="true"
                 data-show-columns-toggle-all="true"
                 data-show-export="true"
+                data-export-types='["csv","excel"]'
                 data-click-to-select="true"
                 data-pagination="true"
                 data-page-list="[10, 25, 50, 100, all]"
                 data-locale="es-ES"
                 class="table table-striped"
-                data-sort-name="id_cabecera_solicitud"
+                data-sort-name="idcite"
                 data-sort-order="desc"
                 data-show-refresh="true"
-                data-url="../php/sirefoGetSolicitudes.php"
+                data-url="../php/getDetalleCites.php"
                 data-query-params="filtrosDataTable">
                 <thead>
-                    <th data-field="id_cabecera_solicitud" data-sortable="true">Proceso</th>
-                    <th data-field="tipo_proceso" data-sortable="true">Tipo</th>
-                    <th data-field="codigo_solicitud" data-sortable="true">Cod. solicitud</th>
-                    <th data-field="detalle_cantidad" data-sortable="true">Cantidad</th>
-                    <th data-field="fecha_envio" data-sortable="true">Fecha envio</th>
-                    <th data-field="estado_envio" data-sortable="true">Estado envio</th>
-                    <th data-field="fecha_circular" data-sortable="true">Fecha Circular</th>
-                    <th data-field="estado_solicitud" data-sortable="true">Estado solicitud</th>
+                    <th data-field="idcite" data-sortable="true">Id</th>
+                    <th data-field="fecha" data-sortable="true">Fecha</th>
                     <th data-field="usuario" data-sortable="true">Usuario</th>
+                    <th data-field="doc" data-sortable="true">Documento</th>
+                    <th data-field="cite" data-sortable="true">CITE</th>
+                    <th data-field="destino" data-sortable="true">Destino</th>
+                    <th data-field="referencia" data-sortable="true">Referencia</th>
+                    <th data-field="hhrr_" data-sortable="true">HHRR</th>
+                    <th data-field="estado" data-sortable="true">Estado</th>
                     <th data-field="acciones">Acciones</th>
                 </thead>
                 <tbody id="tbodyItems">
@@ -220,7 +256,19 @@ if (!$_SESSION['swlogin']) {
         }
     }
 
-    function getSolicitudes() {
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var toastrMessage = localStorage.getItem('toastrMessage');
+        if (toastrMessage) {
+            // Mostrar el mensaje toastr
+            toastr["success"](toastrMessage);
+
+            // Limpiar el mensaje del localStorage
+            localStorage.removeItem('toastrMessage');
+        }
+    });
+
+    function getCites() {
 
         $.ajax({
             async: true,
@@ -230,9 +278,10 @@ if (!$_SESSION['swlogin']) {
                 filtroFechaIni: $('#filtroFechaIni').val(),
                 filtroFechaFin: $('#filtroFechaFin').val()
             },
-            url: '../php/sirefoGetSolicitudes.php',
+            url: '../php/getDetalleCites.php',
             beforeSend: function() {
                 loadGralOn();
+
             },
             success: function(dat) {
                 loadGralOff();
@@ -244,16 +293,16 @@ if (!$_SESSION['swlogin']) {
                 $.each(dat.info, function(index, item) {
                     var fila = `
                     <tr>
-                        <td>${item.id_cabecera_solicitud}</td>
-                        <td>${item.tipo_proceso}</td>
-                        <td>${item.codigo_solicitud}</td>
-                        <td>${item.detalle_cantidad}</td>
-                        <td>${item.fecha_envio}</td>
-                        <td>${item.estado_envio}</td>
-                        <td>${item.fecha_circular}</td>
-                        <td>${item.estado_solicitud}</td>
+                        <td>${item.idcite}</td>
+                        <td>${item.fecha}</td>
                         <td>${item.usuario}</td>
-                        <td>${item.acciones}</td>
+                        <td>${item.doc}</td>
+                        <td>${item.cite}</td>
+                        <td>${item.destino}</td>
+                        <td>${item.referencia}</td>
+                        <td>${item.hhrr_}</td>
+                        <td>${item.estado}</td>
+                        <td>${item.acciones}</td> 
                     </tr>
                 `;
                     $('#tbodyItems').append(fila);
@@ -350,8 +399,8 @@ if (!$_SESSION['swlogin']) {
                 loadGralOn();
             },
             success: function(dat) {
-                dat = $.parseJSON(dat);
                 loadGralOff();
+                dat = $.parseJSON(dat);
                 $.confirm({
                     title: "Remision de solicitud",
                     type: "green",
@@ -669,11 +718,120 @@ if (!$_SESSION['swlogin']) {
         });
     }
 
-    function borrarCompendio(idsolicitud, codigoSolicitud) {
+    function verAnulacionCite(idcite, codigoCite) {
+        var datos = {
+            idcite: idcite,
+        };
+        $.ajax({
+            async: true,
+            type: 'POST',
+            data: datos,
+            url: '../php/getCiteAnulado.php',
+            beforeSend: function() {
+                loadGralOn();
+            },
+            success: function(dat) {
+                loadGralOff();
+                $.confirm({
+                    title: "Detalle de cite",
+                    type: "red",
+                    content: dat,
+                    buttons: {
+                        cancel: {
+                            text: "Cerrar",
+                            action: function() {},
+                        },
+                    },
+                });
+            },
+            timeout: 16000,
+            error: function(xhr, status, error) {
+                alert('Error: ' + error);
+            }
+        });
+    }
+
+    function editarCite(idcite, codigoCite) {
+        var datos = {
+            idcite: idcite,
+        };
+        $.ajax({
+            async: true,
+            type: 'POST',
+            data: datos,
+            url: '../php/formEditCite.php',
+            beforeSend: function() {
+                loadGralOn();
+            },
+            success: function(dat) {
+                loadGralOff();
+                $.confirm({
+                    title: codigoCite,
+                    type: "green",
+                    content: dat,
+                    buttons: {
+
+                        guardar: {
+                            text: "Guardar",
+                            btnClass: "btn-green",
+                            action: function() {
+                                var datos2 = {
+                                    idcite: idcite,
+                                    hhrr_: $('#hhrr_').val(),
+                                    referencia: $('#referencia').val(),
+                                    destino: $('#destino').val(),
+                                    fecha_registro: $('#fecha_registro').val(),
+                                };
+                                console.log(datos2);
+
+                                $.ajax({
+                                    async: true,
+                                    type: 'POST',
+                                    data: datos2,
+                                    url: '../php/editCite.php',
+                                    beforeSend: function() {
+                                        loadGralOn();
+                                    },
+                                    success: function(dat) {
+                                        loadGralOff();
+                                        console.log(dat);
+                                        $.confirm({
+                                            title: dat.title,
+                                            type: dat.estado,
+                                            content: dat.message,
+                                            buttons: {
+                                                cancel: {
+                                                    text: "Cerrar",
+                                                    action: function() {
+                                                        window.location.href = './citeList.php';
+                                                    },
+                                                },
+                                            }
+                                        });
+
+                                    }
+                                });
+                            },
+                        },
+                        cancel: {
+                            text: "Cerrar",
+                            action: function() {},
+                        },
+                    },
+                });
+            },
+            timeout: 16000,
+            error: function(xhr, status, error) {
+                alert('Error: ' + error);
+            }
+        });
+    }
+
+    function borrarCite(idcite, codigoCite) {
         $.confirm({
-            title: "Eliminación de solicitud",
+            title: "Eliminación de CITE",
             type: "red",
-            content: "Confirme la eliminacion de la solicitud: <b>" + idsolicitud + "</b>, con codigo de solicitud: <b>" + codigoSolicitud + "</b> y detalle brevemente la(s) razon(es):<br> <textarea id='observacion' rows='6' cols='40' class= 'form-control' placeholder='Escribe aquí el detalle...'></textarea><br><br>",
+            content: "Confirme la eliminacion del CITE: <b>" + codigoCite + "</b> y detalle brevemente la(s) razon(es):<br> <textarea id='observacion' rows='6' cols='40' class= 'form-control' placeholder='Escribe aquí el detalle...'></textarea><br><br>",
             buttons: {
                 confirmar: {
                     text: "Confirmar",
@@ -681,35 +839,49 @@ if (!$_SESSION['swlogin']) {
                     action: function() {
 
                         var datos = {
-                            idsolicitud: idsolicitud,
+                            idcite: idcite,
                             observacion: $('#observacion').val(),
-
                         };
-                        console.log(datos);
                         $.ajax({
                             async: true,
                             type: 'POST',
                             data: datos,
-                            url: '../php/sirefoBajaSolicitud.php',
+                            url: '../php/citeAnulacion.php',
                             beforeSend: function() {
                                 loadGralOn();
                             },
                             success: function(dat) {
-                                loadGralOff();
                                 console.log(dat);
-                                //AGREAGAR NOTIFICACION DE GUARDADO CORRECTO 
-                                dat = $.parseJSON(dat);
-                                console.log(dat.log);
-                                window.location.href = './sirefoList.php';
-
+                                loadGralOff();
+                                if (dat.err == '0') {
+                                    toastr["success"]("CITE anulado correctamente", codigoCite);
+                                    window.location.href = './citeList.php';
+                                } else {
+                                    if (dat.err == '2') {
+                                        $.confirm({
+                                            title: dat.message,
+                                            type: "red",
+                                            content: "Su sesión a concluido, vuelva a ingresar por favor.",
+                                            buttons: {
+                                                login: {
+                                                    text: "Login",
+                                                    btnClass: "btn-red",
+                                                    action: function() {
+                                                        window.location.href = './login.php';
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    } else {
+                                        toastr["warning"]("Ocurrio un error", dat.message);
+                                    }
+                                }
                             },
                             timeout: 16000,
                             error: function(xhr, status, error) {
-                                alert('Error: ' + error);
+                                alert('Excepcion: ' + error);
                             }
                         });
-
-
                     }
                 },
                 cancel: {

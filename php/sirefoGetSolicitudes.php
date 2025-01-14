@@ -54,26 +54,9 @@ foreach ($cabeceras as $key => $cabecera) {
     $query = "
         select a.estado, a.fecha_circular
         from srf_estado_solicitud a 
-        where a.id_cabecera_solicitud = " . $cabecera['id_cabecera_solicitud'] . " limit 1 ";
+        where a.id_cabecera_solicitud = " . $cabecera['id_cabecera_solicitud'] . " and estado_ is true limit 1 ";
     $stmt = $cons->query($query);
-    $estadoSolicitud = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    /* $html .= '<tr>
-                <td>' . $cabecera['id_cabecera_solicitud'] . '</td>
-                <td>' . $cabecera['codigo_solicitud'] . '</td>
-                <td>' . $cabecera['detalle_cantidad'] . '</td>
-                <td>' . $cabecera['fecha_envio'] . '</td>
-                <td>' . (isset($estadoEnvio['respuesta']) ? $estadoEnvio['respuesta'] : '-') . '</td>
-                <td>' . (isset($estadoSolicitud['fecha_circular']) ? $estadoSolicitud['fecha_circular'] : '-') . '</td>
-                <td>' . (isset($estadoSolicitud['estado']) ? $estadoSolicitud['estado'] : '-') . '</td>
-                <td>' . $cabecera['usuario'] . '</td>
-                <td style="text-align: center;">
-                    <a class="btn btn-primary" href="../static/sirefo/' . $cabecera['adjunto_nombre'] . '" target="_blank" role="button"><i class="fa fa-cloud-download"></i></a> |
-                    <a class="btn btn-success" onclick="actualizaEstados(' . $cabecera['id_cabecera_solicitud'] . ')" role="button"><i class="fa fa-refresh"></i></a> |
-                    <a class="btn btn-warning" href="formActuado(' . $cabecera['id_cabecera_solicitud'] . ')" role="button"><i class="fa fa-edit"></i></a> |
-                    <a class="btn btn-danger" onclick="borrarCompendio(' . $cabecera['id_cabecera_solicitud'] . ')" role="button"><i class="fa fa-eye"></i></a>
-                </td>
-            </tr>'; */
+    $estadoSolicitud = $stmt->fetch(PDO::FETCH_ASSOC); 
 
     $fila = array(
         "id_cabecera_solicitud" => $cabecera['id_cabecera_solicitud'],
@@ -86,10 +69,12 @@ foreach ($cabeceras as $key => $cabecera) {
         "estado_solicitud" => isset($estadoSolicitud['estado']) ? $estadoSolicitud['estado'] : '-',
         "usuario" => $cabecera['usuario'],
         "acciones" => '
-            <a class="btn btn-primary" href="../static/sirefo/' . $cabecera['adjunto_nombre'] . '" target="_blank" role="button"><i class="fa fa-cloud-download"></i></a> |
-            <a class="btn btn-success" onclick="actualizaEstados(' . $cabecera['id_cabecera_solicitud'] . ', \'' . $cabecera['codigo_solicitud'] . '\')" role="button"><i class="fa fa-refresh"></i></a> |
-            <a class="btn btn-warning" href="./sirefoAddSolicitud.php?id=' . $cabecera['id_cabecera_solicitud'] . '&tp=' . $cabecera['tipo_proceso'] . '&dc=' . $cabecera['detalle_cantidad'] . '&cs=' . $cabecera['codigo_solicitud'] . '&sw=1" role="button"><i class="fa fa-edit"></i></a> |
-            <a class="btn btn-danger" onclick="borrarCompendio(' . $cabecera['id_cabecera_solicitud'] . ', \'' . $cabecera['codigo_solicitud'] . '\')" role="button"><i class="fa fa-trash"></i></a>'
+            <a class="btn btn-primary" href="../static/sirefo/' . $cabecera['adjunto_nombre'] . '" title="Descargar nota de remision" target="_blank" role="button"><i class="fa fa-cloud-download"></i></a> |
+            
+            '.($estadoSolicitud['estado']==='ENVIADO'?'<a class="btn btn-success" onclick="estadoEnvio(' . $cabecera['id_cabecera_solicitud'] . ', \'' . $cabecera['codigo_solicitud'] . '\')" title="Ver estado del envio de solicitud" role="button"><i class="fa fa-question-circle" aria-hidden="true"></i></a> |':'<a class="btn btn-success" onclick="actualizaEstados(' . $cabecera['id_cabecera_solicitud'] . ', \'' . $cabecera['codigo_solicitud'] . '\')" title="Remitir solicitud" role="button"><i class="fa fa-cloud-upload" aria-hidden="true"></i></a> |').'
+            
+            '.($estadoSolicitud['estado']!='ENVIADO'?'<a class="btn btn-warning" title="Editar solicitud" href="./sirefoAddSolicitud.php?id=' . $cabecera['id_cabecera_solicitud'] . '&tp=' . $cabecera['tipo_proceso'] . '&dc=' . $cabecera['detalle_cantidad'] . '&cs=' . $cabecera['codigo_solicitud'] . '&sw=1" role="button"><i class="fa fa-edit"></i></a> |
+            <a class="btn btn-danger" title="Dar de baja la solicitud" onclick="borrarCompendio(' . $cabecera['id_cabecera_solicitud'] . ', \'' . $cabecera['codigo_solicitud'] . '\')" role="button"><i class="fa fa-trash"></i></a>':'')
     );
     $data[] = $fila;
 }

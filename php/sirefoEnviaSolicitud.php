@@ -73,7 +73,9 @@ foreach ($items as $key => $item) {
     $itemSolicitud->ApellidoPaterno = $item['apellido_paterno'];
     $itemSolicitud->AutoConclusion = $item['auto_conclusion'];
     $itemSolicitud->DocumentoIdentidadComplemento = $item['documento_identidad_complemento'];
-    $itemSolicitud->DocumentoIdentidadExtension = $item['documento_identidad_extension'];
+    
+    $itemSolicitud->DocumentoIdentidadExtension = ($item['documento_identidad_extension']>0?$item['documento_identidad_extension']:'');
+
     $itemSolicitud->DocumentoIdentidadNumero = $item['documento_identidad_numero'];
     $itemSolicitud->DocumentoIdentidadTipo = $item['id_documento_identidad_tipo'];
     $itemSolicitud->DocumentoRespaldo = $item['documento_respaldo'];

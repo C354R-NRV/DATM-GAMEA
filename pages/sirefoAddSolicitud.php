@@ -192,7 +192,7 @@ if (!$_SESSION['swlogin']) {
 
     function quitarItem(nroItem) {
         var id_item_solicitud = $('#id_item_solicitud' + nroItem).val();
-        console.log(" para quitarItem:" + nroItem + ", con id_item_solicitud:" + id_item_solicitud);
+        
         if (id_item_solicitud > 0) {
             $.confirm({
                 title: "Dar de baja el item",
@@ -214,14 +214,11 @@ if (!$_SESSION['swlogin']) {
                                     id_item_solicitud: id_item_solicitud,
                                     swActualizaItems: 1
                                 },
-                                beforeSend: function() {
-                                    console.log("LOADING");
+                                beforeSend: function() { 
                                 },
-                                success: function(response) {
-                                    console.log("response:" + response);
+                                success: function(response) { 
                                     dat = $.parseJSON(response);
-                                    if (dat.err.every(Boolean)) {
-                                        console.log("todo ok!");
+                                    if (dat.err.every(Boolean)) { 
                                         $('#detalleCantidad').val(dat.nueva_cantidad_detalle);
                                         //actualizamos la estructura
                                         actualizarItemsTrasBaja(nroItem);
@@ -250,7 +247,7 @@ if (!$_SESSION['swlogin']) {
             });
         } else {
             var detalleCantidadAux = $('#detalleCantidad').val() - 1;
-            console.log(" == no se tiene id_item_solicitud, nuevo detalleCantidadAux:" + detalleCantidadAux);
+            
             $('#detalleCantidad').val(detalleCantidadAux);
             cntItem = detalleCantidadAux; 
             $.ajax({
@@ -261,11 +258,9 @@ if (!$_SESSION['swlogin']) {
                     detalleCantidad: detalleCantidadAux,
                     swActualizaItems: 0
                 },
-                beforeSend: function() {
-                    console.log("LOADING");
+                beforeSend: function() { 
                 },
-                success: function(response) {
-                    console.log("response:" + response);
+                success: function(response) { 
                     dat = $.parseJSON(response);
                     $('#detalleCantidad').val(dat.nueva_cantidad_detalle);
                     actualizarItemsTrasBaja(nroItem);
@@ -277,18 +272,13 @@ if (!$_SESSION['swlogin']) {
         }
     }
 
-    function actualizarItemsTrasBaja(nroItem) {
-
+    function actualizarItemsTrasBaja(nroItem) { 
         $('#item' + nroItem).remove();
 
-        $('#contenedorItems > div[id^="item"]').each(function(index) {
-
-            var nuevoIndex = index;
-            /* console.log("nuevoIndex:" + nuevoIndex + ", index:" + index); */
+        $('#contenedorItems > div[id^="item"]').each(function(index) { 
+            var nuevoIndex = index; 
             $(this).attr('id', 'item' + nuevoIndex);
-            $(this).find('h3').text('Item No ' + (nuevoIndex + 1));
-
-
+            $(this).find('h3').text('Item No ' + (nuevoIndex + 1)); 
             $(this).find('[id]').each(function() {
                 var idOriginal = $(this).attr('id');
 
@@ -309,7 +299,6 @@ if (!$_SESSION['swlogin']) {
                 var onclickAttr = $(this).attr('onclick');
                 if (onclickAttr) {
                     var nuevoOnclick = onclickAttr.replace(/\d+/, nuevoIndex);
-                    console.log(" == en idOriginal:" + idOriginal + ", con nuevoId:" + nuevoId + ", nuevoOnclick:" + nuevoOnclick);
                     $(this).attr('onclick', nuevoOnclick);
                 }
 
@@ -332,7 +321,6 @@ if (!$_SESSION['swlogin']) {
     let swValidacionPdf = true;
 
     function verificaDB() {
-        console.log("verificaDB");
 
         var errores = [];
         var formData = new FormData();
@@ -340,9 +328,11 @@ if (!$_SESSION['swlogin']) {
         var codigoSolicitud = $('#codigoSolicitud').val();
         if (swVerificaDb && $.trim(codigoSolicitud) != '') {
             swVerificaDb = false;
-            if (!isValidAlphanumeric(codigoSolicitud, 1)) {
-                errores.push(' -El campo numero de cite / codigo de solicitud, debe tener más de 1 caracteres.');
+
+            if ( codigoSolicitud.length <= 3) {
+                errores.push(' -El campo numero de cite no tiene un formato correcto');
             }
+
             formData.append('cabecera_CodigoSolicitud', codigoSolicitud);
             formData.append('cabecera_TipoProceso', $('#tipoProceso').val());
 
@@ -368,15 +358,12 @@ if (!$_SESSION['swlogin']) {
                 processData: false,
                 url: "../php/sirefoVerificaDb.php",
                 beforeSend: function() {
-                    console.log("LOADING");
                 },
                 success: function(e) {
-                    console.log(e);
                     $('#detalleCantidad').off('keyup');
                     $('#detalleCantidad').off('blur');
                     dat = $.parseJSON(e);
                     if (dat.existeSolicitud != '0') {
-                        console.log("en verifica -> existe solicitud ");
                         $('#fileExistente').html(dat.info.adjunto_nombre);
                         if ($('#detalleCantidad').val() == dat.info.detalle_cantidad || $('#detalleCantidad').val() == '')
                             $('#detalleCantidad').val(dat.info.detalle_cantidad);
@@ -384,17 +371,14 @@ if (!$_SESSION['swlogin']) {
                         $('#id_cabecera_solicitud').val(dat.info.id_cabecera_solicitud);
 
                         if (dat.info.detalle_cantidad > 0) {
-                            console.log("en addItem autocompletar");
                             addItem('autocompletar', dat.infoItem);
                         }
                     } else {
                         swValidacionPdf = false;
-                        console.log("en detalleCantidadAnterior, podiendo a cero pues no existeSolicitud");
                         $('#detalleCantidadAnterior').val('0');
                     }
                     $('#detalleCantidad').on('keyup', function() {
                         if (event.key === "Enter" || event.keyCode === 13) {
-                            console.log("en addItem false");
                             addItem(false, false);
                         }
                     });
@@ -413,27 +397,21 @@ if (!$_SESSION['swlogin']) {
 
     function addItem(swauto = '', datItems) {
         cnt = parseInt($('#detalleCantidad').val());
-        console.log(' = se renderizara para cnt:' + cnt + ", con cntItem:" + cntItem + ", detalleCantidadAnterior:" + $('#detalleCantidadAnterior').val());
         var auxDetalleCantidadAnterior = parseInt($('#detalleCantidadAnterior').val());
         if (cnt > 0 && auxDetalleCantidadAnterior <= cnt) {
             $('#detalleCantidadAnterior').val(cnt);
-            console.log("detalleCantidadAnterior:" + cnt);
             if (cntItem < cnt) {
-                console.log("filtos superados");
                 var n = cnt - cntItem;
-                console.log('previo a ajax sirefoAddItem');
                 $.ajax({
                     async: true,
                     type: "POST",
                     dataType: "html",
                     contentType: "application/x-www-form-urlencoded",
                     url: "../php/sirefoAddItem.php",
-                    data: "&cnt=" + n + "&cntItemAct=" + cntItem,
+                    data: "&cnt=" + n + "&cntItemAct=" + cntItem+ "&tipoProceso=" + $('#tipoProceso').val(),
                     beforeSend: function() {
-                        console.log("LOADING");
                     },
                     success: function(e) {
-                        console.log("&cnt=" + n + "&cntItemAct=" + cntItem);
                         dat = $.parseJSON(e);
                         // agregar item nuevo a div contenedorItems 
                         $("#contenedorItems").append(dat.items);
@@ -442,13 +420,9 @@ if (!$_SESSION['swlogin']) {
                         tipoRespaldo = dat.tipoRespaldo;
 
                         if (swauto === 'autocompletar') {
-                            console.log("datItems:");
-                            console.log(datItems);
                             var i = 0;
                             datItems.forEach(item => {
                                 $('#tipoPersona' + i).val(item.tipo_persona);
-                                /* console.log(" === #tipoPersona:" + $('#tipoPersona' + i).val());
-                                console.log(" === item.tipo_persona:" + item.tipo_persona); */
                                 reestructuraFormItem(i);
                                 $('#id_documento_identidad_tipo' + i).val(item.id_documento_identidad_tipo);
                                 $('#documentoIdentidadNumero' + i).val(item.documento_identidad_numero);
@@ -473,7 +447,6 @@ if (!$_SESSION['swlogin']) {
                 });
             } else {
                 var n = cntItem - cnt;
-                console.log("eliminando, con cntItem:" + cntItem + ", cnt:" + cnt);
                 //quitamos  n ultimos items 
                 for (let index = cntItem; index >= cnt; index--) {
                     $("#item" + index).remove();
@@ -482,7 +455,6 @@ if (!$_SESSION['swlogin']) {
             cntItem = cnt;
         } else {
             $('#detalleCantidad').val($('#detalleCantidadAnterior').val());
-            console.log(" con detalleCantidad:" + $('#detalleCantidad').val());
         }
     }
 
@@ -509,10 +481,8 @@ if (!$_SESSION['swlogin']) {
     }
 
     function actExtension(noItem) {
-        console.log("actExtension para:" + noItem);
         var tipoPersona = $('#tipoPersona' + noItem).val();
         if (tipoPersona == 'N' && $('#id_documento_identidad_tipo' + noItem).val() == 4) {
-            console.log('quitamos la opcion PE');
             $("#id_documento_identidad_extension" + noItem + " option[value='10']").remove();
         }
         if (tipoPersona == 'N' && $('#id_documento_identidad_tipo' + noItem).val() != 4 && $("#id_documento_identidad_extension" + noItem + " option[value='10']").length == 0) {
@@ -539,8 +509,9 @@ if (!$_SESSION['swlogin']) {
             swValidacionPdf = true;
         }
         var codigoSolicitud = $('#codigoSolicitud').val();
-        if (!isValidAlphanumeric(codigoSolicitud, 2)) {
-            errores.push(' -El campo numero de cite / codigo de solicitud, debe tener más de 2 caracteres.');
+
+        if ( codigoSolicitud.length <= 3) {
+            errores.push(' -El campo numero de cite no tiene un formato correcto');
         }
         formData.append('cabecera_codigo_solicitud', codigoSolicitud);
         formData.append('cabecera_tipo_proceso', $('#tipoProceso').val());
@@ -563,7 +534,6 @@ if (!$_SESSION['swlogin']) {
         }
 
         formData.append('cabecera_detalle_cantidad', detalleCantidad);
-        /* console.log(" =========== cabecera_detalle_cantidad:" + detalleCantidad); */
         formData.append('cabecera_cntItem', cntItem);
         formData.append('cabecera_swItems', swItems);
         formData.append('cabecera_nroitem', nroitem);
@@ -587,10 +557,10 @@ if (!$_SESSION['swlogin']) {
 
                 formData.append('item_documentoIdentidadComplemento' + index, $('#documentoIdentidadComplemento' + index).val());
                 formData.append('item_id_documento_identidad_extension' + index, $('#id_documento_identidad_extension' + index).val());
-
+                console.log("id_documento_identidad_extension"+index+$('#id_documento_identidad_extension' + index).val());
                 var nombre = $('#nombre' + index).val();
                 if (!isValidAlphanumeric(nombre, 3) && tipoPersona === 'N') {
-                    errores.push(" -El campo Nombre (Item " + cntImpresion + ") debe tener más de 3 caracteres");
+                    errores.push(" -El campo Nombre (Item " + cntImpresion + ") debe tener más de 3 caracteres o contiene caracteres no permitidos");
                 }
                 formData.append('item_nombre' + index, nombre);
                 formData.append('item_apellidoPaterno' + index, $('#apellidoPaterno' + index).val());
@@ -598,7 +568,7 @@ if (!$_SESSION['swlogin']) {
 
                 var razonSocial = $('#razonSocial' + index).val();
                 if (!isValidAlphanumeric(razonSocial, 3) && tipoPersona === 'J') {
-                    errores.push(' -El campo Razón social (Item ' + cntImpresion + '), debe ser alfanumérico con más de 3 caracteres');
+                    errores.push(' -El campo Razón social (Item ' + cntImpresion + '), debe contar con más de 3 caracteres o contiene caracteres no permitidos');
                 }
                 formData.append('item_razonSocial' + index, razonSocial);
 
@@ -658,20 +628,18 @@ if (!$_SESSION['swlogin']) {
                 processData: false,
                 url: '../php/sirefoSaveSolicitud.php',
                 beforeSend: function() {
-                    console.log("LOADING");
-                    console.log(formData);
                 },
 
                 success: function(dat) {
-                    //AGREAGAR NOTIFICACION DE GUARDADO CORRECTO
-                    console.log(dat);
-                    dat = $.parseJSON(dat);
-                    console.log(dat.log);
+                    //AGREAGAR NOTIFICACION DE GUARDADO CORRECTO 
+
+                    dat = $.parseJSON(dat); 
                     if (dat.err == '0') {
                         toastr["success"]("Registros guardados correctamente", dat.log);
                     } else {
                         toastr["error"]("Ocurrio algun error.", dat.log);
                     }
+                    
 
                 },
                 timeout: 16000,
@@ -688,7 +656,7 @@ if (!$_SESSION['swlogin']) {
     }
 
     function isValidAlphanumeric(value, minLength) {
-        return /^[a-zA-Z0-9\s&'ñÑáéíóúÁÉÍÓÚüÜ]+$/.test(value) && value.length >= minLength;
+        return /^[a-zA-Z0-9\s&'ñÑáéíóúÁÉÍÓÚüÜ.]+$/.test(value) && value.length >= minLength;
     }
 </script>
 

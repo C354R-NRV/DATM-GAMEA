@@ -7,7 +7,7 @@ foreach ($_POST as $clave => $valor) {
 
 $conn = new Conexion();
 $cons = $conn->conectar();
-$query = "select * from srf_documento_identidad_tipo where estado_";
+$query = "select * from srf_documento_identidad_tipo where estado_ is true";
 $stmt = $cons->query($query);
 $tipoDoc = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -16,7 +16,7 @@ $query = "select * from srf_documento_identidad_extension";
 $stmt = $cons->query($query);
 $extension = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$query = "select * from srf_tipo_respaldo where estado_ ";
+$query = "select * from srf_tipo_respaldo where estado_ is true ";
 $stmt = $cons->query($query);
 $tipoRespaldo = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -69,7 +69,7 @@ for ($i = $cntItemAct; $i < ($cntItemAct + $cnt); $i++) {
     <div class="row">
         <div class="col-md-3 mb-3">
             <label for="autoConclusion' . $i . '">Auto Conclusión</label>
-            <input type="text" id="autoConclusion' . $i . '" class="form-control" placeholder="Auto de Conclusion">
+            <input type="text" id="autoConclusion' . $i . '" '.($tipoProceso == 'R'?' disabled ':'').' class="form-control" placeholder="Auto de Conclusion">
         </div>
         <div class="col-md-3 mb-3">
             <label for="id_tipo_respaldo' . $i . '">Tipo de Respaldo</label>
@@ -87,7 +87,7 @@ for ($i = $cntItemAct; $i < ($cntItemAct + $cnt); $i++) {
         <div class="col-md-3 mb-3">
             <label for="montoRetencionBs' . $i . '">Monto Retención</label>
             <input type="number" id="montoRetencionBs' . $i . '" class="form-control"  placeholder="En Bs.">
-            <input type="number" id="montoRetencionUFV' . $i . '" class="form-control"   placeholder="En UFV\'s">
+            <input type="hidden" id="montoRetencionUFV' . $i . '" class="form-control" value="0" disabeld  placeholder="En UFV\'s">
         </div>
     </div>
     <div class="row">

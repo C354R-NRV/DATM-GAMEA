@@ -149,7 +149,7 @@ function simatSiim() {
           var ci_ = $("#ci_").val();
           var tipo_ = $("#tipo_").val();
           datos =
-            "&ci_=" + ci_+'&tipo_='+tipo_;
+            "&ci_=" + ci_ + '&tipo_=' + tipo_;
           $.ajax({
             async: true,
             type: "POST",
@@ -169,7 +169,7 @@ function simatSiim() {
               dat = JSON.parse(e);
               if (dat.error == 'false' || !dat.error) {
                 if (dat.existeInmueble == '1') {
-                  window.open("../php/rptSimatSiim.php?id=" + ci_+"&tipo_="+tipo_, "_blank");
+                  window.open("../php/rptSimatSiim.php?id=" + ci_ + "&tipo_=" + tipo_, "_blank");
                 }
                 else {
                   $.confirm({
@@ -188,22 +188,22 @@ function simatSiim() {
                     }
                   });
                 }
-              }else{
+              } else {
                 $.confirm({
-                    title: "Error...",
-                    content: "Excepcion generada: " + dat.message,
-                    type: "red",
-                    columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
-                    containerFluid: true,
-                    buttons: {
-                      cancel: {
-                        text: "Cerrar",
-                        action: function () {
-                          simatSiim();
-                        },
+                  title: "Error...",
+                  content: "Excepcion generada: " + dat.message,
+                  type: "red",
+                  columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
+                  containerFluid: true,
+                  buttons: {
+                    cancel: {
+                      text: "Cerrar",
+                      action: function () {
+                        simatSiim();
                       },
-                    }
-                  });
+                    },
+                  }
+                });
               }
             },
             timeout: 16000,
@@ -317,6 +317,177 @@ function detalleDeuda(aux = false) {
     }
   });
 }
+
+function solicitudCite(aux = false) {
+
+  $.ajax({
+    async: true,
+    type: "POST",
+    dataType: "html",
+    contentType: "application/x-www-form-urlencoded",
+    url: "../php/getTipoDocCite.php",
+    data: '',
+    beforeSend: function () {
+      loadGralOn();
+    },
+    success: function (html_) {
+      loadGralOff();
+      $.confirm({
+        title: " ",
+        type: "green",
+        typeAnimated: true,
+        columnClass: "col-md-10 col-md-offset-10 col-xs-8 col-xs-offset-8",
+        content: html_,
+        buttons: {
+          formSubmit: {
+            text: "Solicitar CITE",
+            btnClass: "btn-blue",
+            action: function () {
+              var formSubmitButton = this.buttons.formSubmit;
+              datos = "&referencia_=" + $("#referencia_").val() +
+                "&tipoDocumento_=" + $("#tipoDocumento_").val() +
+                "&usuario_solicitante=" + $("#usuario_solicitante").val() +
+                "&hhrr_=" + $("#hhrr_").val() +
+                "&destino_=" + $("#destino_").val();
+              $.ajax({
+                async: true,
+                type: "POST",
+                dataType: "html",
+                contentType: "application/x-www-form-urlencoded",
+                url: "../php/getCite.php",
+                data: datos,
+                beforeSend: function () {
+                  formSubmitButton.setText('Procesando...');
+                  formSubmitButton.disable();
+                  loadGralOn();
+                },
+                success: function (e) {
+                  loadGralOff();
+                  dat = JSON.parse(e)
+
+                  $.confirm({
+                    title: dat.title,
+                    content: dat.message,
+                    type: dat.estado,
+                    typeAnimated: true,
+                    columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
+                    buttons: {
+                      copiar: {
+                        text: "Copiar",
+                        btnClass: "btn-green",
+                        action: function () {
+                          let citeCreado = $("#citeCreado").html();
+                          console.log('previo al try');
+                          console.log(citeCreado);
+                          (async () => {
+                            try {
+                              await copyToClipboard(citeCreado);
+                              // Guardar el mensaje en localStorage
+                              localStorage.setItem('toastrMessage', 'Copiado al portapapeles!');
+                              // Redirigir a citeList.php
+                              window.location.href = "citeList.php";
+                            } catch (err) {
+                              console.error('Error al copiar: ', err);
+                            }
+                          })();
+                        },
+                      },
+                      cancel: {
+                        text: "Cerrar",
+                        action: function () { },
+                      },
+                    },
+
+                  });
+                },
+                timeout: 1600,
+                error: function () { },
+              });
+
+            },
+          },
+          cancel: {
+            text: "Cerrar",
+            action: function () { },
+          },
+        },
+        onOpenBefore: function () {
+          $('.jconfirm-title-c').css('text-align', 'center');
+        }
+      });
+
+    },
+    timeout: 1600,
+    error: function () { },
+  });
+
+
+}
+
+
+function copyToClipboard(text) {
+  return new Promise((resolve, reject) => {
+    // Primero intentamos usar la API Clipboard si está disponible
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(resolve).catch(reject);
+    } else {
+      // Fallback para navegadores que no soportan la API Clipboard
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";  // Evita scroll en la página
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+          resolve();
+        } else {
+          reject(new Error('No se pudo copiar el texto'));
+        }
+      } catch (err) {
+        reject(err);
+      } finally {
+        document.body.removeChild(textArea);
+      }
+    }
+  });
+}
+
+function displayAsTable(data) {
+  const table = document.createElement('table');
+  table.style.borderCollapse = 'collapse';
+  table.style.width = '100%';
+
+  // Crear encabezados
+  const headerRow = table.insertRow();
+  for (const key in data[0]) {
+    const th = document.createElement('th');
+    th.textContent = key.toUpperCase();
+    th.style.border = '1px solid black';
+    th.style.padding = '5px';
+    th.style.textAlign = 'center';
+    th.style.color = 'white';
+    th.style.background = 'black';
+    headerRow.appendChild(th);
+  }
+
+  // Llenar datos
+  data.forEach(item => {
+    const row = table.insertRow();
+    for (const key in item) {
+      const cell = row.insertCell();
+      cell.textContent = item[key];
+      cell.style.border = '1px solid black';
+      cell.style.padding = '5px';
+    }
+  });
+
+  return table;
+
+}
+
 function checkEndOfPage() {
   // Si la posición de desplazamiento más la altura de la ventana es igual a la altura del documento, entonces estamos en el pie de página
 

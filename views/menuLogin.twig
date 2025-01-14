@@ -1,6 +1,7 @@
  
                 <div class="navbar-nav ms-auto"> 
                     <a href="home.php" class="nav-item nav-link active">iA</a> 
+                    <a href="citeList.php" class="nav-item nav-link active">CITES</a> 
 
                     <div class="nav-item dropdown">
                         <a href="index.php#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Publicaciones</a>
@@ -15,8 +16,8 @@
                     <div class="nav-item dropdown">
                         <a href="index.php#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">UAJ</a>
                         <div class="dropdown-menu bg-light mt-2"> 
-                            <a href="sirefoPanel.php" class="dropdown-item">- SIREFO</a>
-                        </div>
+                            <a href="sirefoPanel.php" class="dropdown-item">- SIREFO</a>    
+                        </div> 
                     </div>
                     
                     <div class="nav-item dropdown">
@@ -35,6 +36,6 @@
                             <a href="#" class="dropdown-item">- Predial Adm</a>
                         </div>
                     </div>                     
-                    <a class="nav-item nav-link" style="cursor:pointer;" href="logout.php"><i class="fa fa-sign-out"></i></a>
+                    <a class="nav-item nav-link" style="cursor:pointer;" href="logout.php">{{datSesion.usuario}} <i class="fa fa-sign-out"></i></a>
                     <input type="hidden" id="swLogin" value="{{datSesion.swlogin}}"/>
                 </div> 

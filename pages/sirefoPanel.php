@@ -315,6 +315,62 @@ if (!$_SESSION['swlogin']) {
         window.location.href = './sirefoList.php';
     });
 
+    $('.card-1').click(function() { 
+        $.ajax({
+            async: true,
+            type: "GET",
+            dataType: "json",
+            url: "../php/preapi.php",
+            data: {
+                endpoint: 'consultaCabecera'
+            },
+            beforeSend: function() {
+                loadGralOn();
+            },
+            success: function(data) { 
+                loadGralOff();
+                auxData = data.message;
+                auxTitle = 'Atención...';
+                if (data.success) {
+                    auxTitle = 'SIREFO - CONSULTA CABECERA';
+                    auxData = displayAsTable(data.message);
+                } 
+                $.confirm({
+                    title: auxTitle,
+                    content: auxData,
+                    type: data.type,
+                    typeAnimated: true,
+                    columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
+                    buttons: {
+                        cancel: {
+                            text: "Cerrar",
+                            action: function() {},
+                        },
+                    },
+                    onOpenBefore: function() {
+                        $('.jconfirm-title-c').css('text-align', 'center');
+                    }
+                });
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("Error en la solicitud AJAX:", textStatus, errorThrown);
+                loadGralOff();
+                $.confirm({
+                    title: "Error",
+                    content: "Hubo un problema al conectar con el servidor. Por favor, intenta de nuevo más tarde.",
+                    type: "red",
+                    buttons: {
+                        ok: {
+                            text: "Aceptar",
+                            action: function() {}
+                        }
+                    }
+                });
+            },
+            timeout: 16000
+        });
+    });
+    
     $('.card-4').click(function() {
         console.log("aca estamos en card4");
         $.ajax({
@@ -428,38 +484,7 @@ if (!$_SESSION['swlogin']) {
             },
             timeout: 16000
         });
-    });
-
-
-    function displayAsTable(data) {
-        const table = document.createElement('table');
-        table.style.borderCollapse = 'collapse';
-        table.style.width = '100%';
-
-        // Crear encabezados
-        const headerRow = table.insertRow();
-        for (const key in data[0]) {
-            const th = document.createElement('th');
-            th.textContent = key;
-            th.style.border = '1px solid black';
-            th.style.padding = '5px';
-            headerRow.appendChild(th);
-        }
-
-        // Llenar datos
-        data.forEach(item => {
-            const row = table.insertRow();
-            for (const key in item) {
-                const cell = row.insertCell();
-                cell.textContent = item[key];
-                cell.style.border = '1px solid black';
-                cell.style.padding = '5px';
-            }
-        });
-
-        return table;
-
-    }
+    }); 
 </script>
 
 </html>

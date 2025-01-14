@@ -14,7 +14,7 @@ left join datm_usuario b on b.id = a.idusuario
 where a.estado_   and a.id_cabecera_solicitud = $idsolicitud;";
 $stmt = $cons->query($query);
 $cabeceras = $stmt->fetchAll(PDO::FETCH_ASSOC);
-$resp['query'] =   $query; 
+$resp['query'] =   $query;
 $data = array();
 
 $html = ' <hr>
@@ -121,7 +121,7 @@ foreach ($items as $key => $item) {
 
     $html .= ' 
             <tr>
-                <td>' . $item['documento_identidad_numero'] . ($item['tipo_persona'] == 'N' ? (trim($item['documento_identidad_complemento']) != '' ? '-' . $item['documento_identidad_complemento'] : '').' ' . $item['documento_identidad_extension'] : '') . '</td>
+                <td>' . $item['documento_identidad_numero'] . ($item['tipo_persona'] == 'N' ? (trim($item['documento_identidad_complemento']) != '' ? '-' . $item['documento_identidad_complemento'] : '') . ' ' . $item['documento_identidad_extension'] : '') . '</td>
                 <td>' . ($item['tipo_persona'] == 'N' ? $item['nombres'] : $item['razon_social']) . '</td>
                 <td>' . $item['auto_conclusion'] . '</td>
                 <td>' . $item['tipo_respaldo'] . '</td>
@@ -141,7 +141,7 @@ $html .= '
 ';
 
 /* $resp['cabecera']  = $data;
-$resp['items']  = $dataItem; */ 
+$resp['items']  = $dataItem; */
 
 $resp['html'] = $html;
 $dat = json_encode($resp);

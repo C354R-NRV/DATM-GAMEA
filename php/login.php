@@ -9,7 +9,9 @@ foreach ($_POST as $clave => $valor) {
 $conn = new Conexion();
 $cons = $conn->conectar();  
 
-    $query = "select * from datm_usuario u where u.usuario like UPPER('$u_')  and u.password like MD5('$p_'); ";  
+    $query = "select id,cedula_identidad, nombres, primer_apellido, 
+                segundo_apellido, usuario, codigo_unidad, area, rol, cargo, solicitante_cite, COALESCE(area, '') as area, estado  
+                from datm_usuario u where u.usuario like UPPER('$u_')  and u.password like MD5('$p_'); ";  
     $stmt = $cons->query($query); 
 
     $rs  = array();
@@ -24,6 +26,8 @@ $cons = $conn->conectar();
         $_SESSION['swlogin'] = $sw = '1';
         if($row['estado'] == 'DESBLOQUEADO'){
             $_SESSION['idusuario'] = $row['id'] ;
+            $_SESSION['codigo_unidad'] = $row['codigo_unidad'] ;
+            $_SESSION['area'] = $row['area'] ;
             $_SESSION['usuario'] = $row['usuario'] ;
             $_SESSION['rol'] = $row['rol'] ;
             $_SESSION['nombreUsuario']  = $nombre = $row['nombres'].' '.$row['primer_apellido'].' '.$row['segundo_apellido'];
