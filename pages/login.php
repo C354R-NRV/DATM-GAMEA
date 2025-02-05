@@ -1,3 +1,8 @@
+<?php
+session_start();
+session_destroy();
+$_SESSION['swlogin'] = '0';
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -7,7 +12,7 @@
     <link href="../img/favicon.ico" rel="icon">
     <title>DATM</title>
     <link rel="stylesheet" href="../css/styleLogin.css">
-</head> 
+</head>
 
 <body>
     <div class="menu">

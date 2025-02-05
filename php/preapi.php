@@ -8,7 +8,8 @@ function sanitizeInput($value)
 
 $inputParams = $_SERVER['REQUEST_METHOD'] === 'GET' ? $_GET : $_POST;
 $endpoint = sanitizeInput($inputParams['endpoint'] ?? '');
-$id = sanitizeInput($inputParams['id'] ?? ''); 
+$id = sanitizeInput($inputParams['id'] ?? '');
+$fecha_ = sanitizeInput($inputParams['fecha_'] ?? '');
 $ack = sanitizeInput($inputParams['ack'] ?? '');
 
 const API_URL = 'https://172.16.21.116/api.php';
@@ -54,20 +55,25 @@ function processApiResponse($response, $httpCode, $error, $endpoint)
     }
 
     if ($httpCode >= 200 && $httpCode < 300) {
-        if ($endpoint === 'remitirSolicitud' && isset($data['message'])) {  
+        if ($endpoint === 'remitirSolicitud' && isset($data['message'])) {
             return [
                 'success' => $data['success'],
                 'message' => $data['message'],
                 'type' => $data['type']
             ];
-        } else {
-            // Procesar respuestas de otros endpoints
+        }
+        if ($endpoint === 'consultarEstadoEnvio') {
+
             return [
                 'success' => true,
-                'message' => $data['result'] ?? $data['entidades'] ?? 'Operación exitosa',
-                'type' => 'green'
+                'message' => $data['result']
             ];
         }
+        return [
+            'success' => true,
+            'message' => $data['result'] ?? $data['entidades'] ?? 'Operación exitosa',
+            'type' => 'green'
+        ];
     } else {
         return [
             'success' => false,
@@ -76,29 +82,31 @@ function processApiResponse($response, $httpCode, $error, $endpoint)
             'type' => 'red'
         ];
     }
-}
+}  
 
-// Lógica principal
-$result = [];
 switch ($endpoint) {
     case 'ping':
-        [$response, $httpCode, $error] = makeApiRequest(['endpoint' => $endpoint, 'ack' => $ack]);
+        [$response, $httpCode, $error] = makeApiRequest(['endpoint' => $endpoint, 'ambiente' => $_SESSION['sirefo_ambiente'],   'ack' => $ack]);
         $result = processApiResponse($response, $httpCode, $error, $endpoint);
         break;
     case 'consultaEntidadVigente':
-        [$response, $httpCode, $error] = makeApiRequest(['endpoint' => $endpoint]);
+        [$response, $httpCode, $error] = makeApiRequest(['endpoint' => $endpoint,'ambiente' => $_SESSION['sirefo_ambiente'], ]);
         $result = processApiResponse($response, $httpCode, $error, $endpoint);
         break;
     case 'remitirSolicitud':
-        [$response, $httpCode, $error] = makeApiRequest(['endpoint' => $endpoint, 'id' => $id, 'us' => $_SESSION['idusuario']]);
+        [$response, $httpCode, $error] = makeApiRequest(['endpoint' => $endpoint, 'ambiente' => $_SESSION['sirefo_ambiente'],   'id' => $id, 'us' => $_SESSION['idusuario']]);
         $result = processApiResponse($response, $httpCode, $error, $endpoint);
         break;
     case 'consultarEstadoEnvio':
-        [$response, $httpCode, $error] = makeApiRequest(['endpoint' => $endpoint, 'id' => $id, 'us' => $_SESSION['idusuario']]);
+        [$response, $httpCode, $error] = makeApiRequest(['endpoint' => $endpoint, 'ambiente' => $_SESSION['sirefo_ambiente'],   'id' => $id, 'us' => $_SESSION['idusuario']]);
+        $result = processApiResponse($response, $httpCode, $error, $endpoint);
+        break;
+    case 'consultarListadoEstadoEnvio':
+        [$response, $httpCode, $error] = makeApiRequest(['endpoint' => $endpoint,  'ambiente' => $_SESSION['sirefo_ambiente'],  'fecha_' => $fecha_]);
         $result = processApiResponse($response, $httpCode, $error, $endpoint);
         break;
     case 'consultaCabecera':
-        [$response, $httpCode, $error] = makeApiRequest(['endpoint' => $endpoint]);
+        [$response, $httpCode, $error] = makeApiRequest(['endpoint' => $endpoint, 'ambiente' => $_SESSION['sirefo_ambiente'], ]);
         $result = processApiResponse($response, $httpCode, $error, $endpoint);
         break;
     default:

@@ -31,7 +31,7 @@ if (empty($srfCabecera)) {
     id_documento_identidad_extension, razon_social, nombre, apellido_paterno, apellido_materno, 
     auto_conclusion, id_tipo_respaldo, documento_respaldo, monto_retencion_bs, monto_retencion_ufv, id_item_solicitud 
     from srf_item_solicitud 
-    where  id_cabecera_solicitud = " . $srfCabecera['id_cabecera_solicitud'] . "  and estado_    order by id_item_solicitud asc;";
+    where  id_cabecera_solicitud = " . $srfCabecera['id_cabecera_solicitud'] . "  and estado_  order by id_item_solicitud asc;";
     $stmt = $cons->query($query);
     $srfItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $pjson['infoItem'] = $srfItems;

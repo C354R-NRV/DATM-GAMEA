@@ -36,6 +36,7 @@ function login(){
             beforeSend: function () {  
             },
             success: function (e) {   
+                console.log(e);
                 dat = $.parseJSON(e);
                 if(dat.obs == ''){  
                     var url = 'index.php';

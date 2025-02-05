@@ -286,19 +286,21 @@ if (!$_SESSION['swlogin']) {
                 loadGralOn();
             },
             success: function(e) {
-                console.log(e);
                 loadGralOff();
                 data = JSON.parse(e);
-                auxData = data.message;
+                auxData = "<b>" + data.message + "</b>";
                 auxTitle = 'Atención...';
-                if (data.message.Confirmacion == 'true' || data.message.Confirmacion == true) {
+                data.type = 'red';
+                if (data.success) {
                     auxTitle = 'RESPUESTA SIREFO';
-                    if (data.message.Detalle)
-                        auxData = "se ha realizado correctamente la REMISION DE SOLICITUD";
+                    auxData = "<b>" + data.message.Estado + "</b>";
+                    if (data.message.Estado == 'Procesado') {
+                        data.type = 'green';
+                        auxData += "<br> <b>- Circular:" + (data.message.Circular) + "<br> - Fecha Circular:" + (data.message.FechaCircular) + "</b>";
+                    }
                 } else {
-                    auxTitle = 'Ocurrio un Error...';
-                    data.type = data.message.type;
-                    auxData = data.message.Detalle;
+                    auxTitle = 'Ocurrio un Error en la consulta de estado de envio...';
+                    auxData = data.message.Estado;
                     data.type = 'red';
                 }
                 $.confirm({
@@ -310,7 +312,9 @@ if (!$_SESSION['swlogin']) {
                     buttons: {
                         cancel: {
                             text: "Cerrar",
-                            action: function() {},
+                            action: function() {
+                                window.location.href = './sirefoList.php';
+                            },
                         },
                     },
                     onOpenBefore: function() {
@@ -333,8 +337,52 @@ if (!$_SESSION['swlogin']) {
                     }
                 });
             },
+            timeout: 26000
+        });
+    }
+
+
+
+    function verDetallesEnvio(idsolicitud, codigoSolicitud) {
+
+        $.ajax({
+            async: true,
+            type: "POST",
+            dataType: "html",
+            url: "../php/sirefoGetDetalleEnvioProcesado.php",
+            data: { 
+                idsolicitud: idsolicitud
+            },
+            beforeSend: function() {
+                loadGralOn();
+            },
+            success: function(e) {
+                console.log(e)
+                loadGralOff();
+                data = JSON.parse(e);
+
+                $.confirm({
+                    title: " <b>Detalles de solicitud: " + codigoSolicitud + "</b>",
+                    typeAnimated: true,
+                    columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
+                    content: data.html,
+                    type: "green",
+                    buttons: {
+                        cerrar: {
+                            text: "Cerrar",
+                            action: function() {}
+                        }
+                    }
+                });
+
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("Error en la solicitud AJAX:", textStatus, errorThrown);
+                loadGralOff();
+            },
             timeout: 16000
         });
+
     }
 
     function actualizaEstados(idsolicitud, codigoSolicitud) {
@@ -387,9 +435,9 @@ if (!$_SESSION['swlogin']) {
                                             if (data.message.Detalle)
                                                 auxData = "se ha realizado correctamente la REMISION DE SOLICITUD";
                                         } else {
-                                            auxTitle = 'Ocurrio un Error...';
+                                            auxTitle = 'Ocurrio un Error durante la actualizacion de estados...';
                                             data.type = data.message.type;
-                                            auxData = data.message.Detalle;
+                                            auxData = data.message;
                                             data.type = 'red';
                                         }
                                         $.confirm({
@@ -401,7 +449,9 @@ if (!$_SESSION['swlogin']) {
                                             buttons: {
                                                 cancel: {
                                                     text: "Cerrar",
-                                                    action: function() {},
+                                                    action: function() {
+                                                        window.location.href = './sirefoList.php';
+                                                    },
                                                 },
                                             },
                                             onOpenBefore: function() {
@@ -441,11 +491,6 @@ if (!$_SESSION['swlogin']) {
                 alert('Error: ' + error);
             }
         });
-
-
-
-
-
     }
 
     function cargaUbicacion(idregistro) {

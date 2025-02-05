@@ -93,41 +93,89 @@ if (!$_SESSION['swlogin']) {
             background-color: #e9e9e9;
         }
 
-
-        .cite-detail {
-            max-width: 600px;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            background-color: #fff;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .cite-detail h2 {
-            text-align: center;
-            color: #007bff;
-            margin-bottom: 20px;
-        }
-
-        .cite-detail ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        .cite-detail li {
-            margin: 10px 0;
+        .show-btn3 {
+            position: absolute;
+            /* Ajusta la distancia desde la parte superior */
+            top: 9.5rem;
+            right: -3px;
+            /* Ajusta la distancia desde la parte derecha */
+            background-color: #020e10;
+            /* Color de fondo del botón */
+            color: white;
+            /* Color del texto del botón */
             padding: 10px;
-            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
         }
 
-        .cite-detail li:last-child {
-            border-bottom: none;
+        .chat-message2 {
+            margin-bottom: 10px;
+            /* color: rgb(23, 83, 129); */
+            color: rgb(0, 5, 8);
         }
 
-        .label {
+        .text-end2 {
+            color: rgb(27, 95, 64);
+            text-align: right;
+            font-size: 13px;
+        }
+
+        #sendMessageIa:hover i {
+            color: rgb(17, 71, 47);
+        }
+
+        #chat-box h1 {
+            /* color: rgb(56, 94, 143); */
+            color: rgb(0, 5, 8);
             font-weight: bold;
-            color: #555;
+            font-size: 1.2rem;
+
+        }
+
+
+
+        .thinking {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            color: #0f4562;
+        }
+
+        .thinking-dots {
+            display: flex;
+            color: #0f4562;
+        }
+
+        .thinking-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #000;
+            margin: 0 3px;
+            opacity: 0;
+            animation: pulse 1.5s infinite;
+            color: #0f4562;
+        }
+
+        .thinking-dot:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+
+        .thinking-dot:nth-child(3) {
+            animation-delay: 1s;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -161,7 +209,6 @@ if (!$_SESSION['swlogin']) {
     echo $twig->render('prebodyltFin.twig');
     ?>
     <!-- Hero End -->
-
     <!-- About Start -->
     <div class="contenedorDigitaliza">
         <div class="form-group d-flex flex-column flex-md-row">
@@ -180,9 +227,11 @@ if (!$_SESSION['swlogin']) {
                 </div>
                 <div class="col-md-1 mb-3">
                     <button class="btn btn-primary" onclick="getCites()">consultar</button>
+                    <div class="show-btn3" onclick="showIa()"><span id="contenBtn"><img class="img-fluid" src="../img/ia.gif" style="height: 2rem;" alt=""></span></div>
                 </div>
             </div>
         </div>
+
         <hr>
         <div>
             <table id="tableCompendio"
@@ -238,9 +287,6 @@ if (!$_SESSION['swlogin']) {
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     $(".datepicker").flatpickr();
-    /*   $(document).ready(function($) {
-          getSolicitudes();
-      }); */
 
     function filtrosDataTable(p) {
         console.log("en filtrosDataTable");
@@ -260,16 +306,109 @@ if (!$_SESSION['swlogin']) {
     document.addEventListener('DOMContentLoaded', function() {
         var toastrMessage = localStorage.getItem('toastrMessage');
         if (toastrMessage) {
-            // Mostrar el mensaje toastr
             toastr["success"](toastrMessage);
-
-            // Limpiar el mensaje del localStorage
             localStorage.removeItem('toastrMessage');
         }
     });
 
-    function getCites() {
+    function showIa() {
+        $.confirm({
+            title: '',
+            content: ` 
+            <div class="chat-container border p-3 mt-3">
+                    <div id="chat-box" class="chat-box"></div>
+                </div>
+                <div class="position-relative w-100 mt-3 mb-2">
+                    <textarea class="form-control w-100 ps-4 pe-5" rows="5" id="user-input" placeholder="Escriba su consulta aca ..."  ></textarea>
+                    <button type="button" class="btn shadow-none position-absolute top-0 end-0 mt-1 me-2" onclick="sendMessageIa()" id="sendMessageIa"><i class="fa fa-paper-plane fs-4" style="color:#036b8b;"></i></button>
+                </div>`,
+            type: "green",
+            typeAnimated: true,
+            columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
+            buttons: {
+                cancel: {
+                    text: "Cerrar",
+                    action: function() {},
+                },
+            },
+            onOpenBefore: function() {
+                $('.jconfirm-title-c').css('text-align', 'center');
+                const $chatBox = $('#chat-box');
+                const botMessage = $('<div>').addClass('chat-message2').text(`Hola!, soy DATM inteligente, estoy lista para ayudarte con la redacción de tu documento. 🤖`);
+                $chatBox.append(botMessage);
+                loadGralOff();
+            }
+        });
+    }
 
+
+    function renderWithTypingEffect(element, htmlContent, delay = 50) {
+        let tempDiv = $('<div>').html(htmlContent); // Crear un contenedor temporal para conservar el HTML
+        let elements = tempDiv.contents(); // Obtener los nodos internos 
+        function typeNext(index) {
+            if (index < elements.length) {
+                $(element).append(elements[index]); // Agregar el siguiente nodo al contenedor destino
+                console.log(elements[index]);
+                setTimeout(() => typeNext(index + 1), delay);
+            }
+        }
+        typeNext(0);
+    }
+
+    function sendMessageIa() {
+        console.log("En sendMessageIa");
+        const userInput = $('#user-input').val().trim();
+        if (userInput === '') return;
+
+        const $chatBox = $('#chat-box');
+        const userMessage = $('<div>').addClass('chat-message2 text-end2').text(`${userInput}`);
+
+        $chatBox.append(userMessage);
+        datos = '&promptUser=' + userInput + "&recurso=redaccionnotas&tituloPrincipal=Redaccion de documentos";
+
+
+        $.ajax({
+            async: true,
+            type: "POST",
+            dataType: "html",
+            contentType: "application/x-www-form-urlencoded",
+            url: "../php/apiGemini.php",
+            data: datos,
+            beforeSend: function() {
+                console.log("cargando...");
+                const $thinking = $('<div class="thinking"><span>Generando contenido</span><div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div></div>');
+                $('#chat-box').append($thinking);
+
+            },
+            success: function(response) {
+                $('.thinking').remove();
+
+                /* const botMessage = $('<div>').addClass('chat-message2');
+                $chatBox.append(botMessage); 
+                typeWriter(botMessage, response); */
+
+                const botMessage = $('<div>').addClass('chat-message2').html(`${response}`);
+                $chatBox.append(botMessage);
+                setTimeout(function() {
+                    $chatBox.scrollTop($chatBox.prop('scrollHeight'));
+                }, 100);
+
+                /* const botMessage = $('<div>').addClass('chat-message2');
+                $('#chatBox').append(botMessage); // Agregar el contenedor vacío
+                renderWithTypingEffect(botMessage, response); */
+
+            },
+            timeout: 16000,
+            error: function() {}
+        });
+        $('#user-input').val('');
+        setTimeout(function() {
+            $chatBox.scrollTop($chatBox.prop('scrollHeight'));
+        }, 100);
+    }
+
+
+    function getCites() {
         $.ajax({
             async: true,
             type: 'POST',
@@ -281,16 +420,13 @@ if (!$_SESSION['swlogin']) {
             url: '../php/getDetalleCites.php',
             beforeSend: function() {
                 loadGralOn();
-
             },
             success: function(dat) {
                 loadGralOff();
-                console.log(dat)
                 $('#tbodyItems').empty();
                 dat = $.parseJSON(dat);
-                console.log(dat.query);
                 // Iterar sobre los datos recibidos y agregarlos al tbody
-                $.each(dat.info, function(index, item) {
+                $.each(dat, function(index, item) {
                     var fila = `
                     <tr>
                         <td>${item.idcite}</td>
@@ -301,18 +437,13 @@ if (!$_SESSION['swlogin']) {
                         <td>${item.destino}</td>
                         <td>${item.referencia}</td>
                         <td>${item.hhrr_}</td>
-                        <td>${item.estado}</td>
+                        <td>${item.estado} </td>
                         <td>${item.acciones}</td> 
                     </tr>
                 `;
                     $('#tbodyItems').append(fila);
                 });
-
-                // Recargar la tabla para que Bootstrap Table detecte los nuevos datos
-                console.log("previo resfrescar")
                 $('#tableCompendio').bootstrapTable('refresh');
-                console.log("resfrescamos")
-
             },
             timeout: 16000,
             error: function(xhr, status, error) {
@@ -335,7 +466,6 @@ if (!$_SESSION['swlogin']) {
                 loadGralOn();
             },
             success: function(e) {
-                console.log(e);
                 loadGralOff();
                 data = JSON.parse(e);
                 auxData = data.message;
@@ -426,7 +556,6 @@ if (!$_SESSION['swlogin']) {
                                         loadGralOn();
                                     },
                                     success: function(e) {
-                                        console.log(e);
                                         loadGralOff();
                                         data = JSON.parse(e);
                                         auxData = data.message;
@@ -490,10 +619,6 @@ if (!$_SESSION['swlogin']) {
                 alert('Error: ' + error);
             }
         });
-
-
-
-
 
     }
 
@@ -572,7 +697,6 @@ if (!$_SESSION['swlogin']) {
                                 "&seccion_=" + $("#seccion_").val() +
                                 "&idregistro=" + idregistro +
                                 "&observacion_=" + $("#observacion_").val();
-                            console.log(datos);
                             $.ajax({
                                 async: true,
                                 type: "POST",
@@ -688,7 +812,6 @@ if (!$_SESSION['swlogin']) {
                             "&documento_=" + $("#documento_").val() +
                             "&idactuado=" + idactuado +
                             "&comentario_=" + $("#comentario_").val();
-                        console.log(datos);
                         $.ajax({
                             async: true,
                             type: "POST",
@@ -782,7 +905,6 @@ if (!$_SESSION['swlogin']) {
                                     destino: $('#destino').val(),
                                     fecha_registro: $('#fecha_registro').val(),
                                 };
-                                console.log(datos2);
 
                                 $.ajax({
                                     async: true,
@@ -794,7 +916,6 @@ if (!$_SESSION['swlogin']) {
                                     },
                                     success: function(dat) {
                                         loadGralOff();
-                                        console.log(dat);
                                         $.confirm({
                                             title: dat.title,
                                             type: dat.estado,
@@ -851,7 +972,6 @@ if (!$_SESSION['swlogin']) {
                                 loadGralOn();
                             },
                             success: function(dat) {
-                                console.log(dat);
                                 loadGralOff();
                                 if (dat.err == '0') {
                                     toastr["success"]("CITE anulado correctamente", codigoCite);

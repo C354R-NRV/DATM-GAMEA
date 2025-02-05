@@ -14,7 +14,7 @@ class conexion
     // private $host = '172.16.100.28'; 
     
     private $host = 'localhost';
-    private $dbname = 'datmdev2025';
+    private $dbname = 'datm030225_2';
     private $user = 'postgres';
     private $password = '1n0v4d05';
 

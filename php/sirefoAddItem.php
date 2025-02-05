@@ -52,9 +52,11 @@ for ($i = $cntItemAct; $i < ($cntItemAct + $cnt); $i++) {
             <input type="number" id="documentoIdentidadNumero' . $i . '" class="form-control" placeholder="Num. documento">
             <input type="text" id="documentoIdentidadComplemento' . $i . '" class="form-control natural_' . $i . '" placeholder="Complemento">
             <select class="form-controlSelect natural_' . $i . '"  id="id_documento_identidad_extension' . $i . '">';
+
     foreach ($extension as $row) {
         $item .=  "<option value=" . $row['id_documento_identidad_extension'] . ">" . $row['documento_identidad_extension'] . "</option>";
     }
+
 
     $item .= '</select>
         </div>
@@ -69,7 +71,7 @@ for ($i = $cntItemAct; $i < ($cntItemAct + $cnt); $i++) {
     <div class="row">
         <div class="col-md-3 mb-3">
             <label for="autoConclusion' . $i . '">Auto Conclusión</label>
-            <input type="text" id="autoConclusion' . $i . '" '.($tipoProceso == 'R'?' disabled ':'').' class="form-control" placeholder="Auto de Conclusion">
+            <input type="text" id="autoConclusion' . $i . '" ' . ($tipoProceso == 'R' ? ' disabled ' : '') . ' class="form-control" placeholder="Auto de Conclusion">
         </div>
         <div class="col-md-3 mb-3">
             <label for="id_tipo_respaldo' . $i . '">Tipo de Respaldo</label>
@@ -107,3 +109,4 @@ $resp['extension']  = $extension;
 $resp['tipoRespaldo']  = $tipoRespaldo;
 $dat = json_encode($resp);
 echo $dat;
+

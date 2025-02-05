@@ -23,15 +23,15 @@ $stmt = $cons->query($query);
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($result) {
-    echo '<div class="cite-detail">'; 
+    echo '<div class="element-detail">'; 
     echo '<ul>';
-    echo '<li><span class="label">Fecha de creación:</span> ' . htmlspecialchars($result['fecha']) . '</li>';
-    echo '<li><span class="label">Usuario creador:</span> ' . htmlspecialchars($result['usuario']) . '</li>';
-    echo '<li><span class="label">Código de Cite:</span> ' . htmlspecialchars($result['cite']) . '</li>';
-    echo '<li><span class="label">Referencia:</span> ' . htmlspecialchars($result['referencia']) . '</li>';
-    echo '<li><span class="label">Fecha de anulación:</span> ' . htmlspecialchars($result['fecha_anulacion']) . '</li>';
-    echo '<li><span class="label">Usuario que anuló:</span> ' . htmlspecialchars($result['usuario_anulacion']) . '</li>';
-    echo '<li><span class="label">Motivo de anulación:</span> ' . htmlspecialchars($result['motivo_anulacion']) . '</li>';
+    echo '<li><span class="element-label">Fecha de creación:</span> ' . htmlspecialchars($result['fecha']) . '</li>';
+    echo '<li><span class="element-label">Usuario creador:</span> ' . htmlspecialchars($result['usuario']) . '</li>';
+    echo '<li><span class="element-label">Código de Cite:</span> ' . htmlspecialchars($result['cite']) . '</li>';
+    echo '<li><span class="element-label">Referencia:</span> ' . htmlspecialchars($result['referencia']) . '</li>';
+    echo '<li><span class="element-label">Fecha de anulación:</span> ' . htmlspecialchars($result['fecha_anulacion']) . '</li>';
+    echo '<li><span class="element-label">Usuario que anuló:</span> ' . htmlspecialchars($result['usuario_anulacion']) . '</li>';
+    echo '<li><span class="element-label">Motivo de anulación:</span> ' . htmlspecialchars($result['motivo_anulacion']) . '</li>';
     echo '</ul>';
     echo '</div>';
 } else {

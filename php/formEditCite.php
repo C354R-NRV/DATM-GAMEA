@@ -23,13 +23,13 @@ $stmt = $cons->query($query);
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($result) {
-    echo '<div class="cite-detail">'; 
+    echo '<div class="element-detail">'; 
     echo '<ul>';
-    echo '<li><span class="label">Usuario creador:</span> ' . htmlspecialchars($result['usuario']) . '</li>'; 
-    echo '<li><span class="label">Fecha de CITE:</span><input class="form-control" type="text" id="fecha_registro" value="' .$result['fecha'] . '"/></li>';
-    echo '<li><span class="label">Hoja de ruta:</span><input class="form-control" type="text" id="hhrr_" value=" ' . htmlspecialchars($result['hhrr_']) . '"></li>';
-    echo '<li><span class="label">Referencia:</span><input class="form-control" type="text" id="referencia" value=" ' . htmlspecialchars($result['referencia']) . '"></li>';
-    echo '<li><span class="label">Destinatario:</span><input  class="form-control" type="text" id="destino" value=" ' . htmlspecialchars($result['destino']) . '"></li>';
+    echo '<li><span class="element-label">Usuario creador:</span> ' . htmlspecialchars($result['usuario']) . '</li>'; 
+    echo '<li><span class="element-label">Fecha de CITE:</span><input class="form-control" type="text" id="fecha_registro" value="' .$result['fecha'] . '"/></li>';
+    echo '<li><span class="element-label">Hoja de ruta:</span><input class="form-control" type="text" id="hhrr_" value=" ' . htmlspecialchars($result['hhrr_']) . '"></li>';
+    echo '<li><span class="element-label">Referencia:</span><input class="form-control" type="text" id="referencia" value=" ' . htmlspecialchars($result['referencia']) . '"></li>';
+    echo '<li><span class="element-label">Destinatario:</span><input  class="form-control" type="text" id="destino" value=" ' . htmlspecialchars($result['destino']) . '"></li>';
     echo '</ul>';
     echo '</div>';
 } else {

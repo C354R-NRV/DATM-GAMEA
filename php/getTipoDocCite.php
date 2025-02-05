@@ -66,15 +66,16 @@ $html_ .= "</div>";
 $html_ .= "
             <div class='col-md-12' style='padding:0.3rem 0 0.3rem 0'>
             <label for='hhrr_'>Numero de Hoja de ruta</label>
-                <input type='text' id='hhrr_' class='form-control' placeholder='Hoja de ruta relacionada' autocomplete='off'>
+                <input type='text' id='hhrr_' class='form-control' placeholder='Hoja de ruta relacionada'  >
             </div>
             <div class='col-md-12' style='padding:0.3rem 0 0.3rem 0'>
             <label for='referencia_'>Referencia</label>
-                <input type='text' id='referencia_' class='form-control' placeholder='Breve referencia' autocomplete='off'>
+                <input type='text' id='referencia_' class='form-control' placeholder='Breve referencia'  >
             </div>
             <div class='col-md-12' style='padding:0.3rem 0 0.3rem 0'>
             <label for='destino_'>Destinatario</label>
-                <input type='text' id='destino_' class='form-control' placeholder='Destinatario del documento' autocomplete='off'>
+                <input type='text' id='destino_' class='form-control' placeholder='Destinatario del documento'>
             </div>";
 
 echo $html_;
+

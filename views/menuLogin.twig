@@ -12,17 +12,18 @@
                             <a onclick="impvaNoAnotado()" class="dropdown-item">- Deudores del impuesto IMPVA (sin anotación)</a>
                         </div>
                     </div>
-
+                    {% if datSesion.codigo_unidad == 'UAJ-CC' %}
+                        <div class="nav-item dropdown">
+                            <a href="index.php#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">UAJ</a>
+                            <div class="dropdown-menu bg-light mt-2"> 
+                                <a href="sirefoPanel.php" class="dropdown-item">- SIREFO</a>    
+                            </div> 
+                        </div>
+                    {% endif %}
                     <div class="nav-item dropdown">
-                        <a href="index.php#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">UAJ</a>
-                        <div class="dropdown-menu bg-light mt-2"> 
-                            <a href="sirefoPanel.php" class="dropdown-item">- SIREFO</a>    
-                        </div> 
-                    </div>
-                    
-                    <div class="nav-item dropdown">
-                        <a href="index.php#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">UAA</a>
+                        <a href="index.php#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">GA</a>
                         <div class="dropdown-menu bg-light mt-2">
+                            <a onclick="numeralLiteral()" class="dropdown-item">- A literal</a>
                             <a href="compendio.php" class="dropdown-item ">- Archivo Digital</a>
                             <a href="ver.php?id=e2c39295b134a9c6efb1d8851c36d940" class="dropdown-item">- Verifacion de pago</a>
                             <a onclick="simatSiim()" class="dropdown-item">- SIMAT/SIIM</a> 
@@ -31,11 +32,19 @@
                     
                     <div class="nav-item dropdown">
                         <a href="index.php#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">UFC</a>
-                        <div class="dropdown-menu bg-light mt-2"> 
+                        <div class="dropdown-menu bg-light mt-2">  
                             <a onclick="detalleDeuda()" class="dropdown-item">- Detalle Deuda</a>
                             <a href="#" class="dropdown-item">- Predial Adm</a>
                         </div>
                     </div>                     
-                    <a class="nav-item nav-link" style="cursor:pointer;" href="logout.php">{{datSesion.usuario}} <i class="fa fa-sign-out"></i></a>
-                    <input type="hidden" id="swLogin" value="{{datSesion.swlogin}}"/>
+                    
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">{{datSesion.usuario}}</a>
+                        <input type="hidden" id="swLogin" value="{{datSesion.swlogin}}"/>
+                        <div class="dropdown-menu bg-light mt-2">  
+                            <a href="logout.php" class="dropdown-item">- Cerrar sesion</a>
+                            <a onclick="cambioPass()" class="dropdown-item">- Cambiar clave</a>
+                        </div>
+                    </div>                      
+                   
                 </div> 

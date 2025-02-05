@@ -314,8 +314,14 @@ if (!$_SESSION['swlogin']) {
     $('.card-0').click(function() {
         window.location.href = './sirefoList.php';
     });
+    $('.card-1').click(function() {
+        window.location.href = './sirefoList.php';
+    });
+    $('.card-5').click(function() {
+        window.location.href = './sirefoList.php';
+    });
 
-    $('.card-1').click(function() { 
+    $('.card-1').click(function() {
         $.ajax({
             async: true,
             type: "GET",
@@ -327,14 +333,14 @@ if (!$_SESSION['swlogin']) {
             beforeSend: function() {
                 loadGralOn();
             },
-            success: function(data) { 
+            success: function(data) {
                 loadGralOff();
                 auxData = data.message;
                 auxTitle = 'Atención...';
                 if (data.success) {
                     auxTitle = 'SIREFO - CONSULTA CABECERA';
                     auxData = displayAsTable(data.message);
-                } 
+                }
                 $.confirm({
                     title: auxTitle,
                     content: auxData,
@@ -370,7 +376,147 @@ if (!$_SESSION['swlogin']) {
             timeout: 16000
         });
     });
-    
+
+    $('.card-6').click(function() {
+
+        //SOLICITAMOS FECHA DE REPORTE DESDE DONDE PEDIR INFORMACION AL SIREFO
+
+
+        // $(".datepicker").flatpickr();
+
+        $.confirm({
+            title: "<div style='width:98%;text-align:center;'>Consulta de estado de solicitudes</div>",
+            type: "green",
+            typeAnimated: true,
+            columnClass: "col-md-10 col-md-offset-10 col-xs-8 col-xs-offset-8",
+            content: `       
+                        <input type="text" class="form-control datepicker flatpickr-input active" value="" id="fecha_" placeholder="Fecha de consulta" readonly="readonly">
+                    
+            `,
+            onContentReady: function() {
+                $(".datepicker").flatpickr({
+                    dateFormat: "Y-m-d",
+                    appendTo: document.body,
+                    static: false,
+                    position: 'auto',
+                    onReady: function(selectedDates, dateStr, instance) {
+                        // Añadir clase personalizada al contenedor del calendario
+                        instance.calendarContainer.classList.add('high-z-calendar');
+
+                        // Asegurar que el calendario esté fuera del contenedor de jquery-confirm
+                        document.body.appendChild(instance.calendarContainer);
+
+                        // Asegurar que el calendario tenga posición fija
+                        instance.calendarContainer.style.position = 'fixed';
+                    }
+                });
+
+                // Añadir estilos necesarios
+                const style = document.createElement('style');
+                style.textContent = `
+                    .jconfirm-content {
+                        overflow: visible !important;
+                    }
+                    .high-z-calendar {
+                        z-index: 99999999 !important;
+                        position: fixed !important;
+                    }
+                    .flatpickr-calendar {
+                        z-index: 99999999 !important;
+                    }
+                    .flatpickr-calendar.open {
+                        display: inline-block !important;
+                        z-index: 99999999 !important;
+                        overflow: visible !important;
+                    } 
+                    /* Asegurar que el calendario no sea cortado */
+                    .flatpickr-calendar.arrowTop:before,
+                    .flatpickr-calendar.arrowTop:after {
+                        display: none;
+                    }
+                `;
+                document.head.appendChild(style);
+            },
+            buttons: {
+                copiar: {
+                    text: "Consultar",
+                    btnClass: "btn-green",
+                    action: function() {
+                        $.ajax({
+                            async: true,
+                            type: "GET",
+                            dataType: "json",
+                            url: "../php/preapi.php",
+                            data: {
+                                endpoint: 'consultarListadoEstadoEnvio',
+                                fecha_: ($('#fecha_').val()).replace(/-/g, "") 
+                            },
+                            beforeSend: function() {
+                                console.log("fecha_:"+($('#fecha_').val()).replace(/-/g, "") );
+                                loadGralOn();
+                            },
+                            success: function(data) {
+                                console.log(data);
+                                loadGralOff();
+                                auxData = data.message;
+                                auxTitle = 'Atención...';
+                                if (data.success) {
+                                    auxTitle = 'SIREFO - ESTADO DE SOLICITUDES ENVIADAS';
+                                    auxData = displayAsTable(data.message);
+                                }
+                                $.confirm({
+                                    title: auxTitle,
+                                    content: auxData,
+                                    type: data.type,
+                                    typeAnimated: true,
+                                    columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
+                                    buttons: {
+                                        cancel: {
+                                            text: "Cerrar",
+                                            action: function() {},
+                                        },
+                                    },
+                                    onOpenBefore: function() {
+                                        $('.jconfirm-title-c').css('text-align', 'center');
+                                    }
+                                });
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                console.error("Error en la solicitud AJAX:", textStatus, errorThrown);
+                                loadGralOff();
+                                $.confirm({
+                                    title: "Error",
+                                    content: "Hubo un problema al conectar con el servidor. Por favor, intenta de nuevo más tarde.",
+                                    type: "red",
+                                    buttons: {
+                                        ok: {
+                                            text: "Aceptar",
+                                            action: function() {}
+                                        }
+                                    }
+                                });
+                            },
+                            timeout: 16000
+                        });
+
+                    },
+                },
+                cancel: {
+                    text: "Cerrar",
+                    action: function() {},
+                },
+            },
+            onOpenBefore: function() {
+                $('.jconfirm-title-c').css('text-align', 'center');
+            }
+        });
+
+
+
+
+
+
+    });
     $('.card-4').click(function() {
         console.log("aca estamos en card4");
         $.ajax({
@@ -392,7 +538,7 @@ if (!$_SESSION['swlogin']) {
                 if (data.success) {
                     auxTitle = 'SIREFO - ENTIDADES VIGENTES';
                     auxData = displayAsTable(data.message);
-                } 
+                }
                 $.confirm({
                     title: auxTitle,
                     content: auxData,
@@ -484,7 +630,7 @@ if (!$_SESSION['swlogin']) {
             },
             timeout: 16000
         });
-    }); 
+    });
 </script>
 
 </html>

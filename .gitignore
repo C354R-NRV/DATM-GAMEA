@@ -14,6 +14,7 @@ bower_components
 /img
 /vendor
 /php/PHPMailer
+/pdfjs
 
 # Compiled source #
 ###################

@@ -8,7 +8,7 @@ $conn = new Conexion();
 $cons = $conn->conectar();
 
 $query = "
-select a.id_cabecera_solicitud, a.codigo_solicitud, a.detalle_cantidad, a.fecha_envio, a.adjunto_nombre, b.usuario, a.tipo_proceso
+select a.id_cabecera_solicitud, a.codigo_solicitud, a.detalle_cantidad, to_char(a.fecha_envio, 'YYYY-MM-DD HH24:MI:SS') AS fecha_envio, a.adjunto_nombre, b.usuario, a.tipo_proceso
 from srf_cabecera_solicitud a 
 left join datm_usuario b on b.id = a.idusuario
 where a.estado_   and a.id_cabecera_solicitud = $idsolicitud;";
@@ -33,7 +33,7 @@ foreach ($cabeceras as $key => $cabecera) {
     $estadoEnvio = $stmt->fetch(PDO::FETCH_ASSOC);
 
     $query = "
-        select a.estado, a.fecha_circular
+        select a.estado, to_char(a.fecha_circular, 'YYYY-MM-DD HH24:MI:SS') AS fecha_circular
         from srf_estado_solicitud a 
         where a.id_cabecera_solicitud = " . $cabecera['id_cabecera_solicitud'] . "   limit 1 ";
     $stmt = $cons->query($query);
@@ -116,8 +116,7 @@ foreach ($items as $key => $item) {
         "tipo_respaldo" => $item['tipo_respaldo'], 
         "documento_respaldo" => $item['documento_respaldo'],
         "monto_retencion" => ($item['codigo_solicitud'] > 0 ? $item['monto_retencion_bs'] . ' Bs.' : $item['monto_retencion_ufv'] . ' UFV.')
-    ); */
-
+    ); */ 
 
     $html .= ' 
             <tr>

@@ -49,7 +49,6 @@ if (!$_SESSION['swlogin']) {
             cursor: pointer;
         } */
 
-
         .input-group {
             display: flex;
             align-items: center;
@@ -192,7 +191,7 @@ if (!$_SESSION['swlogin']) {
 
     function quitarItem(nroItem) {
         var id_item_solicitud = $('#id_item_solicitud' + nroItem).val();
-        
+
         if (id_item_solicitud > 0) {
             $.confirm({
                 title: "Dar de baja el item",
@@ -209,16 +208,15 @@ if (!$_SESSION['swlogin']) {
                         action: function() {
                             $.ajax({
                                 type: "POST",
-                                url: "../php/sirefoBajaItem.php",  
+                                url: "../php/sirefoBajaItem.php",
                                 data: {
                                     id_item_solicitud: id_item_solicitud,
                                     swActualizaItems: 1
                                 },
-                                beforeSend: function() { 
-                                },
-                                success: function(response) { 
+                                beforeSend: function() {},
+                                success: function(response) {
                                     dat = $.parseJSON(response);
-                                    if (dat.err.every(Boolean)) { 
+                                    if (dat.err.every(Boolean)) {
                                         $('#detalleCantidad').val(dat.nueva_cantidad_detalle);
                                         //actualizamos la estructura
                                         actualizarItemsTrasBaja(nroItem);
@@ -247,20 +245,19 @@ if (!$_SESSION['swlogin']) {
             });
         } else {
             var detalleCantidadAux = $('#detalleCantidad').val() - 1;
-            
+
             $('#detalleCantidad').val(detalleCantidadAux);
-            cntItem = detalleCantidadAux; 
+            cntItem = detalleCantidadAux;
             $.ajax({
                 type: "POST",
-                url: "../php/sirefoBajaItem.php",  
+                url: "../php/sirefoBajaItem.php",
                 data: {
                     id_cabecera_solicitud: $('#id_cabecera_solicitud').val(),
                     detalleCantidad: detalleCantidadAux,
                     swActualizaItems: 0
                 },
-                beforeSend: function() { 
-                },
-                success: function(response) { 
+                beforeSend: function() {},
+                success: function(response) {
                     dat = $.parseJSON(response);
                     $('#detalleCantidad').val(dat.nueva_cantidad_detalle);
                     actualizarItemsTrasBaja(nroItem);
@@ -272,13 +269,13 @@ if (!$_SESSION['swlogin']) {
         }
     }
 
-    function actualizarItemsTrasBaja(nroItem) { 
+    function actualizarItemsTrasBaja(nroItem) {
         $('#item' + nroItem).remove();
 
-        $('#contenedorItems > div[id^="item"]').each(function(index) { 
-            var nuevoIndex = index; 
+        $('#contenedorItems > div[id^="item"]').each(function(index) {
+            var nuevoIndex = index;
             $(this).attr('id', 'item' + nuevoIndex);
-            $(this).find('h3').text('Item No ' + (nuevoIndex + 1)); 
+            $(this).find('h3').text('Item No ' + (nuevoIndex + 1));
             $(this).find('[id]').each(function() {
                 var idOriginal = $(this).attr('id');
 
@@ -329,7 +326,7 @@ if (!$_SESSION['swlogin']) {
         if (swVerificaDb && $.trim(codigoSolicitud) != '') {
             swVerificaDb = false;
 
-            if ( codigoSolicitud.length <= 3) {
+            if (codigoSolicitud.length <= 3) {
                 errores.push(' -El campo numero de cite no tiene un formato correcto');
             }
 
@@ -357,8 +354,7 @@ if (!$_SESSION['swlogin']) {
                 contentType: false,
                 processData: false,
                 url: "../php/sirefoVerificaDb.php",
-                beforeSend: function() {
-                },
+                beforeSend: function() {},
                 success: function(e) {
                     $('#detalleCantidad').off('keyup');
                     $('#detalleCantidad').off('blur');
@@ -408,9 +404,8 @@ if (!$_SESSION['swlogin']) {
                     dataType: "html",
                     contentType: "application/x-www-form-urlencoded",
                     url: "../php/sirefoAddItem.php",
-                    data: "&cnt=" + n + "&cntItemAct=" + cntItem+ "&tipoProceso=" + $('#tipoProceso').val(),
-                    beforeSend: function() {
-                    },
+                    data: "&cnt=" + n + "&cntItemAct=" + cntItem + "&tipoProceso=" + $('#tipoProceso').val(),
+                    beforeSend: function() {},
                     success: function(e) {
                         dat = $.parseJSON(e);
                         // agregar item nuevo a div contenedorItems 
@@ -418,16 +413,18 @@ if (!$_SESSION['swlogin']) {
                         tipoDoc = dat.tipoDoc;
                         extension = dat.extension;
                         tipoRespaldo = dat.tipoRespaldo;
-
                         if (swauto === 'autocompletar') {
                             var i = 0;
                             datItems.forEach(item => {
                                 $('#tipoPersona' + i).val(item.tipo_persona);
                                 reestructuraFormItem(i);
                                 $('#id_documento_identidad_tipo' + i).val(item.id_documento_identidad_tipo);
+                                $('#id_documento_identidad_extension' + i).val(item.id_documento_identidad_extension);
+                                if (item.id_documento_identidad_tipo == 4) {
+                                    $('#id_documento_identidad_extension' + i).hide();
+                                }
                                 $('#documentoIdentidadNumero' + i).val(item.documento_identidad_numero);
                                 $('#documentoIdentidadComplemento' + i).val(item.documento_identidad_complemento);
-                                $('#id_documento_identidad_extension' + i).val(item.id_documento_identidad_extension);
                                 $('#razonSocial' + i).val(item.razon_social);
                                 $('#nombre' + i).val(item.nombre);
                                 $('#apellidoPaterno' + i).val(item.apellido_paterno);
@@ -470,7 +467,6 @@ if (!$_SESSION['swlogin']) {
         });
         //si el tipo persona es N ocultamos los items con clase juridico_
         if (tipoPersona === "J") {
-
             $(".natural_" + noItem).hide();
             $(".juridico_" + noItem).show();
         } else if (tipoPersona === "N") {
@@ -481,14 +477,34 @@ if (!$_SESSION['swlogin']) {
     }
 
     function actExtension(noItem) {
+
         var tipoPersona = $('#tipoPersona' + noItem).val();
+        console.log("en actExtension");
+        console.log("tipoPersona:" + tipoPersona);
+        console.log("id_documento_identidad_tipo:" + $('#id_documento_identidad_tipo' + noItem).val());
+        $('#id_documento_identidad_extension' + noItem).show();
         if (tipoPersona == 'N' && $('#id_documento_identidad_tipo' + noItem).val() == 4) {
-            $("#id_documento_identidad_extension" + noItem + " option[value='10']").remove();
+            $('#id_documento_identidad_extension' + noItem).hide();
         }
-        if (tipoPersona == 'N' && $('#id_documento_identidad_tipo' + noItem).val() != 4 && $("#id_documento_identidad_extension" + noItem + " option[value='10']").length == 0) {
+        if (tipoPersona == 'N') {
+            //$("#id_documento_identidad_extension" + noItem + " option[value='10']").remove();
+            $("#id_documento_identidad_extension" + noItem).empty();
+            $("#id_documento_identidad_extension" + noItem).append($("<option></option>").val('1').text('CH'));
+            $("#id_documento_identidad_extension" + noItem).append($("<option></option>").val('2').text('LP'));
+            $("#id_documento_identidad_extension" + noItem).append($("<option></option>").val('3').text('CB'));
+            $("#id_documento_identidad_extension" + noItem).append($("<option></option>").val('4').text('OR'));
+            $("#id_documento_identidad_extension" + noItem).append($("<option></option>").val('5').text('PO'));
+            $("#id_documento_identidad_extension" + noItem).append($("<option></option>").val('6').text('TJ'));
+            $("#id_documento_identidad_extension" + noItem).append($("<option></option>").val('7').text('SC'));
+            $("#id_documento_identidad_extension" + noItem).append($("<option></option>").val('8').text('BE'));
+            $("#id_documento_identidad_extension" + noItem).append($("<option></option>").val('9').text('PA'));
+        }
+        if (tipoPersona == 'N' && $('#id_documento_identidad_tipo' + noItem).val() == 5) {
+            $("#id_documento_identidad_extension" + noItem).empty();
             $("#id_documento_identidad_extension" + noItem).append(
                 $("<option></option>").val('10').text('PE')
             );
+            $("#id_documento_identidad_extension" + noItem).val('10').change();
         }
     }
 
@@ -510,7 +526,7 @@ if (!$_SESSION['swlogin']) {
         }
         var codigoSolicitud = $('#codigoSolicitud').val();
 
-        if ( codigoSolicitud.length <= 3) {
+        if (codigoSolicitud.length <= 3) {
             errores.push(' -El campo numero de cite no tiene un formato correcto');
         }
         formData.append('cabecera_codigo_solicitud', codigoSolicitud);
@@ -557,7 +573,7 @@ if (!$_SESSION['swlogin']) {
 
                 formData.append('item_documentoIdentidadComplemento' + index, $('#documentoIdentidadComplemento' + index).val());
                 formData.append('item_id_documento_identidad_extension' + index, $('#id_documento_identidad_extension' + index).val());
-                console.log("id_documento_identidad_extension"+index+$('#id_documento_identidad_extension' + index).val());
+                console.log("id_documento_identidad_extension" + index + $('#id_documento_identidad_extension' + index).val());
                 var nombre = $('#nombre' + index).val();
                 if (!isValidAlphanumeric(nombre, 3) && tipoPersona === 'N') {
                     errores.push(" -El campo Nombre (Item " + cntImpresion + ") debe tener más de 3 caracteres o contiene caracteres no permitidos");
@@ -578,8 +594,8 @@ if (!$_SESSION['swlogin']) {
 
                 var montoRetencionBs = $('#montoRetencionBs' + index).val();
                 var montoRetencionUFV = $('#montoRetencionUFV' + index).val();
-                if (!isNumeric(montoRetencionBs) && !isNumeric(montoRetencionUFV)) {
-                    errores.push(" -Ingrese un monto de retenciones en bolivianos o UFV's (Item " + cntImpresion + ")");
+                if (!isNumeric(montoRetencionBs)) {
+                    errores.push(" -Ingrese un monto de retenciones en bolivianos (Item " + cntImpresion + ")");
                 }
                 if (!isNumeric(montoRetencionBs)) {
                     montoRetencionBs = 0;
@@ -627,19 +643,18 @@ if (!$_SESSION['swlogin']) {
                 contentType: false,
                 processData: false,
                 url: '../php/sirefoSaveSolicitud.php',
-                beforeSend: function() {
-                },
+                beforeSend: function() {},
 
                 success: function(dat) {
                     //AGREAGAR NOTIFICACION DE GUARDADO CORRECTO 
 
-                    dat = $.parseJSON(dat); 
+                    dat = $.parseJSON(dat);
                     if (dat.err == '0') {
                         toastr["success"]("Registros guardados correctamente", dat.log);
                     } else {
                         toastr["error"]("Ocurrio algun error.", dat.log);
                     }
-                    
+
 
                 },
                 timeout: 16000,

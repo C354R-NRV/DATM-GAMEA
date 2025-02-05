@@ -5,8 +5,15 @@ require_once './conexionpsql.php';
 foreach ($_POST as $clave => $valor) {
     $$clave = addslashes(trim($valor));
 }
+foreach ($_GET as $clave => $valor) {
+    $$clave = addslashes(trim($valor));
+}
 $conn = new Conexion();
 $cons = $conn->conectar();
+
+if (isset($filtroFechaIni) and trim($filtroFechaIni) != '' and isset($filtroFechaFin) and trim($filtroFechaFin) != '') {
+    $filtro .= " and a.fecha_registro::DATE  BETWEEN TO_DATE( '$filtroFechaIni', 'YYYY-MM-DD') AND TO_DATE( '$filtroFechaFin', 'YYYY-MM-DD') ";
+}
 
 // Query to get the maximum correlative for the given unit and code
 $query = "select idcite, TO_CHAR(a.fecha_registro::timestamp, 'DD/MM/YYYY HH24:MI:SS') fecha,  b.usuario, a.cite, a.referencia, a.motivo_anulacion, CASE 
@@ -18,31 +25,59 @@ $query = "select idcite, TO_CHAR(a.fecha_registro::timestamp, 'DD/MM/YYYY HH24:M
     left join datm_usuario c on c.id =  a.usuario_anulacion
     left join datm_usuario d on d.id =  a.usuario_solicitante
     left join datm_cite_tipo_doc e on e.codigo_doc = a.codigo    and e.unidad = a.unidad and COALESCE(a.area, '') = COALESCE(e.area, '')
-    where a.unidad like '" . $_SESSION['codigo_unidad'] . "' order by idcite;";
+    where a.unidad like '" . $_SESSION['codigo_unidad'] . "'
+        $filtro 
+    order by idcite;";
+
+/* print_r($query) ; */
 
 $stmt = $cons->query($query);
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $data = array();
-$cnt= 1;
+$cnt = 1;
 foreach ($result as $key => $cite) {
-    $fila = array(
+    $fila = array( 
         "idcite" => $cnt,
         "fecha" =>  $cite['fecha'],
-        "usuario" => ($cite['usuario'] == $cite['usuario_solicitante']? $cite['usuario']: $cite['usuario_solicitante']),
+        "usuario" => ($cite['usuario'] == $cite['usuario_solicitante'] ? $cite['usuario'] : $cite['usuario_solicitante']),
         "doc" => $cite['doc_'],
         "cite" => $cite['cite'],
         "destino" => $cite['destino'],
         "referencia" => $cite['referencia'],
         "hhrr_" => $cite['hhrr_'],
-        "estado" =>   $cite['estado'],
-        "acciones" => '<div style="text-align:center;">' . 
-                ( ($cite['estado'] == 'Activo' and ($cite['usuario_'] == $_SESSION['idusuario'] or $_SESSION['rol'] == 'SECRETARIA'  or $_SESSION['rol'] == 'JEFATURA')  )  ? 
-                    '<a class="btn btn-danger" title="Dar de baja el CITE" onclick="borrarCite(' . $cite['idcite'] . ', \'' . $cite['cite'] . '\')" role="button"><i class="fa fa-trash"></i></a>' : 
-                    '<a class="btn btn-secondary" title="ver detalle de CITE" onclick="verAnulacionCite(' . $cite['idcite'] . ', \'' . $cite['cite'] . '\')" role="button"><i class="fa fa-search" aria-hidden="true"></i></a>').
-                    ((($_SESSION['rol'] == 'SECRETARIA'  or $_SESSION['rol'] == 'JEFATURA') and $cite['estado'] == 'Activo' )?' <br><a class="btn btn-warning" title="Editar CITE" onclick="editarCite(' . $cite['idcite'] . ', \'' . $cite['cite'] . '\')" role="button"><i class="fa fa-edit" aria-hidden="true"></i></a>':''). '</div>'
+        "estado" =>   $cite['estado'] ,
+        "acciones" => '<div style="text-align:center;">' .
+            (($cite['estado'] == 'Activo' and ($cite['usuario_'] == $_SESSION['idusuario'] or $_SESSION['rol'] == 'SECRETARIA'  or $_SESSION['rol'] == 'JEFATURA'))  ?
+                '<a class="btn btn-danger" title="Dar de baja el CITE" onclick="borrarCite(' . $cite['idcite'] . ', \'' . $cite['cite'] . '\')" role="button"><i class="fa fa-trash"></i></a>' :
+                '<a class="btn btn-secondary" title="ver detalle de CITE" onclick="verAnulacionCite(' . $cite['idcite'] . ', \'' . $cite['cite'] . '\')" role="button"><i class="fa fa-search" aria-hidden="true"></i></a>') .
+            ((($_SESSION['rol'] == 'SECRETARIA'  or $_SESSION['rol'] == 'JEFATURA') and $cite['estado'] == 'Activo' or ($cite['usuario_'] == $_SESSION['idusuario'] and comparaFechaLimite($cite['fecha'], 3) and $cite['estado'] == 'Activo')) ? ' <br><a class="btn btn-warning" title="Editar CITE" onclick="editarCite(' . $cite['idcite'] . ', \'' . $cite['cite'] . '\')" role="button"><i class="fa fa-edit" aria-hidden="true"></i></a>' : '') . '</div>'
     );
     $cnt++;
     $data[] = $fila;
 }
 print_r(json_encode($data));
+
+
+function comparaFechaLimite($fecha, $dias)
+{
+    $currentDate = new DateTime();
+    $inputDate = DateTime::createFromFormat('d/m/Y H:i:s', $fecha);
+
+    // Verificar si la fecha ingresada es válida
+    if (!$inputDate) {
+        echo "Formato de fecha inválido.";
+        exit;
+    }
+
+    // Sumar 3 días a la fecha ingresada
+    $inputDatePlus3Days = clone $inputDate;
+    $inputDatePlus3Days->modify("+$dias days");
+
+    // Comparar las fechas
+    if ($currentDate < $inputDatePlus3Days) {
+        return true;
+    } else {
+        return false;
+    }
+}

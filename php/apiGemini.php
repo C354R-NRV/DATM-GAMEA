@@ -5,7 +5,7 @@ foreach ($_POST as $clave => $valor) {
     $$clave = addslashes(trim($valor));
 }
 
-$url = 'http://172.16.21.90:3011/api/chat';
+$url = 'http://172.16.21.90:3011/api/docs';
 $data = array(
     'promptUser' => $promptUser,
     'recurso' => $recurso,

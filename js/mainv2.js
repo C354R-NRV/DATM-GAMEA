@@ -69,6 +69,142 @@ var sw_ = true;
   });
 })(jQuery);
 
+
+function numeroALetras() {
+  let numero = $('#numeral_').val();
+  // Eliminar comas y convertir a número
+  numero = parseFloat(numero.replace(/,/g, ''));
+
+  if (isNaN(numero)) {
+    $('#literal_').val('Por favor, ingrese un número válido.');
+    return;
+  }
+
+  const unidades = ['', 'un', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve'];
+  const unidadesEspeciales = ['', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve'];
+  const decenas = ['diez', 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 'diecinueve'];
+  const decenas2 = ['', '', 'veinte', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
+  const centenas = ['', 'ciento', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos', 'seiscientos', 'setecientos', 'ochocientos', 'novecientos'];
+
+  function convertirGrupo(n, final) {
+    let resultado = '';
+
+    if (n === 100) return 'cien';
+
+    if (n >= 100) {
+      resultado += centenas[Math.floor(n / 100)] + ' ';
+      n %= 100;
+    }
+
+    if (n >= 30) {
+      resultado += decenas2[Math.floor(n / 10)];
+      if (n % 10 !== 0) {
+        resultado += ' y ' + (final ? unidadesEspeciales[n % 10] : unidades[n % 10]);
+      }
+    } else if (n >= 20) {
+      if (n === 20) {
+        resultado += 'veinte';
+      } else {
+        resultado += 'veinti' + (final ? unidadesEspeciales[n % 10] : unidades[n % 10]);
+      }
+    } else if (n >= 10) {
+      resultado += decenas[n - 10];
+    } else if (n > 0) {
+      resultado += final ? unidadesEspeciales[n] : unidades[n];
+    }
+
+    return resultado.trim();
+  }
+
+  if (numero === 0) return 'Cero 00/100';
+
+  const grupos = ['', 'mil', 'millones', 'mil millones', 'billones'];
+  let resultado = '';
+  let i = 0;
+  let parteEntera = Math.floor(numero);
+  const parteDecimal = Math.round((numero - parteEntera) * 100);
+
+  while (parteEntera > 0) {
+    const grupo = parteEntera % 1000;
+    if (grupo > 0) {
+      const texto = convertirGrupo(grupo, i === 0);
+      if (i === 1) {
+        if (grupo === 1) {
+          resultado = 'mil ' + resultado;
+        } else {
+          resultado = texto + ' mil ' + resultado;
+        }
+      } else if (i === 2 && grupo === 1) {
+        resultado = 'un millón ' + resultado;
+      } else {
+        resultado = texto + (i > 0 ? ' ' + grupos[i] : '') + (resultado ? ' ' + resultado : '');
+      }
+    }
+    parteEntera = Math.floor(parteEntera / 1000);
+    i++;
+  }
+
+  resultado = resultado.trim();
+
+  // Capitalizar la primera letra
+  resultado = resultado.charAt(0).toUpperCase() + resultado.slice(1);
+
+  // Reemplazar "Uno mil" por "Un mil" al inicio de la cadena
+  if (resultado.startsWith('Mil')) {
+    resultado = 'Un mil' + resultado.slice(3);
+  }
+
+  resultado += ' ' + parteDecimal.toString().padStart(2, '0') + '/100';
+
+  $('#literal_').val(resultado);
+}
+function numeralLiteral() {
+  $.confirm({
+    title: "<div style='width:98%;text-align:center;'>Numeral>literal</div>",
+    type: "green",
+    typeAnimated: true,
+    columnClass: "col-md-10 col-md-offset-10 col-xs-8 col-xs-offset-8",
+    content: `                      
+                    <div class='col-md-12' style='padding:0.3rem 0 0.3rem 0'>
+                        <input type='number' id='numeral_' onkeyup='numeroALetras();'   class='form-control' placeholder='Ingrese el numero del cual obtener su formato literal' >
+                    </div>
+                    <hr>
+                    <div class='col-md-12' style='padding:0.3rem 0 0.3rem 0'>
+                        <input type='text' id='literal_' class='form-control' placeholder='Numero en formato literal' autocomplete='off'>
+                    </div>
+            `,
+    buttons: {
+      copiar: {
+        text: "Copiar",
+        btnClass: "btn-green",
+        action: function () {
+          let literal_ = $("#literal_").val();
+          (async () => {
+            try {
+              await copyToClipboard(literal_);
+              toastr["success"]("Número literal copiado!");
+
+            } catch (err) {
+              console.error('Error al copiar: ', err);
+            }
+          })();
+          return false;
+        },
+      },
+      cancel: {
+        text: "Cerrar",
+        action: function () { },
+      },
+    },
+    onOpenBefore: function () {
+      $('.jconfirm-title-c').css('text-align', 'center');
+    }
+  });
+}
+
+
+
+
 function proformaRuat() {
   $.confirm({
     title: "<div style='width:100%;text-align:center;'>De que rubro desea generar la proforma de deuda?</div>",
@@ -223,6 +359,96 @@ function simatSiim() {
   });
 }
 
+function cambioPass() {
+  $.confirm({
+    title: "<div style='width:98%;text-align:center;'>CAMBIO DE CONTRASEÑA</div>",
+    type: "green",
+    typeAnimated: true,
+    columnClass: "col-md-10 col-md-offset-10 col-xs-8 col-xs-offset-8",
+    content: `                      
+            <div class='col-md-12' style='padding:0.3rem 0 0.3rem 0'>
+                <input type='password' id='passwordAct_' class='form-control' placeholder='Clave actual' autocomplete='off'>
+            </div> 
+            <div class='col-md-12' style='padding:0.3rem 0 0.3rem 0'>
+                <input type='password' id='passwordNuevo_' class='form-control' placeholder='Nueva clave' autocomplete='off'>
+            </div> 
+            `,
+    buttons: {
+      formSubmit: {
+        text: "Guardar",
+        btnClass: "btn-blue",
+        action: function () {
+          var formSubmitButton = this.buttons.formSubmit;
+          datos = "&passwordNuevo_=" + $("#passwordNuevo_").val() + "&passwordAct_=" + $("#passwordAct_").val();
+          $.ajax({
+            async: true,
+            type: "POST",
+            dataType: "html",
+            contentType: "application/x-www-form-urlencoded",
+            url: "../php/setPass.php",
+            data: datos,
+            beforeSend: function () {
+              formSubmitButton.setText('Procesando...');
+              formSubmitButton.disable();
+              loadGralOn();
+            },
+            success: function (e) {
+              console.log(e);
+              loadGralOff();
+              dat = JSON.parse(e);
+              if (dat.estado == 'green') {
+                $.confirm({
+                  title: dat.title,
+                  content: dat.message,
+                  type: dat.estado,
+                  typeAnimated: true,
+                  columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
+                  buttons: {
+                    aceptar: {
+                      text: "Aceptar",
+                      action: function () {
+                        window.location.href = "login.php";
+                      },
+                    },
+                  }
+                });
+              } else {
+                $.confirm({
+                  title: dat.title,
+                  content: dat.message,
+                  type: dat.estado,
+                  typeAnimated: true,
+                  columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
+                  buttons: {
+                    volver: {
+                      text: "Volver",
+                      action: function () {
+                        cambioPass()
+                      },
+                    },
+                  }
+                });
+              }
+
+
+
+            },
+            timeout: 16000,
+            error: function () { },
+          });
+
+        },
+      },
+      cancel: {
+        text: "Cerrar",
+        action: function () { },
+      },
+    },
+    onOpenBefore: function () {
+      $('.jconfirm-title-c').css('text-align', 'center');
+    }
+  });
+}
 function detalleDeuda(aux = false) {
 
   aux = (aux != false ? aux : '')
@@ -542,18 +768,27 @@ function showPromos() {
   });
 }
 
-function showEdictos() {
-
-
+function showEdictos() { 
   var contenido = `<div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-indicators">
     <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
     <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button> 
     <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button> 
     <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button> 
+    <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="4" aria-label="Slide 5"></button> 
   </div>
   <div class="carousel-inner">
       <div class="carousel-item active">  
+          <div class="bd-placeholder-img text-center">
+              <img src="../img/anuncios/edicto01122024.jpg">
+              <div class="container text-center">
+                  <div class="carousel-caption text-start"> 
+                      <p><a class="btn btn-lg btn-warning" href="../img/anuncios/edicto01122024.pdf" target="_blank"><i class="fa fa-cloud-download"></i> <span style="font-size:0.7rem;">Descargar edicto | 04/12/24 [1Mb]</a></p>
+                  </div>
+              </div>
+          </div>
+      </div>     
+      <div class="carousel-item">  
           <div class="bd-placeholder-img text-center">
               <img src="../img/anuncios/edicto12072024.jpg">
               <div class="container text-center">
