@@ -78,6 +78,7 @@ foreach ($cabeceras as $key => $cabecera) {
                             <th>RESPALDO</th>
                             <th>DOC. RESPALDO</th>
                             <th>RETENCIÓN</th>
+                            <th>DOC. TRIB.</th>
                         </tr>
                     </thead>
                     <tbody>  
@@ -97,7 +98,7 @@ $query = "select concat(nombre, ' ', apellido_paterno, ' ', apellido_materno) no
 	monto_retencion_bs, 
 	monto_retencion_ufv , 
     tipo_persona,
-	a.id_cabecera_solicitud
+	a.id_cabecera_solicitud, documento_tributario, tipo_documento_tributario, resolucion_determinativa, gestion_fiscal, cite_anotacion_preventiva
 from srf_item_solicitud a 
 left join srf_documento_identidad_extension b on b.id_documento_identidad_extension = a.id_documento_identidad_extension
 left join srf_tipo_respaldo c on  c.id_tipo_respaldo = a.id_tipo_respaldo
@@ -116,7 +117,7 @@ foreach ($items as $key => $item) {
         "tipo_respaldo" => $item['tipo_respaldo'], 
         "documento_respaldo" => $item['documento_respaldo'],
         "monto_retencion" => ($item['codigo_solicitud'] > 0 ? $item['monto_retencion_bs'] . ' Bs.' : $item['monto_retencion_ufv'] . ' UFV.')
-    ); */ 
+    ); */
 
     $html .= ' 
             <tr>
@@ -126,6 +127,7 @@ foreach ($items as $key => $item) {
                 <td>' . $item['tipo_respaldo'] . '</td>
                 <td>' . $item['documento_respaldo'] . '</td>
                 <td>' . ($item['monto_retencion_bs'] > 0 ? $item['monto_retencion_bs'] . ' Bs.' : $item['monto_retencion_ufv'] . ' UFV.') . '</td>
+                <td>' . $item['documento_tributario'] . "<span  style='font-size:10px;'><br>[".$item['tipo_documento_tributario'].']</span></td>
             </tr>  
         ';
 }

@@ -13,7 +13,7 @@ class conexion
 
     // private $host = '172.16.100.28'; 
     
-    private $host = 'localhost';
+    private $host = '172.16.21.90';
     private $dbname = 'datm030225_2';
     private $user = 'postgres';
     private $password = '1n0v4d05';
@@ -53,4 +53,23 @@ class conexion
         }
         return $meses[$numero_mes];
     }
+}
+
+function generarSha1DesdeCabecera($cabecera)
+{
+    $texto = '';
+    $texto .= !empty($cabecera->adjunto_nombre) ? $cabecera->adjunto_nombre : '';
+    $texto .= !empty($cabecera->autoridad_cargo) ? $cabecera->autoridad_cargo : '';
+    $texto .= !empty($cabecera->autoridad_solicitante) ? $cabecera->autoridad_solicitante : '';
+    $texto .= !empty($cabecera->codigo_solicitud) ? $cabecera->codigo_solicitud : '';
+    $texto .= !empty($cabecera->detalle_cantidad) ? $cabecera->detalle_cantidad : '';
+    $texto .= !empty($cabecera->entidad) ? $cabecera->entidad : '';
+    $texto .= !empty($cabecera->fecha_envio_ansi) ? $cabecera->fecha_envio_ansi : '';
+    $texto .= !empty($cabecera->gerencia) ? $cabecera->gerencia : '';
+    $texto .= !empty($cabecera->IdSolicitud) ? $cabecera->IdSolicitud : '';
+    $texto .= !empty($cabecera->tipo_proceso) ? $cabecera->tipo_proceso : '';
+
+    $cabecera->hash_datos_txt = $texto;
+    $cabecera->hash_datos = strtoupper(sha1($texto));
+    return $cabecera->hash_datos;
 }

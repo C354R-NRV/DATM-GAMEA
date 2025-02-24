@@ -28,6 +28,7 @@ if (!$_SESSION['swlogin']) {
         }
 
         .btn-flotante {
+
             position: fixed;
             top: 40%;
             right: 20px;
@@ -109,6 +110,10 @@ if (!$_SESSION['swlogin']) {
         <button id="btn-guardar" class="btn btn-primary">
             <i class="fa fa-floppy-o"></i>
         </button>
+        <hr>
+        <button id="btn-generar" class="btn btn-success">
+            <i class="fa fa-file-text-o"></i>
+        </button>
     </div>
     <div class="contenedorDigitaliza">
 
@@ -136,7 +141,17 @@ if (!$_SESSION['swlogin']) {
             <div class="col-md-3 mb-3">
                 <label for="detalleCantidad">Cantidad de items</label>
                 <div class="input-group">
-                    <input type="number" id="detalleCantidad" onfocus="verificaDB()" class="form-control" placeholder="Cantidad items" value="<?php echo (isset($_GET['dc']) ? $_GET['dc'] : '') ?>">
+                    <input type="number" id="detalleCantidad" onfocus="verificaDB()" class="form-control" placeholder="Cantidad items" value="<?php
+
+                    require_once '../php/conexionpsql.php';
+                    $conn = new Conexion();
+                    $cons = $conn->conectar();
+                    
+                    $query = "select * from srf_cabecera_solicitud where id_cabecera_solicitud = ".(isset($_GET['id']) ? $_GET['id'] : '0')." limit 1;";
+                    $stmt = $cons->query($query);
+                    $cabecera = $stmt->fetch(PDO::FETCH_ASSOC);
+                    echo $cabecera['detalle_cantidad'];
+                    ?>">
                     <button id="refreshButton" class="btn btn-outline-secondary" type="button" onclick="addItem(false, false)">
                         <i class="fa fa-refresh"></i>
                     </button>
@@ -184,8 +199,25 @@ if (!$_SESSION['swlogin']) {
         $('#btn-guardar').on('click', function() {
             guardarSolicitud(true, 0);
         });
+        $('#btn-generar').on('click', function() {
+            var url_ = "../php/rptSirefoNota.php?id=" + $('#id_cabecera_solicitud').val();
+            window.open(url_, "_blank");
+        });
         if ($('#swEdicionSolicitud').val()) {
             verificaDB();
+        }
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var toastrMessage = localStorage.getItem('toastrMessage');
+        var toastrTitle = localStorage.getItem('toastrTitle');
+        console.log("en addevenlistener");
+        console.log("toastrMessage:" + toastrMessage);
+        if (toastrMessage) {
+            toastr["success"](toastrMessage, toastrTitle);
+            localStorage.removeItem('toastrMessage');
+            localStorage.removeItem('toastrTitle');
         }
     });
 
@@ -387,7 +419,6 @@ if (!$_SESSION['swlogin']) {
                 timeout: 16000,
                 error: function() {},
             });
-
         }
     }
 
@@ -419,6 +450,8 @@ if (!$_SESSION['swlogin']) {
                                 $('#tipoPersona' + i).val(item.tipo_persona);
                                 reestructuraFormItem(i);
                                 $('#id_documento_identidad_tipo' + i).val(item.id_documento_identidad_tipo);
+                                $('#documentoTributario' + i).val(item.documento_tributario);
+                                $('#tipo_documento_tributario' + i).val(item.tipo_documento_tributario);
                                 $('#id_documento_identidad_extension' + i).val(item.id_documento_identidad_extension);
                                 if (item.id_documento_identidad_tipo == 4) {
                                     $('#id_documento_identidad_extension' + i).hide();
@@ -430,6 +463,9 @@ if (!$_SESSION['swlogin']) {
                                 $('#apellidoPaterno' + i).val(item.apellido_paterno);
                                 $('#apellidoMaterno' + i).val(item.apellido_materno);
                                 $('#autoConclusion' + i).val(item.auto_conclusion);
+                                $('#gestionFiscal' + i).val(item.gestion_fiscal);
+                                $('#cite_anotacion_preventiva' + i).val(item.cite_anotacion_preventiva);
+                                $('#resolucionDeterminativa' + i).val(item.resolucion_determinativa);
                                 $('#id_tipo_respaldo' + i).val(item.id_tipo_respaldo);
                                 $('#documentoRespaldo' + i).val(item.documento_respaldo);
                                 $('#montoRetencionBs' + i).val(item.monto_retencion_bs);
@@ -517,8 +553,8 @@ if (!$_SESSION['swlogin']) {
             if (fileInput.files.length > 0) {
                 formData.append('cabecera_archivoPdf', fileInput.files[0]);
             } else {
-                if ($('#fileExistente').html().trim() == '')
-                    errores.push(' -Tiene que agregar un documento adjunto en PDF segun el reglamento interno.');
+                /* if ($('#fileExistente').html().trim() == '')
+                    errores.push(' -Tiene que agregar un documento adjunto en PDF segun el reglamento interno.'); */
 
             }
         } else {
@@ -571,6 +607,8 @@ if (!$_SESSION['swlogin']) {
                 }
                 formData.append('item_documentoIdentidadNumero' + index, documentoIdentidadNumero);
 
+                formData.append('item_documentoTributario' + index, $('#documentoTributario' + index).val());
+                formData.append('item_tipo_documento_tributario' + index, $('#tipo_documento_tributario' + index).val());
                 formData.append('item_documentoIdentidadComplemento' + index, $('#documentoIdentidadComplemento' + index).val());
                 formData.append('item_id_documento_identidad_extension' + index, $('#id_documento_identidad_extension' + index).val());
                 console.log("id_documento_identidad_extension" + index + $('#id_documento_identidad_extension' + index).val());
@@ -589,11 +627,17 @@ if (!$_SESSION['swlogin']) {
                 formData.append('item_razonSocial' + index, razonSocial);
 
                 formData.append('item_autoConclusion' + index, $('#autoConclusion' + index).val());
+                formData.append('item_resolucionDeterminativa' + index, $('#resolucionDeterminativa' + index).val());
+                formData.append('item_gestionFiscal' + index, $('#gestionFiscal' + index).val());
+                formData.append('item_cite_anotacion_preventiva' + index, $('#cite_anotacion_preventiva' + index).val());
                 formData.append('item_id_tipo_respaldo' + index, $('#id_tipo_respaldo' + index).val());
                 formData.append('item_documentoRespaldo' + index, $('#documentoRespaldo' + index).val());
 
                 var montoRetencionBs = $('#montoRetencionBs' + index).val();
                 var montoRetencionUFV = $('#montoRetencionUFV' + index).val();
+
+                var id_item_solicitud = $('#id_item_solicitud' + index).val();
+
                 if (!isNumeric(montoRetencionBs)) {
                     errores.push(" -Ingrese un monto de retenciones en bolivianos (Item " + cntImpresion + ")");
                 }
@@ -605,6 +649,7 @@ if (!$_SESSION['swlogin']) {
                     montoRetencionUFV = 0;
                 }
                 formData.append('item_montoRetencionUFV' + index, montoRetencionUFV);
+                formData.append('item_id_item_solicitud' + index, id_item_solicitud);
             }
         }
 
@@ -647,10 +692,13 @@ if (!$_SESSION['swlogin']) {
 
                 success: function(dat) {
                     //AGREAGAR NOTIFICACION DE GUARDADO CORRECTO 
-
+                    console.log(dat);
                     dat = $.parseJSON(dat);
                     if (dat.err == '0') {
-                        toastr["success"]("Registros guardados correctamente", dat.log);
+                        console.log("cargando en localStorage:" + dat.log);
+                        localStorage.setItem('toastrMessage', dat.log);
+                        localStorage.setItem('toastrTitle', "Registros guardados correctamente");
+                        window.location.href = "sirefoAddSolicitud.php?id=" + dat.idsolicitud + "&tp=" + dat.tipoProceso + "&cs=" + dat.codigo + "&sw=" + dat.sw;
                     } else {
                         toastr["error"]("Ocurrio algun error.", dat.log);
                     }

@@ -30,8 +30,9 @@ function get_next_correlative($usuario_, $unidad, $codigo, $referencia, $usuario
         $resultUsuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
         $auxArea = '';
-        if ($resultUsuario['area'] != '')
-            $auxArea = "/" . $resultUsuario['area'];
+        $area  = $resultUsuario['area'];
+        if ($area != '')
+            $auxArea = "/" . $area;
 
         // Query to get the maximum correlative for the given unit and code
         $query = "SELECT COALESCE(MAX(correlativo), 0) as max_correlativo 
@@ -75,7 +76,10 @@ function get_next_correlative($usuario_, $unidad, $codigo, $referencia, $usuario
             $baseCite =  $unidad . '/' . $codigo  . '/' . $next_correlative . '/' . date('Y');
         }
 
-
+        if ($area == 'CCI' or $area == 'CCII' or $area == 'OI') {
+            $baseCite =  $unidad . '/' . $codigo . '/' . $area . ($_SESSION['codigo_usuario'] != '' ? '/' . $_SESSION['codigo_usuario'] : '') . '/' . $next_correlative . '/' . date('Y');
+        } 
+        
         $baseCite = 'DATM/' . $baseCite;
 
 

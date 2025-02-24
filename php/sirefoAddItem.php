@@ -35,6 +35,13 @@ for ($i = $cntItemAct; $i < ($cntItemAct + $cnt); $i++) {
                 <option value="N">Natual</option>
                 <option value="J">Juridico</option>
             </select>
+            <br>
+                <label for="tipo_documento_tributario' . $i . '">Tipo documento tributario</label>
+                <select class="form-controlSelect"  id="tipo_documento_tributario' . $i . '">
+                    <option value="VEH">Vehiculo</option>
+                    <option value="INM">Inmueble</option>
+                    <option value="ACT">Actividad Economica</option>
+                </select>
         </div>
         <div class="col-md-3 mb-3">
             <label for="id_documento_identidad_tipo' . $i . '">Tipo de documento</label>
@@ -46,6 +53,9 @@ for ($i = $cntItemAct; $i < ($cntItemAct + $cnt); $i++) {
     }
 
     $item .= '</select>
+                <br>
+                <label for="documento_tributario' . $i . '">Documento tributario</label>
+                <input type="text" id="documentoTributario' . $i . '" class="form-control" placeholder="NRO PTA/NUM. INM/NUM ACT">
         </div>
         <div class="col-md-3 mb-3">
             <label for="documentoIdentidadNumero' . $i . '">No. Documento</label>
@@ -54,7 +64,7 @@ for ($i = $cntItemAct; $i < ($cntItemAct + $cnt); $i++) {
             <select class="form-controlSelect natural_' . $i . '"  id="id_documento_identidad_extension' . $i . '">';
 
     foreach ($extension as $row) {
-        $item .=  "<option value=" . $row['id_documento_identidad_extension'] . ">" . $row['documento_identidad_extension'] . "</option>";
+        $item .=  "<option value=" . $row['id_documento_identidad_extension'] . ">" . $row['documento_identidad_extension_det'] . "</option>";
     }
 
 
@@ -69,16 +79,24 @@ for ($i = $cntItemAct; $i < ($cntItemAct + $cnt); $i++) {
         </div>
     </div>
     <div class="row">
-        <div class="col-md-3 mb-3">
+        <div class="col-md-3 mb-3" id="bloqueAutoConclusion' . $i . '" '.($tipoProceso == 'R' ? ' style="display:none;"' : '') .'>
             <label for="autoConclusion' . $i . '">Auto Conclusión</label>
-            <input type="text" id="autoConclusion' . $i . '" ' . ($tipoProceso == 'R' ? ' disabled ' : '') . ' class="form-control" placeholder="Auto de Conclusion">
+            <input type="text" id="autoConclusion' . $i . '" '. ' class="form-control" placeholder="Auto de Conclusion">
         </div>
+        
+        <div class="col-md-3 mb-3" id="bloqueResolucionDeterminativa' . $i . '" '.($tipoProceso == 'S' ? ' style="display:none;"' : '') .'>
+            <label for="resolucionDeterminativa' . $i . '">Resolución Determinativa</label>
+            <input type="text" id="resolucionDeterminativa' . $i . '" class="form-control" placeholder="Cite de resolución determinativa">
+            <input type="text" id="gestionFiscal' . $i . '" class="form-control" placeholder="Gestion(en) fiscal(es)">
+            <input type="text" id="cite_anotacion_preventiva' . $i . '" class="form-control" placeholder="Cite para inscripcion de anotación preventiva">
+        </div>
+
         <div class="col-md-3 mb-3">
             <label for="id_tipo_respaldo' . $i . '">Tipo de Respaldo</label>
             <select class="form-controlSelect" id="id_tipo_respaldo' . $i . '">';
 
     foreach ($tipoRespaldo as $row) {
-        $item .=   "<option value=" . $row['id_tipo_respaldo'] . ">" . $row['tipo_respaldo'] . "</option>";
+        $item .=   "<option value=" . $row['id_tipo_respaldo'] . ">" . $row['tipo_respaldo_det'] . "</option>";
     }
     $item .=   '</select>
         </div>

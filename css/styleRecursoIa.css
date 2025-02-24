@@ -135,6 +135,20 @@ h5 {
   background-color: #d6ffdf;
 }
 
+.exencionCabecera{ 
+  background-color: #d6ffdf;
+  width: 100%;
+  margin:0.5rem 0 ;
+  padding-top: 0.5rem;
+}
+
+.exencionRequisito{ 
+  background-color: #d6f3ff;
+  width: 100%;
+  margin:0.5rem 0 0.5rem 0;
+  padding-top: 0.5rem;
+}
+
 .form-controlSelect{
   display: block; 
   width: 100%;

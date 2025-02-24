@@ -61,6 +61,7 @@ try {
         $cabecera->fecha_envio_ansi = date('YmdHis');
         $fechaEnvio = new DateTime(date('Y-m-d H:i:s'));
         $cabecera->fecha_envio = $fechaEnvio->format('Y-m-d H:i:s');
+        $cabecera->fecha_registro = $cabecera->fecha_envio;
     }
 
     $sha1Hash = strtoupper(sha1($base64Pdf));
@@ -92,11 +93,11 @@ try {
             $query = "INSERT INTO srf_cabecera_solicitud (
                 adjunto,         adjunto_nombre,        autoridad_cargo,        autoridad_solicitante,        codigo_solicitud,
                 detalle_cantidad,        entidad,        fecha_envio,        fecha_envio_ansi,        gerencia,         
-                hash_imagen,         tipo_proceso,        idusuario,        estado_
+                hash_imagen,         tipo_proceso,        idusuario,        estado_, fecha_registro
             ) VALUES (
                 :adjunto,        :adjunto_nombre,        :autoridad_cargo,        :autoridad_solicitante,        :codigo_solicitud,
                 :detalle_cantidad,        :entidad,        :fecha_envio,        :fecha_envio_ansi,        :gerencia, 
-                :hash_imagen,         :tipo_proceso,        :idusuario,        :estado_
+                :hash_imagen,         :tipo_proceso,        :idusuario,        :estado_, :fecha_registro
             )";
             $stmt = $cons->prepare($query);
             $stmt->bindParam(':adjunto', $cabecera->adjunto);
@@ -114,6 +115,7 @@ try {
 
             $stmt->bindParam(':estado_', $nErr);
             $stmt->bindParam(':fecha_envio', $cabecera->fecha_envio);
+            $stmt->bindParam(':fecha_registro', $cabecera->fecha_registro);
 
             $nErr = $stmt->execute();
             $query = " select * 
@@ -148,6 +150,7 @@ try {
                 SET hash_datos = '" . $pjson['hash_datos'] . "',  
                 hash_datos_txt = '" . $cabecera->hash_datos_txt . "' 
                 WHERE id_cabecera_solicitud = " . $cabecera->IdSolicitud;
+
             $stmt = $cons->prepare($query);
             $err = $stmt->execute();
             $auxTmp  = 'PENDIENTE DE ENVIO';
@@ -158,22 +161,21 @@ try {
             fecha_consulta,
             uconsulta_,
             id_cabecera_solicitud 
-        ) VALUES (
-            :estado_,
-            :fecha_consulta_,
-            :uconsulta__,
-            :id_cabecera_solicitud_
-        )";
+                ) VALUES (
+                    :estado_,
+                    :fecha_consulta_,
+                    :uconsulta__,
+                    :id_cabecera_solicitud_
+                )";
             $stmt = $cons->prepare($query);
             $stmt->bindParam(':estado_', $auxTmp);
             $stmt->bindParam(':fecha_consulta_', $fecha_);
             $stmt->bindParam(':uconsulta__', $cabecera->idusuario);
             $stmt->bindParam(':id_cabecera_solicitud_', $cabecera->IdSolicitud);
-            $stmt->execute(); 
-
+            $stmt->execute();
         } catch (Exception $e) {
             $pjson['err'] = '1';
-            $pjson['log'] .=  "<p class='rspIncorrecta'>[x] Error al registrar cabecera : " . $e . "</p>"; 
+            $pjson['log'] .=  "<p class='rspIncorrecta'>[x] Error al registrar cabecera : " . $e . "</p>";
         }
     }
 
@@ -206,26 +208,32 @@ try {
                     $item->razon_social = $_POST['item_razonSocial' . $i];
                     $item->id_documento_identidad_tipo = $_POST['item_id_documento_identidad_tipo' . $i];
                     $item->documento_identidad_numero = $_POST['item_documentoIdentidadNumero' . $i];
+                    $item->documento_tributario = $_POST['item_documentoTributario' . $i];
+                    $item->tipo_documento_tributario = $_POST['item_tipo_documento_tributario' . $i];
                     $item->documento_identidad_complemento = $_POST['item_documentoIdentidadComplemento' . $i];
                     $item->id_documento_identidad_extension = '0';
                     if (! ($item->id_documento_identidad_tipo == '1' or $item->id_documento_identidad_tipo == '3' or $item->id_documento_identidad_tipo == '4'))
                         $item->id_documento_identidad_extension = $_POST['item_id_documento_identidad_extension' . $i];
                     $item->auto_conclusion = $_POST['item_autoConclusion' . $i];
+                    $item->gestion_fiscal = $_POST['item_gestionFiscal' . $i];
+                    $item->cite_anotacion_preventiva = $_POST['item_cite_anotacion_preventiva' . $i];
+                    $item->resolucion_determinativa = $_POST['item_resolucionDeterminativa' . $i];
                     $item->id_tipo_respaldo = $_POST['item_id_tipo_respaldo' . $i];
                     $item->documento_respaldo = $_POST['item_documentoRespaldo' . $i];
                     $item->monto_retencion_bs = formatearDecimales($_POST['item_montoRetencionBs' . $i]);
                     $item->monto_retencion_ufv = formatearDecimales($_POST['item_montoRetencionUFV' . $i]);
+                    $item->id_item_solicitud = formatearDecimales($_POST['item_id_item_solicitud' . $i]);
                     $item->id_cabecera_solicitud = $cabecera->IdSolicitud;
                     $item->estado_ = true;
 
+                    $item->id_item_solicitud = ($item->id_item_solicitud > 0 ? $item->id_item_solicitud : 0);
+
                     $query = "SELECT * FROM srf_item_solicitud 
-                            WHERE documento_identidad_numero = :documento_identidad_numero 
-                            and documento_identidad_complemento like :documento_identidad_complemento
-                            and id_cabecera_solicitud = :id_cabecera_solicitud";
+                            WHERE 
+                            id_item_solicitud = $item->id_item_solicitud
+                            and estado_ is true
+                            ";
                     $stmt = $cons->prepare($query);
-                    $stmt->bindParam(':documento_identidad_numero', $item->documento_identidad_numero);
-                    $stmt->bindParam(':id_cabecera_solicitud', $cabecera->IdSolicitud);
-                    $stmt->bindParam(':documento_identidad_complemento', $item->documento_identidad_complemento);
                     $stmt->execute();
                     $datosActuales = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     if (empty($datosActuales) and $item->documento_identidad_numero) {
@@ -248,7 +256,13 @@ try {
                                 monto_retencion_ufv,
                                 id_cabecera_solicitud,
                                 estado_,
-                                id_documento_identidad_extension
+                                id_documento_identidad_extension,
+                                documento_tributario,
+                                tipo_documento_tributario,
+                                resolucion_determinativa, 
+                                gestion_fiscal,
+                                cite_anotacion_preventiva
+
                             ) VALUES (
                                 :tipo_persona,
                                 :nombre,
@@ -266,7 +280,12 @@ try {
                                 :monto_retencion_ufv,
                                 :id_cabecera_solicitud,
                                 :estado_,
-                                :id_documento_identidad_extension
+                                :id_documento_identidad_extension,
+                                :documento_tributario,
+                                :tipo_documento_tributario,
+                                :resolucion_determinativa, 
+                                :gestion_fiscal,
+                                :cite_anotacion_preventiva
                             )";
                         $tmpTrue = true;
                         $stmt = $cons->prepare($query);
@@ -277,6 +296,11 @@ try {
                         $stmt->bindParam(':razon_social', $item->razon_social);
                         $stmt->bindParam(':id_documento_identidad_tipo', $item->id_documento_identidad_tipo);
                         $stmt->bindParam(':documento_identidad_numero', $item->documento_identidad_numero);
+                        $stmt->bindParam(':documento_tributario', $item->documento_tributario);
+                        $stmt->bindParam(':tipo_documento_tributario', $item->tipo_documento_tributario);
+                        $stmt->bindParam(':resolucion_determinativa', $item->resolucion_determinativa);
+                        $stmt->bindParam(':gestion_fiscal', $item->gestion_fiscal);
+                        $stmt->bindParam(':cite_anotacion_preventiva', $item->cite_anotacion_preventiva);
                         $stmt->bindParam(':documento_identidad_complemento', $item->documento_identidad_complemento);
                         $stmt->bindParam(':auto_conclusion', $item->auto_conclusion);
                         $stmt->bindParam(':id_tipo_respaldo', $item->id_tipo_respaldo);
@@ -465,6 +489,13 @@ try {
             $stmt = $cons->prepare($query);
             $err = $stmt->execute();
         }
+
+        $pjson['idsolicitud'] = $cabecera->IdSolicitud;
+        $pjson['codigo'] = $cabecera->codigo_solicitud;
+        $pjson['cantidadItems'] = $cabecera->detalle_cantidad;
+        $pjson['tipoProceso'] = $cabecera->tipo_proceso;
+        $pjson['sw'] = '1';
+        $pjson['log'] .= "<br>Informacion consolidada.";
     } else {
         $pjson['err'] = '1';
         $pjson['log'] .= "<p class='rspIncorrecta'>[x] Error al guardar la cabecera:" . $stmt->errorInfo()[2] . "</p>";
@@ -478,28 +509,7 @@ try {
 } finally {
     $dat = json_encode($pjson);
     echo $dat;
-}
-
-
-
-function generarSha1DesdeCabecera($cabecera)
-{
-    $texto = '';
-    $texto .= !empty($cabecera->adjunto_nombre) ? $cabecera->adjunto_nombre : '';
-    $texto .= !empty($cabecera->autoridad_cargo) ? $cabecera->autoridad_cargo : '';
-    $texto .= !empty($cabecera->autoridad_solicitante) ? $cabecera->autoridad_solicitante : '';
-    $texto .= !empty($cabecera->codigo_solicitud) ? $cabecera->codigo_solicitud : '';
-    $texto .= !empty($cabecera->detalle_cantidad) ? $cabecera->detalle_cantidad : '';
-    $texto .= !empty($cabecera->entidad) ? $cabecera->entidad : '';
-    $texto .= !empty($cabecera->fecha_envio_ansi) ? $cabecera->fecha_envio_ansi : '';
-    $texto .= !empty($cabecera->gerencia) ? $cabecera->gerencia : '';
-    $texto .= !empty($cabecera->IdSolicitud) ? $cabecera->IdSolicitud : '';
-    $texto .= !empty($cabecera->tipo_proceso) ? $cabecera->tipo_proceso : '';
-
-    $cabecera->hash_datos_txt = $texto;
-    $cabecera->hash_datos = strtoupper(sha1($texto));
-    return $cabecera->hash_datos;
-}
+} 
 
 function generarSha1Item($item, $cons, $pjson)
 {

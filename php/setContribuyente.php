@@ -159,7 +159,7 @@ function sendMail($destino, $nombres, $pin)
                     <br>
                     <br>
                     <span style='color:#6b0d0d;font-size:0.7rem;'>No es necesario que responda a este correo<br></span>
-                    <span style='color:gray;font-size:0.7rem;'><br>Área de sistemas<br>Dirección de Adminitración Tributaria Municipal<br>Gobierno Autónomo Municipal de El Alto</span>
+                    <span style='color:gray;font-size:0.7rem;'><br>Área de sistemas<br>Dirección de Administración Tributaria Municipal<br>Gobierno Autónomo Municipal de El Alto</span>
                     ";
 
         $mail->SMTPOptions = array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true));

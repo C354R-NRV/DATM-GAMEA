@@ -30,11 +30,11 @@ var sw_ = true;
     }
   });
 
-  var timer;
+  /* var timer;
   $(window).scroll(function () {
     clearTimeout(timer);
     timer = setTimeout(checkEndOfPage, 100); // Espera 100 milisegundos antes de verificar
-  });
+  }); */
   // Facts counter
   $('[data-toggle="counter-up"]').counterUp({
     delay: 10,
@@ -609,6 +609,7 @@ function solicitudCite(aux = false) {
                             try {
                               await copyToClipboard(citeCreado);
                               // Guardar el mensaje en localStorage
+                              
                               localStorage.setItem('toastrMessage', 'Copiado al portapapeles!');
                               // Redirigir a citeList.php
                               window.location.href = "citeList.php";
@@ -714,15 +715,16 @@ function displayAsTable(data) {
 
 }
 
-function checkEndOfPage() {
-  // Si la posición de desplazamiento más la altura de la ventana es igual a la altura del documento, entonces estamos en el pie de página
+function checkEndOfPage() { 
 
+  /* 
+  con el siguiente if se mostraria la promo al final de la pagina
   if (
     $(window).scrollTop() + $(window).height() >= $(document).height() &&
     !$("#swLogin").val()
-  ) {
+  ) { */
     showPromos();
-  }
+  /* } */
 }
 
 function showPromos() {
@@ -734,7 +736,7 @@ function showPromos() {
         <div class="carousel-inner">
             <div class="carousel-item active">  
                 <div class="bd-placeholder-img text-center">
-                    <img src="../img/anuncios/10_descuento.jpg">
+                    <img src="../img/anuncios/20_descuento2025.jpg">
                     <div class="container text-center">
                         <div class="carousel-caption text-start"> 
                             <p><a class="btn btn-lg btn-warning" href="#"><i class="fa fa-facebook-f"></i> <span style="font-size:0.7rem;">Más info aquí</a></p>
@@ -744,7 +746,7 @@ function showPromos() {
             </div>  
             <div class="carousel-item text-end">  
                 <div class="bd-placeholder-img text-center">
-                    <img src="../img/anuncios/10_descuento.jpg">
+                    <img src="../img/anuncios/20_descuento2025.jpg">
                     <div class="container text-center">
                         <div class="carousel-caption text-start"> 
                             <p><a class="btn btn-lg btn-warning" href="#"><i class="fa fa-facebook-f"></i> <span style="font-size:0.7rem;">Más info aquí</a></p>

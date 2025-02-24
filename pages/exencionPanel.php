@@ -51,7 +51,8 @@ if (!$_SESSION['swlogin']) {
             border-left: 1px solid rgba(255, 255, 255, 0.5);
             backdrop-filter: blur(5px);
             transform-style: preserve-3d;
-            transform: perspective(800px)
+            transform: perspective(800px);
+            cursor: pointer;
         }
 
         .h2Panel {
@@ -149,7 +150,7 @@ if (!$_SESSION['swlogin']) {
     ?>
     <li class="breadcrumb-item"><a class="text-white" href="index.php">Home</a></li>
     <li class="breadcrumb-item"><a class="text-white">UAJ</a></li>
-    <li class="breadcrumb-item text-white active" aria-current="page"> <a class="text-white" href="sirefoList.php">EXENCION</a></li>
+    <li class="breadcrumb-item text-white active" aria-current="page"> <a class="text-white" href="exencionList.php">EXENCION</a></li>
     <?php
     echo $twig->render('prebodyltFin.twig');
     ?>
@@ -202,7 +203,7 @@ if (!$_SESSION['swlogin']) {
         transition: true
     });
     $('.card-0').click(function() {
-        window.location.href = 'exencionRevision.php';
+        window.location.href = 'exencionFormVeh.php';
     });
     $('.card-1').click(function() {
         window.location.href = 'exencionRevision.php';

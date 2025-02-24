@@ -17,6 +17,16 @@
                             <a href="index.php#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">UAJ</a>
                             <div class="dropdown-menu bg-light mt-2"> 
                                 <a href="sirefoPanel.php" class="dropdown-item">- SIREFO</a>    
+                                <a href="exencionList.php" class="dropdown-item">- Exención</a>    
+                            </div> 
+                        </div>
+                    {% endif %}
+                    {% if datSesion.codigo_unidad == 'SIS' %}
+                        <div class="nav-item dropdown">
+                            <a href="index.php#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">SIS</a>
+                            <div class="dropdown-menu bg-light mt-2"> 
+                                <a href="usrList.php" class="dropdown-item">- Usuarios</a>    
+                                <a href="#" class="dropdown-item">- Parametros</a>    
                             </div> 
                         </div>
                     {% endif %}

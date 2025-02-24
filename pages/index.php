@@ -39,7 +39,7 @@ $twig = new Environment($loader);
 </head>
 
 <body>
-    
+
     <!-- Spinner Start -->
     <?php
     $auxRequisito = '0';
@@ -144,8 +144,8 @@ $twig = new Environment($loader);
     <!-- Full Screen Search End -->
 
 
-        <!-- Newsletter Start -->
-        <div class="container-fluid bg-obscuro feature py-5">
+    <!-- Newsletter Start -->
+    <div class="container-fluid bg-obscuro feature py-5">
         <div class="container" id="contactanos_">
             <div class="row g-5 align-items-center">
                 <div class="col-md-5 ps-lg-0 pt-5 pt-md-0 text-start wow fadeIn" data-wow-delay="0.3s">
@@ -185,7 +185,7 @@ $twig = new Environment($loader);
                     </div>
                 </div>
             </div>
-        
+
         </div>
     </div>
 
@@ -197,14 +197,14 @@ $twig = new Environment($loader);
                 <div class="col-lg-6 wow fadeIn" data-wow-delay="0.4s">
                     <div style="text-align: center; margin-bottom: 3rem; color: #d11717; cursor:pointer;">
                         <br><br><br><br>
-                        <a href = "https://prensa.evacopa.bo/" target="_blank"><img class="img-fluid" src="../img/obras.gif" style="max-width: 24rem;" alt=""></a>
+                        <a href="https://prensa.evacopa.bo/" target="_blank"><img class="img-fluid" src="../img/obras.gif" style="max-width: 24rem;" alt=""></a>
                     </div>
                 </div>
 
                 <div class="col-lg-6 align-self-center mb-md-5 pb-md-5 wow fadeIn" style="text-align: right;" data-wow-delay="0.3s">
                     <h1 class="text-white mb-4">¡Paga tus impuestos a tiempo y contribuye al crecimiento de El Alto!</h1>
                     <!-- <div class="btn btn-sm border rounded-pill text-white px-3 mb-3"><span style="color:#c3d3d8"> Tu municipio</span></div> -->
-                    <p class="text-light mb-4" style="text-align: rigth;">Tus aportes se traducen en más obras y mejores servicios para todos. ¿Te gustaría hacer seguimiento al progreso de las obras? Haz clic en el enlace a continuación para estar al tanto de cada avance:</p><a href = "https://prensa.evacopa.bo/" target="_blank"> Ver obras </a>
+                    <p class="text-light mb-4" style="text-align: rigth;">Tus aportes se traducen en más obras y mejores servicios para todos. ¿Te gustaría hacer seguimiento al progreso de las obras? Haz clic en el enlace a continuación para estar al tanto de cada avance:</p><a href="https://prensa.evacopa.bo/" target="_blank"> Ver obras </a>
                 </div>
             </div>
         </div>
@@ -435,7 +435,7 @@ $twig = new Environment($loader);
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
 
 
     <!-- Team Start -->
@@ -476,6 +476,12 @@ $twig = new Environment($loader);
     <script src="../vendor/bootstrap-table-master/dist/bootstrap-table.min.js"></script>
     <script>
         $(document).ready(function($) {
+
+            <?php
+            if (!$_SESSION['idusuario'])
+                echo "checkEndOfPage();";
+            ?> 
+
             var requisitoGet = $('#requisito_get').val();
             console.log("requisitoGet:" + requisitoGet);
             if (requisitoGet > 0 && requisitoGet <= 3) {
@@ -495,7 +501,7 @@ $twig = new Environment($loader);
                 }
                 getEstructuraContenido(modulo_, color_);
             }
-            if(requisitoGet == 4) verEnlacesQr();
+            if (requisitoGet == 4) verEnlacesQr();
         });
 
         function verEnlacesQr() {

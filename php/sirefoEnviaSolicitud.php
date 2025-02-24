@@ -72,6 +72,9 @@ foreach ($items as $key => $item) {
     $itemSolicitud->ApellidoMaterno = $item['apellido_materno'];
     $itemSolicitud->ApellidoPaterno = $item['apellido_paterno'];
     $itemSolicitud->AutoConclusion = $item['auto_conclusion'];
+    $itemSolicitud->resolucionDeterminativa = $item['resolucionDeterminativa'];
+    $itemSolicitud->gestionFiscal = $item['gestionFiscal'];
+    $itemSolicitud->cite_anotacion_preventiva = $item['cite_anotacion_preventiva'];
     $itemSolicitud->DocumentoIdentidadComplemento = $item['documento_identidad_complemento'];
     
     $itemSolicitud->DocumentoIdentidadExtension = ($item['documento_identidad_extension']>0?$item['documento_identidad_extension']:'');

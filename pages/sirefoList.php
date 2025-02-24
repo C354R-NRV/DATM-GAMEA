@@ -45,53 +45,6 @@ if (!$_SESSION['swlogin']) {
         .headerDetalleSolicitud p {
             margin: 5px 0;
         }
-
-        .striped-table {
-            width: 100%;
-            border-collapse: collapse;
-            border: 1px solid #fff;
-            border-radius: 10px;
-            overflow: hidden;
-            width: 100%;
-        }
-
-        .striped-table th,
-        .striped-table td {
-            border: 1px solid #fff;
-            text-align: left;
-            padding: 8px;
-        }
-
-
-        .striped-table th:first-child {
-            border-top-left-radius: 10px;
-        }
-
-        .striped-table th:last-child {
-            border-top-right-radius: 10px;
-        }
-
-        /* Borde redondeado para las esquinas inferiores de la tabla */
-        .striped-table td:first-child {
-            border-bottom-left-radius: 10px;
-        }
-
-        .striped-table td:last-child {
-            border-bottom-right-radius: 10px;
-        }
-
-        .striped-table th {
-            background-color: #055807;
-            color: #f9f9f9;
-        }
-
-        .striped-table tbody tr:nth-child(odd) {
-            background-color: #f9f9f9;
-        }
-
-        .striped-table tbody tr:nth-child(even) {
-            background-color: #e9e9e9;
-        }
     </style>
 </head>
 
@@ -160,7 +113,7 @@ if (!$_SESSION['swlogin']) {
                 data-show-export="true"
                 data-click-to-select="true"
                 data-pagination="true"
-                data-page-list="[10, 25, 50, 100, all]"
+                data-page-list="[10, 25, 50, 100, 200, all]"
                 data-locale="es-ES"
                 class="table table-striped"
                 data-sort-name="id_cabecera_solicitud"
@@ -173,8 +126,9 @@ if (!$_SESSION['swlogin']) {
                     <th data-field="tipo_proceso" data-sortable="true">Tipo</th>
                     <th data-field="codigo_solicitud" data-sortable="true">Cod. solicitud</th>
                     <th data-field="detalle_cantidad" data-sortable="true">Cantidad</th>
+                    <th data-field="fecha_registro" data-sortable="true">Fecha Registro</th>
                     <th data-field="fecha_envio" data-sortable="true">Fecha envio</th>
-                    <th data-field="estado_envio" data-sortable="true">Estado envio</th>
+                    <th data-field="estado_envio" data-sortable="true">Estado en SIREFO</th>
                     <th data-field="fecha_circular" data-sortable="true">Fecha Circular</th>
                     <th data-field="estado_solicitud" data-sortable="true">Estado solicitud</th>
                     <th data-field="usuario" data-sortable="true">Usuario</th>
@@ -202,11 +156,11 @@ if (!$_SESSION['swlogin']) {
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     $(".datepicker").flatpickr();
-    /*   $(document).ready(function($) {
-          getSolicitudes();
+    /*  $(document).ready(function($) {
+            getSolicitudes();
       }); */
-
     function filtrosDataTable(p) {
+        console.log(p);
         console.log("en filtrosDataTable");
         return {
             filtroCodigoSolicitud: $('#filtroCodigoSolicitud').val(),
@@ -248,6 +202,7 @@ if (!$_SESSION['swlogin']) {
                         <td>${item.tipo_proceso}</td>
                         <td>${item.codigo_solicitud}</td>
                         <td>${item.detalle_cantidad}</td>
+                        <td>${item.fecha_registro}</td>
                         <td>${item.fecha_envio}</td>
                         <td>${item.estado_envio}</td>
                         <td>${item.fecha_circular}</td>
@@ -286,6 +241,7 @@ if (!$_SESSION['swlogin']) {
                 loadGralOn();
             },
             success: function(e) {
+                console.log("idsolicitud:" + idsolicitud);
                 loadGralOff();
                 data = JSON.parse(e);
                 auxData = "<b>" + data.message + "</b>";
@@ -350,7 +306,7 @@ if (!$_SESSION['swlogin']) {
             type: "POST",
             dataType: "html",
             url: "../php/sirefoGetDetalleEnvioProcesado.php",
-            data: { 
+            data: {
                 idsolicitud: idsolicitud
             },
             beforeSend: function() {
@@ -383,6 +339,10 @@ if (!$_SESSION['swlogin']) {
             timeout: 16000
         });
 
+    }
+
+    function getDocumentoCircular(iditem) {
+        window.open('../php/rptSirefoCircular.php?id=' + iditem, '_blank');
     }
 
     function actualizaEstados(idsolicitud, codigoSolicitud) {
@@ -433,7 +393,7 @@ if (!$_SESSION['swlogin']) {
                                         if (data.message.Confirmacion == 'true' || data.message.Confirmacion == true) {
                                             auxTitle = 'RESPUESTA SIREFO';
                                             if (data.message.Detalle)
-                                                auxData = "se ha realizado correctamente la REMISION DE SOLICITUD";
+                                                auxData = "se ha realizado correctamente la REMISION DE SOLICITUD para <b>" + codigoSolicitud + "</b>";
                                         } else {
                                             auxTitle = 'Ocurrio un Error durante la actualizacion de estados...';
                                             data.type = data.message.type;
