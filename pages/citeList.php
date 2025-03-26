@@ -156,7 +156,6 @@ if (!$_SESSION['swlogin']) {
     echo $twig->render('prebodyltIni.twig');
     ?>
     <li class="breadcrumb-item"><a class="text-white" href="index.php">Home</a></li>
-    <li class="breadcrumb-item"><a class="text-white">UAJ</a></li>
     <li class="breadcrumb-item text-white active" aria-current="page"> <a class="text-white">CITE</a></li>
     <?php
     echo $twig->render('prebodyltFin.twig');

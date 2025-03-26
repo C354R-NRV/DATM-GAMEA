@@ -73,7 +73,7 @@ if (!$_SESSION['swlogin']) {
                                         <div class="inner color-whiteIa">
                                             <!-- <h3 class="flip-boxIa-header color-white">Custom Domains</h3> -->
                                             <!-- <p>A short sentence describing this callout is.</p> -->
-                                            <img src="https://s25.postimg.cc/65hsttv9b/cta-arrow.png" alt="" class="flip-boxIa-img">
+                                            <!-- <img src="https://s25.postimg.cc/65hsttv9b/cta-arrow.png" alt="" class="flip-boxIa-img"> -->
                                         </div>
                                     </div>
                                     <div class="flip-boxIa-back text-centerCarIa cardIa1">
@@ -94,7 +94,7 @@ if (!$_SESSION['swlogin']) {
                                             <div class="inner color-whiteIa">
                                                 <!-- <h3 class="flip-boxIa-header color-white">Dedicated</h3>
                                             <p>A short sentence describing this callout is.</p> -->
-                                                <img src="https://s25.postimg.cc/65hsttv9b/cta-arrow.png" alt="" class="flip-boxIa-img">
+                                                <!-- <img src="https://s25.postimg.cc/65hsttv9b/cta-arrow.png" alt="" class="flip-boxIa-img"> -->
                                             </div>
                                         </div>
                                         <div class="flip-boxIa-back text-centerCarIa cardIa2">

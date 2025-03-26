@@ -63,7 +63,7 @@ try {
                     <ul class='main'>
                         <li>Placa de control : " . $row['nro_pta'] . "</li>
                         <li>Servicio: " . $row['SERVICIO'] . "</li>
-                        <li>Clase: " . $row['CLASE'] . "</li>
+                        <li>Clase: " . $row['clase'] . "</li>
                         <li>Combustible: " . $row['TIPO_COMBUSTIBLE'] . "</li>
                         <li>Marca: " . $row['MARCA']  . "</li>
                     </ul> 

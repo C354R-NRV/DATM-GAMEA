@@ -143,15 +143,15 @@ if (!$_SESSION['swlogin']) {
                 <div class="input-group">
                     <input type="number" id="detalleCantidad" onfocus="verificaDB()" class="form-control" placeholder="Cantidad items" value="<?php
 
-                    require_once '../php/conexionpsql.php';
-                    $conn = new Conexion();
-                    $cons = $conn->conectar();
-                    
-                    $query = "select * from srf_cabecera_solicitud where id_cabecera_solicitud = ".(isset($_GET['id']) ? $_GET['id'] : '0')." limit 1;";
-                    $stmt = $cons->query($query);
-                    $cabecera = $stmt->fetch(PDO::FETCH_ASSOC);
-                    echo $cabecera['detalle_cantidad'];
-                    ?>">
+                                                                                                                                                require_once '../php/conexionpsql.php';
+                                                                                                                                                $conn = new Conexion();
+                                                                                                                                                $cons = $conn->conectar();
+
+                                                                                                                                                $query = "select * from srf_cabecera_solicitud where id_cabecera_solicitud = " . (isset($_GET['id']) ? $_GET['id'] : '0') . " limit 1;";
+                                                                                                                                                $stmt = $cons->query($query);
+                                                                                                                                                $cabecera = $stmt->fetch(PDO::FETCH_ASSOC);
+                                                                                                                                                echo $cabecera['detalle_cantidad'];
+                                                                                                                                                ?>">
                     <button id="refreshButton" class="btn btn-outline-secondary" type="button" onclick="addItem(false, false)">
                         <i class="fa fa-refresh"></i>
                     </button>
@@ -601,37 +601,41 @@ if (!$_SESSION['swlogin']) {
                 var tipoPersona = $('#tipoPersona' + index).val();
                 formData.append('item_tipo_persona' + index, tipoPersona);
                 formData.append('item_id_documento_identidad_tipo' + index, $('#id_documento_identidad_tipo' + index).val());
-                var documentoIdentidadNumero = $('#documentoIdentidadNumero' + index).val();
+                var documentoIdentidadNumero = $.trim($('#documentoIdentidadNumero' + index).val());
                 if (!isValidAlphanumeric(documentoIdentidadNumero, 4)) {
                     errores.push(" -El numero de documento de identidad (Item " + cntImpresion + "), tiene que ser del tipo numerico y con mas de 4 caracteres.");
                 }
                 formData.append('item_documentoIdentidadNumero' + index, documentoIdentidadNumero);
+                var documentoTributario = $.trim($('#documentoTributario' + index).val());
+                if (!isValidAlphanumeric(documentoTributario, 3)) {
+                    errores.push(" -El campo documento tributario (Item " + cntImpresion + ") debe tener más de 3 caracteres o contiene caracteres no permitidos");
+                }
+                formData.append('item_documentoTributario' + index, documentoTributario);
 
-                formData.append('item_documentoTributario' + index, $('#documentoTributario' + index).val());
                 formData.append('item_tipo_documento_tributario' + index, $('#tipo_documento_tributario' + index).val());
                 formData.append('item_documentoIdentidadComplemento' + index, $('#documentoIdentidadComplemento' + index).val());
                 formData.append('item_id_documento_identidad_extension' + index, $('#id_documento_identidad_extension' + index).val());
                 console.log("id_documento_identidad_extension" + index + $('#id_documento_identidad_extension' + index).val());
-                var nombre = $('#nombre' + index).val();
+                var nombre = $.trim($('#nombre' + index).val());
                 if (!isValidAlphanumeric(nombre, 3) && tipoPersona === 'N') {
                     errores.push(" -El campo Nombre (Item " + cntImpresion + ") debe tener más de 3 caracteres o contiene caracteres no permitidos");
                 }
                 formData.append('item_nombre' + index, nombre);
-                formData.append('item_apellidoPaterno' + index, $('#apellidoPaterno' + index).val());
-                formData.append('item_apellidoMaterno' + index, $('#apellidoMaterno' + index).val());
+                formData.append('item_apellidoPaterno' + index, $.trim($('#apellidoPaterno' + index).val()));
+                formData.append('item_apellidoMaterno' + index, $.trim($('#apellidoMaterno' + index).val()));
 
-                var razonSocial = $('#razonSocial' + index).val();
+                var razonSocial = $.trim($('#razonSocial' + index).val());
                 if (!isValidAlphanumeric(razonSocial, 3) && tipoPersona === 'J') {
                     errores.push(' -El campo Razón social (Item ' + cntImpresion + '), debe contar con más de 3 caracteres o contiene caracteres no permitidos');
                 }
                 formData.append('item_razonSocial' + index, razonSocial);
 
-                formData.append('item_autoConclusion' + index, $('#autoConclusion' + index).val());
-                formData.append('item_resolucionDeterminativa' + index, $('#resolucionDeterminativa' + index).val());
-                formData.append('item_gestionFiscal' + index, $('#gestionFiscal' + index).val());
-                formData.append('item_cite_anotacion_preventiva' + index, $('#cite_anotacion_preventiva' + index).val());
+                formData.append('item_autoConclusion' + index, $.trim($('#autoConclusion' + index).val()));
+                formData.append('item_resolucionDeterminativa' + index, $.trim($('#resolucionDeterminativa' + index).val()));
+                formData.append('item_gestionFiscal' + index, $.trim($('#gestionFiscal' + index).val()));
+                formData.append('item_cite_anotacion_preventiva' + index, $.trim($('#cite_anotacion_preventiva' + index).val()));
                 formData.append('item_id_tipo_respaldo' + index, $('#id_tipo_respaldo' + index).val());
-                formData.append('item_documentoRespaldo' + index, $('#documentoRespaldo' + index).val());
+                formData.append('item_documentoRespaldo' + index, $.trim($('#documentoRespaldo' + index).val()));
 
                 var montoRetencionBs = $('#montoRetencionBs' + index).val();
                 var montoRetencionUFV = $('#montoRetencionUFV' + index).val();

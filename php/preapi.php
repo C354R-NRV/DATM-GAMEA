@@ -88,14 +88,16 @@ function processApiResponse($response, $httpCode, $error, $endpoint)
 }
 try {
     switch ($endpoint) {
-        case 'ping':
-            [$response, $httpCode, $error] = makeApiRequest(['endpoint' => $endpoint, 'ambiente' => $_SESSION['sirefo_ambiente'],   'ack' => $ack]);
-            $result = processApiResponse($response, $httpCode, $error, $endpoint);
-            break;
-        case 'consultaEntidadVigente':
-            [$response, $httpCode, $error] = makeApiRequest(['endpoint' => $endpoint, 'ambiente' => $_SESSION['sirefo_ambiente'],]);
-            $result = processApiResponse($response, $httpCode, $error, $endpoint);
-            break;
+        case 'ping': {
+                [$response, $httpCode, $error] = makeApiRequest(['endpoint' => $endpoint, 'ambiente' => $_SESSION['sirefo_ambiente'],   'ack' => $ack]);
+                $result = processApiResponse($response, $httpCode, $error, $endpoint);
+                break;
+            }
+        case 'consultaEntidadVigente': {
+                [$response, $httpCode, $error] = makeApiRequest(['endpoint' => $endpoint, 'ambiente' => $_SESSION['sirefo_ambiente'],]);
+                $result = processApiResponse($response, $httpCode, $error, $endpoint);
+                break;
+            }
         case 'remitirSolicitud': {
 
                 //ACA SE TIENE QUE ACTUALIZAR LA FECHA DE ENVIO, ACTUALIZAR EL LA FEHCA ENVIO ANSI, HAS_DATOS Y EL HASH DATOS TXT
@@ -115,15 +117,15 @@ try {
 
                 $cabecera =  new stdClass();
                 $cabecera->adjunto_nombre = $srfCabecera['adjunto_nombre'];
-                $cabecera->autoridad_cargo =$srfCabecera['autoridad_cargo'];
+                $cabecera->autoridad_cargo = $srfCabecera['autoridad_cargo'];
                 $cabecera->autoridad_solicitante = $srfCabecera['autoridad_solicitante'];
-                $cabecera->codigo_solicitud =$srfCabecera['codigo_solicitud'];
-                $cabecera->detalle_cantidad =$srfCabecera['detalle_cantidad'];
-                $cabecera->entidad =$srfCabecera['entidad'];
-                $cabecera->fecha_envio_ansi =$fecha_envio_ansi;
-                $cabecera->gerencia =$srfCabecera['gerencia'];
-                $cabecera->IdSolicitud=$srfCabecera['id_cabecera_solicitud'];
-                $cabecera->tipo_proceso =$srfCabecera['tipo_proceso'];
+                $cabecera->codigo_solicitud = $srfCabecera['codigo_solicitud'];
+                $cabecera->detalle_cantidad = $srfCabecera['detalle_cantidad'];
+                $cabecera->entidad = $srfCabecera['entidad'];
+                $cabecera->fecha_envio_ansi = $fecha_envio_ansi;
+                $cabecera->gerencia = $srfCabecera['gerencia'];
+                $cabecera->IdSolicitud = $srfCabecera['id_cabecera_solicitud'];
+                $cabecera->tipo_proceso = $srfCabecera['tipo_proceso'];
 
                 $texto = '';
                 $texto .= !empty($srfCabecera['adjunto_nombre']) ? $srfCabecera['adjunto_nombre'] : '';
@@ -154,18 +156,53 @@ try {
                 $result = processApiResponse($response, $httpCode, $error, $endpoint);
                 break;
             }
-        case 'consultarEstadoEnvio':
-            [$response, $httpCode, $error] = makeApiRequest(['endpoint' => $endpoint, 'ambiente' => $_SESSION['sirefo_ambiente'],   'id' => $id, 'us' => $_SESSION['idusuario']]);
-            $result = processApiResponse($response, $httpCode, $error, $endpoint);
-            break;
-        case 'consultarListadoEstadoEnvio':
-            [$response, $httpCode, $error] = makeApiRequest(['endpoint' => $endpoint,  'ambiente' => $_SESSION['sirefo_ambiente'],  'fecha_' => $fecha_]);
-            $result = processApiResponse($response, $httpCode, $error, $endpoint);
-            break;
-        case 'consultaCabecera':
-            [$response, $httpCode, $error] = makeApiRequest(['endpoint' => $endpoint, 'ambiente' => $_SESSION['sirefo_ambiente'],]);
-            $result = processApiResponse($response, $httpCode, $error, $endpoint);
-            break;
+        case 'consultarEstadoEnvio': {
+                [$response, $httpCode, $error] = makeApiRequest(['endpoint' => $endpoint, 'ambiente' => $_SESSION['sirefo_ambiente'],   'id' => $id, 'us' => $_SESSION['idusuario']]);
+                $result = processApiResponse($response, $httpCode, $error, $endpoint);
+
+                break;
+            }
+        case 'consultarEstadoEnvioGeneral': {
+                //OBTENER TODAS LAS SOLICITUDES ENVIADAS QUE AUN NO TIENEN UN ESTADO sirefo O QUE TENGAN ESTADO NO PROCESADO
+
+                $sql = "SELECT a.id_cabecera_solicitud, a.codigo_solicitud, a.fecha_registro, a.fecha_envio, d.estado, d.fecha_consulta, c.respuesta
+                        from srf_cabecera_solicitud a 
+                        left join datm_usuario b on b.id = a.idusuario 
+                        left join srf_estado_envio c on c.id_cabecera_solicitud = a.id_cabecera_solicitud 
+                        left join srf_estado_solicitud  d on d.id_cabecera_solicitud = a.id_cabecera_solicitud 
+                        where a.estado_  is true   and c.estado_  is true 
+                        and d.estado = 'ENVIADO' and (c.respuesta = 'No Procesado' or c.respuesta is null) order by c.respuesta 
+                        desc , a.id_cabecera_solicitud desc;";
+
+                //PARA CADA RESULTADO ITERAR LA SOLICITUD A LA API PARA ACRTUALIZAR SU ESTADO DE FORMA AUTOMATICA
+                $stmt = $cons->query($sql);
+                $rsp = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $idusuario = 214; // USUARIO -> SISTEMA
+                $respuesta = array();
+                $statusAnt = true;
+                foreach ($rsp as $key => $value) {
+                    $id = $value['id_cabecera_solicitud'];
+                    [$response, $httpCode, $error] = makeApiRequest(['endpoint' => 'consultarEstadoEnvio', 'ambiente' => $_SESSION['sirefo_ambiente'],   'id' => $id, 'us' => $idusuario]);
+                    $respuesta = processApiResponse($response, $httpCode, $error, 'consultarEstadoEnvio');
+                    if($respuesta['success']){
+                        $result['message'] .=  "Procesado para ".$value['codigo_solicitud']." con Circular:".$respuesta['message']['Circular']." -".$respuesta['success']. "<br>\n";    
+                    }                    
+                    $result['success'] = ($statusAnt and $respuesta['success']);
+                    $statusAnt  =  $result['success'];
+                }
+                $result['type'] = ($result['success']?'green':'red');
+                break;
+            }
+        case 'consultarListadoEstadoEnvio': {
+                [$response, $httpCode, $error] = makeApiRequest(['endpoint' => $endpoint,  'ambiente' => $_SESSION['sirefo_ambiente'],  'fecha_' => $fecha_]);
+                $result = processApiResponse($response, $httpCode, $error, $endpoint);
+                break;
+            }
+        case 'consultaCabecera': {
+                [$response, $httpCode, $error] = makeApiRequest(['endpoint' => $endpoint, 'ambiente' => $_SESSION['sirefo_ambiente'],]);
+                $result = processApiResponse($response, $httpCode, $error, $endpoint);
+                break;
+            }
         default:
             $result = [
                 'success' => false,
@@ -175,7 +212,6 @@ try {
     }
 
     echo json_encode($result);
- 
 } catch (Exception $th) {
     echo $th;
 }

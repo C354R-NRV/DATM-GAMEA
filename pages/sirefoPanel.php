@@ -180,7 +180,7 @@ if (!$_SESSION['swlogin']) {
             </div>
 
             <div class="card card-1">
-                <i class="fa fa-question-circle-o" aria-hidden="true"></i>
+            <i class="fa fa-refresh" aria-hidden="true"></i>
                 <hr>
                 <p>Consulta cabecera</p>
                 <div class="glare-container">
@@ -313,10 +313,7 @@ if (!$_SESSION['swlogin']) {
 
     $('.card-0').click(function() {
         window.location.href = './sirefoList.php';
-    });
-    $('.card-1').click(function() {
-        window.location.href = './sirefoList.php';
-    });
+    }); 
     $('.card-5').click(function() {
         window.location.href = './sirefoList.php';
     });

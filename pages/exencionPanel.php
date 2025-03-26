@@ -174,13 +174,13 @@ if (!$_SESSION['swlogin']) {
                     <p>Inmuebles</p> 
                 </div>
             </div>
-            <div class="box card-2">
+            <!-- <div class="box card-2">
                 <div class="description">
                     <i class="fa fa-shopping-basket" aria-hidden="true"></i>
                     <hr>
                     <p>Act. Económica</p> 
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 
@@ -192,7 +192,6 @@ if (!$_SESSION['swlogin']) {
     <!-- Template Javascript -->
 </body>
 <script src="../js/mainRecursoIa.js"></script>
-<script src="https://kit.fontawesome.com/bad7f7f5d4.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
 <script>
     VanillaTilt.init(document.querySelectorAll(".box"), {
@@ -208,9 +207,9 @@ if (!$_SESSION['swlogin']) {
     $('.card-1').click(function() {
         window.location.href = 'exencionRevision.php';
     });
-    $('.card-2').click(function() {
+    /* $('.card-2').click(function() {
         window.location.href = 'exencionRevision.php';
-    });
+    }); */
 </script>
 
 </html>

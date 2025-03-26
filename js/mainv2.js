@@ -70,6 +70,162 @@ var sw_ = true;
 })(jQuery);
 
 
+document.addEventListener('input', function (e) {
+  if (e.target && e.target.id === 'token_') {
+    e.target.value = e.target.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 6);
+  }
+});
+
+document.addEventListener('keydown', function (e) {
+  if (e.target && e.target.id === 'token_') {
+    if (e.key === '-' || e.keyCode === 189) {
+      e.preventDefault();
+    }
+  }
+});
+
+let cntIntentos = 3;
+function enviarDocumentosExencion(codigo_solicitud) {
+  if (cntIntentos > 0) {
+    $.confirm({
+      title: "Confirmar envío de documentos",
+      type: "blue",
+      columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
+      content: `Se le ha enviado el TOKEN correspondiente para validar y confirmar su envio de documentos para la solicitud ${codigo_solicitud}, favor ingresar el mismo en el siguiente recuadro:<br>
+            <div class="token-container">
+                <h2 class="token-title">TOKEN ASIGNADO</h2>
+                <input type="text" class="token-input" id="token_" value=""   autocomplete="off" maxlength="6">
+            </div>
+            `,
+      buttons: {
+        aceptar: {
+          btnClass: "btn-green",
+          text: "Aceptar",
+          action: function () {
+            $.ajax({
+              async: true,
+              type: "POST",
+              dataType: "html",
+              url: "../php/exencionVerificaToken.php",
+              data: {
+                token_: $('#token_').val(),
+                codigo_solicitud: codigo_solicitud
+              },
+              beforeSend: function () {
+                loadGralOn();
+              },
+              success: function (e) {
+                loadGralOff();
+                console.log(e);
+                dat = JSON.parse(e);
+                if (dat.err == '0') {
+                  $.confirm({
+                    title: "Envio correcto!",
+                    type: "green",
+                    content: "Se ha enviado satisfactoriamente los requisitos a la DATM!",
+                    buttons: {
+                      aceptar: {
+                        text: "Aceptar",
+                        type: "green",
+                        action: function () {
+                          window.location.href = 'exencionList.php';
+                        },
+                      },
+                    },
+                  });
+                } else {
+                  cntIntentos = dat.intentos_token;
+                  $.confirm({
+                    title: "Error!",
+                    type: "red",
+                    content: dat.log + "<br><br>Usted cuenta con <b>" + (cntIntentos) + "</b> intentos para el ingreso del token.",
+                    buttons: {
+                      cancel: {
+                        text: "Aceptar",
+                        action: function () {
+                          enviarDocumentosExencion(codigo_solicitud)
+                        },
+                      },
+                    },
+                  });
+                }
+              },
+              error: function () {
+                $.confirm({
+                  title: "Error!",
+                  type: "red",
+                  content: "Hubo un error en la negociacion con el servidor.",
+                  buttons: {
+                    cancel: {
+                      text: "Cerrar",
+                      action: function () { },
+                    },
+                  },
+                });
+              }
+            });
+
+          }
+        },
+        cerrar: {
+          text: "cerrar",
+          action: function () {
+            window.location.href = './exencionList.php';
+          }
+        }
+
+      },
+      onOpen: function () {
+        setTimeout(() => {
+          this.$content.find('.token-input').focus();
+        }, 100);
+      }
+    });
+
+  } else {
+    cntIntentos = 3;
+    enviarNuevoToken(codigo_solicitud);
+  }
+}
+function enviarNuevoToken(codigo_solicitud) {
+  console.log("enviamos nuevo token para:" + codigo_solicitud);
+
+  $.ajax({
+    async: true,
+    type: 'POST',
+    data: {
+      codigo_solicitud: codigo_solicitud,
+    },
+    url: '../php/exencionReenviaToken.php',
+    beforeSend: function () {
+      loadGralOn();
+    },
+    success: function (e) {
+      loadGralOff();
+      dat = JSON.parse(e);
+      if (dat.err == '0')
+        enviarDocumentosExencion(codigo_solicitud);
+      else
+        $.confirm({
+          title: "Error!",
+          type: "red",
+          content: "Hubo un error en la negociacion con el servidor, intente mas tarde por favor.",
+          buttons: {
+            cancel: {
+              text: "Cerrar",
+              action: function () { },
+            },
+          },
+        });
+
+    },
+    timeout: 16000,
+    error: function (xhr, status, error) {
+      alert('Error: ' + error);
+    }
+  });
+}
+
 function numeroALetras() {
   let numero = $('#numeral_').val();
   // Eliminar comas y convertir a número
@@ -359,6 +515,26 @@ function simatSiim() {
   });
 }
 
+function verDocPopup(rutaArchivo, obs_ = '') {
+
+  $.confirm({
+    title: '',
+    content: (obs_ != '' ? '<span style="padding:0.5rem 1rem  0.5rem  1rem; font-weight:bold; color:#732e2e">' + obs_ + '</span><hr>' : '') + `<iframe src="pdfjs/web/viewer.html?file=../../${rutaArchivo}"
+                  width="100%"
+                  height="700px"
+                  style="border: none;"></iframe>`,
+    type: "black",
+    typeAnimated: true,
+    columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
+    buttons: {
+      cancel: {
+        text: "Cerrar",
+        action: function () { },
+      },
+    },
+  });
+}
+
 function cambioPass() {
   $.confirm({
     title: "<div style='width:98%;text-align:center;'>CAMBIO DE CONTRASEÑA</div>",
@@ -380,6 +556,7 @@ function cambioPass() {
         action: function () {
           var formSubmitButton = this.buttons.formSubmit;
           datos = "&passwordNuevo_=" + $("#passwordNuevo_").val() + "&passwordAct_=" + $("#passwordAct_").val();
+          console.log(datos);
           $.ajax({
             async: true,
             type: "POST",
@@ -609,7 +786,7 @@ function solicitudCite(aux = false) {
                             try {
                               await copyToClipboard(citeCreado);
                               // Guardar el mensaje en localStorage
-                              
+
                               localStorage.setItem('toastrMessage', 'Copiado al portapapeles!');
                               // Redirigir a citeList.php
                               window.location.href = "citeList.php";
@@ -715,7 +892,7 @@ function displayAsTable(data) {
 
 }
 
-function checkEndOfPage() { 
+function checkEndOfPage() {
 
   /* 
   con el siguiente if se mostraria la promo al final de la pagina
@@ -723,7 +900,7 @@ function checkEndOfPage() {
     $(window).scrollTop() + $(window).height() >= $(document).height() &&
     !$("#swLogin").val()
   ) { */
-    showPromos();
+  showPromos();
   /* } */
 }
 
@@ -770,7 +947,7 @@ function showPromos() {
   });
 }
 
-function showEdictos() { 
+function showEdictos() {
   var contenido = `<div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-indicators">
     <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
@@ -959,8 +1136,14 @@ function formVerificaRegistros() {
       * Para obtener su número PIN, por favor realice su registro
     </div>
   `;
+  var ciAux = '';
+  var disabled_ = '';
   if ($("#swLogin").val()) {
     sinLogin = '';
+    if ($("#cinitContribuyente").val() > 0) {
+      ciAux = $("#cinitContribuyente").val();
+      disabled_ = 'disabled';
+    }
   }
 
   var content_ = `
@@ -976,7 +1159,7 @@ function formVerificaRegistros() {
                     </select>
                 </div>  
                 <div class="col-md-8">
-                    <input type="text" id="ci_" placeholder="Ejemplo:6062063" class="form-control" value="" autocomplete="off" required />
+                    <input type="text" id="ci_" placeholder="Ejemplo:6062063" class="form-control" value="${ciAux}"  ${disabled_} autocomplete="off" required />
                 </div>
             </div>
             ${sinLogin} 
@@ -984,113 +1167,212 @@ function formVerificaRegistros() {
         `;
   var errorContribuyente = true;
 
-  $.confirm({
-    title: "Por favor, ingrese la siguiente información:",
-    type: "dark",
-    content: content_,
-    buttons: {
-      tryAgain2: {
-        text: "Registrarme",
-        btnClass: "btn-green",
-        action: function () {
-          formRegistroContri($("#tipodoc_").val(), $("#ci_").val());
-        },
-      },
-      formSubmit: {
-        text: "Consultar",
-        btnClass: "btn-blue",
-        action: function () {
-          var formSubmitButton = this.buttons.formSubmit;
-
-          if (($("#ci_").val()).length > 4 && ($("#pin_").length === 0 || $("#pin_").val().length > 3)) {
+  if ($("#swLogin").val()) {
+    $.confirm({
+      title: "Por favor, ingrese la siguiente información:",
+      type: "dark",
+      content: content_,
+      buttons: { 
+        formSubmit: {
+          text: "Consultar",
+          btnClass: "btn-blue",
+          action: function () {
+            var formSubmitButton = this.buttons.formSubmit;
+  
+            if (($("#ci_").val()).length > 4 && ($("#pin_").length === 0 || $("#pin_").val().length > 3)) {
+              datos =
+                "&tipodoc_=" + $("#tipodoc_").val() +
+                "&ci_=" + $("#ci_").val() +
+                "&pin_=" + $("#pin_").val();
+              $.ajax({
+                async: true,
+                type: "POST",
+                dataType: "html",
+                contentType: "application/x-www-form-urlencoded",
+                url: "../php/getInfoGralContribuyente.php",
+                data: datos,
+                beforeSend: function () {
+                  formSubmitButton.setText('Procesando...');
+                  formSubmitButton.disable();
+                  loadGralOn();
+  
+                },
+                success: function (e) {
+  
+                  loadGralOff();
+                  formSubmitButton.setText('Consultar');
+                  formSubmitButton.enable();
+                  dat = JSON.parse(e);
+                  if (dat.color_ != 'red') {
+                    errorContribuyente = true;
+                  }
+                  contenido = dat.html;
+                  $.confirm({
+                    title: dat.titulo_,
+                    content: contenido,
+                    type: dat.color_,
+                    typeAnimated: true,
+                    columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
+                    buttons: {
+                      cancel: {
+                        text: "Cerrar",
+                        action: function () { },
+                      },
+                    },
+                    onOpenBefore: function () {
+                      $('.jconfirm-title-c').css('text-align', 'center');
+                    }
+                  });
+                },
+                timeout: 16000,
+                error: function () { },
+              });
+            } else {
+              toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "progressBar": true,
+                "rtl": true,
+                "preventDuplicates": true,
+                "onclick": null,
+                "showDuration": 300,
+                "hideDuration": 1000,
+                "timeOut": 3000,
+                "extendedTimeOut": 1000,
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+              };
+              toastr["warning"]('Error...', 'El CI y/o PIN no son correctos, revise e intente nuevamente por favor.');
+              return false;
+            }
             datos =
               "&tipodoc_=" + $("#tipodoc_").val() +
               "&ci_=" + $("#ci_").val() +
               "&pin_=" + $("#pin_").val();
-            $.ajax({
-              async: true,
-              type: "POST",
-              dataType: "html",
-              contentType: "application/x-www-form-urlencoded",
-              url: "../php/getInfoGralContribuyente.php",
-              data: datos,
-              beforeSend: function () {
-                formSubmitButton.setText('Procesando...');
-                formSubmitButton.disable();
-                loadGralOn();
-
-              },
-              success: function (e) {
-
-                loadGralOff();
-                formSubmitButton.setText('Consultar');
-                formSubmitButton.enable();
-                dat = JSON.parse(e);
-                if (dat.color_ != 'red') {
-                  errorContribuyente = true;
-                }
-                contenido = dat.html;
-                $.confirm({
-                  title: dat.titulo_,
-                  content: contenido,
-                  type: dat.color_,
-                  typeAnimated: true,
-                  columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
-                  buttons: {
-                    cancel: {
-                      text: "Cerrar",
-                      action: function () { },
-                    },
-                  },
-                  onOpenBefore: function () {
-                    $('.jconfirm-title-c').css('text-align', 'center');
-                  }
-                });
-              },
-              timeout: 16000,
-              error: function () { },
-            });
-          } else {
-            toastr.options = {
-              "closeButton": true,
-              "debug": false,
-              "progressBar": true,
-              "rtl": true,
-              "preventDuplicates": true,
-              "onclick": null,
-              "showDuration": 300,
-              "hideDuration": 1000,
-              "timeOut": 3000,
-              "extendedTimeOut": 1000,
-              "showEasing": "swing",
-              "hideEasing": "linear",
-              "showMethod": "fadeIn",
-              "hideMethod": "fadeOut"
-            };
-            toastr["warning"]('Error...', 'El CI y/o PIN no son correctos, revise e intente nuevamente por favor.');
-            return false;
-          }
-          datos =
-            "&tipodoc_=" + $("#tipodoc_").val() +
-            "&ci_=" + $("#ci_").val() +
-            "&pin_=" + $("#pin_").val();
+          },
         },
+        cancel: function () { },
       },
-      cancel: function () { },
-    },
-    onContentReady: function () {
-      var jc = this;
-      /* this.$content.find("form").on("submit", function (e) {
-        e.preventDefault();
-        jc.$$formSubmit.trigger("click");
-      }); */
-      $('#pin_').on('keypress', function (ev) {
-        if (ev.which === 13) {
-          jc.$$formSubmit.trigger('click');
-        }
-      });
-    },
-  });
+      onContentReady: function () {
+        var jc = this; 
+        $('#pin_').on('keypress', function (ev) {
+          if (ev.which === 13) {
+            jc.$$formSubmit.trigger('click');
+          }
+        });
+      },
+    });
+
+
+  }
+
+  else{
+    $.confirm({
+      title: "Por favor, ingrese la siguiente información:",
+      type: "dark",
+      content: content_,
+      buttons: {
+        tryAgain2: {
+          text: "Registrarme",
+          btnClass: "btn-green",
+          action: function () {
+            formRegistroContri($("#tipodoc_").val(), $("#ci_").val());
+          },
+        },
+        formSubmit: {
+          text: "Consultar",
+          btnClass: "btn-blue",
+          action: function () {
+            var formSubmitButton = this.buttons.formSubmit;
+  
+            if (($("#ci_").val()).length > 4 && ($("#pin_").length === 0 || $("#pin_").val().length > 3)) {
+              datos =
+                "&tipodoc_=" + $("#tipodoc_").val() +
+                "&ci_=" + $("#ci_").val() +
+                "&pin_=" + $("#pin_").val();
+              $.ajax({
+                async: true,
+                type: "POST",
+                dataType: "html",
+                contentType: "application/x-www-form-urlencoded",
+                url: "../php/getInfoGralContribuyente.php",
+                data: datos,
+                beforeSend: function () {
+                  formSubmitButton.setText('Procesando...');
+                  formSubmitButton.disable();
+                  loadGralOn();
+  
+                },
+                success: function (e) {
+  
+                  loadGralOff();
+                  formSubmitButton.setText('Consultar');
+                  formSubmitButton.enable();
+                  dat = JSON.parse(e);
+                  if (dat.color_ != 'red') {
+                    errorContribuyente = true;
+                  }
+                  contenido = dat.html;
+                  $.confirm({
+                    title: dat.titulo_,
+                    content: contenido,
+                    type: dat.color_,
+                    typeAnimated: true,
+                    columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
+                    buttons: {
+                      cancel: {
+                        text: "Cerrar",
+                        action: function () { },
+                      },
+                    },
+                    onOpenBefore: function () {
+                      $('.jconfirm-title-c').css('text-align', 'center');
+                    }
+                  });
+                },
+                timeout: 16000,
+                error: function () { },
+              });
+            } else {
+              toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "progressBar": true,
+                "rtl": true,
+                "preventDuplicates": true,
+                "onclick": null,
+                "showDuration": 300,
+                "hideDuration": 1000,
+                "timeOut": 3000,
+                "extendedTimeOut": 1000,
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+              };
+              toastr["warning"]('Error...', 'El CI y/o PIN no son correctos, revise e intente nuevamente por favor.');
+              return false;
+            }
+            datos =
+              "&tipodoc_=" + $("#tipodoc_").val() +
+              "&ci_=" + $("#ci_").val() +
+              "&pin_=" + $("#pin_").val();
+          },
+        },
+        cancel: function () { },
+      },
+      onContentReady: function () {
+        var jc = this; 
+        $('#pin_').on('keypress', function (ev) {
+          if (ev.which === 13) {
+            jc.$$formSubmit.trigger('click');
+          }
+        });
+      },
+    });
+  }
 }
 
 

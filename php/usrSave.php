@@ -41,6 +41,7 @@ try {
     $fecha_ = $fecha->format('Y-m-d H:i:s');
     $nom_ = ($usr->nombres != '' ? $usr->nombres : $usr->razonSocial);
     $fechaPin  = date('Ymd');
+
     $usuario = strtoupper($usr->correo);
     $hash = hash('sha256', $cedula_identidad . $fechaPin);
     $pass = substr($hash, 0, 8);
@@ -48,6 +49,11 @@ try {
     $conn = new Conexion();
     $cons = $conn->conectar();
     $estado_ = 'DESBLOQUEADO';
+
+    if ($usr->rol != 'CONTRIBUYENTE') {
+        $usuario = generarUsuario($nom_, $usr->primer_apellido, $usr->segundo_apellido);
+        $pass = $usr->cedula_identidad;
+    }
 
     $query = "INSERT INTO datm_usuario 
                 (fecha_registro, cedula_identidad, nombres, 
@@ -72,7 +78,7 @@ try {
     $stmt->bindParam(':nombres', $nom_);
     $stmt->bindParam(':primer_apellido', $usr->primer_apellido);
     $stmt->bindParam(':segundo_apellido', $usr->segundo_apellido);
-    $stmt->bindParam(':usuario', $usuario);
+    $stmt->bindParam(':usuario', strtoupper($usuario));
     $stmt->bindParam(':password', MD5($pass));
     $stmt->bindParam(':codigo_unidad', $usr->unidad);
     $stmt->bindParam(':rol', $usr->rol);
@@ -87,7 +93,7 @@ try {
     $stmt->bindParam(':cedula_identidad_complemento', $usr->cedula_identidad_complemento);
     $stmt->bindParam(':id_documento_identidad_tipo', $usr->id_documento_identidad_extension);
     $nErr = $stmt->execute();
-    if ($nErr!='1') {
+    if ($nErr != '1') {
         $pjson['log'] .= "<br>- Problemas en el registro:" . $nErr;
         $pjson['err'] = '1';
     } else {
@@ -103,13 +109,14 @@ try {
     ]);
 
     $resultadoNombre = implode(' ', $partes);
-
-    $rssendmail_ = sendMail($usr->correo, $resultadoNombre, $pass, $usuario);
-    if ($rssendmail_ != 'ok') {
-        $pjson['log'] .= "<p class='rspIncorrecta'>No se logro enviar las credenciales al correo:$correo, por favor vuelva a intentarlo nuevamente." . $rssendmail_ . "</p>";
-        $pjson['err'] = '1';
-    } else {
-        $pjson['log'] .= "<p>- Correo enviado correctamente</p>";
+    if ($usr->correo != '') {
+        $rssendmail_ = sendMail($usr->correo, $resultadoNombre, $pass, $usuario);
+        if ($rssendmail_ != 'ok') {
+            $pjson['log'] .= "<p class='rspIncorrecta'>No se logro enviar las credenciales al correo:$correo, por favor vuelva a intentarlo nuevamente." . $rssendmail_ . "</p>";
+            $pjson['err'] = '1';
+        } else {
+            $pjson['log'] .= "<p>- Correo enviado correctamente</p>";
+        }
     }
 } catch (PDOException $e) {
     $pjson['err'] = '1';
@@ -159,4 +166,26 @@ function sendMail($destino, $nombre_, $pass_, $usuario)
     } catch (Exception $e) {
         return "<br><br>El mensaje no pudo ser enviado. Error de PHPMailer: {$mail->ErrorInfo}";
     }
+}
+
+function generarUsuario($nombre, $primer_apellido, $segundo_apellido)
+{
+    // Obtener la inicial del nombre
+    $inicial = mb_substr($nombre, 0, 1, 'UTF-8');
+
+    // Determinar qué apellido usar
+    $apellido = !empty($primer_apellido) ? $primer_apellido : $segundo_apellido;
+
+    // Generar el nombre de usuario
+    $usuario = $inicial . $apellido . '.IA';
+
+    // Convertir a minúsculas y eliminar acentos
+    $usuario = mb_strtolower($usuario, 'UTF-8');
+    $usuario = strtr(
+        $usuario,
+        'áéíóúüñÁÉÍÓÚÜÑ',
+        'aeiouunAEIOUUN'
+    );
+
+    return $usuario;
 }

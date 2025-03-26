@@ -94,7 +94,7 @@ try {
                 </tr>":"")."
                 <tr>
                     <td>
-                        " . $solicitud[0]['hash_datos'] . " 
+                        " . $solicitud[0]['hash_datos'] . " - <b>“2025 BICENTENARIO DE BOLIVIA”</b>
                     </td>
                 </tr>
                     <tr>
@@ -108,7 +108,7 @@ try {
             <!--136=14cm y 210=21.5cm--> 
             <div  >
                 <div style='text-align: right; margin-bottom: 20px;'>
-                    El Alto, <span id='fechaActual'>" . $dia . " de " . $conn->obtenerNombreMes(intval(date("m"))) . " de " . $anio. "</span><br>
+                    El Alto, <span id='fechaActual'>" . $dia . " de " . $conn->obtenerNombreMes(intval($mes)) . " de " . $anio. "</span><br>
                     <b>" . $solicitud[0]['codigo_solicitud'] . "</b>
                 </div>
                 <div style='margin-bottom: 20px;'>
@@ -139,18 +139,20 @@ try {
 
         $documento .= "<table class='tableReq' align='center' style='font-size:11px;'>
                     <tr class='tableReqtr'>
-                        <th class='tableReqth' style='width: 10%;'>No</th>
-                        <th class='tableReqth' style='width: 40%;'>Nombre/Razon social</th>
-                        <th class='tableReqth' style='width: 20%;'>Documento</th>
-                        <th class='tableReqth' style='width: 30%;'>No. Registro tributario</th>
+                        <th class='tableReqth' style='width: 5%;'>No</th>
+                        <th class='tableReqth' style='width: 35%;'>Nombre/Razon social</th>
+                        <th class='tableReqth' style='width: 15%;'>Documento</th>
+                        <th class='tableReqth' style='width: 25%;'>No. Registro tributario</th>
+                        <th class='tableReqth' style='width: 20%;'>Doc. Respaldo</th>
                     </tr>";
         $cnt = 1;
         foreach ($solicitud as $key => $item) {
             $documento .=   "<tr>
-                            <td class='tableReqtd' style='width: 10%;'>" . $cnt . "</td>
-                            <td class='tableReqtd' style='width: 40%; text-align:left;'>" . $item['nombre_completo'] . "</td>
-                            <td class='tableReqtd' style='width: 20%;'>" . $item['documento'] . "</td>
-                            <td class='tableReqtd' style='width: 30%;'>" . $item['documento_tributario'] . " <span  style='font-size:9px;'>[" . $item['tipo_documento_tributario'] . "]</span></td>
+                            <td class='tableReqtd' style='width: 5%;'>" . $cnt . "</td>
+                            <td class='tableReqtd' style='width: 35%; text-align:left;'>" . $item['nombre_completo'] . "</td>
+                            <td class='tableReqtd' style='width: 15%;'>" . $item['documento'] . "</td>
+                            <td class='tableReqtd' style='width: 25%;'>" . $item['documento_tributario'] . " <span  style='font-size:9px;'>[" . $item['tipo_documento_tributario'] . "]</span></td>
+                            <td class='tableReqtd' style='width: 20%;'>"  . $item['documento_respaldo']. "</td>
                         </tr> ";
             $cnt++;
         }
@@ -165,7 +167,9 @@ try {
             $solicitud[0]['resolucion_determinativa'] . ",  se transfiguro en título de ejecución de acuerdo a lo dispuesto en el numeral 1 del Artículo 108 del Código Tributario Boliviano Ley 2492.
             </p>
             <p>
-            Señalar que aquella <b>RETENCIÓN DE FONDOS</b> es resultado del proceso de fiscalización de la gestión fiscal <b>" . $solicitud[0]['gestion_fiscal'] . "</b>, en el cual se determina que el citado aún mantiene deuda pendiente con esta Administración Tributaria Municipal, y ante la falta de pago se encuentra en etapa de ejecución tributaria.
+            Señalar que aquella <b>RETENCIÓN DE FONDOS</b> es resultado del proceso de fiscalización de la gestión fiscal <b>" . $solicitud[0]['gestion_fiscal'] . "</b>
+            , con número de <b>" . $solicitud[0]['tipo_respaldo'] . ": " . $solicitud[0]['documento_respaldo'] . "</b>, 
+            en el cual se determina que el citado aún mantiene deuda pendiente con esta Administración Tributaria Municipal, y ante la falta de pago se encuentra en etapa de ejecución tributaria.
             </p> 
         </div>  
     </div> ";
@@ -204,7 +208,7 @@ try {
                 </tr>
                 <tr>
                     <td>
-                        " . $solicitud[0]['hash_datos'] . " 
+                        " . $solicitud[0]['hash_datos'] . " - <b>“2025 BICENTENARIO DE BOLIVIA”</b>
                     </td>
                 </tr>
                     <tr>
@@ -216,7 +220,7 @@ try {
             </page_footer> 
             
             <div style='text-align: right; margin-bottom: 20px;'>
-                    El Alto, <span id='fechaActual'>" . $dia . " de " . $conn->obtenerNombreMes(intval(date("m"))) . " de " . $anio . "</span><br>
+                    El Alto, <span id='fechaActual'>" . $dia . " de " . $conn->obtenerNombreMes(intval($mes)) . " de " . $anio . "</span><br>
                     <b>" . $solicitud[0]['cite_anotacion_preventiva'] . "</b>
             </div>
             <div style='margin-bottom: 20px;'>

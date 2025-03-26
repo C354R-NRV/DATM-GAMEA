@@ -27,7 +27,7 @@ try {
             $resp['estado'] = 'green';
             $resp['title'] = 'Cambio exitoso!';
         } else {
-            throw new Exception('La nueva contraseña es muy corta');
+            throw new Exception('La nueva contraseña es muy corta, longitud proporcionada:' . strlen(trim($passwordNuevo_)));
         }
     }
 } catch (Exception $e) {

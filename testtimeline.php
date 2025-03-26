@@ -39,8 +39,7 @@ h2 {
 }
 
 .timeline {
-    position: relative;
-    padding: 2rem 0;
+    position: relative; 
 }
 
 .timeline::before {
@@ -69,7 +68,7 @@ h2 {
 
 .crisis-content {
     width: calc(50% - 30px);
-    padding: 1.5rem;
+    padding: 0.2rem 1.5rem 0.2rem 1.5rem;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

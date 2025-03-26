@@ -74,7 +74,7 @@ foreach ($cabeceras as $key => $cabecera) {
                         <tr>
                             <th>CI/NIT</th>
                             <th>NOMBRES/R. SOCIAL</th>
-                            <th>AUTO CONCLUSIÓN</th>
+                            <th>DETALLES DE SOLICITUD</th>
                             <th>RESPALDO</th>
                             <th>DOC. RESPALDO</th>
                             <th>RETENCIÓN</th>
@@ -122,9 +122,25 @@ foreach ($items as $key => $item) {
     $html .= ' 
             <tr>
                 <td>' . $item['documento_identidad_numero'] . ($item['tipo_persona'] == 'N' ? (trim($item['documento_identidad_complemento']) != '' ? '-' . $item['documento_identidad_complemento'] : '') . ' ' . $item['documento_identidad_extension'] : '') . '</td>
-                <td>' . ($item['tipo_persona'] == 'N' ? $item['nombres'] : $item['razon_social']) . '</td>
-                <td>' . $item['auto_conclusion'] . '</td>
-                <td>' . $item['tipo_respaldo'] . '</td>
+                <td>' . ($item['tipo_persona'] == 'N' ? $item['nombres'] : $item['razon_social']) . '</td>';
+                
+
+            if ($cabecera['tipo_proceso'] == 'R') {
+                $html .= '<td style="font-size:0.75rem;">
+                                <b>' . $item['tipo_respaldo'] . ':</b> ' . $item['documento_respaldo'] . '<br>                
+                                <b>Res. determinativa:</b> ' . $item['resolucion_determinativa'] . '<br>
+                                <b>Gestión fiscal:</b> ' . $item['gestion_fiscal'] . '<br>
+                                <b>Anotación prev.:</b> ' . $item['cite_anotacion_preventiva'] . '
+                            </td>';
+            } else {
+                $html .= '<td style="font-size:0.75rem;">
+                                ' . $item['tipo_respaldo'] . ': ' . $item['documento_respaldo'] . '<br>                
+                                <b>Auto concl.:</b> ' . $item['auto_conclusion'] . '<br>
+                                
+                            </td>';
+            }
+
+                $html .= '<td>' . $item['tipo_respaldo'] . '</td>
                 <td>' . $item['documento_respaldo'] . '</td>
                 <td>' . ($item['monto_retencion_bs'] > 0 ? $item['monto_retencion_bs'] . ' Bs.' : $item['monto_retencion_ufv'] . ' UFV.') . '</td>
                 <td>' . $item['documento_tributario'] . "<span  style='font-size:10px;'><br>[".$item['tipo_documento_tributario'].']</span></td>

@@ -121,9 +121,12 @@ if (!$_SESSION['swlogin']) {
                 data-query-params="filtrosDataTable">
                 <thead>
                     <th data-field="id" data-sortable="true">No</th>
+                    <th data-field="rol" data-sortable="true">Rol</th>
+                    <th data-field="cedula_identidad" data-sortable="true">Ci/Nit</th>
+                    <th data-field="nombres" data-sortable="true">Nombres</th>
                     <th data-field="usuario" data-sortable="true">Usuario</th>
                     <th data-field="contacto" data-sortable="true">Contacto</th>
-                    <th data-field="correo" data-sortable="true">Correo</th>
+                    
                     <th data-field="fecha_registro" data-sortable="true">Fecha registro</th>
                     <th data-field="acciones">Acciones</th>
                 </thead>
@@ -180,21 +183,20 @@ if (!$_SESSION['swlogin']) {
             beforeSend: function() {
                 loadGralOn();
             },
-            success: function(dat) {
-                console.log("getUsuarios--------------->");
-                console.log(dat);
+            success: function(e) { 
                 loadGralOff();
                 $('#tbodyItems').empty();
-                dat = $.parseJSON(dat);
+                dat = $.parseJSON(e);
                 // Iterar sobre los datos recibidos y agregarlos al tbody
-                $.each(dat.info, function(index, item) {
+                $.each(dat, function(index, item) {
                     var fila = `
                     <tr>
                         <td>${item.id}</td>
                         <td>${item.rol}</td>
+                        <td>${item.cedula_identidad}</td>
+                        <td>${item.nombres}</td>
                         <td>${item.usuario}</td>
-                        <td>${item.contacto}</td>
-                        <td>${item.correo}</td>
+                        <td>${item.contacto}</td> 
                         <td>${item.fecha_registro}</td> 
                         <td>${item.acciones}</td>
                     </tr>
@@ -282,11 +284,11 @@ if (!$_SESSION['swlogin']) {
         }); */
     }
 
-    function borrarCompendio(idsolicitud, codigoSolicitud) {
+    function borrarUsuario(idusuario, codigoSolicitud) {
         $.confirm({
             title: "Eliminación de solicitud",
             type: "red",
-            content: "Confirme la eliminacion de la solicitud: <b>" + idsolicitud + "</b>, con codigo de solicitud: <b>" + codigoSolicitud + "</b> y detalle brevemente la(s) razon(es):<br> <textarea id='observacion' rows='6' cols='40' class= 'form-control' placeholder='Escribe aquí el detalle...'></textarea><br><br>",
+            content: "Confirme la eliminacion del usuario: <b>" + idusuario + "</b>, con codigo de solicitud: <b>" + codigoSolicitud + "</b> y detalle brevemente la(s) razon(es):<br> <textarea id='observacion' rows='6' cols='40' class= 'form-control' placeholder='Escribe aquí el detalle...'></textarea><br><br>",
             buttons: {
                 confirmar: {
                     text: "Confirmar",
@@ -294,7 +296,7 @@ if (!$_SESSION['swlogin']) {
                     action: function() {
 
                         var datos = {
-                            idsolicitud: idsolicitud,
+                            idusuario: idusuario,
                             observacion: $('#observacion').val(),
 
                         };
@@ -303,7 +305,7 @@ if (!$_SESSION['swlogin']) {
                             async: true,
                             type: 'POST',
                             data: datos,
-                            url: '../php/exencionBajaSolicitud.php',
+                            url: '../php/usrBajaSolicitud.php',
                             beforeSend: function() {
                                 loadGralOn();
                             },
@@ -313,7 +315,7 @@ if (!$_SESSION['swlogin']) {
                                 //AGREAGAR NOTIFICACION DE GUARDADO CORRECTO 
                                 dat = $.parseJSON(dat);
                                 console.log(dat.log);
-                                window.location.href = './sirefoList.php';
+                                window.location.href = './usrList.php';
 
                             },
                             timeout: 16000,

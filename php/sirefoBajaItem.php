@@ -45,11 +45,11 @@ if ($swActualizaItems) {
 
     $nueva_cantidad_detalle = $itemSolicitud['detalle_cantidad'] - 1;
     $query = "INSERT INTO srf_cabecera_solicitud_hst (
-                id_cabecera_solicitud,
-                campo,
-                valor_anterior,
-                valor_nuevo,
-                fecha_modificacion,
+                id_cabecera_solicitud, 
+                campo, 
+                valor_anterior, 
+                valor_nuevo, 
+                fecha_modificacion, 
                 idusuario
             ) VALUES (
                 " . $itemSolicitud['id_cabecera_solicitud'] . ",

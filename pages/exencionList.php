@@ -76,6 +76,7 @@ if (!$_SESSION['swlogin']) {
 
     <?php
     echo $twig->render('prebodyltFin.twig');
+    echo '<input type="hidden" id="rolUser" value="' . $_SESSION['rol'] . '">';
     ?>
     <!-- Hero End -->
 
@@ -84,7 +85,10 @@ if (!$_SESSION['swlogin']) {
         <div class="form-group d-flex flex-column flex-md-row">
             <div class="row">
                 <div class="col-md-1 mb-3">
-                    <a class="btn btn-success" href="exencionPanel.php" role="button"><i class="fa fa-plus"></i></a>
+                    <?php
+                    if ($_SESSION['rol'] == 'CONTRIBUYENTE')
+                        echo '<a class="btn btn-success" href="exencionPanel.php" role="button"><i class="fa fa-plus"></i></a>';
+                    ?>
                 </div>
                 <div class="col-md-4 mb-3">
                     <input type="text" class="form-control" value="" id="filtroCodigoSolicitud" placeholder="Codigo de solicitud">
@@ -115,19 +119,27 @@ if (!$_SESSION['swlogin']) {
                 data-page-list="[10, 25, 50, 100, 200, all]"
                 data-locale="es-ES"
                 class="table table-striped"
-                data-sort-name="id_cabecera_solicitud"
+                data-sort-name="fecha_actuado"
                 data-sort-order="desc"
                 data-show-refresh="true"
                 data-url="../php/exencionGetSolicitudes.php"
                 data-query-params="filtrosDataTable">
                 <thead>
-                    <th data-field="idcabecera" data-sortable="true">No</th>
-                    <th data-field="tipo_proceso" data-sortable="true">Tipo</th>
+                    <th data-field="idcabecera" data-sortable="true">Id</th>
+                    <th data-field="idactuado" data-sortable="true">Act</th>
+                    <?php
+                    if ($_SESSION['rol'] != 'CONTRIBUYENTE') {
+                        echo '<th data-field="usuario" data-sortable="true">Usuario</th>
+                                <th data-field="cedula_identidad" data-sortable="true">CI/NIT</th>
+                                <th data-field="contacto" data-sortable="true">Contacto</th>';
+                    }
+                    ?>
+                    <th data-field="rubro" data-sortable="true">Tipo</th> 
                     <th data-field="registro_tributario" data-sortable="true">Reg. Trib.</th>
                     <th data-field="codigo_solicitud" data-sortable="true">Cod. solicitud</th>
-                    <th data-field="fecha_registro" data-sortable="true">Fecha registro</th>
-                    <th data-field="fecha_envio" data-sortable="true">Fecha envio</th>
-                    <th data-field="estado_envio" data-sortable="true">Estado</th>
+                    <th data-field="fecha_inicio" data-sortable="true">Fecha inicio</th>
+                    <th data-field="fecha_actuado" data-sortable="true">Fecha actuado</th>
+                    <th data-field="detalle_estado" data-sortable="true">Estado</th>
                     <th data-field="acciones">Acciones</th>
                 </thead>
                 <tbody id="tbodyItems">
@@ -171,7 +183,6 @@ if (!$_SESSION['swlogin']) {
     }
 
     function getSolicitudes() {
-
         $.ajax({
             async: true,
             type: 'POST',
@@ -185,24 +196,38 @@ if (!$_SESSION['swlogin']) {
                 loadGralOn();
             },
             success: function(dat) {
+                console.log(dat);
                 loadGralOff();
                 $('#tbodyItems').empty();
                 dat = $.parseJSON(dat);
-                console.log(dat.query);
                 // Iterar sobre los datos recibidos y agregarlos al tbody
                 $.each(dat.info, function(index, item) {
+
                     var fila = `
                     <tr>
                         <td>${item.idcabecera}</td>
-                        <td>${item.rubro}</td>
+                        <td>${item.idactuado}</td>
+                        `;
+
+                    if ($('#rolUser').val() != 'CONTRIBUYENTE') {
+                        fila += `
+                                <td>${item.usuario}</td>
+                                <td>${item.cedula_identidad}</td>
+                                <td>${item.contacto}</td>
+                            `;
+                    }
+
+                    fila += `<td>${item.rubro}</td>
                         <td>${item.registro_tributario}</td>
                         <td>${item.codigo_solicitud}</td>
-                        <td>${item.fecha_registro}</td>
-                        <td>${item.fecha_envio}</td> 
+                        <td>${item.fecha_inicio}</td>
+                        <td>${item.fecha_actuado}</td> 
                         <td>${item.detalle_estado}</td> 
                         <td>${item.acciones}</td>
                     </tr>
                 `;
+
+
                     $('#tbodyItems').append(fila);
                 });
 
@@ -219,95 +244,219 @@ if (!$_SESSION['swlogin']) {
         });
     }
 
-    function enviarSolicitud(idsolicitud, codigoSolicitud) {
-        console.log("Enviando solicitud" + idsolicitud + ", para:" + codigoSolicitud);
-        /*  $.ajax({
-            async: true,
-            type: "POST",
-            dataType: "html",
-            url: "../php/preapi.php",
-            data: {
-                endpoint: 'consultarEstadoEnvio',
-                id: idsolicitud
-            },
-            beforeSend: function() {
-                loadGralOn();
-            },
-            success: function(e) {
-                
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error("Error en la solicitud AJAX:", textStatus, errorThrown);
-                loadGralOff();
-                $.confirm({
-                    title: "Error",
-                    content: "Hubo un problema al conectar con el servidor. Por favor, intenta de nuevo más tarde.",
-                    type: "red",
-                    buttons: {
-                        ok: {
-                            text: "Aceptar",
-                            action: function() {}
-                        }
-                    }
-                });
-            },
-            timeout: 26000
-        }); */
+    function revisarSolicitud(idcabecera, idactuado, codigoSolicitud, sw) {
+        window.location.href = './exencionRevisionSolicitud.php?j=' + idcabecera + '&i=' + codigoSolicitud + '&w=' + sw+'&x='+idactuado;
     }
 
-    function editarSolicitud(idsolicitud, codigoSolicitud) {
-        console.log("editarSolicitud:" + idsolicitud + ", para:" + codigoSolicitud);
-        /*  $.ajax({
-            async: true,
-            type: "POST",
-            dataType: "html",
-            url: "../php/preapi.php",
-            data: {
-                endpoint: 'consultarEstadoEnvio',
-                id: idsolicitud
-            },
-            beforeSend: function() {
-                loadGralOn();
-            },
-            success: function(e) {
-                
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error("Error en la solicitud AJAX:", textStatus, errorThrown);
-                loadGralOff();
-                $.confirm({
-                    title: "Error",
-                    content: "Hubo un problema al conectar con el servidor. Por favor, intenta de nuevo más tarde.",
-                    type: "red",
-                    buttons: {
-                        ok: {
-                            text: "Aceptar",
-                            action: function() {}
-                        }
+    function cambiarARecibido(idsolicitud, codigoSolicitud) {
+        $.confirm({
+            title: "Recepción de solitud",
+            type: "orange",
+            content: "Confirme la recepción de la solicitud: <b>" + idsolicitud + "</b>, con código de solicitud: <b>" + codigoSolicitud + "</b>",
+            columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
+            buttons: {
+                confirmar: {
+                    text: "Confirmar",
+                    btnClass: "btn-warning",
+                    action: function() {
+                        var datos = {
+                            idsolicitud: idsolicitud,
+                        };
+                        $.ajax({
+                            async: true,
+                            type: 'POST',
+                            data: datos,
+                            url: '../php/exencionRecepcionSolicitud.php',
+                            beforeSend: function() {
+                                loadGralOn();
+                            },
+                            success: function(dat) {
+                                console.log(dat);
+                                loadGralOff();
+                                //AGREAGAR NOTIFICACION DE GUARDADO CORRECTO 
+                                dat = $.parseJSON(dat);
+                                window.location.href = './exencionList.php';
+                            },
+                            timeout: 16000,
+                            error: function(xhr, status, error) {
+                                alert('Error: ' + error);
+                            }
+                        });
                     }
-                });
-            },
-            timeout: 26000
-        }); */
+                },
+                cancel: {
+                    text: "Cerrar",
+                    action: function() {}
+                }
+            }
+        });
     }
+
+    function subsanarObservaciones(idcabecera, codigoSolicitud) {
+        window.location.href = './exencionSubsanarObservaciones.php?i=' + idcabecera + '&c=' + codigoSolicitud;
+    }
+
+    function cambiarAEntregaFisico(idcabecera, codigoSolicitud) {
+        $.confirm({
+            title: "Confirmación de entrega",
+            type: "orange",
+            content: "Por favor, confirme la <b>entrega de los requisitos en fisico</b> de la solicitud: <b>" + idcabecera + "</b>, con código de solicitud: <b>" + codigoSolicitud + "</b>",
+            columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
+            buttons: {
+                confirmar: {
+                    text: "Confirmar",
+                    btnClass: "btn-warning",
+                    action: function() {
+                        $.ajax({
+                            async: true,
+                            type: 'POST',
+                            data: {
+                                idcabecera: idcabecera,
+                                codigoSolicitud: codigoSolicitud,
+                            },
+                            url: '../php/exencionEntregaFisica.php',
+                            beforeSend: function() {
+                                loadGralOn();
+                            },
+                            success: function(dat) {
+                                console.log(dat);
+                                loadGralOff();
+                                //AGREAGAR NOTIFICACION DE GUARDADO CORRECTO  
+                                dat = $.parseJSON(dat);
+                                window.location.href = './exencionList.php';
+                            },
+                            timeout: 16000,
+                            error: function(xhr, status, error) {
+                                alert('Error: ' + error);
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: "Cancelar",
+                    action: function() {}
+                }
+            }
+        });
+
+    }
+
+    function cambiarAtendido(idcabecera, codigoSolicitud) {
+        $.confirm({
+            title: "Confirmación de cambio de estado",
+            type: "orange",
+            content: "Por favor, confirme el cambio de estado a <b>COMPLETADO Y ATENDIDO</b> de la solicitud: <b>" + idcabecera + "</b>, con código de solicitud: <b>" + codigoSolicitud + "</b>",
+            columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
+            buttons: {
+                confirmar: {
+                    text: "Confirmar",
+                    btnClass: "btn-warning",
+                    action: function() {
+                        $.ajax({
+                            async: true,
+                            type: 'POST',
+                            data: {
+                                idcabecera: idcabecera,
+                                codigoSolicitud: codigoSolicitud,
+                            },
+                            url: '../php/exencionAtentido.php',
+                            beforeSend: function() {
+                                loadGralOn();
+                            },
+                            success: function(dat) {
+                                console.log(dat);
+                                loadGralOff();
+                                //AGREAGAR NOTIFICACION DE GUARDADO CORRECTO  
+                                dat = $.parseJSON(dat);
+                                window.location.href = './exencionList.php';
+                            },
+                            timeout: 16000,
+                            error: function(xhr, status, error) {
+                                alert('Error: ' + error);
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: "Cancelar",
+                    action: function() {}
+                }
+            }
+        });
+    }
+
+    function cambiarARecibidoFisico(idcabecera, codigoSolicitud) {
+
+        $.confirm({
+            title: "Confirmación de recepción en fisico",
+            type: "orange",
+            content: "Por favor, confirme la <b>recepción de los requisitos en fisico</b> de la solicitud: <b>" + idcabecera + "</b>, con código de solicitud: <b>" + codigoSolicitud + "</b>",
+            columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
+            buttons: {
+                confirmar: {
+                    text: "Confirmar",
+                    btnClass: "btn-warning",
+                    action: function() {
+                        $.ajax({
+                            async: true,
+                            type: 'POST',
+                            data: {
+                                idcabecera: idcabecera,
+                                codigoSolicitud: codigoSolicitud,
+                            },
+                            url: '../php/exencionRecepcionFisica.php',
+                            beforeSend: function() {
+                                loadGralOn();
+                            },
+                            success: function(dat) {
+                                console.log(dat);
+                                loadGralOff();
+                                //AGREAGAR NOTIFICACION DE GUARDADO CORRECTO  
+                                dat = $.parseJSON(dat);
+                                window.location.href = './exencionList.php';
+                            },
+                            timeout: 16000,
+                            error: function(xhr, status, error) {
+                                alert('Error: ' + error);
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: "Cancelar",
+                    action: function() {}
+                }
+            }
+        });
+
+        
+    }
+
+    function verLineaTiempo(idsolicitud, codigoSolicitud) {
+        console.log("verLineaTiempo solicitud" + idsolicitud + ", para:" + codigoSolicitud);
+        window.location.href = './exencionLineaTiempo.php?j=' + idsolicitud + '&i=' + codigoSolicitud;
+    }
+
+    function enviarSolicitud(idsolicitud, codigoSolicitud) {
+        console.log("Enviando solicitud" + idsolicitud + ", para:" + codigoSolicitud);
+
+    } 
 
     function borrarCompendio(idsolicitud, codigoSolicitud) {
         $.confirm({
             title: "Eliminación de solicitud",
             type: "red",
-            content: "Confirme la eliminacion de la solicitud: <b>" + idsolicitud + "</b>, con codigo de solicitud: <b>" + codigoSolicitud + "</b> y detalle brevemente la(s) razon(es):<br> <textarea id='observacion' rows='6' cols='40' class= 'form-control' placeholder='Escribe aquí el detalle...'></textarea><br><br>",
+            content: "Confirme la eliminacion de la solicitud: <b>" + idsolicitud + "</b>, con código de solicitud: <b>" + codigoSolicitud + "</b> y detalle brevemente la(s) razon(es):<br> <textarea id='observacion' rows='6' cols='40' class= 'form-control' placeholder='Escribe aquí el detalle...'></textarea><br><br>",
+            columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
             buttons: {
                 confirmar: {
                     text: "Confirmar",
                     btnClass: "btn-red",
                     action: function() {
-
                         var datos = {
                             idsolicitud: idsolicitud,
                             observacion: $('#observacion').val(),
-
                         };
-                        console.log(datos);
                         $.ajax({
                             async: true,
                             type: 'POST',
@@ -318,24 +467,58 @@ if (!$_SESSION['swlogin']) {
                             },
                             success: function(dat) {
                                 loadGralOff();
-                                console.log(dat);
                                 //AGREAGAR NOTIFICACION DE GUARDADO CORRECTO 
                                 dat = $.parseJSON(dat);
-                                console.log(dat.log);
-                                window.location.href = './sirefoList.php';
+                                window.location.href = './exencionList.php';
 
                             },
                             timeout: 16000,
                             error: function(xhr, status, error) {
                                 alert('Error: ' + error);
                             }
-                        }); 
+                        });
                     }
                 },
                 cancel: {
                     text: "Cerrar",
                     action: function() {}
                 }
+            }
+        });
+    }
+
+    function verDetalleReversion(idsolicitud, codigoSolicitud) {
+        var datos = {
+            idsolicitud: idsolicitud,
+            observacion: $('#observacion').val(),
+        };
+        $.ajax({
+            async: true,
+            type: 'POST',
+            data: datos,
+            url: '../php/exencionDetalleBajaSolicitud.php',
+            beforeSend: function() {
+                loadGralOn();
+            },
+            success: function(dat) {
+                loadGralOff();
+                $.confirm({
+                    title: "Detalles de solicitud revertida",
+                    type: "green",
+                    content: dat,
+                    columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
+                    buttons: {
+                        volver: {
+                            text: "Volver",
+                            action: function() {}
+                        }
+                    }
+                });
+
+            },
+            timeout: 16000,
+            error: function(xhr, status, error) {
+                alert('Error: ' + error);
             }
         });
     }

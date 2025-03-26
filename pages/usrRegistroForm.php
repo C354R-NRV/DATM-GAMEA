@@ -171,7 +171,7 @@ if (!$_SESSION['swlogin']) {
                     <div class="col-md-3 mb-3">
                         <label for="tipo_persona">Tipo de persona</label>
                         <select class="form-controlSelect" onchange="reestructuraFormItem()" id="tipo_persona">
-                            <option value="N">Natual</option>
+                            <option value="N">Natural</option>
                             <option value="J">Juridico</option>
                         </select>
                     </div>
@@ -288,11 +288,12 @@ if (!$_SESSION['swlogin']) {
                     <div class="col-md-3 mb-3">
                         <label for="cargo">Cargo</label>
                         <select class="form-controlSelect" id="cargo">
-                            <option value="N">Contribuyente</option>
+                            <option value="CONTRIBUYENTE">Contribuyente</option>
                             <?php
-                            $query = "select distinct cargo  
+                            $query = "
+                                select distinct cargo  
                                 from datm_usuario 
-                                where cargo is not null and cargo != 'ROOT'  ";
+                                where cargo is not null and cargo != 'ROOT'";
                             $stmt = $cons->query($query);
                             $extension = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             foreach ($extension as $row) {
@@ -383,8 +384,7 @@ if (!$_SESSION['swlogin']) {
                                 } else {
 
                                 }
-                                loadGralOff();
-
+                                loadGralOff(); 
                             },
                             error: function(jqXHR, textStatus, errorThrown) {
                                 console.error("Error en la solicitud AJAX:", textStatus, errorThrown);

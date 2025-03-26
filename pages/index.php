@@ -116,6 +116,7 @@ $twig = new Environment($loader);
                         <div class="btn btn-sm rounded-pill px-3 mb-3 mensajeProformaBtn"><b><i class="fa fa-file-text-o fs-5"></i> Tus deudas</b></div><span style="padding: 1rem;"></span>
                         <div class="btn btn-sm rounded-pill px-3 mb-3 mensajeTramitepBtn"><b><i class="fa fa-folder-open-o  fs-5"></i> Tramites</b></div><span style="padding: 1rem;"></span>
                         <div class="btn btn-sm rounded-pill px-3 mb-3 miRegistroBtn"><b><i class="fa fa-database fs-5"></i> Tus bienes</b></div>
+                        <input type="hidden" value="<?php echo ($_SESSION['rol'] == 'CONTRIBUYENTE' ? $_SESSION['cedula_identidad'] : '0'); ?>" id="cinitContribuyente" />
                     </div>
                 </div>
             </div>
@@ -480,7 +481,7 @@ $twig = new Environment($loader);
             <?php
             if (!$_SESSION['idusuario'])
                 echo "checkEndOfPage();";
-            ?> 
+            ?>
 
             var requisitoGet = $('#requisito_get').val();
             console.log("requisitoGet:" + requisitoGet);

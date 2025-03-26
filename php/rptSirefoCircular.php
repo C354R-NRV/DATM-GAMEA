@@ -18,26 +18,28 @@ $query = "select  TRIM(
             razon_social
         )
     ) AS nombre_completo,
-documento_identidad_numero, 
-documento_identidad_complemento,
+documento_identidad_numero || COALESCE(NULLIF(' ' || documento_identidad_complemento, ' '), '') AS documento_identidad_numero,
 documento_identidad_extension,
 auto_conclusion, 
 tipo_respaldo, 
 documento_respaldo, 
 monto_retencion_bs, 
 monto_retencion_ufv , 
-tipo_persona,
+a.tipo_persona,
 tipo_proceso,
 a.id_cabecera_solicitud, a.id_item_solicitud, d.codigo_solicitud, 
 to_char(d.fecha_envio, 'DD/MM/YYYY') AS fecha_envio,
 e.circular, 
-to_char(e.fecha_circular, 'DD/MM/YYYY HH24:MI:SS') AS fecha_circular ,  a.hash_detalle
+to_char(e.fecha_circular, 'DD/MM/YYYY HH24:MI:SS') AS fecha_circular ,  a.hash_detalle,
+documento_tributario,
+tipo_documento_tributario , cod_documento_identidad_tipo
 from srf_item_solicitud a 
 left join srf_documento_identidad_extension b on b.id_documento_identidad_extension = a.id_documento_identidad_extension
 left join srf_tipo_respaldo c on  c.id_tipo_respaldo = a.id_tipo_respaldo
 left join srf_cabecera_solicitud d on d.id_cabecera_solicitud = a.id_cabecera_solicitud
+left join srf_documento_identidad_tipo f on f.id_documento_identidad_tipo = a.id_documento_identidad_tipo 
 left join srf_estado_envio e on e.id_cabecera_solicitud = a.id_cabecera_solicitud and e.estado_ is true
-where a.estado_  is true and a.id_item_solicitud = $id;";
+where a.estado_  is true and a.id_item_solicitud =  $id;";
 
 $stmt = $cons->query($query);
 $item = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -86,12 +88,20 @@ try {
                 
                 <table style='width: 100%; font-size:11px; color:##515151; '> 
 
+
                     <tr>
-                    <td style='text-align:right'>
+                    <td style='text-align:right'> 
                     $aux_qr 
                     </td>
 
                     </tr>
+
+                                        <tr>
+                    <td style='text-align:center'> 
+<b>“2025 BICENTENARIO DE BOLIVIA”</b>
+                    </td>
+                    </tr>
+                    
                     <tr>
                         <td style='text-align: center; padding:5px 10px 0 20px; border-top:3px double black; width: 100%; font-size:10px;'> 
                             Zonal Villa Bolivar D, Carretera a Viacha, Terminal Metropolitana de la Ciudad de El Alto, primer piso<br>https://datm.elalto.gob.bo/
@@ -107,7 +117,10 @@ try {
                 </div>
                 <div style='margin-bottom: 20px;'>
                     <p>Señor(a):<br>
-                    <b>" . $item['nombre_completo'] . "</b></p>
+                    <b>" . $item['nombre_completo'] . "</b><br>
+                    <b>" . $item['cod_documento_identidad_tipo'] . ": " . $item['documento_identidad_numero'] . "</b><br>
+                    <b>" . $item['tipo_documento_tributario'] . ": " . $item['documento_tributario'] . "</b>
+                    </p>
                 </div>
                 Presente:<br>
                 <div style='text-align: right; margin-bottom: 20px;'>
@@ -128,7 +141,7 @@ try {
                         </tr>
                         <tr>
                             <td class='tableReqtd'>" . $item['circular'] . "</td>
-                            <td class='tableReqtd'>" . $item['fecha_circular'] . "</td>
+                            <td class='tableReqtd'>" . $item['fecha_circular'] . "</td> 
                         </tr> 
                     </table>
                     <p>Es por cuanto se emite el presente para fines que convengan al interesado.</p>
@@ -137,13 +150,13 @@ try {
                     <br>
                 </div> 
 
-                <table style='text-align: center; width: 40%' align='center'>
+                <!-- <table style='text-align: center; width: 40%' align='center'>
                     <tr>
                         <td style='width: 100%'> 
                             <b>Dirección de Administración Tributaria Municipal</b>
                         </td>
                     </tr>
-                </table> 
+                </table> -->
             </div>
         </page>
         ";

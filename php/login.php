@@ -10,8 +10,8 @@ $conn = new Conexion();
 $cons = $conn->conectar();
 
 $query = "select id,cedula_identidad, nombres, primer_apellido, 
-                segundo_apellido, usuario, codigo_unidad, area, rol, cargo, solicitante_cite, COALESCE(area, '') as area, estado, COALESCE(codigo_usuario, '') as codigo_usuario 
-                from datm_usuario u where u.usuario like UPPER('$u_')  and u.password like MD5('$p_'); ";
+                segundo_apellido, usuario, codigo_unidad, area, rol, cargo, solicitante_cite, COALESCE(area, '') as area, estado, COALESCE(codigo_usuario, '') as codigo_usuario, contacto, correo
+                from datm_usuario u where UPPER(u.usuario) like UPPER('$u_')  and u.password like MD5('$p_'); ";
 $stmt = $cons->query($query);
 
 $rs  = array();
@@ -36,6 +36,10 @@ foreach ($resultados as $row) {
         $_SESSION['codigo_usuario'] = $row['codigo_usuario'];
         $_SESSION['area'] = $row['area'];
         $_SESSION['usuario'] = $row['usuario'];
+        $_SESSION['cedula_identidad'] = $row['cedula_identidad'];
+        $_SESSION['contacto'] = $row['contacto'];
+        $_SESSION['correo'] = $row['correo'];
+        $_SESSION['cedula_identidad_complemento'] = $row['cedula_identidad_complemento'];
         $_SESSION['rol'] = $row['rol'];
         $_SESSION['nombreUsuario']  = $nombre = $row['nombres'] . ' ' . $row['primer_apellido'] . ' ' . $row['segundo_apellido'];
     } else {

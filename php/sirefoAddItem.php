@@ -32,7 +32,7 @@ for ($i = $cntItemAct; $i < ($cntItemAct + $cnt); $i++) {
         <div class="col-md-3 mb-3">
             <label for="tipoPersona' . $i . '">Tipo de persona</label>
             <select class="form-controlSelect" onchange="reestructuraFormItem(' . $i . ')" id="tipoPersona' . $i . '">
-                <option value="N">Natual</option>
+                <option value="N">Natural</option>
                 <option value="J">Juridico</option>
             </select>
             <br>

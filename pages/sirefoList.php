@@ -98,7 +98,12 @@ if (!$_SESSION['swlogin']) {
                 </div>
                 <div class="col-md-1 mb-3">
                     <button class="btn btn-primary" onclick="getSolicitudes()">consultar</button>
+                    <?php
+                    if ($_SESSION['codigo_unidad'] == 'SIS')
+                        echo '<button class="btn btn-warning" onclick="sincronizaEstadoEnvios()">Sincronizar</button>';
+                    ?>
                 </div>
+
             </div>
         </div>
         <hr>
@@ -190,10 +195,8 @@ if (!$_SESSION['swlogin']) {
             },
             success: function(dat) {
                 loadGralOff();
-                console.log(dat)
                 $('#tbodyItems').empty();
                 dat = $.parseJSON(dat);
-                console.log(dat.query);
                 // Iterar sobre los datos recibidos y agregarlos al tbody
                 $.each(dat.info, function(index, item) {
                     var fila = `
@@ -227,38 +230,36 @@ if (!$_SESSION['swlogin']) {
         });
     }
 
-    function estadoEnvio(idsolicitud, codigoSolicitud) {
+    function sincronizaEstadoEnvios() {
+        loadGralOn();
         $.ajax({
             async: true,
             type: "POST",
             dataType: "html",
             url: "../php/preapi.php",
             data: {
-                endpoint: 'consultarEstadoEnvio',
-                id: idsolicitud
+                endpoint: 'consultarEstadoEnvioGeneral',
             },
             beforeSend: function() {
                 loadGralOn();
             },
             success: function(e) {
-                console.log("idsolicitud:" + idsolicitud);
                 loadGralOff();
+                console.log(e);
                 data = JSON.parse(e);
                 auxData = "<b>" + data.message + "</b>";
                 auxTitle = 'Atención...';
                 data.type = 'red';
                 if (data.success) {
                     auxTitle = 'RESPUESTA SIREFO';
-                    auxData = "<b>" + data.message.Estado + "</b>";
-                    if (data.message.Estado == 'Procesado') {
-                        data.type = 'green';
-                        auxData += "<br> <b>- Circular:" + (data.message.Circular) + "<br> - Fecha Circular:" + (data.message.FechaCircular) + "</b>";
-                    }
+                    auxData = "<b>" + data.message + "</b>";
+                    data.type = 'green';
                 } else {
                     auxTitle = 'Ocurrio un Error en la consulta de estado de envio...';
-                    auxData = data.message.Estado;
+                    auxData = (data.message.Estado ? data.message.Estado : data.message);
                     data.type = 'red';
                 }
+                //loadGralOff();
                 $.confirm({
                     title: auxTitle,
                     content: auxData,
@@ -293,7 +294,81 @@ if (!$_SESSION['swlogin']) {
                     }
                 });
             },
-            timeout: 26000
+            timeout: 126000
+        });
+    }
+
+    function estadoEnvio(idsolicitud, codigoSolicitud) {
+        $.ajax({
+            async: true,
+            type: "POST",
+            dataType: "html",
+            url: "../php/preapi.php",
+            data: {
+                endpoint: 'consultarEstadoEnvio',
+                id: idsolicitud
+            },
+            beforeSend: function() {
+                loadGralOff();
+                loadGralOn();
+                console.log("LOADING");
+            },
+            success: function(e) {
+                console.log("FINISH");
+                console.log("idsolicitud:" + idsolicitud);
+
+                data = JSON.parse(e);
+                auxData = "<b>" + data.message + "</b>";
+                auxTitle = 'Atención...';
+                data.type = 'red';
+                if (data.success) {
+                    auxTitle = 'RESPUESTA SIREFO';
+                    auxData = "<b>" + data.message.Estado + "</b>";
+                    if (data.message.Estado == 'Procesado') {
+                        data.type = 'green';
+                        auxData += "<br> <b>- Circular:" + (data.message.Circular) + "<br> - Fecha Circular:" + (data.message.FechaCircular) + "</b>";
+                    }
+                } else {
+                    auxTitle = 'Ocurrio un Error en la consulta de estado de envio...';
+                    auxData = data.message.Estado;
+                    data.type = 'red';
+                }
+                //loadGralOff();
+                $.confirm({
+                    title: auxTitle,
+                    content: auxData,
+                    type: data.type,
+                    typeAnimated: true,
+                    columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
+                    buttons: {
+                        cancel: {
+                            text: "Cerrar",
+                            action: function() {
+                                window.location.href = './sirefoList.php';
+                            },
+                        },
+                    },
+                    onOpenBefore: function() {
+                        $('.jconfirm-title-c').css('text-align', 'center');
+                    }
+                });
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("Error en la solicitud AJAX:", textStatus, errorThrown);
+                loadGralOff();
+                $.confirm({
+                    title: "Error",
+                    content: "Hubo un problema al conectar con el servidor. Por favor, intenta de nuevo más tarde.",
+                    type: "red",
+                    buttons: {
+                        ok: {
+                            text: "Aceptar",
+                            action: function() {}
+                        }
+                    }
+                });
+            },
+            timeout: 16000
         });
     }
 

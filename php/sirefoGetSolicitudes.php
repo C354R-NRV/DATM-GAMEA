@@ -30,8 +30,8 @@ if (isset($limit) and trim($limit) != '' and isset($offset) and trim($offset) !=
 $conn = new Conexion();
 $cons = $conn->conectar();
 
-$query = "
-select a.id_cabecera_solicitud, a.codigo_solicitud, a.detalle_cantidad, to_char(a.fecha_registro, 'YYYY-MM-DD HH24:MI:SS') AS fecha_registro, to_char(a.fecha_envio, 'YYYY-MM-DD HH24:MI:SS') AS fecha_envio,  a.adjunto_nombre, 
+$query = "SELECT a.id_cabecera_solicitud, a.codigo_solicitud, a.detalle_cantidad, to_char(a.fecha_registro, 'YYYY-MM-DD HH24:MI:SS') AS fecha_registro, 
+to_char(a.fecha_envio, 'YYYY-MM-DD HH24:MI:SS') AS fecha_envio,  a.adjunto_nombre, 
 b.usuario, a.tipo_proceso
 from srf_cabecera_solicitud a 
 left join datm_usuario b on b.id = a.idusuario

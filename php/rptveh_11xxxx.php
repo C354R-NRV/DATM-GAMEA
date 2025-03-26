@@ -26,7 +26,7 @@ try {
         $nombre = $row['nombre_rsocial'];
         $tipo_documento = $row['tipo_documento'];
         $ci_ = $row['documento_identidad'];
-        $detalleVehiculo .= '<tr><td ' . $cssAux_ . '>' . $row['nro_pta'] . '</td><td ' . $cssAux_ . '>:</td><td ' . $cssAux_ . '>' . $row['CLASE'] . ', ' . $row['TIPO_COMBUSTIBLE'] . ', ' . $row['MARCA'] . ' ' . $row['TIPO'] . '</td></tr>';
+        $detalleVehiculo .= '<tr><td ' . $cssAux_ . '>' . $row['nro_pta'] . '</td><td ' . $cssAux_ . '>:</td><td ' . $cssAux_ . '>' . $row['clase'] . ', ' . $row['TIPO_COMBUSTIBLE'] . ', ' . $row['MARCA'] . ' ' . $row['TIPO'] . '</td></tr>';
         $auxCnt++;
     }
     $txtPlural = ' del vehiculo ';

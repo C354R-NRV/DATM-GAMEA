@@ -1,4 +1,5 @@
 <?php
+session_start();
 require '../vendor/autoload.php';
 
 use Spipu\Html2Pdf\Html2Pdf;
@@ -14,8 +15,14 @@ $conn = new Conexion();
 $cons = $conn->conectar();
 
 try {
-
-    $resultados = getInfoVehRpt($cons, $ci_, $num_placa_);
+    $ci_ = $_SESSION['cedula_identidad'];
+    $contacto = $_SESSION['contacto'];
+    $correo_ = $_SESSION['correo'];
+    if ($nro_pta == 'TODOS') {
+        $resultados = getInfoVeh10_11Rpt($cons, $ci_);
+    } else {
+        $resultados = getInfoVehRpt($cons, $ci_, $nro_pta);
+    }
 
     $detalleVehiculo = '<table align="center" style="text-align:center;width: 100%; border-collapse: collapse; margin: 0 0 0 15px;">';
     $cssAux_ = 'style=" border: 1px solid #A9A9A9;padding: 5px; text-align: left;"';
@@ -32,7 +39,6 @@ try {
     if ($auxCnt > 1)
         $txtPlural = ' de los vehiculos ';
     $detalleVehiculo .= '</table>';
-
 
     $documento = "
     <style type='text/css'>
@@ -58,7 +64,7 @@ try {
     </style> 
     ";
     foreach ($resultados as $row) {
-        
+
         $apll = $row['primer_apellido_sigla'] . " " . $row['segundo_apellido'] . " " . $row['apellido_esposo'];
 
         $ci_ = $row['documento_identidad'];
@@ -78,29 +84,29 @@ try {
             $correoAux_ = "Correo:" . $correo_;
 
         $documento .= "
-            <page format='272x210' style='font: arial; color: #222222;'> 
-            <div style='margin:25px 55px 55px 55px;'>
-                <div style='text-align: right; margin-bottom: 20px;'>
-                    <p>El Alto - Bolivia, <span id='fechaActual'>" . date("d") . " de " . $conn->obtenerNombreMes(intval(date("m"))) . " de " . date("Y") . "</span></p>
-                </div>
-                <div style='margin-bottom: 20px;'>
-                    <p>Señor:</p>
-                    <p>Lic. Jhon Villalba Camacho<br>
-                    Director de Administración Tributaria Municipal de El Alto<br>
-                    GOBIERNO AUTONOMO MUNICIPAL DE EL ALTO</p>
-                    <p>Presente:</p>
-                </div>
-                <div style='text-align: right; margin-bottom: 20px;'>
-                    <span style='text-decoration:underline;'><b>REF.: SOLICITUD DEL TRAMITE DE EXENCIONES DE VEHÍCULOS Y/O MOTOCICLETAS CON PLACA DE   CONTROL Nº $num_placa_</b></span>
-                </div>
-                <div style='text-align: justify;'>
-                    <p>De mi mayor consideración:</p> 
-                    <p>Por medio de la presente nota, me dirijo a su autoridad solicitando el trámite de EXENCIONES DE VEHÍCULOS Y/O MOTOCICLETAS $txtPlural:</p>
-                    
+            <page format='272x210' style='font: arial; color: #222222;' backtop='12mm' backbottom='12mm' backleft='20mm' backright='10mm'> 
+                
+                    <div style='text-align: right; margin-bottom: 20px;'>
+                        <p>El Alto - Bolivia, <span id='fechaActual'>" . date("d") . " de " . $conn->obtenerNombreMes(intval(date("m"))) . " de " . date("Y") . "</span></p>
+                    </div>
+                    <div style='margin-bottom: 20px;'>
+                        <p>Señor:</p>
+                        <p>Lic. Jhon Villalba Camacho<br>
+                        Director de Administración Tributaria Municipal de El Alto<br>
+                        GOBIERNO AUTONOMO MUNICIPAL DE EL ALTO</p>
+                        <p>Presente:</p>
+                    </div>
+                    <div style='text-align: right; margin-bottom: 20px;'>
+                        <span style='text-decoration:underline;'><b>REF.: SOLICITUD DE TRAMITE DE EXENCIONES DE VEHÍCULOS Y/O MOTOCICLETAS ".(($auxCnt<=1)?"CON PLACA DE CONTROL Nº $nro_pta":"")."</b></span>
+                    </div>
+                    <div style='text-align: justify;'>
+                        <p>De mi mayor consideración:</p> 
+                        <p>Por medio de la presente nota, me dirijo a su autoridad solicitando el trámite de EXENCIONES DE VEHÍCULOS Y/O MOTOCICLETAS $txtPlural:</p>
+                    </div>
                     $detalleVehiculo
-                    
-                    <p>Todo ello al amparo de la Resolución Administrativa DRPT/Nº 006/2022 de fecha 02 de febrero de 2022, correspondientes a las gestiones desde $gestionIni_ hasta $gestionFin_, para tal efecto se adjunta:</p>
-                    
+                
+                    <p>Todo ello al amparo de la Resolución Administrativa DRPT/Nº 006/2022 de fecha 02 de febrero de 2022, correspondientes a la gestion $gestionIni_, para tal efecto se adjunta:</p>
+                            
                     <table class='tableReq' align='center'>
                         <tr class='tableReqtr'>
                             <th class='tableReqth' style='width: 550px;'>REQUISITOS</th>
@@ -138,29 +144,28 @@ try {
                             <td class='tableReqtd'></td>
                         </tr>
                         <tr>
-                            <td class='tableReqtd' style='width: 550px;'>NIT (Si corresponde).</td>
+                            <td class='tableReqtd' style='width: 550px;'>NIT.</td>
                             <td class='tableReqtd'></td>
                             <td class='tableReqtd'></td>
                         </tr>
                     </table>
 
                     <p>Sin otro particular me despido seguro de que mi solicitud será atendida favorablemente.</p>
-                    <p>Atentamente,</p> 
-                    </div>
-                </div>
+                    <p>Atentamente,</p>   
+
                 <table style='text-align: center; border-top: 1px solid #A9A9A9; width: 40%; font-size: 11px;' align='center'>
                         <tr>
                             <td style='width: 100%'>
                                 $nombre<br>
                                 $tip_doc $ci_<br>
-                                Num. Contacto: $contacto_<br>
+                                Num. Contacto: $contacto<br>
                                 $correoAux_
                             </td>
                         </tr>
                     </table> 
             ";
 
-        $footer = "Se autoriza la notificación por medio telemático al número de contacto $contacto_ ";
+        $footer = "Se autoriza la notificación por medio telemático al número de contacto $contacto ";
         if ($correo_)
             $footer .= " o al correo electrónico $correo_";
         $footer .= " , conforme al Art. 83 Bis, de la Ley No 2492 (CTB)";
@@ -176,7 +181,7 @@ try {
         </page_footer>';
 
         $documento .= "</page>";
-        
+
         break;
     }
     if ($resultados) {

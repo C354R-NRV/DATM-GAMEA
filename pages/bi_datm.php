@@ -87,7 +87,7 @@ if (!$_SESSION['swlogin']) {
                             </p>
                             <p>
                                 
-                                La Ubicación y horarios de atención son: Nuestra dirección está en la Zona Villa Bolivar B, Terminal Metropolitana de El Alto,La Paz Bolivia, el horario de atención es de Lunes a Viernes de 8:00 a 16:00., Ubicación: https://maps.app.goo.gl/RSHmPufwraJnA1vx8.
+                                La Ubicación y horarios de atención son: Nuestra dirección está en la Zona Villa Bolivar D, Terminal Metropolitana de El Alto,La Paz Bolivia, el horario de atención es de Lunes a Viernes de 8:00 a 16:00., Ubicación: https://maps.app.goo.gl/RSHmPufwraJnA1vx8.
                             </p>
                             <p>
                                 

@@ -31,6 +31,61 @@ body {
 }
 
 
+
+
+
+
+
+.token-container {
+  max-width: 400px;
+  margin: 20px auto;
+  border: 2px solid #1d97b1;
+  border-radius: 25px;
+  padding: 5px;
+  text-align: center;
+}
+
+.token-title {
+  color: #17798e;
+  font-size: 1.25rem;
+  font-family: Arial, sans-serif;
+}
+
+.token-input {
+  width: 100%;
+  font-size: 3rem;
+  text-align: center;
+  border: none;
+  background: transparent;
+  font-family: Arial, sans-serif;
+  font-weight: 500;
+  padding: 10px 0;
+  box-sizing: border-box;
+}
+
+/* Remover flechas del input number */
+.token-input::-webkit-outer-spin-button,
+.token-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+  
+}
+
+.token-input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Remover el outline al hacer focus */
+.token-input:focus {
+  outline: none;
+}
+
+.sueltaAqui {
+  font-size: 2rem;
+  color: black;
+}
+
+
 .striped-table {
   width: 100%;
   border-collapse: collapse;
@@ -295,11 +350,13 @@ h6,
 }
 
 .loadGralOn {
+  position: fixed;  
   z-index: 999;
-  position: absolute;
-  height: 100%;
+  top: 0;
+  left: 0;
+  height: 100vh;  
   width: 100%;
-  background-color: #212121;
+  background-color: #121212;
   opacity: 0.8;
   filter: alpha(opacity=80);
   display: flex;
