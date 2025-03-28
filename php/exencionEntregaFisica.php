@@ -14,6 +14,19 @@ $err = '';
 $pjson['err'] = '0';
 
 try {
+    $query = "SELECT COALESCE(
+        (select min(idactuado)  from exc_actuado  a
+        where idactuado > (
+        select max(idactuado)
+        from exc_actuado 
+        where idcabecera = $idcabecera and estado_
+        and idestado =  11)
+        and a.idcabecera = $idcabecera  and estado_  ),0
+        ) idactuadoValido";
+    $stmt = $cons->query($query);
+    $respActuadoValido = $stmt->fetch(PDO::FETCH_ASSOC); 
+
+    $filtro = ""; 
 
     $query = "
     select idestado  
@@ -71,7 +84,7 @@ try {
     $query = "
     select max(nro_actuado) nro_actuado
     from exc_actuado a  
-    where idcabecera = $idcabecera;";
+    where idcabecera = $idcabecera and a.estado_ is true;";
     $stmt = $cons->query($query);
     $resp = $stmt->fetch(PDO::FETCH_ASSOC);
     $nro_actuado = ($resp['nro_actuado'] + 1);
@@ -92,20 +105,23 @@ try {
         $pjson['err'] = '1';
     } else {
         $idactuado = $cons->lastInsertId();
+    } 
+    if (intval($respActuadoValido['idactuadovalido']) > 0) {
+        //entonces previamente ya se realizo una entrega en fisico que fue observado en su momento y se esta busanando
+        $filtro = " and b.idactuado >= " . $respActuadoValido['idactuadovalido'];
     }
-
-    // ya que se esta entregando los documentos NO observados, se los adhiere al actuado de ENTREGA, para su final revision en fisico
-
-    $query = "
-    select c.documento_path, c.idrequisito , a.iditem_act
-    from exc_item_actuado a 
-    left join exc_item_actuado  c on a.iditem_actuado_ant = c.iditem_act
-    left join exc_actuado b on a.idactuado = b.idactuado
-    where a.estado_ is true and b.estado_ is true
-    and a.idestado = 6
-    and idcabecera = $idcabecera order by idrequisito;";
+    $query = "SELECT a.iditem_act  , a.idrequisito , a.idestado, c.documento_path
+                from exc_item_actuado a 
+                left join exc_item_actuado  c on a.iditem_actuado_ant = c.iditem_act  
+                left join exc_actuado b on a.idactuado = b.idactuado
+                where a.estado_ is true and b.estado_ is true
+                and idcabecera = $idcabecera 
+                and a.idestado = 6 
+                $filtro 
+                order by a.idrequisito desc;"; 
     $stmt = $cons->query($query);
     $resp = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
     foreach ($resp as $key => $value) {
         $query = "INSERT INTO exc_item_actuado (
@@ -135,9 +151,6 @@ try {
         $stmt->bindParam(':idrequisito', $value['idrequisito']);
         $stmt->bindParam(':documento_path', $value['documento_path']);
         $stmt->execute();
-
-        
-
     }
 } catch (PDOException $e) {
     $pjson['err'] = '1';

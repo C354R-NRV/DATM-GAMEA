@@ -226,7 +226,8 @@ if (!$_SESSION['swlogin']) {
             <?php
 
             $query = "select  a.nro_actuado,  to_char(a.fecha_registro, 'YYYY-MM-DD') AS fecha_registro, 
-                    c.usuario, e.detalle_estado estado_cabecera,  e2.detalle_estado  estado_actuado, a.idactuado, observacion, registro_tributario
+                    c.usuario, e.detalle_estado estado_cabecera,  e2.detalle_estado  estado_actuado, a.idactuado, observacion, registro_tributario,
+                    d.fecha_culminacion, d.resolucion_path
                     from exc_actuado a 
                     left join exc_cabecera d on d.idcabecera = a.idcabecera
                     left join exc_estado e on e.idestado =  d.idestado
@@ -247,10 +248,22 @@ if (!$_SESSION['swlogin']) {
                 $html .= ($value['observacion'] != '' ? 'Observación:<b>' . $value['observacion'] . '</b><br>' : '');
 
                 $html .= '
-                Documento tributario: <b>' . $value['registro_tributario'] . '</b><br>
-                Nro de actuado: <b>' . $value['nro_actuado'] . '</b><br>Usuario: <b>' . $value['usuario'] . '</b>
-                </div>
+                Documento tributario: <b>' . $value['registro_tributario'] . '</b>
+                <br>Nro de actuado: <b>' . $value['nro_actuado'] . '</b>
+                <br>Usuario: <b>' . $value['usuario'] . '</b>';
+
+                if ($value['resolucion_path'] != '' and $value['estado_actuado'] == 'COMPLETADO Y ATENDIDO') { 
+                    $cadena = $value['resolucion_path'];
+                    $partes = explode("/", $cadena);
+                    $resultado = end($partes);  
+                    $html .= '
+                    <br>Fecha culminación: <b>' . $value['fecha_culminacion'] . '</b>
+                    <br>Resolución: <b>' . $resultado. '</b><a class="btn verDoc" onclick="verDocPopup(\'../static/exencion/' . $value['resolucion_path'] . '\')">
+                        <i class="fa fa-eye" aria-hidden="true" style="color:#3d7915; font-size:1.2rem;"></i></a>';
+                }
+                $html .= '</div>
                         <p class="description" style="display: none;">';
+
                 $query = "
                     select a.idestado, d.detalle_estado , c.detalle, a.documento_path, a.observacion , a.iditem_act
                     from exc_item_actuado  a  

@@ -19,7 +19,7 @@ $pjson['err'] = '0';
 $query = "SELECT count(a.idactuado) cnt_por_revisar  from exc_item_actuado a 
                 left join exc_actuado b on a.idactuado = b.idactuado 
                 where a.idactuado = $idactuado
-                and a.idestado in (2,3)";
+                and a.idestado in (2,3,7,11)";
 $stmt = $cons->query($query);
 $resp = $stmt->fetch(PDO::FETCH_ASSOC); 
 try { 

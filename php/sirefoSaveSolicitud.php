@@ -34,6 +34,7 @@ try {
     $stmt = $cons->query($query);
     $srfCabecera = $stmt->fetch(PDO::FETCH_ASSOC);
     $uploadDir = '../static/sirefo/';
+    
     if (isset($_FILES["cabecera_archivoPdf"]["tmp_name"])) {
         $fileName = 'srf_' . uniqid() . '.pdf';
         $fileTmpPath = $_FILES["cabecera_archivoPdf"]["tmp_name"];
@@ -197,7 +198,7 @@ try {
                 if (
                     isset($_POST['item_documentoIdentidadNumero' . $i]) and
                     trim($_POST['item_documentoIdentidadNumero' . $i]) != '' and
-                    preg_match('/^[a-zA-Z0-9\s]{2,}$/', $_POST['item_documentoIdentidadNumero' . $i])
+                    preg_match('/^[a-zA-Z0-9\s\-]{2,}$/', $_POST['item_documentoIdentidadNumero' . $i])
                 ) {
                     $cntValidos++;
                     $item = new stdClass();

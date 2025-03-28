@@ -345,21 +345,27 @@ if (!$_SESSION['swlogin']) {
         $.confirm({
             title: "Confirmación de cambio de estado",
             type: "orange",
-            content: "Por favor, confirme el cambio de estado a <b>COMPLETADO Y ATENDIDO</b> de la solicitud: <b>" + idcabecera + "</b>, con código de solicitud: <b>" + codigoSolicitud + "</b>",
+            content: "Por favor, confirme el cambio de estado a <b>COMPLETADO Y ATENDIDO</b> de la solicitud: <b>" + idcabecera + "</b>, con código de solicitud: <b>" + codigoSolicitud + "</b> y <b>Adjunte la RESOLUCION ADMINISTRATIVA</b><br><input type='file' id='formFilePdf' class='form-control' placeholder='Cargar documento'>",
             columnClass: "col-md-10 col-md-offset-10 col-xs-10 col-xs-offset-10",
             buttons: {
                 confirmar: {
                     text: "Confirmar",
                     btnClass: "btn-warning",
                     action: function() {
-                        $.ajax({
+
+                        var formData = new FormData();
+                        var fileInput = $('#formFilePdf')[0];
+                        formData.append('archivoPdf', fileInput.files[0]);
+                        formData.append('idcabecera', idcabecera);
+                        formData.append('codigoSolicitud', codigoSolicitud);
+                        
+                        $.ajax({ 
                             async: true,
                             type: 'POST',
-                            data: {
-                                idcabecera: idcabecera,
-                                codigoSolicitud: codigoSolicitud,
-                            },
-                            url: '../php/exencionAtentido.php',
+                            data: formData,
+                            contentType: false,
+                            processData: false, 
+                            url: '../php/exencionAtentido.php', 
                             beforeSend: function() {
                                 loadGralOn();
                             },

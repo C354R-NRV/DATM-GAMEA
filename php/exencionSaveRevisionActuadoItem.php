@@ -1,13 +1,11 @@
 <?php
 session_start();
 require_once './conexionpsql.php';
-require_once './whatsappNotificacion.php';
-
+require_once './whatsappNotificacion.php'; 
 
 foreach ($_POST as $clave => $valor) {
     $$clave = addslashes(trim($valor));
-}
-
+} 
 
 $conn = new Conexion();
 $cons = $conn->conectar();
@@ -23,7 +21,7 @@ try {
     $swExisteFile = false;
     if (isset($_FILES["archivoPdf"]["tmp_name"])) {
         $swExisteFile = true;
-        $fileName = str_replace(".pdf", "", $documento_path) . '_rev.pdf';
+        $fileName = str_replace(".pdf", "", $documento_path) . '_res.pdf';
         $fileTmpPath = $_FILES["archivoPdf"]["tmp_name"];
 
         // Si la carpeta del usuario no existe, crearla
@@ -38,16 +36,14 @@ try {
         } else {
             $pjson['log'] .= '<p>- Archivo subido correctamente.</p>';
         }
-    }
-
+    } 
 
     //GUARDAR ACTUADO
     $idestado = 5;
     if ($observacion === '' and !$swExisteFile) {
         $idestado  = 6;
         $itemObservadoSw = false;
-    }
-
+    } 
 
     $query = "UPDATE exc_item_actuado 
             SET  idestado  = $idestado , idusuario = " . $_SESSION['idusuario'] . "  , observacion  = '" . $observacion . "', documento_path = '" . $fileName . "'  
@@ -57,8 +53,7 @@ try {
     if (!$stmt->execute()) {
         $pjson['log'] .= $stmt->errorInfo();
         $pjson['err'] = '1';
-    }
-
+    } 
     
     $idestado = 4;  
 

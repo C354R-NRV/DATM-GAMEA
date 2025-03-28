@@ -81,7 +81,7 @@ try {
 
     for ($i = 1; $i <= $datos['cntItem']; $i++) {
         $iditem_act = $datos['documentos']['listaReq' . $i]['iditem_act'];
-        $idrequisito = $datos['documentos']['listaReq' . $i]['idrequisito']; 
+        $idrequisito = $datos['documentos']['listaReq' . $i]['idrequisito'];
 
         foreach ($datos['documentos']['listaReq' . $i]['docNames'] as $key => $item_) {
 
@@ -90,22 +90,23 @@ try {
             }
             $documento_path = $item_;
 
+
             $query = "INSERT INTO exc_item_actuado ( 
                         documento_path,
                         idusuario,
                         fecha_registro,
                         idestado,
                         idactuado,
-                        idrequisito ,
-                        iditem_actuado_ant
+                        idrequisito 
+                        " . ($iditem_act != '' ? ",iditem_actuado_ant" : "") . "
                         ) VALUES ( 
                         :documento_path,
                         :idusuario,
                         :fecha_registro,
                         :idestado,
                         :idactuado,
-                        :idrequisito ,
-                        :iditem_actuado_ant
+                        :idrequisito 
+                        " . ($iditem_act != '' ? ",:iditem_actuado_ant" : "") . "
                         )";
             $stmt = $cons->prepare($query);
             $stmt->bindParam(':documento_path', $documento_path);
@@ -114,7 +115,8 @@ try {
             $stmt->bindParam(':idestado', $idestado);
             $stmt->bindParam(':idactuado', $idactuado);
             $stmt->bindParam(':idrequisito', $idrequisito);
-            $stmt->bindParam(':iditem_actuado_ant', $iditem_act);
+            if ($iditem_act != '')
+                $stmt->bindParam(':iditem_actuado_ant', $iditem_act);
 
             if (!$stmt->execute()) {
                 $pjson['log'] .= $stmt->errorInfo();

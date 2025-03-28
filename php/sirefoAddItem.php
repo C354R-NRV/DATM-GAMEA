@@ -59,7 +59,7 @@ for ($i = $cntItemAct; $i < ($cntItemAct + $cnt); $i++) {
         </div>
         <div class="col-md-3 mb-3">
             <label for="documentoIdentidadNumero' . $i . '">No. Documento</label>
-            <input type="number" id="documentoIdentidadNumero' . $i . '" class="form-control" placeholder="Num. documento">
+            <input type="text" id="documentoIdentidadNumero' . $i . '" class="form-control" placeholder="Num. documento">
             <input type="text" id="documentoIdentidadComplemento' . $i . '" class="form-control natural_' . $i . '" placeholder="Complemento">
             <select class="form-controlSelect natural_' . $i . '"  id="id_documento_identidad_extension' . $i . '">';
 

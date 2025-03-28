@@ -31,7 +31,8 @@ $fecha_registro = $fecha_->format('Y-m-d H:i:s');
 $uregistro_ = $_SESSION['idusuario'];
 $idestado = 1; // POR ENVIAR
 $idrubro =  1; // vehiculo
-$registro_tributario = $datos['nro_pta'];
+$reg  = $datos['nro_pta']; 
+$registro_tributario = implode(", ", $reg )  ; 
 
 $fecha_ = new DateTime(date('Y-m-d H:i:s'));
 $dias_habiles = 3;
@@ -76,7 +77,7 @@ try {
     $stmt->bindParam(':fecha_registro', $fecha_registro);
     $stmt->bindParam(':idestado', $idestado);
     $stmt->bindParam(':registro_tributario', $registro_tributario);
-    $stmt->bindParam(':idrubro', $idrubro); 
+    $stmt->bindParam(':idrubro', $idrubro);
 
     if (!$stmt->execute()) {
         $pjson['log'] .= $stmt->errorInfo();
@@ -119,7 +120,7 @@ try {
     $stmt->bindParam(':nro_actuado', $nro_actuado);
     $stmt->bindParam(':token', $token);
     $stmt->bindParam(':fecha_validez_token', $fecha_validez_token);
-    
+
     if (!$stmt->execute()) {
         $pjson['log'] .= $stmt->errorInfo();
         $pjson['err'] = '1';
@@ -131,39 +132,38 @@ try {
         /* $pjson['log'] .= " - Registro de item:" . $idactuado . "<br>\n"; */
         //registro de los exc_item_actuado (documentos adjuntos para el requisito)            
         foreach ($datos['documentos']['listaReq' . $requisito['orden']] as $key => $doc) {
-            if (!isset($doc) || $doc === null) {
-                $doc = '';
-            }
-            $documento_path = $doc;
+            if (!(!isset($doc) || $doc === null)) {
+                $documento_path = $doc;
 
-            $query = "INSERT INTO exc_item_actuado ( 
-                documento_path,
-                idusuario,
-                fecha_registro,
-                idestado,
-                idactuado,
-                idrequisito 
-                ) VALUES ( 
-                :documento_path,
-                :idusuario,
-                :fecha_registro,
-                :idestado,
-                :idactuado,
-                :idrequisito 
-                )";
-            $stmt = $cons->prepare($query);
-            $stmt->bindParam(':documento_path', $documento_path);
-            $stmt->bindParam(':idusuario', $uregistro_);
-            $stmt->bindParam(':fecha_registro', $fecha_registro);
-            $stmt->bindParam(':idestado', $idestado);
-            $stmt->bindParam(':idactuado', $idactuado);
-            $stmt->bindParam(':idrequisito', $requisito['idrequisito']);
-            if (!$stmt->execute()) {
-                $pjson['log'] .= $stmt->errorInfo();
-                $pjson['err'] = '1';
-            } else {
-                $iditem_actuado = $cons->lastInsertId();
-                /*  $pjson['log'] .= "   - Registro de actuado:" . $documento_path . ", exitoso<br>\n"; */
+                $query = "INSERT INTO exc_item_actuado ( 
+                    documento_path,
+                    idusuario,
+                    fecha_registro,
+                    idestado,
+                    idactuado,
+                    idrequisito 
+                    ) VALUES ( 
+                    :documento_path,
+                    :idusuario,
+                    :fecha_registro,
+                    :idestado,
+                    :idactuado,
+                    :idrequisito 
+                    )";
+                $stmt = $cons->prepare($query);
+                $stmt->bindParam(':documento_path', $documento_path);
+                $stmt->bindParam(':idusuario', $uregistro_);
+                $stmt->bindParam(':fecha_registro', $fecha_registro);
+                $stmt->bindParam(':idestado', $idestado);
+                $stmt->bindParam(':idactuado', $idactuado);
+                $stmt->bindParam(':idrequisito', $requisito['idrequisito']);
+                if (!$stmt->execute()) {
+                    $pjson['log'] .= $stmt->errorInfo();
+                    $pjson['err'] = '1';
+                } else {
+                    $iditem_actuado = $cons->lastInsertId();
+                    /*  $pjson['log'] .= "   - Registro de actuado:" . $documento_path . ", exitoso<br>\n"; */
+                }
             }
         }
     }

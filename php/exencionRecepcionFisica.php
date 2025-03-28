@@ -23,7 +23,8 @@ try {
     select max(a.nro_actuado) nro_actuado
     from  exc_actuado  a 
     where a.idcabecera =  $idcabecera and a.estado_ is true  )
-    and  b1.idcabecera =  $idcabecera; ";
+    and  b1.idcabecera =  $idcabecera   and a1.estado_ is true ; ";
+
     $stmt = $cons->query($query);
     $actuados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -88,6 +89,7 @@ try {
     select max(nro_actuado) nro_actuado
     from exc_actuado a  
     where idcabecera = $idcabecera and a.estado_ is true;";
+    
     $stmt = $cons->query($query);
     $resp = $stmt->fetch(PDO::FETCH_ASSOC);
     $nro_actuado = ($resp['nro_actuado'] + 1);

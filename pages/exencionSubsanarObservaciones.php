@@ -124,7 +124,7 @@ if (!$_SESSION['swlogin']) {
 
     $query = "SELECT b.idcabecera, b.idactuado , x.gestion, x.codigo_solicitud, 
                 x.registro_tributario, y.idrubro, y.rubro, 
-                c.idrequisito, c.detalle, c.anotacion,  a.observacion , 
+                c.idrequisito, c.detalle, c.anotacion,  a.observacion , c.obligatorio,
                 a.iditem_actuado_ant, e.documento_path, f.detalle_estado as detalle_estado_ant, uant.usuario as usuarioant,
                 a.iditem_act, a.documento_path as documento_path_rev, d.detalle_estado, uact.usuario as usuarioact , b.observacion obs_gral
                 from exc_item_actuado a 
@@ -141,7 +141,7 @@ if (!$_SESSION['swlogin']) {
                 and b.idactuado = (select max(idactuado) from exc_actuado a 
                 where a.idcabecera = $i  and a.idestado = 5) 
                 and b.idestado = 5 and a.idestado = 5
-                and a.estado_ is true   order by c.orden, iditem_act ";
+                and a.estado_ is true   order by c.orden, iditem_act";
 
     $stmt = $cons->query($query);
     $solicitud = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -191,29 +191,33 @@ if (!$_SESSION['swlogin']) {
                 </select>
             </div>
             <div class="col-md-6 mb-6" style="text-align: right; font-weight: bold; font-style: italic; font-size: 0.8rem;">
-                <?php echo ($solicitud[0]['obs_gral']!=''?'"'.$solicitud[0]['obs_gral'].'"':""); ?>
+                <?php echo ($solicitud[0]['obs_gral'] != '' ? '"' . $solicitud[0]['obs_gral'] . '"' : ""); ?>
             </div>
         </div>
 
         <?php
         $html = '';
         $cnt = 1;
+
+
         foreach ($solicitud as $key => $value) {
             $html .= "
                 <div class='row exencionRequisito'>
                     <div class='col-md-4 mb-4'>
-                        <h1>" . $value['detalle'] . "</h1>                        
+                        <h1>" . $value['detalle'] .   ($value['obligatorio'] ? '<span style="color:#7e2d05;  ">*</span>' : '') . "</h1>                        
                         <p>" . $value['anotacion']
                 . ($value['idrequisito'] == '1' ? "<a onclick='generarSolicitud()' title='Generar solicitud' role='button'><i class='fa fa-file-text-o' aria-hidden='true'></i></a>" : "")
                 . "</p>
-                        <input type='hidden' id='idrequisito$cnt' value='" . $value['idrequisito'] . "'/>
+                        <input type='hidden' class='idrequisito' value='" . $value['idrequisito'] . "'/>
+                        <input type='hidden' class='resquisitoObligatorio' value='" . $value['obligatorio'] . "'/>
+                        <input type='hidden' class='iditem_act' value='" . $value['iditem_act'] . "'> 
                     </div>
                     <div class='col-md-4 mb-4'>
                         <div class='containerUpload'>
                             <div class='drop-section drop-section$cnt'>
                                 <div class='colFormUpload'>
                                     <i class='fa fa-cloud-upload' aria-hidden='true' style='font-size: 2rem;padding-top:1vh ;'></i>
-                                    <button class='file-selector file-selector$cnt'>Buscar solicitud</button>
+                                    <button class='file-selector file-selector$cnt'>Adjuntar PDF</button>
                                     <input type='file' class='file-selector-input file-selector-input$cnt' multiple />
                                 </div>
                                 <div class='colFormUpload'>
@@ -252,8 +256,7 @@ if (!$_SESSION['swlogin']) {
                                 </li>
                                 <div style="border:0.0625rem solid rgb(255, 158, 158); border-radius:0.3rem;margin:0.625rem 0; padding:0.125rem" >
                                     ' . $value['observacion'] . (trim($value['documento_path_rev']) != '' ? ' <br><a class="btn" onclick="verDocPopup(\'../static/exencion/' . $value['usuarioact'] . '/' . $value['documento_path_rev'] . '\',\'' . $value['observacion'] . '\')"><i class="fa fa-eye" aria-hidden="true" style="color:#3d7915; font-size:1.2rem;"></i></a>' : '') . '<br>                                    
-                                    <input type="hidden" class="iditem_act" value="' . $value['iditem_act'] . '">
-                                    <input type="hidden" class="idrequisito" value="' . $value['idrequisito'] . '">
+                                    
                                     </div>
                                 </div>
                             </div>
@@ -264,6 +267,53 @@ if (!$_SESSION['swlogin']) {
                     </div>
                 </div>
             ";
+            $cnt++;
+        }
+
+        //ahora incorporamos los requisitos no completados o vacios, para dar posibilidad de incorporarlos
+        $query = "SELECT  idrequisito, detalle,  anotacion, obligatorio  from exc_requisito where idrequisito not in (
+                    select  c.idrequisito 
+                    from exc_item_actuado a 
+                    left join exc_item_actuado  c on a.iditem_actuado_ant = c.iditem_act
+                    left join exc_actuado b on a.idactuado = b.idactuado
+                    where a.estado_ is true and b.estado_ is true
+                    and a.idestado in (6,5)
+                    and idcabecera = $i  
+                    group by  c.idrequisito 
+                    ) and idrubro = 1 and estado_ is true";
+
+        $stmt = $cons->query($query);
+        $requisitos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($requisitos as $key => $value) {
+            $html .= "<div class='row exencionRequisito'>
+                <div class='col-md-4 mb-4'>
+                    <h1>" . $value['detalle'] . ($value['obligatorio'] ? '<span style="color:#7e2d05;  ">*</span>' : '') . "</h1>                        
+                        <p>" . $value['anotacion']
+                . ($value['idrequisito'] == '1' ? "<a onclick='generarSolicitud()' title='Generar solicitud' role='button'><i class='fa fa-file-text-o' aria-hidden='true'></i></a>" : "")
+                . "</p>
+                    <input type='hidden' class='idrequisito' value='" . $value['idrequisito'] . "'/>
+                    <input type='hidden' class='resquisitoObligatorio' value='" . $value['obligatorio'] . "'/>
+                    <input type='hidden' class='iditem_act' value=''> 
+                </div>
+                <div class='col-md-4 mb-4'>
+                    <div class='containerUpload'>
+                        <div class='drop-section drop-section$cnt'>
+                            <div class='colFormUpload'>
+                                <i class='fa fa-cloud-upload' aria-hidden='true' style='font-size: 2rem;padding-top:1vh ;'></i>
+                                <button class='file-selector file-selector$cnt'>Adjuntar PDF</button>
+                                <input type='file' class='file-selector-input file-selector-input$cnt' multiple />
+                            </div>
+                            <div class='colFormUpload'>
+                                <div class='drop-here sueltaAqui'>Suelta aqui</div>
+                            </div>
+                        </div>
+                        <div class='list-section list-section$cnt'>
+                            <div class='list listaReq$cnt'></div>
+                        </div>
+                    </div>
+                </div>
+            </div>";
             $cnt++;
         }
 
@@ -393,7 +443,6 @@ if (!$_SESSION['swlogin']) {
         http.onload = () => {
 
             if (http.status === 200) {
-
                 li.classList.add("complete");
                 li.classList.add("documento" + contadorArchivos);
                 li.classList.remove("in-prog");
@@ -460,6 +509,9 @@ if (!$_SESSION['swlogin']) {
             const listClass = $(this).attr("class").match(/listaReq\d+/)
             if (listClass) {
                 const h1Content = $(this).closest('.exencionRequisito').find('h1').text();
+                const iditem_act = $(this).closest('.exencionRequisito').find('.iditem_act').val();
+                const idrequisito = $(this).closest('.exencionRequisito').find('.idrequisito').val();
+                const resquisitoObligatorio = $(this).closest('.exencionRequisito').find('.resquisitoObligatorio').val();
                 const listKey = listClass[0];
 
                 $(this).find("input.nomDoc").each(function(index) {
@@ -481,19 +533,17 @@ if (!$_SESSION['swlogin']) {
 
                 const docNames = $(this).find("input.nomDoc").map(function() {
                     return $(this).val()
-                }).get();
-                const iditem_act = $(this).find("input.iditem_act").val();
-                const idrequisito = $(this).find("input.idrequisito").val();
+                }).get(); 
                 datos.documentos[listKey] = {
                     docNames,
                     iditem_act,
                     idrequisito
                 };
 
-                console.log("docNames:" + docNames);
-                if (docNames == '') {
+                if (docNames == '' && resquisitoObligatorio == '1') {
                     errores.push(" - No se ha agregado ningún documento PDF para el requisito: <b>" + h1Content + "</b>");
                 }
+
 
                 cntItem++;
             }

@@ -42,6 +42,7 @@ if (!$_SESSION['swlogin']) {
     <link href="../css/styleExencion.css" rel="stylesheet">
     <link href="../vendor/bootstrap-table-master/dist/bootstrap-table.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         .oculto_ {
             display: none;
@@ -119,6 +120,7 @@ if (!$_SESSION['swlogin']) {
     <li class="breadcrumb-item"><a class="text-white">UAJ</a></li>
     <li class="breadcrumb-item text-white active" aria-current="page"><a class="text-white" href="exencionList.php">EXENCION</a></li>
     <li class="breadcrumb-item text-white active" aria-current="page">FORMULARIO</li>
+
     <?php
     echo $twig->render('prebodyltFin.twig');
     ?>
@@ -137,13 +139,11 @@ if (!$_SESSION['swlogin']) {
                 <input id="gestionIni" class='form-control' disabled value="<?php $gestionActual = date('Y');
                                                                             echo ($gestionActual - 1); ?>" />
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-md-6 mb-6">
                 <label for="nro_pta">Nro. placa</label>
-
-                <select class="form-controlSelect" id="nro_pta">
+                <select id="nro_pta" multiple class="js-example-basic-multiple">
                     <option value="TODOS">TODOS</option>
                     <?php
-                    // considerando que el complemento no se toma en cuenta en RUAT, hasta el momento asi parece ser 2025-02-24
                     $query = "SELECT nro_pta 
                                 FROM vehiculo_univ          
                                 WHERE documento_identidad = '" . $_SESSION['cedula_identidad'] . "' order by nro_pta desc;";
@@ -155,7 +155,6 @@ if (!$_SESSION['swlogin']) {
                     }
                     ?>
                 </select>
-
             </div>
             <div class="col-md-3 mb-3">
 
@@ -165,26 +164,30 @@ if (!$_SESSION['swlogin']) {
         <?php
         $query = "SELECT c.idrequisito, c.detalle,  c.anotacion, c.obligatorio
             from  exc_requisito c  
-            where c.estado_ is true order by c.orden, iditem_act ";
+            where c.estado_ is true 
+            and c.idrubro = 1
+            order by c.orden ";
 
         $stmt = $cons->query($query);
         $requisito = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $cnt = 1;
-        foreach ($variable as $key => $value) {
-            $html = "<div class='row exencionRequisito'>
+        $html = '';
+        foreach ($requisito as $key => $value) {
+            $html .= "<div class='row exencionRequisito'>
                 <div class='col-md-4 mb-4'>
-                    <h1>" . $value['detalle'] . "</h1>                        
+                    <h1>" . $value['detalle'] . ($value['obligatorio'] ? '<span style="color:#7e2d05;  ">*</span>' : '') . "</h1>                        
                         <p>" . $value['anotacion']
                 . ($value['idrequisito'] == '1' ? "<a onclick='generarSolicitud()' title='Generar solicitud' role='button'><i class='fa fa-file-text-o' aria-hidden='true'></i></a>" : "")
                 . "</p>
-                        <input type='hidden' id='idrequisito$cnt' value='" . $value['idrequisito'] . "'/>
+                        <input type='hidden' class='idrequisito' value='" . $value['idrequisito'] . "'/>
+                        <input type='hidden' class='resquisitoObligatorio' value='" . $value['obligatorio'] . "'/>
                 </div>
                 <div class='col-md-4 mb-4'>
                     <div class='containerUpload'>
                         <div class='drop-section drop-section$cnt'>
                             <div class='colFormUpload'>
                                 <i class='fa fa-cloud-upload' aria-hidden='true' style='font-size: 2rem;padding-top:1vh ;'></i>
-                                <button class='file-selector file-selector$cnt'>Adjuntar</button>
+                                <button class='file-selector file-selector$cnt'>Adjuntar PDF</button>
                                 <input type='file' class='file-selector-input file-selector-input$cnt' multiple />
                             </div>
                             <div class='colFormUpload'>
@@ -199,200 +202,8 @@ if (!$_SESSION['swlogin']) {
             </div>";
             $cnt++;
         }
-
+        echo $html;
         ?>
-
-        <div class="row exencionRequisito">
-            <div class="col-md-4 mb-4">
-                <h1>Nota de solicitud</h1><br>Generar solicitud -> <a onclick="generarSolicitud()" title="Generar solicitud" role="button"><i class="fa fa-file-text-o" aria-hidden="true"></i></a>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="containerUpload">
-                    <div class="drop-section drop-section1">
-                        <div class="colFormUpload">
-                            <i class="fa fa-cloud-upload" aria-hidden="true" style="font-size: 2rem;padding-top:1vh ;"></i>
-                            <button class="file-selector file-selector1">Buscar solicitud</button>
-                            <input type="file" class="file-selector-input file-selector-input1" multiple />
-                        </div>
-                        <div class="colFormUpload">
-                            <div class="drop-here sueltaAqui">Suelta aqui</div>
-                        </div>
-                    </div>
-                    <div class="list-section list-section1">
-                        <div class="list listaReq1"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row exencionRequisito">
-            <div class="col-md-4 mb-4">
-                <h1>Poliza de importación</h1>
-                <p>Poliza titularizada o COPO (según corresponda)</p>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="containerUpload">
-                    <div class="drop-section  drop-section2">
-                        <div class="colFormUpload">
-                            <i class="fa fa-cloud-upload" aria-hidden="true" style="font-size: 2rem;padding-top:1vh ;"></i>
-                            <button class="file-selector file-selector2">Buscar poliza</button>
-                            <input type="file" class="file-selector-input file-selector-input2" multiple />
-                        </div>
-                        <div class="colFormUpload">
-                            <div class="drop-here sueltaAqui">Suelta aqui</div>
-                        </div>
-                    </div>
-                    <div class="list-section  list-section2">
-                        <div class="list listaReq2"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row exencionRequisito">
-            <div class="col-md-4 mb-4">
-                <h1>CRPVA ó RUA-03</h1>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="containerUpload">
-                    <div class="drop-section  drop-section3">
-                        <div class="colFormUpload">
-                            <i class="fa fa-cloud-upload" aria-hidden="true" style="font-size: 2rem;padding-top:1vh ;"></i>
-                            <button class="file-selector file-selector3">Buscar CRPVA/RUA-03</button>
-                            <input type="file" class="file-selector-input file-selector-input3" multiple />
-                        </div>
-                        <div class="colFormUpload">
-                            <div class="drop-here sueltaAqui">Suelta aqui</div>
-                        </div>
-                    </div>
-                    <div class="list-section  list-section3">
-                        <div class="list listaReq3"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row exencionRequisito">
-            <div class="col-md-4 mb-4">
-                <h1>Proforma de liquidación</h1>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="containerUpload">
-                    <div class="drop-section  drop-section4">
-                        <div class="colFormUpload">
-                            <i class="fa fa-cloud-upload" aria-hidden="true" style="font-size: 2rem;padding-top:1vh ;"></i>
-                            <button class="file-selector file-selector4">Buscar proforma</button>
-                            <input type="file" class="file-selector-input file-selector-input4" multiple />
-                        </div>
-                        <div class="colFormUpload">
-                            <div class="drop-here sueltaAqui">Suelta aqui</div>
-                        </div>
-                    </div>
-                    <div class="list-section  list-section4">
-                        <div class="list listaReq4"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row exencionRequisito">
-            <div class="col-md-4 mb-4">
-                <h1>Testimonio de constitución</h1>
-                <p>O testimonio de creación</p>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="containerUpload">
-                    <div class="drop-section  drop-section5">
-                        <div class="colFormUpload">
-                            <i class="fa fa-cloud-upload" aria-hidden="true" style="font-size: 2rem;padding-top:1vh ;"></i>
-                            <button class="file-selector file-selector5">Buscar constitución/creación</button>
-                            <input type="file" class="file-selector-input file-selector-input5" multiple />
-                        </div>
-                        <div class="colFormUpload">
-                            <div class="drop-here sueltaAqui">Suelta aqui</div>
-                        </div>
-                    </div>
-                    <div class="list-section  list-section5">
-                        <div class="list listaReq5"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row exencionRequisito">
-            <div class="col-md-4 mb-4">
-                <h1>Estados financieros</h1>
-                <p>Memoria anual y/o registros contables con desglose de(los) veiculo(s). [si corresponde]</p>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="containerUpload">
-                    <div class="drop-section drop-section6">
-                        <div class="colFormUpload">
-                            <i class="fa fa-cloud-upload" aria-hidden="true" style="font-size: 2rem;padding-top:1vh ;"></i>
-                            <button class="file-selector  file-selector6">Buscar EEFF</button>
-                            <input type="file" class="file-selector-input  file-selector-input6" multiple />
-                        </div>
-                        <div class="colFormUpload">
-                            <div class="drop-here sueltaAqui">Suelta aqui</div>
-                        </div>
-                    </div>
-                    <div class="list-section list-section6">
-                        <div class="list listaReq6"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row exencionRequisito">
-            <div class="col-md-4 mb-4">
-                <h1>NIT</h1>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="containerUpload">
-                    <div class="drop-section  drop-section7">
-                        <div class="colFormUpload">
-                            <i class="fa fa-cloud-upload" aria-hidden="true" style="font-size: 2rem;padding-top:1vh ;"></i>
-                            <button class="file-selector file-selector7">Buscar NIT</button>
-                            <input type="file" class="file-selector-input file-selector-input7" multiple />
-                        </div>
-                        <div class="colFormUpload">
-                            <div class="drop-here sueltaAqui">Suelta aqui</div>
-                        </div>
-                    </div>
-                    <div class="list-section  list-section7">
-                        <div class="list listaReq7"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="row exencionRequisito">
-            <div class="col-md-4 mb-4">
-                <h1>Fotocopia de C.I.</h1>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="containerUpload">
-                    <div class="drop-section  drop-section8">
-                        <div class="colFormUpload">
-                            <i class="fa fa-cloud-upload" aria-hidden="true" style="font-size: 2rem;padding-top:1vh ;"></i>
-                            <button class="file-selector file-selector8">Buscar C.I.</button>
-                            <input type="file" class="file-selector-input file-selector-input8" multiple />
-                        </div>
-                        <div class="colFormUpload">
-                            <div class="drop-here sueltaAqui">Suelta aqui</div>
-                        </div>
-                    </div>
-                    <div class="list-section  list-section8">
-                        <div class="list listaReq8"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-
-
     </div>
 
     <!-- About End -->
@@ -403,8 +214,20 @@ if (!$_SESSION['swlogin']) {
     <!-- Template Javascript -->
 </body>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script>
     $(document).ready(function() {
+
+        $('.js-example-basic-multiple').select2({
+            placeholder: "Selecciona placas",
+            allowClear: true
+        });
+
+        $('.js-example-basic-multiple').select2({
+            width: '100%', // Expande al ancho completo del contenedor
+            placeholder: "Selecciona placas",
+            allowClear: true
+        });
 
         for (let index = 1; index < 9; index++) {
             let dropArea = document.querySelector(".drop-section" + index);
@@ -558,13 +381,15 @@ if (!$_SESSION['swlogin']) {
         contadorArchivosAux++;
     }
 
-    function guardar() {
+    function guardar() { 
+
         var datos = {
             gestion: $('#gestionIni').val(),
             nro_pta: $('#nro_pta').val(),
             documentos: {},
             cntItem: 0
         }
+        console.log(datos);
         var html = `
         <h3 style="color:black;">Gestión solicitada: <b>${$('#gestionIni').val()}</b></h3>
         <h4 style="color:black;">Nro. Placa: ${$('#nro_pta').val()}</h4>
@@ -583,8 +408,9 @@ if (!$_SESSION['swlogin']) {
             const listClass = $(this).attr("class").match(/listaReq\d+/)
             if (listClass) {
                 const h1Content = $(this).closest('.exencionRequisito').find('h1').text();
+                const resquisitoObligatorio = $(this).closest('.exencionRequisito').find('.resquisitoObligatorio').val();
+                const idrequisito = $(this).closest('.exencionRequisito').find('.idrequisito').val();
                 const listKey = listClass[0];
-
 
                 // Use each() to iterate through each input.nomDoc
                 $(this).find("input.nomDoc").each(function(index) {
@@ -594,7 +420,6 @@ if (!$_SESSION['swlogin']) {
                     // Get the document name
                     const docName = $(this).val();
                     console.log("docName:" + docName);
-
                     // Append the HTML for this document
                     html += `<tr>
                                 <td>${h1Content}</td>
@@ -617,7 +442,7 @@ if (!$_SESSION['swlogin']) {
                 datos.documentos[listKey] = docNames;
 
                 console.log("docNames:" + docNames);
-                if (docNames == '') {
+                if (docNames == '' && resquisitoObligatorio == '1') {
                     errores.push(" - No se ha agregado ningún documento PDF para el requisito: <b>" + h1Content + "</b>");
                 }
 
@@ -706,6 +531,7 @@ if (!$_SESSION['swlogin']) {
             "&nro_pta=" + $('#nro_pta').val() + "&gestionIni_=" + $('#gestionIni').val() + "&gestionFin_=" + $('#gestionFin').val();
 
         var url_ = "../php/rptveh_11_v2.php?" + datos;
+        console.log("url_:"+url_);
         $.ajax({
             url: url_,
             type: 'HEAD',

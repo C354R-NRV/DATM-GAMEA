@@ -25,11 +25,33 @@ try {
     $campo = 'idestado';
     $valor_anterior = $idestadoCabecera['idestado'];
     $valor_nuevo = 8;
+    
+    $fecha_= new DateTime(date('Y-m-d H:i:s'));
+    $fecha_culminacion = $fecha_->format('Y-m-d H:i:s'); 
+
+    $uploadDir = '../static/exencion/' . $_SESSION['usuario'];
+    $swExisteFile = false;
+    if (isset($_FILES["archivoPdf"]["tmp_name"])) {
+        $swExisteFile = true;
+        $fileName = $codigoSolicitud . '_resolucion.pdf';
+        $fileTmpPath = $_FILES["archivoPdf"]["tmp_name"]; 
+
+        // Si la carpeta del usuario no existe, crearla
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        } 
+        if (!move_uploaded_file($fileTmpPath,   $uploadDir . '/' . $fileName)) {
+            $err .= "Hubo un error al guardar el archivo en el directorio de destino.";
+            $pjson['err'] = '1';
+            $pjson['log'] .= '<p>[x] Hubo un error al guardar el archivo en el directorio de destino <br>-' .  $uploadDir . '<br>' . $fileName . '-.</p><br><p>' . error_get_last()['message'] . '</p>';
+        } else {
+            $pjson['log'] .= '<p>- Archivo subido correctamente.</p>';
+        }
+    }  
 
     $query = "UPDATE exc_cabecera 
-    SET  idestado  =   $valor_nuevo
-    WHERE idcabecera = " . $idcabecera . " ;";
-
+    SET  idestado  =   $valor_nuevo,  fecha_culminacion  =   '$fecha_culminacion', resolucion_path = '" .$_SESSION['usuario'].'/'. $fileName . "'  
+    WHERE idcabecera = " . $idcabecera . ";";
     $stmt = $cons->prepare($query);
     if (!$stmt->execute()) {
         $pjson['log'] .= $stmt->errorInfo();
@@ -37,8 +59,7 @@ try {
     }
 
     $fechaEnvio = new DateTime(date('Y-m-d H:i:s'));
-    $fecha_envio = $fechaEnvio->format('Y-m-d H:i:s');
-
+    $fecha_envio = $fechaEnvio->format('Y-m-d H:i:s'); 
 
     $query = "INSERT INTO exc_cabecera_hst (
             idcabecera, 
@@ -71,7 +92,7 @@ try {
     $query = "
     select max(nro_actuado) nro_actuado
     from exc_actuado a  
-    where idcabecera = $idcabecera;";
+    where idcabecera = $idcabecera and a.estado_ is true;";
     $stmt = $cons->query($query);
     $resp = $stmt->fetch(PDO::FETCH_ASSOC);
     $nro_actuado = ($resp['nro_actuado'] + 1);

@@ -7,7 +7,9 @@ function getInfoInmuebleRpt($cons, $ci_, $numInmueble_)
 }
 function getInfoVehRpt($cons, $ci_, $num_placa_)
 {
-    $query = "select *  from vehiculo_univ where  (documento_identidad ilike '$ci_' OR documento_identidad_apo ilike '$ci_') and nro_pta like '$num_placa_' ";
+    $array_valores = explode(",", $num_placa_);
+    $cadena_formateada = "'" . implode("','", $array_valores) . "'";
+    $query = "select *  from vehiculo_univ where  (documento_identidad ilike '$ci_' OR documento_identidad_apo ilike '$ci_') and nro_pta in ($cadena_formateada)";
     $stmt = $cons->query($query);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 } 

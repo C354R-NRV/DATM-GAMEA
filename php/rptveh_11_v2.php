@@ -97,7 +97,7 @@ try {
                         <p>Presente:</p>
                     </div>
                     <div style='text-align: right; margin-bottom: 20px;'>
-                        <span style='text-decoration:underline;'><b>REF.: SOLICITUD DE TRAMITE DE EXENCIONES DE VEHÍCULOS Y/O MOTOCICLETAS ".(($auxCnt<=1)?"CON PLACA DE CONTROL Nº $nro_pta":"")."</b></span>
+                        <span style='text-decoration:underline;'><b>REF.: SOLICITUD DE TRAMITE DE EXENCIONES DE VEHÍCULOS Y/O MOTOCICLETAS " . (($auxCnt <= 1) ? "CON PLACA DE CONTROL Nº $nro_pta" : "") . "</b></span>
                     </div>
                     <div style='text-align: justify;'>
                         <p>De mi mayor consideración:</p> 
@@ -190,8 +190,13 @@ try {
         $html2pdf = new Html2Pdf();
         $html2pdf->writeHTML($documento);
         $html2pdf->Output();
-    } else
+    } else {
+        /* $array_valores = explode(",", $nro_pta);
+        $cadena_formateada = "'" . implode("','", $array_valores) . "'";
+        $query = "select *  from vehiculo_univ where  (documento_identidad ilike '$ci_' OR documento_identidad_apo ilike '$ci_') and nro_pta in ($cadena_formateada)";
+        echo $query; */
         echo "No se logro recuperar los registros";
+    }
 } catch (PDOException $e) {
     echo "Error al ejecutar la consulta: " . $e->getMessage();
 }

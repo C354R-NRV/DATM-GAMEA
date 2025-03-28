@@ -684,7 +684,7 @@ if (!$_SESSION['swlogin']) {
                 "showMethod": "fadeIn",
                 "hideMethod": "fadeOut"
             };
-
+            console.log(formData);
             $.ajax({
                 async: true,
                 type: 'POST',
@@ -722,8 +722,8 @@ if (!$_SESSION['swlogin']) {
         return !isNaN(parseFloat(value)) && isFinite(value);
     }
 
-    function isValidAlphanumeric(value, minLength) {
-        return /^[a-zA-Z0-9\s&'ñÑáéíóúÁÉÍÓÚüÜ.]+$/.test(value) && value.length >= minLength;
+    function isValidAlphanumeric(value, minLength) { 
+        return /^[a-zA-Z0-9\s&'ñÑáéíóúÁÉÍÓÚüÜ.\-]+$/.test(value) && value.length >= minLength;
     }
 </script>
 
