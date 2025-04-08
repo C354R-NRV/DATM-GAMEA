@@ -422,6 +422,115 @@ if (!$_SESSION['swlogin']) {
         }
     }
 
+    function buscaContribuyente(nroItem) {
+        $("#retencionDetalle" + nroItem).html("");
+        let rubro = $('#tipo_documento_tributario' + nroItem).val();
+        let documentoTributario = $('#documentoTributario' + nroItem).val();
+
+        console.log("rubro:" + rubro + ", documentoTributario:" + documentoTributario);
+        if (rubro != 'PUB') {
+            $.ajax({
+                async: true,
+                type: "POST",
+                dataType: "html",
+                contentType: "application/x-www-form-urlencoded",
+                url: "../php/sirefoGetContribuyente.php",
+                data: "&rubro=" + rubro + "&documentoTributario=" + documentoTributario + "&nroItem=" + nroItem,
+                beforeSend: function() {},
+                success: function(e) {
+                    console.log(e);
+                    dat = $.parseJSON(e);
+                    console.log(dat.contribuyente);
+                    console.log("cntRetenciones" + dat.cntRetenciones);
+
+                    var tipo_contribuyente_ = tipoContribuyente[dat.contribuyente.tipo_contribuyente];
+                    $("#tipoPersona" + nroItem).val(tipo_contribuyente_);
+                    reestructuraFormItem(nroItem);
+                    actExtension(nroItem);
+                    $("#id_documento_identidad_extension" + nroItem).val(dataMap[dat.contribuyente.expedido]);
+
+                    var tipoDocumentoAux = tipoDocumento[dat.contribuyente.tipo_documento];
+                    var documentoAux = dat.contribuyente.documento_identidad;
+                    var complementoAux = '';
+                    var nombre = '';
+                    var paterno = '';
+                    var materno = '';
+                    var razonSocialAux = dat.contribuyente.nombre_rsocial;
+                    if (tipo_contribuyente_ == 'N' && dat.contribuyente.tipo_documento == 'CI') {
+                        razonSocialAux = '';
+                        nombre = dat.contribuyente.nombre_rsocial;
+                        paterno = dat.contribuyente.primer_apellido_sigla;
+                        materno = dat.contribuyente.segundo_apellido;
+                        var match = documentoAux.match(/^(\d+)-?(\w+)?$/);
+                        if (match) {
+                            documentoAux = match[1];
+                            complementoAux = match[2] || '';
+                        }
+                    }
+                    $("#razonSocial" + nroItem).val(razonSocialAux);
+                    $("#nombre" + nroItem).val(nombre);
+                    $("#apellidoPaterno" + nroItem).val(paterno);
+                    $("#apellidoMaterno" + nroItem).val(materno);
+                    $("#documentoIdentidadNumero" + nroItem).val(documentoAux);
+                    $("#documentoIdentidadComplemento" + nroItem).val(complementoAux);
+                    $("#id_documento_identidad_tipo" + nroItem).val(tipoDocumento[dat.contribuyente.tipo_documento]);
+
+                    if (dat.cntRetenciones > 0 && $("#tipoProceso" + nroItem).val() == 'S') {
+                        $("#retencionDetalle" + nroItem).html(dat.htmlRetenciones);
+                    }
+                },
+                timeout: 16000,
+                error: function() {},
+            });
+        }
+    }
+
+    const tipoContribuyente = {
+        "NATURAL": 'N',
+        "JURIDICO": 'J',
+        "": 'J'
+    }
+    const tipoDocumento = {
+        "ASN": '3',
+        "CN": '2',
+        "NIT": '1',
+        "AG": '2',
+        "CI": '2',
+        "RUN": '2',
+        "CEX": '5',
+        "PAS": '4',
+        "RUC": '3'
+    }
+
+    const dataMap = {
+        "BA": 8,
+        "BE": 8,
+        "CH": 1,
+        "CO": 3,
+        "CU": 2,
+        "LI": 2,
+        "JU": 2,
+        "LP": 2,
+        "OR": 4,
+        "PA": 9,
+        "PO": 5,
+        "SC": 7,
+        "SP": 7,
+        "TA": 6,
+        "TC": 6,
+        "": 2
+    };
+
+    function setearRetenciones(nroItem) {
+        console.log("valor a setear:" + $("#retenciones_" + nroItem).val());
+        let retencionesAux = $("#retenciones_" + nroItem).val();
+        if (retencionesAux) {
+            const arrayAux = (retencionesAux).split("_");
+            $('#id_tipo_respaldo' + nroItem).val(arrayAux[0]);
+            $('#documentoRespaldo' + nroItem).val(arrayAux[1]);
+        }
+    }
+
     function addItem(swauto = '', datItems) {
         cnt = parseInt($('#detalleCantidad').val());
         var auxDetalleCantidadAnterior = parseInt($('#detalleCantidadAnterior').val());
@@ -671,7 +780,6 @@ if (!$_SESSION['swlogin']) {
             });
             return;
         } else {
-
             toastr.options = {
                 "closeButton": true,
                 "debug": false,
@@ -722,7 +830,7 @@ if (!$_SESSION['swlogin']) {
         return !isNaN(parseFloat(value)) && isFinite(value);
     }
 
-    function isValidAlphanumeric(value, minLength) { 
+    function isValidAlphanumeric(value, minLength) {
         return /^[a-zA-Z0-9\s&'ñÑáéíóúÁÉÍÓÚüÜ.\-]+$/.test(value) && value.length >= minLength;
     }
 </script>

@@ -24,7 +24,6 @@ try {
         }
     }
 
-
     $fileName = '';
     $base64File = '';
 
@@ -34,7 +33,7 @@ try {
     $stmt = $cons->query($query);
     $srfCabecera = $stmt->fetch(PDO::FETCH_ASSOC);
     $uploadDir = '../static/sirefo/';
-    
+
     if (isset($_FILES["cabecera_archivoPdf"]["tmp_name"])) {
         $fileName = 'srf_' . uniqid() . '.pdf';
         $fileTmpPath = $_FILES["cabecera_archivoPdf"]["tmp_name"];
@@ -510,7 +509,7 @@ try {
 } finally {
     $dat = json_encode($pjson);
     echo $dat;
-} 
+}
 
 function generarSha1Item($item, $cons, $pjson)
 {

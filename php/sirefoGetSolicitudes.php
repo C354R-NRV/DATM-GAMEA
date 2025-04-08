@@ -59,11 +59,11 @@ foreach ($cabeceras as $key => $cabecera) {
     $estadoSolicitud = $stmt->fetch(PDO::FETCH_ASSOC);
 
 
-    $query = "
-        SELECT STRING_AGG(
-        concat(nombre, ' ', apellido_paterno, ' ', apellido_materno,' ', razon_social)
-        || ' ' || documento_identidad_numero || ' ' || documento_tributario , ', ') AS concatenado
-        FROM srf_item_solicitud a 
+    $query = " 
+        SELECT STRING_AGG( 
+        concat(nombre, ' ', apellido_paterno, ' ', apellido_materno,' ', razon_social) 
+        || ' ' || documento_identidad_numero || ' ' || documento_tributario , ', ') AS concatenado 
+        FROM srf_item_solicitud a  
         where a.id_cabecera_solicitud = " . $cabecera['id_cabecera_solicitud'] . " and estado_ is true  ";
     $stmt = $cons->query($query);
     $itemNombres = $stmt->fetch(PDO::FETCH_ASSOC);

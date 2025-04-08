@@ -7,8 +7,7 @@ foreach ($_POST as $clave => $valor) {
 }
 
 function get_next_correlative($usuario_, $unidad, $codigo, $referencia, $usuario_solicitante, $destino_, $hhrr_)
-{
-    // Validate input parameters
+{ 
     $conn = new Conexion();
     $cons = $conn->conectar();
     $valid_units = ['UAJ-CC', 'UFyR', 'UICT', 'SIS', 'DIR', 'GA'];
@@ -83,8 +82,6 @@ function get_next_correlative($usuario_, $unidad, $codigo, $referencia, $usuario
         $baseCite = 'DATM/' . $baseCite;
 
 
-
-        // Insert new record
         date_default_timezone_set('America/La_Paz');
         $fecha_registro = date('Y-m-d H:i:s');
         $insert_query = "INSERT INTO datm_cites (correlativo, unidad, codigo, referencia, usuario_, fecha_registro, estado_, gestion, cite, usuario_solicitante, destino, hhrr_ , area) 
@@ -99,9 +96,8 @@ function get_next_correlative($usuario_, $unidad, $codigo, $referencia, $usuario
     } catch (Exception $e) {
         throw $e;
     }
-}
+} 
 
-// Example usage:
 $resp = array();
 try {
     $next_number = get_next_correlative(
@@ -127,9 +123,7 @@ echo $dat;
 
 
 function completarConCeros($numero)
-{
-    // Aseguramos que el número sea un entero
-    $numero = intval($numero);
-    // Usamos str_pad para completar con ceros a la izquierda hasta 3 dígitos
+{ 
+    $numero = intval($numero); 
     return str_pad($numero, 2, '0', STR_PAD_LEFT);
 }

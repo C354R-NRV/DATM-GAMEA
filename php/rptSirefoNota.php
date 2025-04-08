@@ -44,7 +44,7 @@ $stmt = $cons->query($query);
 $solicitud = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-$date = DateTime::createFromFormat('Y-m-d H:i:s', $solicitud[0]['fecha_envio']);  
+$date = DateTime::createFromFormat('Y-m-d H:i:s', $solicitud[0]['fecha_envio']);
 $dia = $date->format('d'); // Día (DD)
 $mes = intval($date->format('m')); // Mes (MM) como número entero
 $anio = $date->format('Y'); // Año (YYYY)
@@ -85,13 +85,13 @@ try {
             </page_header>
             <page_footer>
                 <table style='width: 100%; font-size:11px; color:##515151; '>
-                ".($solicitud[0]['tipo_proceso'] == 'R'?"<tr>
+                " . ($solicitud[0]['tipo_proceso'] == 'R' ? "<tr>
                     <td style='width: 100%; font-size:8px;'>
                         UAJ-CC<br>
                         C.c. Arch. Unidad<br>
                         Contribuyente
                     </td>
-                </tr>":"")."
+                </tr>" : "") . "
                 <tr>
                     <td>
                         " . $solicitud[0]['hash_datos'] . " - <b>“2025 BICENTENARIO DE BOLIVIA”</b>
@@ -108,7 +108,7 @@ try {
             <!--136=14cm y 210=21.5cm--> 
             <div  >
                 <div style='text-align: right; margin-bottom: 20px;'>
-                    El Alto, <span id='fechaActual'>" . $dia . " de " . $conn->obtenerNombreMes(intval($mes)) . " de " . $anio. "</span><br>
+                    El Alto, <span id='fechaActual'>" . $dia . " de " . $conn->obtenerNombreMes(intval($mes)) . " de " . $anio . "</span><br>
                     <b>" . $solicitud[0]['codigo_solicitud'] . "</b>
                 </div>
                 <div style='margin-bottom: 20px;'>
@@ -140,19 +140,19 @@ try {
         $documento .= "<table class='tableReq' align='center' style='font-size:11px;'>
                     <tr class='tableReqtr'>
                         <th class='tableReqth' style='width: 5%;'>No</th>
-                        <th class='tableReqth' style='width: 35%;'>Nombre/Razon social</th>
+                        <th class='tableReqth' style='width: 30%;'>Nombre/Razon social</th>
                         <th class='tableReqth' style='width: 15%;'>Documento</th>
                         <th class='tableReqth' style='width: 25%;'>No. Registro tributario</th>
-                        <th class='tableReqth' style='width: 20%;'>Doc. Respaldo</th>
+                        <th class='tableReqth' style='width: 25%;'>Doc. Respaldo</th>
                     </tr>";
         $cnt = 1;
         foreach ($solicitud as $key => $item) {
             $documento .=   "<tr>
                             <td class='tableReqtd' style='width: 5%;'>" . $cnt . "</td>
-                            <td class='tableReqtd' style='width: 35%; text-align:left;'>" . $item['nombre_completo'] . "</td>
+                            <td class='tableReqtd' style='width: 30%; text-align:left;'>" . $item['nombre_completo'] . "</td>
                             <td class='tableReqtd' style='width: 15%;'>" . $item['documento'] . "</td>
                             <td class='tableReqtd' style='width: 25%;'>" . $item['documento_tributario'] . " <span  style='font-size:9px;'>[" . $item['tipo_documento_tributario'] . "]</span></td>
-                            <td class='tableReqtd' style='width: 20%;'>"  . $item['documento_respaldo']. "</td>
+                            <td class='tableReqtd' style='width: 25%;'>"  . $item['documento_respaldo'] . "</td> 
                         </tr> ";
             $cnt++;
         }
@@ -161,9 +161,25 @@ try {
         $documento .= "
             <p>
             En previsión a lo dispuesto por el Articulo 110 del Código Tributario Boliviano, Ley No 2492, solicitamos a su autoridad se ordene la RETENCIÓN DE FONDOS de las cuentas que tuviese en el sistema financiero del contribuyente: <b>" .
-            strtoupper($solicitud[0]['nombre_completo'])  . "</b> con <b>" . $solicitud[0]['cod_documento_identidad_tipo'] . "  " . $solicitud[0]['documento'] . "</b> (Titular de" .
-            ($solicitud[0]['tipo_documento_tributario'] == 'VEH' ? "l VEHICULO con placa de control " : ($solicitud[0]['tipo_documento_tributario'] == 'INM' ? "l BIEN INMUEBLE con numero de inmueble " : " la ACTIVIDAD ECONOMICA con numero de de registro tributario "))
-            . strtoupper($solicitud[0]['documento_tributario']) . "), hasta el monto de <b>Bs. " . $solicitud[0]['monto_retencion_bs'] . ".- (" . numeroALetras($solicitud[0]['monto_retencion_bs']) . " BOLIVIANOS)</b>. Siendo que mediante la Resolución Determinativa No." .
+            strtoupper($solicitud[0]['nombre_completo'])  . "</b> con <b>" . $solicitud[0]['cod_documento_identidad_tipo'] . "  " . $solicitud[0]['documento'] . "</b>";
+        $documento .= "(Titular de";
+
+        switch ($solicitud[0]['tipo_documento_tributario']) {
+            case 'INM':
+                $documento .= "l VEÍCULO con placa de control ";
+                break;
+            case 'VEH':
+                $documento .= "l BIEN INMUEBLE con número de inmueble ";
+                break;
+            case 'PUB':
+                $documento .= " la PUBLICIDAD con número de de registro tributario ";
+                break;
+            default:
+                $documento .= " la ACTIVIDAD ECONOMICA con número de de registro tributario ";
+                break;
+        }
+
+        $documento .= strtoupper($solicitud[0]['documento_tributario']) . "), hasta el monto de <b>Bs. " . $solicitud[0]['monto_retencion_bs'] . ".- (" . numeroALetras($solicitud[0]['monto_retencion_bs']) . " BOLIVIANOS)</b>. Siendo que mediante la Resolución Determinativa No." .
             $solicitud[0]['resolucion_determinativa'] . ",  se transfiguro en título de ejecución de acuerdo a lo dispuesto en el numeral 1 del Artículo 108 del Código Tributario Boliviano Ley 2492.
             </p>
             <p>
@@ -184,7 +200,7 @@ try {
         </page>
         ';
 
-    if ($solicitud[0]['tipo_proceso'] == 'R' and  $solicitud[0]['tipo_documento_tributario'] == 'VEH' ) {
+    if ($solicitud[0]['tipo_proceso'] == 'R' and  $solicitud[0]['tipo_documento_tributario'] == 'VEH') {
 
         $documento .= "
         <page format='272x210' style='font: arial; color: #222222;' backtop='27mm' backbottom='17mm' backleft='20mm' backright='10mm'>
@@ -242,7 +258,7 @@ try {
                     En previsión a lo dispuesto por el Articulo 110 del Código Tributario Boliviano Ley 2492, 
                     solicitamos la inscripción de la <b>ANOTACIÓN PREVENTIVA</b> del VEHÍCULO con placa de control <b>" . strtoupper($solicitud[0]['documento_tributario']) . "</b>, 
                     registrado a nombre del (la) contribuyente señor(a) <b>" . strtoupper($solicitud[0]['nombre_completo'])  . "</b> con <b>" . $solicitud[0]['cod_documento_identidad_tipo'] . "  " . trim($solicitud[0]['documento']) .
-                    ".</b><br>Considerando que conforme a lo dispuesto por el numeral I  parágrafo I del Artículo 108 del Código Tributario Boliviano Ley No 2492, 
+            ".</b><br>Considerando que conforme a lo dispuesto por el numeral I  parágrafo I del Artículo 108 del Código Tributario Boliviano Ley No 2492, 
                     concordante con el Articulo 4 del Decreto Supremo No 27874, conforme a la RESOLUCIÓN DETERMINATIVA No " . $solicitud[0]['resolucion_determinativa'] . ", 
                     se constituye en el título de ejecución tributaria.
                     </p> 

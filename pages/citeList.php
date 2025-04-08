@@ -316,7 +316,7 @@ if (!$_SESSION['swlogin']) {
         const userMessage = $('<div>').addClass('chat-message2 text-end2').text(`${userInput}`);
 
         $chatBox.append(userMessage);
-        datos = '&promptUser=' + userInput + "&recurso=redaccionnotas&tituloPrincipal=Redaccion de documentos";
+        datos = '&modalidad=docs' +'&promptUser=' + userInput + "&recurso=redaccionnotas&tituloPrincipal=Redaccion de documentos";
 
 
         $.ajax({
@@ -341,7 +341,7 @@ if (!$_SESSION['swlogin']) {
 
                 const botMessage = $('<div>').addClass('chat-message2').html(`${response}`);
                 $chatBox.append(botMessage);
-                setTimeout(function() {
+                setTimeout(function() { 
                     $chatBox.scrollTop($chatBox.prop('scrollHeight'));
                 }, 100);
 

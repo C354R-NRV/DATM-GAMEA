@@ -162,7 +162,7 @@ function sendMessage() {
     const userMessage = $('<div>').addClass('chat-message text-end').text(`${userInput}`);
 
     $chatBox.append(userMessage);
-    datos = '&promptUser=' + userInput + "&recurso=" + $('#recurso_').val() + "&tituloPrincipal=" + $('#tituloPrincipal').html();
+    datos = '&modalidad=chat' +'&promptUser=' + userInput + "&recurso=" + $('#recurso_').val() + "&tituloPrincipal=" + $('#tituloPrincipal').html();
     console.log(datos);
 
     $.ajax({
@@ -184,7 +184,7 @@ function sendMessage() {
             console.log(dat.detalles); */
 
             loadGralOff();
-            const botMessage = $('<div>').addClass('chat-message').text(`${response}`);
+            const botMessage = $('<div>').addClass('chat-message').html(`${response}`);
             $chatBox.append(botMessage);
             setTimeout(function () {
                 $chatBox.scrollTop($chatBox.prop('scrollHeight'));

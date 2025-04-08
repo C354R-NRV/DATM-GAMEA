@@ -12,7 +12,7 @@ $stmt = $cons->query($query);
 $tipoDoc = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-$query = "select * from srf_documento_identidad_extension";
+$query = "select * from srf_documento_identidad_extension  where estado_ is true";
 $stmt = $cons->query($query);
 $extension = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -30,20 +30,26 @@ for ($i = $cntItemAct; $i < ($cntItemAct + $cnt); $i++) {
     </div>
     <div class="row">
         <div class="col-md-3 mb-3">
+            <label for="tipo_documento_tributario' . $i . '">Tipo documento tributario</label>
+            <select class="form-controlSelect"  id="tipo_documento_tributario' . $i . '">
+                <option value="VEH">Vehiculo</option>
+                <option value="INM">Inmueble</option>
+                <option value="ACT">Actividad Economica</option>
+                <option value="PUB">Publicidad</option>
+            </select>
+            <br>
             <label for="tipoPersona' . $i . '">Tipo de persona</label>
             <select class="form-controlSelect" onchange="reestructuraFormItem(' . $i . ')" id="tipoPersona' . $i . '">
                 <option value="N">Natural</option>
                 <option value="J">Juridico</option>
-            </select>
-            <br>
-                <label for="tipo_documento_tributario' . $i . '">Tipo documento tributario</label>
-                <select class="form-controlSelect"  id="tipo_documento_tributario' . $i . '">
-                    <option value="VEH">Vehiculo</option>
-                    <option value="INM">Inmueble</option>
-                    <option value="ACT">Actividad Economica</option>
-                </select>
+            </select>  
+
         </div>
         <div class="col-md-3 mb-3">
+                        <label for="documento_tributario' . $i . '">Documento tributario</label>
+                <input type="text" id="documentoTributario' . $i . '" onblur="buscaContribuyente(' . $i . ')" class="form-control" placeholder="NRO PTA/NUM. INM/NUM ACT">
+
+                <br>
             <label for="id_documento_identidad_tipo' . $i . '">Tipo de documento</label>
             <select class="form-controlSelect" onchange="actExtension(' . $i . ')" id="id_documento_identidad_tipo' . $i . '">';
 
@@ -52,10 +58,8 @@ for ($i = $cntItemAct; $i < ($cntItemAct + $cnt); $i++) {
             $item .= "<option value=" . $row['id_documento_identidad_tipo'] . ">" . $row['documento_identidad_tipo'] . "</option>";
     }
 
-    $item .= '</select>
-                <br>
-                <label for="documento_tributario' . $i . '">Documento tributario</label>
-                <input type="text" id="documentoTributario' . $i . '" class="form-control" placeholder="NRO PTA/NUM. INM/NUM ACT">
+    $item .= '</select> 
+                
         </div>
         <div class="col-md-3 mb-3">
             <label for="documentoIdentidadNumero' . $i . '">No. Documento</label>
@@ -79,12 +83,12 @@ for ($i = $cntItemAct; $i < ($cntItemAct + $cnt); $i++) {
         </div>
     </div>
     <div class="row">
-        <div class="col-md-3 mb-3" id="bloqueAutoConclusion' . $i . '" '.($tipoProceso == 'R' ? ' style="display:none;"' : '') .'>
+        <div class="col-md-3 mb-3" id="bloqueAutoConclusion' . $i . '" ' . ($tipoProceso == 'R' ? ' style="display:none;"' : '') . '>
             <label for="autoConclusion' . $i . '">Auto Conclusión</label>
-            <input type="text" id="autoConclusion' . $i . '" '. ' class="form-control" placeholder="Auto de Conclusion">
+            <input type="text" id="autoConclusion' . $i . '" ' . ' class="form-control" placeholder="Auto de Conclusion">
         </div>
         
-        <div class="col-md-3 mb-3" id="bloqueResolucionDeterminativa' . $i . '" '.($tipoProceso == 'S' ? ' style="display:none;"' : '') .'>
+        <div class="col-md-3 mb-3" id="bloqueResolucionDeterminativa' . $i . '" ' . ($tipoProceso == 'S' ? ' style="display:none;"' : '') . '>
             <label for="resolucionDeterminativa' . $i . '">Resolución Determinativa</label>
             <input type="text" id="resolucionDeterminativa' . $i . '" class="form-control" placeholder="Cite de resolución determinativa">
             <input type="text" id="gestionFiscal' . $i . '" class="form-control" placeholder="Gestion(en) fiscal(es)">
@@ -99,6 +103,8 @@ for ($i = $cntItemAct; $i < ($cntItemAct + $cnt); $i++) {
         $item .=   "<option value=" . $row['id_tipo_respaldo'] . ">" . $row['tipo_respaldo_det'] . "</option>";
     }
     $item .=   '</select>
+            <div id="retencionDetalle' . $i . '">
+            </div>
         </div>
         <div class="col-md-3 mb-3">
             <label for="documentoRespaldo' . $i . '">Documento de respaldo</label>
@@ -127,4 +133,3 @@ $resp['extension']  = $extension;
 $resp['tipoRespaldo']  = $tipoRespaldo;
 $dat = json_encode($resp);
 echo $dat;
-

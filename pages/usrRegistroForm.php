@@ -189,7 +189,7 @@ if (!$_SESSION['swlogin']) {
                         <input type="text" id="cedula_identidad_complemento" class="form-control natural_" placeholder="Complemento">
                         <select class="form-controlSelect natural_" id="id_documento_identidad_extension">
                             <?php
-                            $query = "select * from srf_documento_identidad_extension";
+                            $query = "select * from srf_documento_identidad_extension where estado_ is true";
                             $stmt = $cons->query($query);
                             $extension = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
