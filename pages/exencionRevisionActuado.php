@@ -78,16 +78,14 @@ if (!$_SESSION['swlogin']) {
     <?php
     echo $twig->render('prebodyltFin.twig');
     ?>
-    <!-- Hero End -->
-
+    <!-- Hero End --> 
+ 
     <!-- About Start -->
     <div class="contenedorDigitaliza">
         <div class="row position-relative">
             <div class="col-8" id="main-content">
                 <div class="show-btn" onclick="toggleObsPanel()"><span id="contenBtn"><img class="img-fluid" src="../img/ia.gif" style="height: 2rem;" alt=""></span></div>
                 <div class="main-content-container">
-
-
                     <h1 id="tituloh1" class="">Revisión de solicitud><?php echo $actuado['codigo_solicitud'] . '>' . $actuado['detalle']; ?>></h1>
                     <div class="form-group">
 

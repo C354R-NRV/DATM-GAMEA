@@ -30,7 +30,8 @@ try {
 
     $query = "
     select tipo_contribuyente, tipo_documento,documento_identidad ,   expedido, nombre_rsocial, primer_apellido_sigla,  segundo_apellido , apellido_esposo,
-    tipo_apoderado, nombre_apo, primer_apellido_apo, segundo_apellido_apo, tipo_documento_apo, documento_identidad_apo, expedido_apo     
+    COALESCE (tipo_apoderado,'x') tipo_apoderado, trim(upper(concat(nombre_apo, ' ', primer_apellido_apo, ' ', segundo_apellido_apo))) nombre_apo, 
+    trim(concat(tipo_documento_apo, ' ', documento_identidad_apo, ' ',  expedido_apo  )   ) as documento_identidad_apo
     from  $rubroAux   
     where  $filtro = '$documentoTributario';";
 

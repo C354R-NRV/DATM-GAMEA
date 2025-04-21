@@ -71,8 +71,11 @@ for ($i = $cntItemAct; $i < ($cntItemAct + $cnt); $i++) {
         $item .=  "<option value=" . $row['id_documento_identidad_extension'] . ">" . $row['documento_identidad_extension_det'] . "</option>";
     }
 
-
     $item .= '</select>
+    <div class="data_apoderado_' . $i . '"><hr>
+    <input type="text" class="form-control" value="" placeholder="Tipo de apoderado (Representante legal, apoderado) "  id="tipo_apoderado' . $i . '"> 
+    <input type="text" class="form-control" value="" placeholder="Tipo documento, numero de documento y extensión" id="documento_identidad_apo' . $i . '"> 
+    </div>
         </div>
         <div class="col-md-3 mb-3" id="forrazonSocial">
             <label for="razonSocial' . $i . '"><span class="natural_' . $i . '">Nombre completo</span><span class="juridico_' . $i . ' oculto_">Razón social</span></label>
@@ -80,6 +83,10 @@ for ($i = $cntItemAct; $i < ($cntItemAct + $cnt); $i++) {
             <input type="text" id="nombre' . $i . '" class="form-control natural_' . $i . '" placeholder="Nombres">
             <input type="text" id="apellidoPaterno' . $i . '" class="form-control natural_' . $i . '" placeholder="Apellido Paterno">
             <input type="text" id="apellidoMaterno' . $i . '" class="form-control natural_' . $i . '" placeholder="Apellido Materno">
+            <div class="data_apoderado_' . $i . '">
+                <hr>
+                <input type="text" class="form-control" placeholder="Nombre apoderado" id="nombre_apo' . $i . '" >
+            </div>
         </div>
     </div>
     <div class="row">

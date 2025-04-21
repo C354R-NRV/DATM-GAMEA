@@ -44,7 +44,7 @@ if (!$_SESSION['swlogin']) {
 
         .headerDetalleSolicitud p {
             margin: 5px 0;
-        } 
+        }
 
         .show-btn3 {
             position: absolute;
@@ -316,7 +316,7 @@ if (!$_SESSION['swlogin']) {
         const userMessage = $('<div>').addClass('chat-message2 text-end2').text(`${userInput}`);
 
         $chatBox.append(userMessage);
-        datos = '&modalidad=docs' +'&promptUser=' + userInput + "&recurso=redaccionnotas&tituloPrincipal=Redaccion de documentos";
+        datos = '&modalidad=docs' + '&promptUser=' + userInput + "&recurso=redaccionnotas&tituloPrincipal=Redaccion de documentos";
 
 
         $.ajax({
@@ -341,7 +341,7 @@ if (!$_SESSION['swlogin']) {
 
                 const botMessage = $('<div>').addClass('chat-message2').html(`${response}`);
                 $chatBox.append(botMessage);
-                setTimeout(function() { 
+                setTimeout(function() {
                     $chatBox.scrollTop($chatBox.prop('scrollHeight'));
                 }, 100);
 
@@ -402,8 +402,8 @@ if (!$_SESSION['swlogin']) {
                 alert('Error: ' + error);
             }
         });
-    } 
- 
+    }
+
 
     function cargaUbicacion(idregistro) {
         if (idregistro) {

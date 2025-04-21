@@ -120,7 +120,8 @@ if (!$_SESSION['swlogin']) {
         <div class="row cabeceraSolicitud">
             <div class="col-md-3 mb-3">
                 <label for="codigoSolicitud">Nro Cite</label>
-                <input type="text" id="codigoSolicitud" class="form-control" placeholder="Codigo de solicitud/Nro Cite de nota" value="<?php echo (isset($_GET['cs']) ? $_GET['cs'] : '') ?>">
+                <input type="text" id="codigoSolicitud" class="form-control" placeholder="Codigo de solicitud/Nro Cite de nota" 
+                value="<?php echo (isset($_GET['cs']) ? $_GET['cs'] : '') ?>"  <?php echo (isset($_GET['id']) ? ' disabled="disabled" ' : '') ?>>
             </div>
             <div class="col-md-3 mb-3">
                 <label for="tipoProceso">Tipo de proceso</label>
@@ -132,7 +133,7 @@ if (!$_SESSION['swlogin']) {
                     $swS = '';
                 }
                 ?>
-                <select class="form-controlSelect" id="tipoProceso">
+                <select class="form-controlSelect" id="tipoProceso"  <?php echo (isset($_GET['id']) ? ' disabled="disabled" ' : '') ?> >
                     <option value="R" <?php echo $swR; ?>>Retención</option>
                     <option value="S" <?php echo $swS; ?>>Suspención</option>
                 </select>
@@ -436,7 +437,9 @@ if (!$_SESSION['swlogin']) {
                 contentType: "application/x-www-form-urlencoded",
                 url: "../php/sirefoGetContribuyente.php",
                 data: "&rubro=" + rubro + "&documentoTributario=" + documentoTributario + "&nroItem=" + nroItem,
-                beforeSend: function() {},
+                beforeSend: function() {
+
+                },
                 success: function(e) {
                     console.log(e);
                     dat = $.parseJSON(e);
@@ -445,7 +448,7 @@ if (!$_SESSION['swlogin']) {
 
                     var tipo_contribuyente_ = tipoContribuyente[dat.contribuyente.tipo_contribuyente];
                     $("#tipoPersona" + nroItem).val(tipo_contribuyente_);
-                    reestructuraFormItem(nroItem);
+
                     actExtension(nroItem);
                     $("#id_documento_identidad_extension" + nroItem).val(dataMap[dat.contribuyente.expedido]);
 
@@ -467,6 +470,7 @@ if (!$_SESSION['swlogin']) {
                             complementoAux = match[2] || '';
                         }
                     }
+                    reestructuraFormItem(nroItem);
                     $("#razonSocial" + nroItem).val(razonSocialAux);
                     $("#nombre" + nroItem).val(nombre);
                     $("#apellidoPaterno" + nroItem).val(paterno);
@@ -477,6 +481,17 @@ if (!$_SESSION['swlogin']) {
 
                     if (dat.cntRetenciones > 0 && $("#tipoProceso" + nroItem).val() == 'S') {
                         $("#retencionDetalle" + nroItem).html(dat.htmlRetenciones);
+                    }
+
+                    //-- completamos info para apoderado si existe
+                    if (dat.contribuyente.tipo_apoderado != 'x' && dat.contribuyente.tipo_apoderado != '') {
+                        let tipoApoderado = (dat.contribuyente.tipo_apoderado == 'REP' ? 'REPRESENTANTE LEGAL' : 'APODERADO');
+                        $('#tipo_apoderado' + nroItem).val(tipoApoderado);
+                        $('#documento_identidad_apo' + nroItem).val(dat.contribuyente.documento_identidad_apo);
+                        $('#nombre_apo' + nroItem).val(dat.contribuyente.nombre_apo);
+                        $('.data_apoderado_' + nroItem).show();
+                    } else {
+                        $('.data_apoderado_' + nroItem).hide();
                     }
                 },
                 timeout: 16000,
@@ -565,6 +580,14 @@ if (!$_SESSION['swlogin']) {
                                 if (item.id_documento_identidad_tipo == 4) {
                                     $('#id_documento_identidad_extension' + i).hide();
                                 }
+                                if (item.tipo_apoderado != 'x' && item.tipo_apoderado != '') {
+                                    $('#tipo_apoderado' + i).val(item.tipo_apoderado);
+                                    $('#documento_identidad_apo' + i).val(item.documento_identidad_apo);
+                                    $('#nombre_apo' + i).val(item.nombre_apo);
+                                    $('.data_apoderado_' + i).show();
+                                } else {
+                                    $('.data_apoderado_' + i).hide();
+                                }
                                 $('#documentoIdentidadNumero' + i).val(item.documento_identidad_numero);
                                 $('#documentoIdentidadComplemento' + i).val(item.documento_identidad_complemento);
                                 $('#razonSocial' + i).val(item.razon_social);
@@ -580,6 +603,7 @@ if (!$_SESSION['swlogin']) {
                                 $('#montoRetencionBs' + i).val(item.monto_retencion_bs);
                                 $('#montoRetencionUFV' + i).val(item.monto_retencion_ufv);
                                 $('#id_item_solicitud' + i).val(item.id_item_solicitud);
+
                                 i++;
                             });
                         }
@@ -744,11 +768,15 @@ if (!$_SESSION['swlogin']) {
                 formData.append('item_gestionFiscal' + index, $.trim($('#gestionFiscal' + index).val()));
                 formData.append('item_cite_anotacion_preventiva' + index, $.trim($('#cite_anotacion_preventiva' + index).val()));
                 formData.append('item_id_tipo_respaldo' + index, $('#id_tipo_respaldo' + index).val());
-                formData.append('item_documentoRespaldo' + index, $.trim($('#documentoRespaldo' + index).val()));
+                let documentoRespaldo = $.trim($('#documentoRespaldo' + index).val());
+
+                if (documentoRespaldo == '') {
+                    errores.push(' -El campo documento de respaldo (Item ' + cntImpresion + '), esta vacio.');
+                }
+                formData.append('item_documentoRespaldo' + index, documentoRespaldo);
 
                 var montoRetencionBs = $('#montoRetencionBs' + index).val();
-                var montoRetencionUFV = $('#montoRetencionUFV' + index).val();
-
+                var montoRetencionUFV = $('#montoRetencionUFV' + index).val(); 
                 var id_item_solicitud = $('#id_item_solicitud' + index).val();
 
                 if (!isNumeric(montoRetencionBs)) {
@@ -763,6 +791,11 @@ if (!$_SESSION['swlogin']) {
                 }
                 formData.append('item_montoRetencionUFV' + index, montoRetencionUFV);
                 formData.append('item_id_item_solicitud' + index, id_item_solicitud);
+
+                formData.append('tipo_apoderado' + index, $('#tipo_apoderado' + index).val());
+                formData.append('documento_identidad_apo' + index, $('#documento_identidad_apo' + index).val());
+                formData.append('nombre_apo' + index, $('#nombre_apo' + index).val());
+
             }
         }
 
@@ -800,9 +833,12 @@ if (!$_SESSION['swlogin']) {
                 contentType: false,
                 processData: false,
                 url: '../php/sirefoSaveSolicitud.php',
-                beforeSend: function() {},
+                beforeSend: function() {
+                    loadGralOn();
+                },
 
                 success: function(dat) {
+                    loadGralOff();
                     //AGREAGAR NOTIFICACION DE GUARDADO CORRECTO 
                     console.log(dat);
                     dat = $.parseJSON(dat);

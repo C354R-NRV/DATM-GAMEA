@@ -1,9 +1,7 @@
 <?php
 session_start();
 require_once './conexionpsql.php';
-require_once './sendMail.php';
-
-
+require_once './sendMail.php'; 
 
 $conn = new Conexion();
 $cons = $conn->conectar();

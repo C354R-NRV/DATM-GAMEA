@@ -30,8 +30,8 @@ if (empty($srfCabecera)) {
     $query = " select tipo_persona, id_documento_identidad_tipo, documento_identidad_numero, documento_identidad_complemento,
     id_documento_identidad_extension, razon_social, nombre, apellido_paterno, apellido_materno, 
     auto_conclusion, id_tipo_respaldo, documento_respaldo, monto_retencion_bs, monto_retencion_ufv, id_item_solicitud, 
-    documento_tributario, tipo_documento_tributario,
-    gestion_fiscal, resolucion_determinativa, cite_anotacion_preventiva
+    documento_tributario, tipo_documento_tributario, 
+    gestion_fiscal, resolucion_determinativa, cite_anotacion_preventiva, COALESCE (tipo_apoderado,'x') tipo_apoderado, nombre_apo, documento_identidad_apo  
     from srf_item_solicitud 
     where  id_cabecera_solicitud = " . $srfCabecera['id_cabecera_solicitud'] . "  and estado_  order by id_item_solicitud asc;";
     $stmt = $cons->query($query);

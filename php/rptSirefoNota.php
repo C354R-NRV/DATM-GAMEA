@@ -24,14 +24,15 @@ auto_conclusion,
 tipo_respaldo, 
 documento_respaldo, 
 monto_retencion_bs, 
-monto_retencion_ufv , 
-a.tipo_persona,
-tipo_proceso,
+monto_retencion_ufv, 
+a.tipo_persona, 
+tipo_proceso, 
 a.id_cabecera_solicitud, a.id_item_solicitud, d.codigo_solicitud, 
 to_char(d.fecha_envio, 'YYYY-MM-DD HH24:MI:SS') AS fecha_envio,
 e.circular, 
 to_char(e.fecha_circular, 'YYYY-MM-DD HH24:MI:SS') AS fecha_circular , documento_tributario, hash_datos, tipo_documento_tributario,
-gestion_fiscal, resolucion_determinativa, cite_anotacion_preventiva
+gestion_fiscal, resolucion_determinativa, cite_anotacion_preventiva,
+COALESCE(a.tipo_apoderado, 'x') tipo_apoderado, nombre_apo, documento_identidad_apo
 from srf_cabecera_solicitud d 
 left join srf_item_solicitud a  on d.id_cabecera_solicitud = a.id_cabecera_solicitud
 left join srf_documento_identidad_extension b on b.id_documento_identidad_extension = a.id_documento_identidad_extension
@@ -149,7 +150,11 @@ try {
         foreach ($solicitud as $key => $item) {
             $documento .=   "<tr>
                             <td class='tableReqtd' style='width: 5%;'>" . $cnt . "</td>
-                            <td class='tableReqtd' style='width: 30%; text-align:left;'>" . $item['nombre_completo'] . "</td>
+                            <td class='tableReqtd' style='width: 30%; text-align:left; font-size:9px;'>" . $item['nombre_completo'];
+            if ($solicitud[0]['tipo_apoderado'] != 'x' and $solicitud[0]['tipo_apoderado'] != '' ) {
+                $documento .= "<br>".$solicitud[0]['tipo_apoderado'] . ": Sr(a). " . $solicitud[0]['nombre_apo'] . " con " . $solicitud[0]['documento_identidad_apo'] . " ";
+            }
+            $documento .= "</td>
                             <td class='tableReqtd' style='width: 15%;'>" . $item['documento'] . "</td>
                             <td class='tableReqtd' style='width: 25%;'>" . $item['documento_tributario'] . " <span  style='font-size:9px;'>[" . $item['tipo_documento_tributario'] . "]</span></td>
                             <td class='tableReqtd' style='width: 25%;'>"  . $item['documento_respaldo'] . "</td> 
@@ -161,30 +166,32 @@ try {
         $documento .= "
             <p>
             En previsión a lo dispuesto por el Articulo 110 del Código Tributario Boliviano, Ley No 2492, solicitamos a su autoridad se ordene la RETENCIÓN DE FONDOS de las cuentas que tuviese en el sistema financiero del contribuyente: <b>" .
-            strtoupper($solicitud[0]['nombre_completo'])  . "</b> con <b>" . $solicitud[0]['cod_documento_identidad_tipo'] . "  " . $solicitud[0]['documento'] . "</b>";
+            strtoupper($solicitud[0]['nombre_completo'])  . "</b> con <b>" . $solicitud[0]['cod_documento_identidad_tipo'] . "  " . $solicitud[0]['documento'] . "</b> ";
+        if ($solicitud[0]['tipo_apoderado'] != 'x' and $solicitud[0]['tipo_apoderado'] != '' ) {
+            $documento .= "con " . $solicitud[0]['tipo_apoderado'] . ": Sr(a). " . $solicitud[0]['nombre_apo'] . " con " . $solicitud[0]['documento_identidad_apo'] . " ";
+        }
         $documento .= "(Titular de";
 
         switch ($solicitud[0]['tipo_documento_tributario']) {
-            case 'INM':
-                $documento .= "l VEÍCULO con placa de control ";
-                break;
             case 'VEH':
+                $documento .= "l VEHÍCULO con placa de control ";
+                break;
+            case 'INM':
                 $documento .= "l BIEN INMUEBLE con número de inmueble ";
                 break;
             case 'PUB':
-                $documento .= " la PUBLICIDAD con número de de registro tributario ";
+                $documento .= " la PUBLICIDAD y PROPAGANDA con número de registro tributario ";
                 break;
             default:
-                $documento .= " la ACTIVIDAD ECONOMICA con número de de registro tributario ";
+                $documento .= " la ACTIVIDAD ECONÓMICA con número de registro tributario ";
                 break;
         }
 
-        $documento .= strtoupper($solicitud[0]['documento_tributario']) . "), hasta el monto de <b>Bs. " . $solicitud[0]['monto_retencion_bs'] . ".- (" . numeroALetras($solicitud[0]['monto_retencion_bs']) . " BOLIVIANOS)</b>. Siendo que mediante la Resolución Determinativa No." .
+        $documento .= strtoupper($solicitud[0]['documento_tributario']) . "), hasta el monto de <b>Bs." . $solicitud[0]['monto_retencion_bs'] . ".- (" . numeroALetras($solicitud[0]['monto_retencion_bs']) . " BOLIVIANOS)</b>. Siendo que mediante la Resolución Determinativa No." .
             $solicitud[0]['resolucion_determinativa'] . ",  se transfiguro en título de ejecución de acuerdo a lo dispuesto en el numeral 1 del Artículo 108 del Código Tributario Boliviano Ley 2492.
             </p>
             <p>
-            Señalar que aquella <b>RETENCIÓN DE FONDOS</b> es resultado del proceso de fiscalización de la gestión fiscal <b>" . $solicitud[0]['gestion_fiscal'] . "</b>
-            , con número de <b>" . $solicitud[0]['tipo_respaldo'] . ": " . $solicitud[0]['documento_respaldo'] . "</b>, 
+            Señalar que aquella <b>RETENCIÓN DE FONDOS</b> es resultado del proceso de fiscalización de la gestión fiscal <b>" . trim($solicitud[0]['gestion_fiscal']) . "</b>, con número de <b>" . $solicitud[0]['tipo_respaldo'] . ": " . $solicitud[0]['documento_respaldo'] . "</b>, 
             en el cual se determina que el citado aún mantiene deuda pendiente con esta Administración Tributaria Municipal, y ante la falta de pago se encuentra en etapa de ejecución tributaria.
             </p> 
         </div>  
@@ -257,8 +264,12 @@ try {
                     <p>
                     En previsión a lo dispuesto por el Articulo 110 del Código Tributario Boliviano Ley 2492, 
                     solicitamos la inscripción de la <b>ANOTACIÓN PREVENTIVA</b> del VEHÍCULO con placa de control <b>" . strtoupper($solicitud[0]['documento_tributario']) . "</b>, 
-                    registrado a nombre del (la) contribuyente señor(a) <b>" . strtoupper($solicitud[0]['nombre_completo'])  . "</b> con <b>" . $solicitud[0]['cod_documento_identidad_tipo'] . "  " . trim($solicitud[0]['documento']) .
-            ".</b><br>Considerando que conforme a lo dispuesto por el numeral I  parágrafo I del Artículo 108 del Código Tributario Boliviano Ley No 2492, 
+                    registrado a nombre del (la) contribuyente <b>" . strtoupper($solicitud[0]['nombre_completo'])  . "</b> con <b>" . $solicitud[0]['cod_documento_identidad_tipo'] . "  " . trim($solicitud[0]['documento']) .
+            ".</b>";
+        if ($solicitud[0]['tipo_apoderado'] != 'x' and $solicitud[0]['tipo_apoderado'] != '' ) {
+            $documento .= " con " . $solicitud[0]['tipo_apoderado'] . ": Sr(a). " . $solicitud[0]['nombre_apo'] . " con " . $solicitud[0]['documento_identidad_apo'] . " ";
+        }
+        $documento .= "<br>Considerando que conforme a lo dispuesto por el numeral I  parágrafo I del Artículo 108 del Código Tributario Boliviano Ley No 2492, 
                     concordante con el Articulo 4 del Decreto Supremo No 27874, conforme a la RESOLUCIÓN DETERMINATIVA No " . $solicitud[0]['resolucion_determinativa'] . ", 
                     se constituye en el título de ejecución tributaria.
                     </p> 
@@ -266,7 +277,7 @@ try {
             <span style='text-align: justify;'>
                 <p>
                     Lo solicitado es conforme al amparo de lo establecido por el Articulo 3 del Decreto supremo No 27310, debiendo considerarse que la inscripción es 
-                    resultado del proceso de fiscalización de oficio de las gestiones fiscales: <b>" . $solicitud[0]['gestion_fiscal'] . "</b>, por un monto de 
+                    resultado del proceso de fiscalización de oficio de las gestiones fiscales: <b>" . trim($solicitud[0]['gestion_fiscal']) . "</b>, por un monto de 
                     <b>Bs. " . $solicitud[0]['monto_retencion_bs'] . ".- (" . numeroALetras($solicitud[0]['monto_retencion_bs']) . " BOLIVIANOS)</b>, en el cual se determina 
                     que el citado aún mantiene deuda pendiente con esta Administración Tributaria Municipal, y ante la falta de pago se encuentra en etapa de ejecución tributaria.                
                 </p> 

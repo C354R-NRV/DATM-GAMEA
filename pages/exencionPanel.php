@@ -205,7 +205,7 @@ if (!$_SESSION['swlogin']) {
         window.location.href = 'exencionFormVeh.php';
     });
     $('.card-1').click(function() {
-        window.location.href = 'exencionRevision.php';
+        window.location.href = 'exencionInm.php';
     });
     /* $('.card-2').click(function() {
         window.location.href = 'exencionRevision.php';

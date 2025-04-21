@@ -32,6 +32,7 @@ if (!$_SESSION['swlogin']) {
     <link href="../css/styleExencion.css" rel="stylesheet">
     <link href="../vendor/bootstrap-table-master/dist/bootstrap-table.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         .oculto_ {
             display: none;
@@ -161,7 +162,7 @@ if (!$_SESSION['swlogin']) {
 
             <div class="col-md-3 mb-3">
                 <label for="nro_pta">Nro. placa</label>
-                <select class="form-controlSelect" id="nro_pta" disabled>
+                <select multiple class="select2Veh" id="nro_pta" disabled>
                     <?php
 
                     $query = "SELECT nro_pta 
@@ -181,9 +182,16 @@ if (!$_SESSION['swlogin']) {
                             $sw = false;
                             $selected = '';
                         }
-                        if ($row['nro_pta'] ==  $solicitud[0]['registro_tributario'])
-                            $selected = 'selected';
 
+                        $valores = array_map('trim', explode(',', $solicitud[0]['registro_tributario']));
+
+                        // Recorremos cada valor para compararlo
+                        foreach ($valores as $valor) {
+                            if ($row['nro_pta'] == $valor) {
+                                $selected = 'selected';
+                                break; // Si ya encontramos coincidencia, no hace falta seguir
+                            }
+                        } 
                         $html .=  "<option value=" . $row['nro_pta'] . " $selected >" . $row['nro_pta'] . "</option>";
                     }
                     echo $html;
@@ -330,8 +338,22 @@ if (!$_SESSION['swlogin']) {
     <!-- Template Javascript -->
 </body>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script>
     $(document).ready(function() {
+
+
+        $('.select2Veh').select2({
+            placeholder: "Selecciona placas",
+            allowClear: true
+        });
+
+        $('.select2Veh').select2({
+            width: '100%', // Expande al ancho completo del contenedor
+            placeholder: "Selecciona placas",
+            allowClear: true
+        });
+
         var cantidadItems = $('#items').val();
         for (let index = 1; index < cantidadItems; index++) {
             let dropArea = document.querySelector(".drop-section" + index);
@@ -533,18 +555,15 @@ if (!$_SESSION['swlogin']) {
 
                 const docNames = $(this).find("input.nomDoc").map(function() {
                     return $(this).val()
-                }).get(); 
+                }).get();
                 datos.documentos[listKey] = {
                     docNames,
                     iditem_act,
                     idrequisito
                 };
-
                 if (docNames == '' && resquisitoObligatorio == '1') {
                     errores.push(" - No se ha agregado ningún documento PDF para el requisito: <b>" + h1Content + "</b>");
                 }
-
-
                 cntItem++;
             }
         });

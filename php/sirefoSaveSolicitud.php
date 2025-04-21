@@ -68,8 +68,7 @@ try {
     $cabecera->hash_imagen = $sha1Hash;
 
     $cabecera->adjunto = $base64Pdf;
-    $cabecera->adjunto_nombre = $fileName;
-
+    $cabecera->adjunto_nombre = $fileName; 
 
     $query = " select * from datm_usuario where estado like 'DESBLOQUEADO' and rol like 'DIRECCION' ";
     $stmt = $cons->query($query);
@@ -88,8 +87,7 @@ try {
 
     if (empty($srfCabecera)) {
 
-        try {
-
+        try { 
             $query = "INSERT INTO srf_cabecera_solicitud (
                 adjunto,         adjunto_nombre,        autoridad_cargo,        autoridad_solicitante,        codigo_solicitud,
                 detalle_cantidad,        entidad,        fecha_envio,        fecha_envio_ansi,        gerencia,         
@@ -202,10 +200,18 @@ try {
                     $cntValidos++;
                     $item = new stdClass();
                     $item->tipo_persona = $_POST['item_tipo_persona' . $i];
-                    $item->nombre = $_POST['item_nombre' . $i];
-                    $item->apellido_paterno = $_POST['item_apellidoPaterno' . $i];
-                    $item->apellido_materno = $_POST['item_apellidoMaterno' . $i];
-                    $item->razon_social = $_POST['item_razonSocial' . $i];
+                    if ($item->tipo_persona  == 'N') {
+                        $item->razon_social = '';
+                        $item->nombre = $_POST['item_nombre' . $i];
+                        $item->apellido_paterno = $_POST['item_apellidoPaterno' . $i];
+                        $item->apellido_materno = $_POST['item_apellidoMaterno' . $i];
+                    } else {
+                        $item->razon_social = $_POST['item_razonSocial' . $i];
+                        $item->nombre = '';
+                        $item->apellido_paterno = '';
+                        $item->apellido_materno = '';
+                    } 
+
                     $item->id_documento_identidad_tipo = $_POST['item_id_documento_identidad_tipo' . $i];
                     $item->documento_identidad_numero = $_POST['item_documentoIdentidadNumero' . $i];
                     $item->documento_tributario = $_POST['item_documentoTributario' . $i];
@@ -222,7 +228,12 @@ try {
                     $item->documento_respaldo = $_POST['item_documentoRespaldo' . $i];
                     $item->monto_retencion_bs = formatearDecimales($_POST['item_montoRetencionBs' . $i]);
                     $item->monto_retencion_ufv = formatearDecimales($_POST['item_montoRetencionUFV' . $i]);
-                    $item->id_item_solicitud = formatearDecimales($_POST['item_id_item_solicitud' . $i]);
+                    $item->id_item_solicitud = intval($_POST['item_id_item_solicitud' . $i]);
+
+                    $item->tipo_apoderado =  ($_POST['tipo_apoderado' . $i]);
+                    $item->documento_identidad_apo =  ($_POST['documento_identidad_apo' . $i]);
+                    $item->nombre_apo =  ($_POST['nombre_apo' . $i]);
+
                     $item->id_cabecera_solicitud = $cabecera->IdSolicitud;
                     $item->estado_ = true;
 
@@ -230,7 +241,7 @@ try {
 
                     $query = "SELECT * FROM srf_item_solicitud 
                             WHERE 
-                            id_item_solicitud = $item->id_item_solicitud
+                            id_item_solicitud = $item->id_item_solicitud 
                             and estado_ is true
                             ";
                     $stmt = $cons->prepare($query);
@@ -261,8 +272,10 @@ try {
                                 tipo_documento_tributario,
                                 resolucion_determinativa, 
                                 gestion_fiscal,
-                                cite_anotacion_preventiva
-
+                                cite_anotacion_preventiva,
+                                tipo_apoderado,
+                                documento_identidad_apo,
+                                nombre_apo 
                             ) VALUES (
                                 :tipo_persona,
                                 :nombre,
@@ -285,7 +298,10 @@ try {
                                 :tipo_documento_tributario,
                                 :resolucion_determinativa, 
                                 :gestion_fiscal,
-                                :cite_anotacion_preventiva
+                                :cite_anotacion_preventiva,
+                                :tipo_apoderado,
+                                :documento_identidad_apo,
+                                :nombre_apo  
                             )";
                         $tmpTrue = true;
                         $stmt = $cons->prepare($query);
@@ -311,6 +327,11 @@ try {
                         $stmt->bindParam(':id_cabecera_solicitud', $cabecera->IdSolicitud);
                         $stmt->bindParam(':estado_', $tmpTrue);
                         $stmt->bindParam(':id_documento_identidad_extension', $item->id_documento_identidad_extension);
+
+                        $stmt->bindParam(':tipo_apoderado', $item->tipo_apoderado);
+                        $stmt->bindParam(':documento_identidad_apo', $item->documento_identidad_apo);
+                        $stmt->bindParam(':nombre_apo', $item->nombre_apo);
+
                         $stmt->execute();
 
                         $item->id_item_solicitud = $cons->lastInsertId();
@@ -347,7 +368,6 @@ try {
                                     $valorNuevoJsonb = $valorNuevo;
 
                                     if ($valorActualJsonb != $valorNuevoJsonb) {
-
                                         $camposModificados[] = array(
                                             'campo' => $campo,
                                             'valor_anterior' => $valorActualJsonb,
@@ -402,7 +422,9 @@ try {
                                     WHERE id_item_solicitud = " . $campoModificado['id_item_solicitud'];
                                 $stmt = $cons->prepare($query);
                                 $err = $stmt->execute();
-                            }
+
+                                $pjson['log'] .= "<br>- ". $campoModificado['campo']." de ".$campoModificado['valor_anterior']." a ". $campoModificado['valor_nuevo'];
+                            } 
                         }
                     }
                 }
@@ -441,8 +463,7 @@ try {
             }
         }
 
-        if (!empty($camposModificados)) {
-            $pjson['log'] .= "<p>- Modificaciones registradas exitosamente</p>";
+        if (!empty($camposModificados)) { 
             foreach ($camposModificados as $campoModificado) {
                 $query = "INSERT INTO srf_cabecera_solicitud_hst (
                         id_cabecera_solicitud,
@@ -488,6 +509,8 @@ try {
             WHERE id_cabecera_solicitud = " . $cabecera->IdSolicitud . ";";
             $stmt = $cons->prepare($query);
             $err = $stmt->execute();
+
+            $pjson['log'] .= "<br>- Modificaciones en cabecera registradas exitosamente";
         }
 
         $pjson['idsolicitud'] = $cabecera->IdSolicitud;

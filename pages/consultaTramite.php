@@ -263,10 +263,36 @@
             color: white;
             /* text-decoration: underline;  */
         }
+
+        .loadGralOn {
+            position: fixed;
+            z-index: 999;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 100%;
+            background-color: #121212;
+            opacity: 0.8;
+            filter: alpha(opacity=80);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loadGralOn img {
+            height: 6em;
+        }
+
+        .loadGralOff {
+            display: none;
+            height: 0%;
+            width: 0%;
+        }
     </style>
 </head>
 
 <body>
+    <div class="loadGral"></div>
     <div class="menu">
         <a href="index.php">SITIO DATM</a> | <a href="login.php">LOGIN</a>
     </div>
@@ -291,7 +317,8 @@
                                 <input type="text" value="" id="nrohhrr" name="nrohhrr" class="form-control" style="margin-top: 8px;  width:auto; margin-right:10px; " autocomplete="off" placeholder="Nro. de hoja de ruta">
                                 <select class="custom-select form-control-sm fuente" id="gestion" name="gestion" style="height: auto; margin-top: 8px; width:100%; margin-right:15px; padding:3; border-radius:5px;" aria-invalid="false">
                                     <option value="2023">2023</option>
-                                    <option value="2024" selected="selected">2024</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2025" selected="selected">2025</option>
                                 </select>
                             </div>
                             <button type="submit" class="btn btn-primary" id="submit_dtm" style="margin: 0.5rem; margin-left:13px; margin-right:13px;  width:90%;">
@@ -313,12 +340,13 @@
                     <!-- <button type="submit" class=" BotonBuscar btn btn-primary btn-lg btn-block p-3" id="search" name="search" style="margin-top: 1.666667%;"><i class="fas fa-search"></i><span class="BotonBuscar">BUSCAR</span></button>-->
                 </div>
             </div>
-            <span id="err" class="err"></span> 
+            <span id="err" class="err"></span>
         </div>
-    </div> 
+    </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js"></script>
     <script src="../js/bootstrap.js"></script>
+    <script src="../js/mainv2.js"></script>
     <script>
         var ans = "";
         var clear = false;
@@ -373,8 +401,11 @@
                 contentType: "application/x-www-form-urlencoded",
                 url: "../php/searchHhrr.php",
                 data: datos,
-                beforeSend: function() {},
+                beforeSend: function() {
+                    loadGralOn();
+                },
                 success: function(e) {
+                    loadGralOff();
                     console.log(e);
                     dat = $.parseJSON(e);
                     $.confirm({
