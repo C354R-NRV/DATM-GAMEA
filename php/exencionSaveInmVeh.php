@@ -15,11 +15,13 @@ $datos = json_decode($jsonData, true);
 
 // Ahora $datos es un array asociativo con la estructura correcta
 $gestion = $datos['gestion'];
+$tipo_solicitud = $datos['tipo_solicitud'];
 $cntItem = $datos['cntItem'];
 $ci_ = $_SESSION['cedula_identidad'];
 
 //CODIGO DE SOLICITUD =>  YY-CODIGO DE USUARIO NUMERICO (000X)-NUMERO DE SECUENCIA 001   
-$query = "select (coalesce (count(a.idcabecera),0)+1) as cnt from exc_cabecera a left join  datm_usuario b on a.uregistro_ = b.id where b.cedula_identidad = '$ci_';";
+$query = "select (coalesce (count(a.idcabecera),0)+1) as cnt 
+        from exc_cabecera a left join  datm_usuario b on a.uregistro_ = b.id where b.cedula_identidad = '$ci_';";
 $stmt = $cons->query($query);
 $cntSolicitudes = $stmt->fetch(PDO::FETCH_ASSOC);
 $codigo_solicitud = date('y') . "-" . str_pad($cntSolicitudes['cnt'], 4, '0', STR_PAD_LEFT) . "-" . str_pad($_SESSION['idusuario'], 3, '0', STR_PAD_LEFT);
@@ -28,8 +30,8 @@ $fecha_ = new DateTime(date('Y-m-d H:i:s'));
 $fecha_registro = $fecha_->format('Y-m-d H:i:s');
 $uregistro_ = $_SESSION['idusuario'];
 $idestado = 1; // POR ENVIAR
-$idrubro =  1; // vehiculo
-$reg  = $datos['nro_pta'];
+$idrubro =  $datos['idrubro'];
+$reg  = $datos['registro_tributario'];
 $registro_tributario = implode(", ", $reg);
 
 $fecha_ = new DateTime(date('Y-m-d H:i:s'));
@@ -57,7 +59,8 @@ try {
             fecha_registro,
             idestado,
             registro_tributario,
-            idrubro
+            idrubro,
+            tipo_solicitud
                 ) VALUES (
                     :gestion,
                     :uregistro_,
@@ -65,7 +68,8 @@ try {
                     :fecha_registro,
                     :idestado,
                     :registro_tributario,
-                    :idrubro
+                    :idrubro,
+                    :tipo_solicitud
                 )";
 
     $stmt = $cons->prepare($query);
@@ -76,9 +80,10 @@ try {
     $stmt->bindParam(':idestado', $idestado);
     $stmt->bindParam(':registro_tributario', $registro_tributario);
     $stmt->bindParam(':idrubro', $idrubro);
+    $stmt->bindParam(':tipo_solicitud', $tipo_solicitud);
 
     if (!$stmt->execute()) {
-        $pjson['log'] .= $stmt->errorInfo();
+        $pjson['log'] .= $stmt->errorInfo()." - DURANTE REGISTRO CABECERA";
         $pjson['err'] = '1';
     } else {
         $idcabecera = $cons->lastInsertId();
@@ -86,7 +91,11 @@ try {
 
 
     //registro de los items (requisitos) -- en este caso de VEHICULO, deberemos registrar un exc_item para cada REQUISITO que esta detallado en exc_requisito, es decir un for para exc_requisito
-    $query = "select * from exc_requisito where idrubro = '$idrubro'";
+    /**
+    Si en caso los requisitos cambian entre EXENCION y EXCLUSION, se debera a gregar un campo nuevo en exc_requisito para identificar si se trata de exencion o exclusion
+    */
+    
+    $query = "select * from exc_requisito where idrubro = '$idrubro' order by orden";
     $stmt = $cons->query($query);
     $requisitos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $idestado = 1; //PENDIENTE DE ENVIO 
@@ -120,7 +129,7 @@ try {
     $stmt->bindParam(':fecha_validez_token', $fecha_validez_token);
 
     if (!$stmt->execute()) {
-        $pjson['log'] .= $stmt->errorInfo();
+        $pjson['log'] .= $stmt->errorInfo()." EN REGSITRO exc_actuado";
         $pjson['err'] = '1';
     } else {
         $idactuado = $cons->lastInsertId();
@@ -129,7 +138,7 @@ try {
     foreach ($requisitos as $key => $requisito) {
         /* $pjson['log'] .= " - Registro de item:" . $idactuado . "<br>\n"; */
         //registro de los exc_item_actuado (documentos adjuntos para el requisito)            
-        foreach ($datos['documentos']['listaReq' . $requisito['orden']] as $key => $doc) {
+        foreach ($datos['documentos']['listaReq' . $requisito['orden']]['docNames'] as $key => $doc) {
             if (!(!isset($doc) || $doc === null)) {
                 $documento_path = $doc;
 
@@ -156,11 +165,11 @@ try {
                 $stmt->bindParam(':idactuado', $idactuado);
                 $stmt->bindParam(':idrequisito', $requisito['idrequisito']);
                 if (!$stmt->execute()) {
-                    $pjson['log'] .= $stmt->errorInfo();
+                    $pjson['log'] .= $stmt->errorInfo()." EN REGISTRO exc_item_actuado";
                     $pjson['err'] = '1';
                 } else {
                     $iditem_actuado = $cons->lastInsertId();
-                    /*  $pjson['log'] .= "   - Registro de actuado:" . $documento_path . ", exitoso<br>\n"; */
+                    $pjson['log'] .= "   - Registro de actuado:" . $documento_path . ", exitoso<br>\n";
                 }
             }
         }

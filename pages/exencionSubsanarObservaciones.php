@@ -108,7 +108,7 @@ if (!$_SESSION['swlogin']) {
     ?>
     <li class="breadcrumb-item"><a class="text-white" href="index.php">Home</a></li>
     <li class="breadcrumb-item"><a class="text-white">UAJ</a></li>
-    <li class="breadcrumb-item text-white active" aria-current="page"><a class="text-white" href="exencionList.php">EXENCION</a></li>
+    <li class="breadcrumb-item text-white active" aria-current="page"><a class="text-white" href="exencionList.php">SOLICITUD</a></li>
     <li class="breadcrumb-item text-white active" aria-current="page">Subsanar solicitud <?php echo $c; ?></li>
     <?php
     echo $twig->render('prebodyltFin.twig');
@@ -124,7 +124,7 @@ if (!$_SESSION['swlogin']) {
     <?php
 
     $query = "SELECT b.idcabecera, b.idactuado , x.gestion, x.codigo_solicitud, 
-                x.registro_tributario, y.idrubro, y.rubro, 
+                x.registro_tributario, y.idrubro, y.rubro, x.tipo_solicitud,
                 c.idrequisito, c.detalle, c.anotacion,  a.observacion , c.obligatorio,
                 a.iditem_actuado_ant, e.documento_path, f.detalle_estado as detalle_estado_ant, uant.usuario as usuarioant,
                 a.iditem_act, a.documento_path as documento_path_rev, d.detalle_estado, uact.usuario as usuarioact , b.observacion obs_gral
@@ -151,23 +151,49 @@ if (!$_SESSION['swlogin']) {
 
     <div class="contenedorDigitaliza">
         <div class="row exencionCabecera">
+
             <div class="col-md-3 mb-3">
-                <label for="codigoSolicitud">Gestión para exención</label>
+                <label for="tipo_solicitud">Tipo solicitud</label>
+                <select class="select2Veh" id="tipo_solicitud" disabled>
+                    <?php
+                    $html = '';
+                    $sw = true;
+                    $selected = '';
+                    if ($solicitud[0]['tipo_solicitud'] == 'EXENCION') {
+                        $selected = 'selected';
+                    }
+                    $html .= "<option value='EXENCION' $selected>EXENCION</option>";
+                    if ($solicitud[0]['tipo_solicitud'] == 'EXCLUSION') {
+                        $selected = 'selected';
+                    }
+                    $html .= "<option value='EXENCION' $selected>EXENCION</option>";
+                    echo $html;
+                    ?>
+                </select>
+            </div>
+
+            <div class="col-md-3 mb-3">
+                <label for="codigoSolicitud">Gestión</label>
                 <input id="gestionIni" class='form-control' disabled value="<?php echo $solicitud[0]['gestion']; ?>" />
                 <?php
-                echo "<input id='idcabecera' type='hidden' value='" . $solicitud[0]['idcabecera'] . "' >";
-                echo "<input id='codigo_solicitud' type='hidden' value='" . $solicitud[0]['codigo_solicitud'] . "' >";
+                    echo "<input id='idcabecera' type='hidden' value='" . $solicitud[0]['idcabecera'] . "' >";
+                    echo "<input id='codigo_solicitud' type='hidden' value='" . $solicitud[0]['codigo_solicitud'] . "' >";
                 ?>
             </div>
 
             <div class="col-md-3 mb-3">
-                <label for="nro_pta">Nro. placa</label>
-                <select multiple class="select2Veh" id="nro_pta" disabled>
-                    <?php
-
-                    $query = "SELECT nro_pta 
+                <label for="registro_tributario">Reg. tributario</label>
+                <select multiple class="select2Veh" id="registro_tributario" disabled>
+                    <?php 
+                    $query = "SELECT nro_pta as registro_tributario 
                                 FROM vehiculo_univ          
-                                WHERE documento_identidad = '" . $_SESSION['cedula_identidad'] . "' order by nro_pta desc;";
+                                WHERE documento_identidad = '" . $_SESSION['cedula_identidad'] . "' order by nro_pta;";
+
+                    if ($solicitud[0]['idrubro'] == 2) {
+                        $query = "SELECT numero_inmueble as registro_tributario
+                                    FROM inmueble_univ a where documento_identidad = '" . $_SESSION['cedula_identidad'] . "' order by numero_inmueble";
+                    }
+                    
                     $stmt = $cons->query($query);
                     $bienes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -187,18 +213,18 @@ if (!$_SESSION['swlogin']) {
 
                         // Recorremos cada valor para compararlo
                         foreach ($valores as $valor) {
-                            if ($row['nro_pta'] == $valor) {
+                            if ($row['registro_tributario'] == $valor) {
                                 $selected = 'selected';
                                 break; // Si ya encontramos coincidencia, no hace falta seguir
                             }
-                        } 
-                        $html .=  "<option value=" . $row['nro_pta'] . " $selected >" . $row['nro_pta'] . "</option>";
+                        }
+                        $html .=  "<option value=" . $row['registro_tributario'] . " $selected >" . $row['registro_tributario'] . "</option>";
                     }
                     echo $html;
                     ?>
-                </select>
+                </select> 
             </div>
-            <div class="col-md-6 mb-6" style="text-align: right; font-weight: bold; font-style: italic; font-size: 0.8rem;">
+            <div class="col-md-3 mb-3" style="text-align: right; font-weight: bold; font-style: italic; font-size: 0.8rem;">
                 <?php echo ($solicitud[0]['obs_gral'] != '' ? '"' . $solicitud[0]['obs_gral'] . '"' : ""); ?>
             </div>
         </div>
@@ -279,7 +305,10 @@ if (!$_SESSION['swlogin']) {
         }
 
         //ahora incorporamos los requisitos no completados o vacios, para dar posibilidad de incorporarlos
-        $query = "SELECT  idrequisito, detalle,  anotacion, obligatorio  from exc_requisito where idrequisito not in (
+        $query = "SELECT  idrequisito, detalle,  anotacion, obligatorio  
+                    from exc_requisito 
+                    
+                    where idrequisito not in (
                     select  c.idrequisito 
                     from exc_item_actuado a 
                     left join exc_item_actuado  c on a.iditem_actuado_ant = c.iditem_act
@@ -288,7 +317,8 @@ if (!$_SESSION['swlogin']) {
                     and a.idestado in (6,5)
                     and idcabecera = $i  
                     group by  c.idrequisito 
-                    ) and idrubro = 1 and estado_ is true";
+                    ) 
+                    and idrubro = ".$solicitud[0]['idrubro']."and estado_ is true";
 
         $stmt = $cons->query($query);
         $requisitos = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -342,15 +372,14 @@ if (!$_SESSION['swlogin']) {
 <script>
     $(document).ready(function() {
 
-
         $('.select2Veh').select2({
-            placeholder: "Selecciona placas",
+            placeholder: "Seleccione",
             allowClear: true
         });
 
         $('.select2Veh').select2({
             width: '100%', // Expande al ancho completo del contenedor
-            placeholder: "Selecciona placas",
+            placeholder: "Seleccione",
             allowClear: true
         });
 
@@ -509,13 +538,13 @@ if (!$_SESSION['swlogin']) {
     function guardar() {
         var datos = {
             gestion: $('#gestionIni').val(),
-            nro_pta: $('#nro_pta').val(),
+            registro_tributario: $('#registro_tributario').val(),
             documentos: {},
             cntItem: 0
         }
         var html = `
         <h3 style="color:black;">Gestión solicitada: <b>${$('#gestionIni').val()}</b></h3>
-        <h4 style="color:black;">Nro. Placa: ${$('#nro_pta').val()}</h4>
+        <h4 style="color:black;">Reg. tributario: ${$('#registro_tributario').val()}</h4>
                     <table class="striped-table">
                     <thead>
                         <tr>
@@ -654,7 +683,7 @@ if (!$_SESSION['swlogin']) {
 
     function generarSolicitud() {
         datos =
-            "&nro_pta=" + $('#nro_pta').val() + "&gestionIni_=" + $('#gestionIni').val() + "&gestionFin_=" + $('#gestionFin').val();
+            "&registro_tributario=" + $('#registro_tributario').val() + "&gestionIni_=" + $('#gestionIni').val() + "&gestionFin_=" + $('#gestionFin').val();
 
         var url_ = "../php/rptveh_11_v2.php?" + datos;
         $.ajax({

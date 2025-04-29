@@ -151,8 +151,8 @@ try {
             $documento .=   "<tr>
                             <td class='tableReqtd' style='width: 5%;'>" . $cnt . "</td>
                             <td class='tableReqtd' style='width: 30%; text-align:left; font-size:9px;'>" . $item['nombre_completo'];
-            if ($solicitud[0]['tipo_apoderado'] != 'x' and $solicitud[0]['tipo_apoderado'] != '' ) {
-                $documento .= "<br>".$solicitud[0]['tipo_apoderado'] . ": Sr(a). " . $solicitud[0]['nombre_apo'] . " con " . $solicitud[0]['documento_identidad_apo'] . " ";
+            if ($item['tipo_apoderado'] != 'x' and $item['tipo_apoderado'] != '') {
+                $documento .= "<br>" . $item['tipo_apoderado'] . ": Sr(a). " . $item['nombre_apo'] . " con " . $item['documento_identidad_apo'] . " ";
             }
             $documento .= "</td>
                             <td class='tableReqtd' style='width: 15%;'>" . $item['documento'] . "</td>
@@ -167,7 +167,7 @@ try {
             <p>
             En previsión a lo dispuesto por el Articulo 110 del Código Tributario Boliviano, Ley No 2492, solicitamos a su autoridad se ordene la RETENCIÓN DE FONDOS de las cuentas que tuviese en el sistema financiero del contribuyente: <b>" .
             strtoupper($solicitud[0]['nombre_completo'])  . "</b> con <b>" . $solicitud[0]['cod_documento_identidad_tipo'] . "  " . $solicitud[0]['documento'] . "</b> ";
-        if ($solicitud[0]['tipo_apoderado'] != 'x' and $solicitud[0]['tipo_apoderado'] != '' ) {
+        if ($solicitud[0]['tipo_apoderado'] != 'x' and $solicitud[0]['tipo_apoderado'] != '') {
             $documento .= "con " . $solicitud[0]['tipo_apoderado'] . ": Sr(a). " . $solicitud[0]['nombre_apo'] . " con " . $solicitud[0]['documento_identidad_apo'] . " ";
         }
         $documento .= "(Titular de";
@@ -186,9 +186,11 @@ try {
                 $documento .= " la ACTIVIDAD ECONÓMICA con número de registro tributario ";
                 break;
         }
-
-        $documento .= strtoupper($solicitud[0]['documento_tributario']) . "), hasta el monto de <b>Bs." . $solicitud[0]['monto_retencion_bs'] . ".- (" . numeroALetras($solicitud[0]['monto_retencion_bs']) . " BOLIVIANOS)</b>. Siendo que mediante la Resolución Determinativa No." .
-            $solicitud[0]['resolucion_determinativa'] . ",  se transfiguro en título de ejecución de acuerdo a lo dispuesto en el numeral 1 del Artículo 108 del Código Tributario Boliviano Ley 2492.
+        $leyendaRA = "Resolución Determinativa No. " . $solicitud[0]['resolucion_determinativa'];
+        if (preg_match('/Resolución Administrativa/i', $solicitud[0]['resolucion_determinativa']) or preg_match('/Resolucion Administrativa/i', $solicitud[0]['resolucion_determinativa']) or preg_match('/R.A./i', $solicitud[0]['resolucion_determinativa'])) {
+            $leyendaRA = $solicitud[0]['resolucion_determinativa'];
+        }
+        $documento .= strtoupper($solicitud[0]['documento_tributario']) . "), hasta el monto de <b>Bs." . $solicitud[0]['monto_retencion_bs'] . ".- (" . numeroALetras($solicitud[0]['monto_retencion_bs']) . " BOLIVIANOS)</b> siendo que mediante la " . $leyendaRA . ",  se transfiguro en título de ejecución de acuerdo a lo dispuesto en el numeral 1 del Artículo 108 del Código Tributario Boliviano Ley 2492.
             </p>
             <p>
             Señalar que aquella <b>RETENCIÓN DE FONDOS</b> es resultado del proceso de fiscalización de la gestión fiscal <b>" . trim($solicitud[0]['gestion_fiscal']) . "</b>, con número de <b>" . $solicitud[0]['tipo_respaldo'] . ": " . $solicitud[0]['documento_respaldo'] . "</b>, 
@@ -266,11 +268,11 @@ try {
                     solicitamos la inscripción de la <b>ANOTACIÓN PREVENTIVA</b> del VEHÍCULO con placa de control <b>" . strtoupper($solicitud[0]['documento_tributario']) . "</b>, 
                     registrado a nombre del (la) contribuyente <b>" . strtoupper($solicitud[0]['nombre_completo'])  . "</b> con <b>" . $solicitud[0]['cod_documento_identidad_tipo'] . "  " . trim($solicitud[0]['documento']) .
             ".</b>";
-        if ($solicitud[0]['tipo_apoderado'] != 'x' and $solicitud[0]['tipo_apoderado'] != '' ) {
+        if ($solicitud[0]['tipo_apoderado'] != 'x' and $solicitud[0]['tipo_apoderado'] != '') {
             $documento .= " con " . $solicitud[0]['tipo_apoderado'] . ": Sr(a). " . $solicitud[0]['nombre_apo'] . " con " . $solicitud[0]['documento_identidad_apo'] . " ";
         }
         $documento .= "<br>Considerando que conforme a lo dispuesto por el numeral I  parágrafo I del Artículo 108 del Código Tributario Boliviano Ley No 2492, 
-                    concordante con el Articulo 4 del Decreto Supremo No 27874, conforme a la RESOLUCIÓN DETERMINATIVA No " . $solicitud[0]['resolucion_determinativa'] . ", 
+                    concordante con el Articulo 4 del Decreto Supremo No 27874, conforme a la " . $leyendaRA . ", 
                     se constituye en el título de ejecución tributaria.
                     </p> 
             </div> 

@@ -48,7 +48,7 @@ $query = "SELECT
     a.nro_actuado,
     e.detalle_estado,
     e.codigo_estado,
-    c.uregistro_
+    c.uregistro_, c.tipo_solicitud
 FROM 
     exc_cabecera c
 INNER JOIN 
@@ -107,6 +107,7 @@ foreach ($cabeceras as $key => $cabecera) {
     $fila = array(
         "idcabecera" => $cabecera['idcabecera'],
         "idactuado" => $cabecera['idactuado'],
+        "tipo_solicitud" => $cabecera['tipo_solicitud'],
         "rubro" => $cabecera['rubro'],
         "registro_tributario" => $cabecera['registro_tributario'],
         "codigo_solicitud" => $cabecera['codigo_solicitud'],

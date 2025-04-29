@@ -32,6 +32,7 @@ if (!$_SESSION['swlogin']) {
     <link href="../css/styleExencion.css" rel="stylesheet">
     <link href="../vendor/bootstrap-table-master/dist/bootstrap-table.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         .oculto_ {
             display: none;
@@ -50,7 +51,14 @@ if (!$_SESSION['swlogin']) {
             padding: 10px;
             font-size: 18px;
             cursor: pointer;
-        } 
+        }
+
+        /* .form-trash {
+            border-radius: 20%;
+            padding: 10px;
+            font-size: 18px;
+            cursor: pointer;
+        } */
 
         .input-group {
             display: flex;
@@ -101,7 +109,7 @@ if (!$_SESSION['swlogin']) {
     <li class="breadcrumb-item"><a class="text-white" href="index.php">Home</a></li>
     <li class="breadcrumb-item"><a class="text-white">UAJ</a></li>
     <li class="breadcrumb-item text-white active" aria-current="page"><a class="text-white" href="exencionList.php">EXENCION</a></li>
-    <li class="breadcrumb-item text-white active" aria-current="page">Inmueble <?php echo $c; ?></li>
+    <li class="breadcrumb-item text-white active" aria-current="page"><?php echo ($j == 2 ? 'Inmueble' : 'Vehiculo') ?></li>
     <?php
     echo $twig->render('prebodyltFin.twig');
     ?>
@@ -133,147 +141,75 @@ if (!$_SESSION['swlogin']) {
                 where b.idcabecera = $i 
                 and b.idactuado = (select max(idactuado) from exc_actuado a 
                 where a.idcabecera = $i  and a.idestado = 5) 
+                and x.idrubro = $j
                 and b.idestado = 5 and a.idestado = 5
                 and a.estado_ is true   order by c.orden, iditem_act";
-
-    $stmt = $cons->query($query);
-    $solicitud = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+    $solicitud = '';
+    if (isset($i) and $i and $i > 0) {
+        $stmt = $cons->query($query);
+        $solicitud = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     ?>
 
     <div class="contenedorDigitaliza">
         <div class="row exencionCabecera">
             <div class="col-md-3 mb-3">
-                <label for="codigoSolicitud">Gestión para exención</label>
-                <input id="gestionIni" class='form-control' disabled value="<?php echo $solicitud[0]['gestion']; ?>" />
-                <?php
-                echo "<input id='idcabecera' type='hidden' value='" . $solicitud[0]['idcabecera'] . "' >";
-                echo "<input id='codigo_solicitud' type='hidden' value='" . $solicitud[0]['codigo_solicitud'] . "' >";
-                ?>
+                <label for="codigoSolicitud">Tipo solicitud</label>
+                <select class="select2Veh" id="tipo_solicitud">
+                    <option value="EXENCION" selected>EXENCION</option>
+                    <option value="EXCLUSION">EXCLUSION</option>
+                </select>
+            </div>
+            <div class="col-md-3 mb-3">
+
+                <label for="codigoSolicitud">Gestión</label>
+                <input id="gestionIni" class='form-control' disabled value="<?php echo (date('Y') - 1); ?>" />
+                <input id="idrubro" type="hidden" value="<?php echo $_GET['j'] ?>">
+
             </div>
 
             <div class="col-md-3 mb-3">
-                <label for="numero_inmueble">Nro. placa</label>
-                <select class="form-controlSelect" id="numero_inmueble" disabled>
+                <label for="registro_tributario">Nro. <?php echo ($j == 2 ? 'Inmueble' : 'Placa') ?></label>
+                <select multiple class="select2Veh" id="registro_tributario">
                     <?php
 
-                    $query = "SELECT numero_inmueble
-                                FROM inmueble_univ a 
-                                where a.documento_identidad =  '" . $_SESSION['cedula_identidad'] . "' order by a.numero_inmueble  desc";
+                    $query = "SELECT nro_pta as registro_tributario 
+                    FROM vehiculo_univ          
+                    WHERE documento_identidad = '" . $_SESSION['cedula_identidad'] . "' order by nro_pta;";
+
+                    if ($j == 2) {
+                        $query = "SELECT numero_inmueble as registro_tributario
+                    FROM inmueble_univ a where documento_identidad = '" . $_SESSION['cedula_identidad'] . "' order by numero_inmueble";
+                    }
+
                     $stmt = $cons->query($query);
                     $bienes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                     $html = '';
                     $sw = true;
+
                     foreach ($bienes as $row) {
                         $selected = '';
-                        if ($solicitud[0]['registro_tributario'] == 'TODOS' && $sw)
-                            $selected = 'selected';
                         if ($sw) {
                             $html .= "<option value='TODOS' $selected>TODOS</option>";
                             $sw = false;
                             $selected = '';
                         }
-                        if ($row['numero_inmueble'] ==  $solicitud[0]['registro_tributario'])
-                            $selected = 'selected';
-
-                        $html .=  "<option value=" . $row['numero_inmueble'] . " $selected >" . $row['numero_inmueble'] . "</option>";
+                        $html .=  "<option value=" . $row['registro_tributario'] . " $selected >" . $row['registro_tributario'] . "</option>";
                     }
                     echo $html;
                     ?>
                 </select>
             </div>
-            <div class="col-md-6 mb-6" style="text-align: right; font-weight: bold; font-style: italic; font-size: 0.8rem;">
-                <?php echo ($solicitud[0]['obs_gral'] != '' ? '"' . $solicitud[0]['obs_gral'] . '"' : ""); ?>
+            <div class="col-md-3 mb-3" style="text-align: right; font-weight: bold; font-style: italic; font-size: 0.8rem;"> 
             </div>
         </div>
 
         <?php
         $html = '';
         $cnt = 1;
-
-
-        foreach ($solicitud as $key => $value) {
-            $html .= "
-                <div class='row exencionRequisito'>
-                    <div class='col-md-4 mb-4'>
-                        <h1>" . $value['detalle'] .   ($value['obligatorio'] ? '<span style="color:#7e2d05;  ">*</span>' : '') . "</h1>                        
-                        <p>" . $value['anotacion']
-                . ($value['idrequisito'] == '1' ? "<a onclick='generarSolicitud()' title='Generar solicitud' role='button'><i class='fa fa-file-text-o' aria-hidden='true'></i></a>" : "")
-                . "</p>
-                        <input type='hidden' class='idrequisito' value='" . $value['idrequisito'] . "'/>
-                        <input type='hidden' class='resquisitoObligatorio' value='" . $value['obligatorio'] . "'/>
-                        <input type='hidden' class='iditem_act' value='" . $value['iditem_act'] . "'> 
-                    </div>
-                    <div class='col-md-4 mb-4'>
-                        <div class='containerUpload'>
-                            <div class='drop-section drop-section$cnt'>
-                                <div class='colFormUpload'>
-                                    <i class='fa fa-cloud-upload' aria-hidden='true' style='font-size: 2rem;padding-top:1vh ;'></i>
-                                    <button class='file-selector file-selector$cnt'>Adjuntar PDF</button>
-                                    <input type='file' class='file-selector-input file-selector-input$cnt' multiple />
-                                </div>
-                                <div class='colFormUpload'>
-                                    <div class='drop-here sueltaAqui'>Suelta aqui</div>
-                                </div>
-                            </div> 
-                                ";
-
-            $html .= '
-                            <div class="list-section list-section' . $cnt . '" style="display: block;">
-                                <div class="list listaReq' . $cnt . '">
-                                <li class="complete documento' . $cnt . '">
-                                    <div class="colFormUpload">
-                                        <img src="../img/pdf.png" alt="">
-                                    </div>
-                                    <div class="colFormUpload">
-                                        <div class="file-name">
-                                            <div class="name">' . $value['documento_path'] . '</div> 
-                                            <span>100%</span>
-                                        </div>
-                                        <div class="file-progress">
-                                            <span style="width: 100%;"></span>
-                                        </div>
-                                        <div class="file-size"></div>
-                                    </div>
-                                    <div class="colFormUpload">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="cross" height="20" width="20"><path d="m5.979 14.917-.854-.896 4-4.021-4-4.062.854-.896 4.042 4.062 4-4.062.854.896-4 4.062 4 4.021-.854.896-4-4.063Z"></path></svg>
-                                    </div> 
-                                    <div class="colFormUpload">
-                                        <a class="btn verDoc" href="#"><i class="fa fa-eye" aria-hidden="true" style="color:#3d7915; font-size:1.2rem;"></i></a>
-                                        <a class="btn eliminarDoc" href="#"><i class="fa fa-trash-o" aria-hidden="true" style="color:#bf0404; font-size:1.2rem;"></i></a>
-                                    </div> 
-                                    <input type="hidden" class="pathDoc" value="../static/exencion/' . $_SESSION['usuario'] . '/' . $value['documento_path'] . '">
-                                    <input type="hidden" class="nomDoc" value="' . $value['documento_path'] . '">
-                                    
-                                </li>
-                                <div style="border:0.0625rem solid rgb(255, 158, 158); border-radius:0.3rem;margin:0.625rem 0; padding:0.125rem" >
-                                    ' . $value['observacion'] . (trim($value['documento_path_rev']) != '' ? ' <br><a class="btn" onclick="verDocPopup(\'../static/exencion/' . $value['usuarioact'] . '/' . $value['documento_path_rev'] . '\',\'' . $value['observacion'] . '\')"><i class="fa fa-eye" aria-hidden="true" style="color:#3d7915; font-size:1.2rem;"></i></a>' : '') . '<br>                                    
-                                    
-                                    </div>
-                                </div>
-                            </div>
-                                ';
-
-            $html .=            " 
-                        </div>
-                    </div>
-                </div>
-            ";
-            $cnt++;
-        }
-
-        //ahora incorporamos los requisitos no completados o vacios, para dar posibilidad de incorporarlos
-        $query = "SELECT  idrequisito, detalle,  anotacion, obligatorio  from exc_requisito where idrequisito not in (
-                    select  c.idrequisito 
-                    from exc_item_actuado a 
-                    left join exc_item_actuado  c on a.iditem_actuado_ant = c.iditem_act
-                    left join exc_actuado b on a.idactuado = b.idactuado
-                    where a.estado_ is true and b.estado_ is true
-                    and a.idestado in (6,5)
-                    and idcabecera = $i  
-                    group by  c.idrequisito 
-                    ) and idrubro = 1 and estado_ is true";
+        //ahora incorporamos los requisitos  
+        $query = "SELECT  idrequisito, detalle,  anotacion, obligatorio  from exc_requisito where     idrubro = $j and estado_ is true  order by orden ";
 
         $stmt = $cons->query($query);
         $requisitos = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -323,8 +259,21 @@ if (!$_SESSION['swlogin']) {
     <!-- Template Javascript -->
 </body>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script>
     $(document).ready(function() {
+
+        $('.select2Veh').select2({
+            placeholder: "Selecciona",
+            allowClear: true
+        });
+
+        $('.select2Veh').select2({
+            width: '100%', // Expande al ancho completo del contenedor
+            placeholder: "Selecciona",
+            allowClear: true
+        });
+
         var cantidadItems = $('#items').val();
         for (let index = 1; index < cantidadItems; index++) {
             let dropArea = document.querySelector(".drop-section" + index);
@@ -479,14 +428,17 @@ if (!$_SESSION['swlogin']) {
 
     function guardar() {
         var datos = {
+            tipo_solicitud: $('#tipo_solicitud').val(),
             gestion: $('#gestionIni').val(),
-            numero_inmueble: $('#numero_inmueble').val(),
+            idrubro: $('#idrubro').val(),
+            registro_tributario: $('#registro_tributario').val(),
             documentos: {},
             cntItem: 0
         }
         var html = `
+        <h3 style="color:black;">Tipo solicitud: <b>${$('#tipo_solicitud').val()}</b></h3>
         <h3 style="color:black;">Gestión solicitada: <b>${$('#gestionIni').val()}</b></h3>
-        <h4 style="color:black;">Nro. Placa: ${$('#numero_inmueble').val()}</h4>
+        <h4 style="color:black;">Reg. Tributario: ${$('#registro_tributario').val()}</h4>
                     <table class="striped-table">
                     <thead>
                         <tr>
@@ -498,6 +450,10 @@ if (!$_SESSION['swlogin']) {
         let cntItem = 0;
 
         let errores = [];
+
+        if (($('#registro_tributario').val()).length == 0) {
+            errores.push(" - No se selecciono ningun registro tributario</b>");
+        }
         $('div[class^="list"]').each(function() {
             const listClass = $(this).attr("class").match(/listaReq\d+/)
             if (listClass) {
@@ -531,10 +487,10 @@ if (!$_SESSION['swlogin']) {
                     docNames,
                     iditem_act,
                     idrequisito
-                }; 
+                };
                 if (docNames == '' && resquisitoObligatorio == '1') {
                     errores.push(" - No se ha agregado ningún documento PDF para el requisito: <b>" + h1Content + "</b>");
-                } 
+                }
                 cntItem++;
             }
         });
@@ -579,7 +535,7 @@ if (!$_SESSION['swlogin']) {
                                 type: "POST",
                                 dataType: "html",
                                 contentType: 'application/json',
-                                url: "../php/exencionSaveVehSubsanado.php",
+                                url: "../php/exencionSaveInmVeh.php",
                                 data: JSON.stringify(datos),
                                 beforeSend: function() {
                                     loadGralOn();
@@ -624,8 +580,10 @@ if (!$_SESSION['swlogin']) {
     }
 
     function generarSolicitud() {
+
+
         datos =
-            "&numero_inmueble=" + $('#numero_inmueble').val() + "&gestionIni_=" + $('#gestionIni').val() + "&gestionFin_=" + $('#gestionFin').val();
+            "&nro_pta=" + $('#registro_tributario').val() + "&gestionIni_=" + $('#gestionIni').val() + "&gestionFin_=" + $('#gestionFin').val();
 
         var url_ = "../php/rptveh_11_v2.php?" + datos;
         $.ajax({

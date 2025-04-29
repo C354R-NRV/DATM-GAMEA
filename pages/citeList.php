@@ -741,50 +741,68 @@ if (!$_SESSION['swlogin']) {
                     text: "Confirmar",
                     btnClass: "btn-red",
                     action: function() {
-
-                        var datos = {
-                            idcite: idcite,
-                            observacion: $('#observacion').val(),
-                        };
-                        $.ajax({
-                            async: true,
-                            type: 'POST',
-                            data: datos,
-                            url: '../php/citeAnulacion.php',
-                            beforeSend: function() {
-                                loadGralOn();
-                            },
-                            success: function(dat) {
-                                loadGralOff();
-                                if (dat.err == '0') {
-                                    toastr["success"]("CITE anulado correctamente", codigoCite);
-                                    window.location.href = './citeList.php';
-                                } else {
-                                    if (dat.err == '2') {
-                                        $.confirm({
-                                            title: dat.message,
-                                            type: "red",
-                                            content: "Su sesión a concluido, vuelva a ingresar por favor.",
-                                            buttons: {
-                                                login: {
-                                                    text: "Login",
-                                                    btnClass: "btn-red",
-                                                    action: function() {
-                                                        window.location.href = './login.php';
+                        var obs_ = $.trim($('#observacion').val());
+                        if (obs_ != '') {
+                            var datos = {
+                                idcite: idcite,
+                                observacion: obs_,
+                            };
+                            $.ajax({
+                                async: true,
+                                type: 'POST',
+                                data: datos,
+                                url: '../php/citeAnulacion.php',
+                                beforeSend: function() {
+                                    loadGralOn();
+                                },
+                                success: function(dat) {
+                                    loadGralOff();
+                                    if (dat.err == '0') {
+                                        toastr["success"]("CITE anulado correctamente", codigoCite);
+                                        window.location.href = './citeList.php';
+                                    } else {
+                                        if (dat.err == '2') {
+                                            $.confirm({
+                                                title: dat.message,
+                                                type: "red",
+                                                content: "Su sesión a concluido, vuelva a ingresar por favor.",
+                                                buttons: {
+                                                    login: {
+                                                        text: "Login",
+                                                        btnClass: "btn-red",
+                                                        action: function() {
+                                                            window.location.href = './login.php';
+                                                        }
                                                     }
                                                 }
-                                            }
-                                        });
-                                    } else {
-                                        toastr["warning"]("Ocurrio un error", dat.message);
+                                            });
+                                        } else {
+                                            toastr["warning"]("Ocurrio un error", dat.message);
+                                        }
+                                    }
+                                },
+                                timeout: 16000,
+                                error: function(xhr, status, error) {
+                                    alert('Excepcion: ' + error);
+                                }
+                            });
+                        } else {
+                            $.confirm({
+                                title: 'Campo requerido',
+                                type: 'orange',
+                                content: 'El campo de observación no puede estar vacío.',
+                                buttons: {
+                                    aceptar: {
+                                        text: 'Aceptar',
+                                        btnClass: 'btn-orange',
+                                        action: function() { 
+                                            return true;
+                                        }
                                     }
                                 }
-                            },
-                            timeout: 16000,
-                            error: function(xhr, status, error) {
-                                alert('Excepcion: ' + error);
-                            }
-                        });
+                            }); 
+                            return false;
+                        }
                     }
                 },
                 cancel: {

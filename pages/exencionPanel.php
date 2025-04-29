@@ -202,10 +202,10 @@ if (!$_SESSION['swlogin']) {
         transition: true
     });
     $('.card-0').click(function() {
-        window.location.href = 'exencionFormVeh.php';
+        window.location.href = 'exencionFormInmVeh.php?j=1';
     });
     $('.card-1').click(function() {
-        window.location.href = 'exencionInm.php';
+        window.location.href = 'exencionFormInmVeh.php?j=2';
     });
     /* $('.card-2').click(function() {
         window.location.href = 'exencionRevision.php';

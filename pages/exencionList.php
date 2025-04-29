@@ -127,6 +127,7 @@ if (!$_SESSION['swlogin']) {
                 <thead>
                     <th data-field="idcabecera" data-sortable="true">Id</th>
                     <th data-field="idactuado" data-sortable="true">Act</th>
+                    <th data-field="tipo_solicitud" data-sortable="true">Solicitud</th>
                     <?php
                     if ($_SESSION['rol'] != 'CONTRIBUYENTE') {
                         echo '<th data-field="usuario" data-sortable="true">Usuario</th>
@@ -207,6 +208,7 @@ if (!$_SESSION['swlogin']) {
                     <tr>
                         <td>${item.idcabecera}</td>
                         <td>${item.idactuado}</td>
+                        <td>${item.tipo_solicitud}</td> 
                         `;
 
                     if ($('#rolUser').val() != 'CONTRIBUYENTE') {

@@ -21,7 +21,7 @@ if (!$_SESSION['swlogin']) {
 <html lang="es">
 
 <head>
-    <title>EXENCION</title>
+    <title>DETALLE</title>
     <?php
     echo $twig->render('linkStyle.twig');
     ?>
@@ -216,28 +216,31 @@ if (!$_SESSION['swlogin']) {
 
     <!-- About Start -->
     <div class="contenedorDigitaliza">
+        <?php
 
+
+        $query = "select  a.nro_actuado,  to_char(a.fecha_registro, 'YYYY-MM-DD') AS fecha_registro, 
+                c.usuario, e.detalle_estado estado_cabecera,  e2.detalle_estado  estado_actuado, a.idactuado, observacion, registro_tributario,
+                d.fecha_culminacion, d.resolucion_path,  COALESCE(d.tipo_solicitud,'') tipo_solicitud, f.rubro
+                from exc_actuado a 
+                left join exc_cabecera d on d.idcabecera = a.idcabecera
+                left join exc_estado e on e.idestado =  d.idestado
+                left join exc_estado e2 on e2.idestado =  a.idestado
+                left join datm_usuario c on a.idusuario = c.id
+                left join exc_rubro f on f.idrubro = d.idrubro 
+                where a.idcabecera =   " . $_GET['j'] . " and a.estado_ is true order by a.nro_actuado";
+
+        $stmt = $cons->query($query);
+        $actuados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        ?>
         <header>
-            <h2>SOLICITUD: <?php echo $_GET['i'] ?></h2>
+            <h2>SOLICITUD: <?php echo $_GET['i'] ?> - <?php echo $actuados[0]['tipo_solicitud']." ".$actuados[0]['rubro']; ?></h2>
         </header>
 
         <div class="timeline">
 
-            <?php
-
-            $query = "select  a.nro_actuado,  to_char(a.fecha_registro, 'YYYY-MM-DD') AS fecha_registro, 
-                    c.usuario, e.detalle_estado estado_cabecera,  e2.detalle_estado  estado_actuado, a.idactuado, observacion, registro_tributario,
-                    d.fecha_culminacion, d.resolucion_path
-                    from exc_actuado a 
-                    left join exc_cabecera d on d.idcabecera = a.idcabecera
-                    left join exc_estado e on e.idestado =  d.idestado
-                    left join exc_estado e2 on e2.idestado =  a.idestado
-                    left join datm_usuario c on a.idusuario = c.id
-                    where a.idcabecera =   " . $_GET['j'] . " and a.estado_ is true order by a.nro_actuado";
-
-            $stmt = $cons->query($query);
-            $actuados = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+            <?php 
             $nro_actuado_ant = 0;
             foreach ($actuados as $key => $value) {
                 $html .= '<div class="crisis-item visible" >
@@ -252,13 +255,13 @@ if (!$_SESSION['swlogin']) {
                 <br>Nro de actuado: <b>' . $value['nro_actuado'] . '</b>
                 <br>Usuario: <b>' . $value['usuario'] . '</b>';
 
-                if ($value['resolucion_path'] != '' and $value['estado_actuado'] == 'COMPLETADO Y ATENDIDO') { 
+                if ($value['resolucion_path'] != '' and $value['estado_actuado'] == 'COMPLETADO Y ATENDIDO') {
                     $cadena = $value['resolucion_path'];
                     $partes = explode("/", $cadena);
-                    $resultado = end($partes);  
+                    $resultado = end($partes);
                     $html .= '
                     <br>Fecha culminación: <b>' . $value['fecha_culminacion'] . '</b>
-                    <br>Resolución: <b>' . $resultado. '</b><a class="btn verDoc" onclick="verDocPopup(\'../static/exencion/' . $value['resolucion_path'] . '\')">
+                    <br>Resolución: <b>' . $resultado . '</b><a class="btn verDoc" onclick="verDocPopup(\'../static/exencion/' . $value['resolucion_path'] . '\')">
                         <i class="fa fa-eye" aria-hidden="true" style="color:#3d7915; font-size:1.2rem;"></i></a>';
                 }
                 $html .= '</div>
