@@ -13,7 +13,7 @@ require 'PHPMailer/src/Exception.php';
     $mail->Host       = 'smtp.gmail.com';
     $mail->SMTPAuth   = true;
     $mail->Username   = 'gamea.datm@gmail.com';
-    $mail->Password   = 'hugyawubxrsphznl';
+    $mail->Password   = 'uwyrbhvvceyhzurx';
     $mail->Port       = 587;
     $mail->SMTPSecure = 'tls';
     $mail->setFrom($mail->Username, 'DATM - ASIGNACION DE PIN');
@@ -41,12 +41,13 @@ require 'PHPMailer/src/Exception.php';
 } */
 function sendMailToken($destino, $nombre_, $codigo_solicitud, $token, $fecha_validez_token)
 {
+    
     $mail = new PHPMailer(true);
     $mail->isSMTP();
     $mail->Host       = 'smtp.gmail.com';
     $mail->SMTPAuth   = true;
     $mail->Username   = 'gamea.datm@gmail.com';
-    $mail->Password   = 'hugyawubxrsphznl';
+    $mail->Password   = 'uwyrbhvvceyhzurx';
     $mail->Port       = 587;
     $mail->SMTPSecure = 'tls';
     try {

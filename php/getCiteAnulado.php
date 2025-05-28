@@ -23,7 +23,7 @@ $stmt = $cons->query($query);
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($result) {
-    echo '<div class="element-detail">'; 
+    echo '<div class="element-detail">';
     echo '<ul>';
     echo '<li><span class="element-label">Fecha de creación:</span> ' . htmlspecialchars($result['fecha']) . '</li>';
     echo '<li><span class="element-label">Usuario creador:</span> ' . htmlspecialchars($result['usuario']) . '</li>';

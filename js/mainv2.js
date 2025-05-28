@@ -1263,9 +1263,7 @@ function formVerificaRegistros() {
           }
         });
       },
-    });
-
-
+    }); 
   }
 
   else{

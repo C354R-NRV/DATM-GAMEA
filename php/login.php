@@ -10,7 +10,8 @@ $conn = new Conexion();
 $cons = $conn->conectar();
 
 $query = "select id,cedula_identidad, nombres, primer_apellido, 
-                segundo_apellido, usuario, codigo_unidad, area, rol, cargo, solicitante_cite, COALESCE(area, '') as area, estado, COALESCE(codigo_usuario, '') as codigo_usuario, contacto, correo
+                segundo_apellido, usuario, codigo_unidad, area, rol, cargo, solicitante_cite, COALESCE(area, '') as area, estado, COALESCE(codigo_usuario, '') as codigo_usuario, contacto, correo,
+                sigla_usuario, honorifico
                 from datm_usuario u where UPPER(u.usuario) like UPPER('$u_')  and u.password like MD5('$p_'); ";
 $stmt = $cons->query($query);
 
@@ -32,6 +33,8 @@ foreach ($resultados as $row) {
 
         $_SESSION['sirefo_ambiente'] = $parametros['sirefo_ambiente'];
         $_SESSION['idusuario'] = $row['id'];
+        $_SESSION['sigla_usuario'] = $row['sigla_usuario'];
+        $_SESSION['honorifico'] = $row['honorifico'];
         $_SESSION['codigo_unidad'] = $row['codigo_unidad'];
         $_SESSION['codigo_usuario'] = $row['codigo_usuario'];
         $_SESSION['area'] = $row['area'];
@@ -41,7 +44,10 @@ foreach ($resultados as $row) {
         $_SESSION['correo'] = $row['correo'];
         $_SESSION['cedula_identidad_complemento'] = $row['cedula_identidad_complemento'];
         $_SESSION['rol'] = $row['rol'];
-        $_SESSION['nombreUsuario']  = $nombre = $row['nombres'] . ' ' . $row['primer_apellido'] . ' ' . $row['segundo_apellido'];
+        $nombre = $row['nombres'] . ' ' . $row['primer_apellido'] . ' ' . $row['segundo_apellido'];
+        $nombre = strtolower($nombre);
+        $nombre = ucwords($nombre);
+        $_SESSION['nombreUsuario']  = $nombre;
     } else {
         $obs = 'Su USUARIO se encuentra bloqueado, favor comuniquese con el area de sistemas';
     }

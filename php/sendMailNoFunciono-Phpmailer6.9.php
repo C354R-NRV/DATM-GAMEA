@@ -17,7 +17,7 @@ try {
     $mail->Host       = 'smtp.gmail.com'; // Dirección del servidor SMTP
     $mail->SMTPAuth   = true;
     $mail->Username   = 'gamea.datm@gmail.com'; // Tu dirección de correo electrónico
-    $mail->Password   = 'hugyawubxrsphznl'; // Tu contraseña de correo electrónico
+    $mail->Password   = 'uwyrbhvvceyhzurx'; // Tu contraseña de correo electrónico
     $mail->Port       = 587; // Puerto TCP para TLS
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Habilitar encriptación TLS
     //$mail->SMTPSecure = 'tls'; 

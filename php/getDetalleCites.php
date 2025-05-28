@@ -15,11 +15,15 @@ if (isset($filtroFechaIni) and trim($filtroFechaIni) != '' and isset($filtroFech
     $filtro .= " and a.fecha_registro::DATE  BETWEEN TO_DATE( '$filtroFechaIni', 'YYYY-MM-DD') AND TO_DATE( '$filtroFechaFin', 'YYYY-MM-DD') ";
 }
 
+if (isset($filtroCodigoSolicitud) and trim($filtroCodigoSolicitud) != ''  ) {
+    $filtro .= " and a.cite like '$filtroCodigoSolicitud' ";
+}
+
 // Query to get the maximum correlative for the given unit and code
 $query = "select idcite, TO_CHAR(a.fecha_registro::timestamp, 'DD/MM/YYYY HH24:MI:SS') fecha,  b.usuario, a.cite, a.referencia, a.motivo_anulacion, CASE 
         WHEN a.estado_ IS TRUE THEN 'Activo'
         WHEN a.estado_ IS FALSE THEN 'Revertido'
-    END as estado, c.usuario usuario_anulacion, destino, d.usuario  usuario_solicitante, usuario_,  detalle_doc as doc_, hhrr_
+    END as estado, c.usuario usuario_anulacion, destino, d.usuario  usuario_solicitante, usuario_,  detalle_doc as doc_, hhrr_, e.codigo_doc
     from datm_cites a 
     left join datm_usuario b on b.id =  a.usuario_ 
     left join datm_usuario c on c.id =  a.usuario_anulacion
@@ -29,15 +33,48 @@ $query = "select idcite, TO_CHAR(a.fecha_registro::timestamp, 'DD/MM/YYYY HH24:M
         $filtro 
     order by idcite;";
 
-/* print_r($query) ; */
-
 $stmt = $cons->query($query);
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $data = array();
 $cnt = 1;
 foreach ($result as $key => $cite) {
-    $fila = array( 
+
+    $html = '<div style="text-align:center;">';
+
+    if (
+        $cite['estado'] == 'Activo' &&
+        (
+            $cite['usuario_'] == $_SESSION['idusuario'] ||
+            $_SESSION['rol'] == 'SECRETARIA' ||
+            $_SESSION['rol'] == 'JEFATURA'
+        )
+    ) {
+        $html .= '<a class="btn btn-danger" title="Dar de baja el CITE" onclick="borrarCite(' . $cite['idcite'] . ', \'' . $cite['cite'] . '\')" role="button"><i class="fa fa-trash"></i></a>';
+    } else {
+        $html .= '<a class="btn btn-secondary" title="ver detalle de CITE" onclick="verAnulacionCite(' . $cite['idcite'] . ', \'' . $cite['cite'] . '\')" role="button"><i class="fa fa-search" aria-hidden="true"></i></a>';
+    }
+
+    if (
+        (
+            ($_SESSION['rol'] == 'SECRETARIA' || $_SESSION['rol'] == 'JEFATURA') &&
+            $cite['estado'] == 'Activo'
+        ) || (
+            $cite['usuario_'] == $_SESSION['idusuario'] &&
+            comparaFechaLimite($cite['fecha'], 3) &&
+            $cite['estado'] == 'Activo'
+        )
+    ) {
+        $html .= ' <br><a class="btn btn-warning" title="Editar CITE" onclick="editarCite(' . $cite['idcite'] . ', \'' . $cite['cite'] . '\')" role="button"><i class="fa fa-edit" aria-hidden="true"></i></a>';
+    }
+    if ($cite['codigo_doc'] == 'ITL') {
+        $html .= ' <br><a class="btn btn-success" title="Generar Informe" onclick="formularioInforme(' . $cite['idcite'] . ', \'' . $cite['cite'] . '\')" role="button"><i class="fa fa-file-word-o" aria-hidden="true"></i></a>';
+    }
+
+    $html .= '</div>';
+
+
+    $fila = array(
         "idcite" => $cnt,
         "fecha" =>  $cite['fecha'],
         "usuario" => ($cite['usuario'] == $cite['usuario_solicitante'] ? $cite['usuario'] : $cite['usuario_solicitante']),
@@ -46,12 +83,8 @@ foreach ($result as $key => $cite) {
         "destino" => $cite['destino'],
         "referencia" => $cite['referencia'],
         "hhrr_" => $cite['hhrr_'],
-        "estado" =>   $cite['estado'] ,
-        "acciones" => '<div style="text-align:center;">' .
-            (($cite['estado'] == 'Activo' and ($cite['usuario_'] == $_SESSION['idusuario'] or $_SESSION['rol'] == 'SECRETARIA'  or $_SESSION['rol'] == 'JEFATURA'))  ?
-                '<a class="btn btn-danger" title="Dar de baja el CITE" onclick="borrarCite(' . $cite['idcite'] . ', \'' . $cite['cite'] . '\')" role="button"><i class="fa fa-trash"></i></a>' :
-                '<a class="btn btn-secondary" title="ver detalle de CITE" onclick="verAnulacionCite(' . $cite['idcite'] . ', \'' . $cite['cite'] . '\')" role="button"><i class="fa fa-search" aria-hidden="true"></i></a>') .
-            ((($_SESSION['rol'] == 'SECRETARIA'  or $_SESSION['rol'] == 'JEFATURA') and $cite['estado'] == 'Activo' or ($cite['usuario_'] == $_SESSION['idusuario'] and comparaFechaLimite($cite['fecha'], 3) and $cite['estado'] == 'Activo')) ? ' <br><a class="btn btn-warning" title="Editar CITE" onclick="editarCite(' . $cite['idcite'] . ', \'' . $cite['cite'] . '\')" role="button"><i class="fa fa-edit" aria-hidden="true"></i></a>' : '') . '</div>'
+        "estado" =>   $cite['estado'],
+        "acciones" => $html
     );
     $cnt++;
     $data[] = $fila;

@@ -18,7 +18,7 @@ try {
     $mail->Host       = 'smtp.gmail.com';
     $mail->SMTPAuth   = true;
     $mail->Username   = 'gamea.datm@gmail.com';
-    $mail->Password   = 'hugyawubxrsphznl';
+    $mail->Password   = 'uwyrbhvvceyhzurx';
     $mail->Port       = 587;
     $mail->SMTPSecure = 'tls';
     $mail->setFrom($mail->Username, 'DATM - ASIGNACION DE PIN');

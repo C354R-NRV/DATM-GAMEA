@@ -120,8 +120,8 @@ if (!$_SESSION['swlogin']) {
         <div class="row cabeceraSolicitud">
             <div class="col-md-3 mb-3">
                 <label for="codigoSolicitud">Nro Cite</label>
-                <input type="text" id="codigoSolicitud" class="form-control" placeholder="Codigo de solicitud/Nro Cite de nota" 
-                value="<?php echo (isset($_GET['cs']) ? $_GET['cs'] : '') ?>"  <?php echo (isset($_GET['id']) ? ' disabled="disabled" ' : '') ?>>
+                <input type="text" id="codigoSolicitud" class="form-control" placeholder="Codigo de solicitud/Nro Cite de nota"
+                    value="<?php echo (isset($_GET['cs']) ? $_GET['cs'] : '') ?>" <?php echo (isset($_GET['id']) ? ' disabled="disabled" ' : '') ?>>
             </div>
             <div class="col-md-3 mb-3">
                 <label for="tipoProceso">Tipo de proceso</label>
@@ -133,7 +133,7 @@ if (!$_SESSION['swlogin']) {
                     $swS = '';
                 }
                 ?>
-                <select class="form-controlSelect" id="tipoProceso"  <?php echo (isset($_GET['id']) ? ' disabled="disabled" ' : '') ?> >
+                <select class="form-controlSelect" id="tipoProceso" <?php echo (isset($_GET['id']) ? ' disabled="disabled" ' : '') ?>>
                     <option value="R" <?php echo $swR; ?>>Retención</option>
                     <option value="S" <?php echo $swS; ?>>Suspención</option>
                 </select>
@@ -450,6 +450,7 @@ if (!$_SESSION['swlogin']) {
                     $("#tipoPersona" + nroItem).val(tipo_contribuyente_);
 
                     actExtension(nroItem);
+
                     $("#id_documento_identidad_extension" + nroItem).val(dataMap[dat.contribuyente.expedido]);
 
                     var tipoDocumentoAux = tipoDocumento[dat.contribuyente.tipo_documento];
@@ -482,9 +483,9 @@ if (!$_SESSION['swlogin']) {
                     if (dat.cntRetenciones > 0 && $("#tipoProceso" + nroItem).val() == 'S') {
                         $("#retencionDetalle" + nroItem).html(dat.htmlRetenciones);
                     }
-
+                    console.log("dat.contribuyente.tipo_apoderado:" + dat.contribuyente.tipo_apoderado);
                     //-- completamos info para apoderado si existe
-                    if (dat.contribuyente.tipo_apoderado != 'x' && dat.contribuyente.tipo_apoderado != '') {
+                    if (dat.contribuyente.tipo_apoderado != 'x' && dat.contribuyente.tipo_apoderado != '' && dat.contribuyente.tipo_apoderado != undefined) {
                         let tipoApoderado = (dat.contribuyente.tipo_apoderado == 'REP' ? 'REPRESENTANTE LEGAL' : 'APODERADO');
                         $('#tipo_apoderado' + nroItem).val(tipoApoderado);
                         $('#documento_identidad_apo' + nroItem).val(dat.contribuyente.documento_identidad_apo);
@@ -732,6 +733,11 @@ if (!$_SESSION['swlogin']) {
             for (let index = 0; index < auxCntItem; index++) {
                 cntImpresion = index + 1;
                 var tipoPersona = $('#tipoPersona' + index).val();
+        
+
+                if (tipoPersona == '' || tipoPersona == 'null' || tipoPersona == null ) {
+                    errores.push(" -Debe indicar el tipo de persona (Item " + cntImpresion + ")");
+                }
                 formData.append('item_tipo_persona' + index, tipoPersona);
                 formData.append('item_id_documento_identidad_tipo' + index, $('#id_documento_identidad_tipo' + index).val());
                 var documentoIdentidadNumero = $.trim($('#documentoIdentidadNumero' + index).val());
@@ -747,8 +753,14 @@ if (!$_SESSION['swlogin']) {
 
                 formData.append('item_tipo_documento_tributario' + index, $('#tipo_documento_tributario' + index).val());
                 formData.append('item_documentoIdentidadComplemento' + index, $('#documentoIdentidadComplemento' + index).val());
-                formData.append('item_id_documento_identidad_extension' + index, $('#id_documento_identidad_extension' + index).val());
-                console.log("id_documento_identidad_extension" + index + $('#id_documento_identidad_extension' + index).val());
+
+                var extension = $.trim($('#id_documento_identidad_extension' + index).val());
+                
+                if (extension == '' && tipoPersona == 'N') {
+                    errores.push(" -El campo Extension (Item " + cntImpresion + ") no puede ser vacio");
+                }
+                formData.append('item_id_documento_identidad_extension' + index, extension); 
+                
                 var nombre = $.trim($('#nombre' + index).val());
                 if (!isValidAlphanumeric(nombre, 3) && tipoPersona === 'N') {
                     errores.push(" -El campo Nombre (Item " + cntImpresion + ") debe tener más de 3 caracteres o contiene caracteres no permitidos");
@@ -776,7 +788,7 @@ if (!$_SESSION['swlogin']) {
                 formData.append('item_documentoRespaldo' + index, documentoRespaldo);
 
                 var montoRetencionBs = $('#montoRetencionBs' + index).val();
-                var montoRetencionUFV = $('#montoRetencionUFV' + index).val(); 
+                var montoRetencionUFV = $('#montoRetencionUFV' + index).val();
                 var id_item_solicitud = $('#id_item_solicitud' + index).val();
 
                 if (!isNumeric(montoRetencionBs)) {

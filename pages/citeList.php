@@ -657,6 +657,89 @@ if (!$_SESSION['swlogin']) {
         });
     }
 
+    function formularioInforme(idcite, codigoCite) {
+
+        /**
+            [PENDIENTE] autocompletar los datos que se tengan asociados al cite en datm_informe_tecnico
+         */
+
+        var content_ = `
+        <div class="form-group" >
+            <div class="row" style="margin-right:0 !important;">
+                <label>Rubro y reg. tributario</label>
+                <div class="col-md-4">
+                    <select id="idrubro" class="form-controlSelect">
+                        <option selected value="2">Inmueble</option>
+                        <option value="1">Vehiculo</option>
+                        <option value="3">Actividad Economica</option>
+                    </select>
+                </div>  
+                <div class="col-md-8">
+                    <input type="text" id="registro_tributario"  class="form-control" autocomplete="off" required />
+                </div>
+            </div>
+            <div class="row" style="margin-right:0 !important;">
+                <div class="col-md-12">
+                    <label>Tipo de informe</label>
+                    <select id="tipo_informe" class="form-controlSelect">
+                        <option selected value="1">BAJA POR NO POSESION</option>
+                        <option value="2">PRESCRIPCION</option>
+                        <option value="3">ACCION DE REPETICION</option>
+                        <option value="4">DOBLE EMPADRONAMIENTO</option>
+                        <option value="5">EXENCION 3RA EDAD</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row" style="margin-right:0 !important;">
+                <div class="col-md-12">
+                    <label>Hoja de ruta</label>
+                    <input type="text" id="hoja_ruta" class="form-control"  required />
+                </div>
+            </div>
+            <div class="row" style="margin-right:0 !important;">
+                <div class="col-md-12">
+                    <label>Proveido</label>
+                    <input type="text" id="proveido"  class="form-control" required /> 
+                </div>
+            </div>
+            <div class="row" style="margin-right:0 !important;"> 
+                <div class="col-md-12"> 
+                    <label>Gestión fiscal (Si corresponde)</label> 
+                    <input type="text" id="gestion_fiscal"  class="form-control"  required /> 
+                </div>
+            </div> 
+        </div>
+        `;
+
+        $.confirm({
+            title: "Por favor, ingrese la siguiente información:",
+            type: "dark",
+            columnClass: "col-md-6 col-md-offset-6 col-xs-6 col-xs-offset-6",
+            content: content_,
+            buttons: {
+                formSubmit: {
+                    text: "Generar",
+                    btnClass: "btn-blue",
+                    action: function() {
+
+                        window.location.href = `../php/generaInforme.php?idcite=${idcite}&cite=${codigoCite}&idrubro=${$('#idrubro').val()}&tipo_informe=${$('#tipo_informe').val()}&registro_tributario=${$('#registro_tributario').val()}&hoja_ruta=${$('#hoja_ruta').val()}&proveido=${$('#proveido').val()}&gestion_fiscal=${$('#gestion_fiscal').val()}`; 
+
+                    },
+                },
+                cancel: function() {},
+            },
+            onContentReady: function() {
+                var jc = this;
+                $('#pin_').on('keypress', function(ev) {
+                    if (ev.which === 13) {
+                        jc.$$formSubmit.trigger('click');
+                    }
+                });
+            },
+        });
+
+    }
+
     function editarCite(idcite, codigoCite) {
         var datos = {
             idcite: idcite,
@@ -795,12 +878,12 @@ if (!$_SESSION['swlogin']) {
                                     aceptar: {
                                         text: 'Aceptar',
                                         btnClass: 'btn-orange',
-                                        action: function() { 
+                                        action: function() {
                                             return true;
                                         }
                                     }
                                 }
-                            }); 
+                            });
                             return false;
                         }
                     }

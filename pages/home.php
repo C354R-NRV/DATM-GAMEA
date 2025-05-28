@@ -48,7 +48,7 @@ if (!$_SESSION['swlogin']) {
     echo $twig->render('prebodyltIni.twig');
     ?>
     <li class="breadcrumb-item"><a class="text-white" href="index.php">Inicio</a></li>
-    <li class="breadcrumb-item text-white active" aria-current="page">Acceso IA</li>
+    <li class="breadcrumb-item text-white active" aria-current="page">Acceso IA <?php echo $_SESSION['rol'];?></li>
     <?php
     echo $twig->render('prebodyltFin.twig');
     ?>
@@ -86,7 +86,7 @@ if (!$_SESSION['swlogin']) {
                                 </div>
                             </div>
                             <?php
-                            if ($_SESSION['rol'] == 'JEFATURA' or $_SESSION['rol'] == 'DIRECCION' ) {
+                            if ($_SESSION['rol'] == 'OPERADORL2' or $_SESSION['rol'] == 'JEFATURA' or $_SESSION['rol'] == 'DIRECCION' ) {
                             ?>
                                 <div class="box-itemIa">
                                     <div class="flip-boxIa">

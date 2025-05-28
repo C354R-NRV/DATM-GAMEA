@@ -220,13 +220,13 @@ if (!$_SESSION['swlogin']) {
 
 
         $query = "select  a.nro_actuado,  to_char(a.fecha_registro, 'YYYY-MM-DD') AS fecha_registro, 
-                c.usuario, e.detalle_estado estado_cabecera,  e2.detalle_estado  estado_actuado, a.idactuado, observacion, registro_tributario,
-                d.fecha_culminacion, d.resolucion_path,  COALESCE(d.tipo_solicitud,'') tipo_solicitud, f.rubro
+                c.usuario, e.detalle_estado estado_cabecera,  e2.detalle_estado  estado_actuado, a.idactuado, observacion, registro_tributario, 
+                d.fecha_culminacion, d.resolucion_path,  COALESCE(d.tipo_solicitud,'') tipo_solicitud, f.rubro 
                 from exc_actuado a 
-                left join exc_cabecera d on d.idcabecera = a.idcabecera
-                left join exc_estado e on e.idestado =  d.idestado
-                left join exc_estado e2 on e2.idestado =  a.idestado
-                left join datm_usuario c on a.idusuario = c.id
+                left join exc_cabecera d on d.idcabecera = a.idcabecera 
+                left join exc_estado e on e.idestado =  d.idestado 
+                left join exc_estado e2 on e2.idestado =  a.idestado 
+                left join datm_usuario c on a.idusuario = c.id 
                 left join exc_rubro f on f.idrubro = d.idrubro 
                 where a.idcabecera =   " . $_GET['j'] . " and a.estado_ is true order by a.nro_actuado";
 
@@ -235,12 +235,12 @@ if (!$_SESSION['swlogin']) {
 
         ?>
         <header>
-            <h2>SOLICITUD: <?php echo $_GET['i'] ?> - <?php echo $actuados[0]['tipo_solicitud']." ".$actuados[0]['rubro']; ?></h2>
+            <h2>SOLICITUD: <?php echo $_GET['i'] ?> - <?php echo $actuados[0]['tipo_solicitud'] . " " . $actuados[0]['rubro']; ?></h2>
         </header>
 
         <div class="timeline">
 
-            <?php 
+            <?php
             $nro_actuado_ant = 0;
             foreach ($actuados as $key => $value) {
                 $html .= '<div class="crisis-item visible" >
