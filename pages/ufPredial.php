@@ -42,7 +42,6 @@ if (!$_SESSION['swlogin']) {
             cursor: pointer;
         }
 
-
         .contenedorDigitaliza {
             padding: 20px;
             max-width: 1200px;
@@ -171,6 +170,7 @@ if (!$_SESSION['swlogin']) {
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
+            position: relative;
         }
 
         #mapContainer:hover {
@@ -190,7 +190,6 @@ if (!$_SESSION['swlogin']) {
             color: rgb(6, 136, 196);
             background: #ffffff;
         }
-
 
         #btnObtenerUbicacion {
             white-space: nowrap;
@@ -225,7 +224,78 @@ if (!$_SESSION['swlogin']) {
             z-index: 0;
         }
 
+        /* Estilos para los controles del miniMap */
+        .minimap-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
 
+        .control-button {
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 30px;
+            height: 30px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .control-button:hover {
+            background-color: rgba(0, 0, 0, 0.9);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .control-button:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .control-button:disabled {
+            background-color: rgba(100, 100, 100, 0.6);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .control-button.loading {
+            background-color: rgba(50, 50, 50, 0.8);
+        }
+
+        /* Estilos específicos para botón satelital */
+        .control-button.satelital {
+            background-color: rgba(29, 25, 22, 0.8);
+        }
+
+        .control-button.satelital.tesela-active {
+            background-color: rgba(29, 25, 22, 0.8);
+        }
+
+        .control-button.satelital:hover {
+            background-color: rgba(36, 29, 27, 0.9)
+        }
+
+        .control-button.tesela-active {
+            background-color: rgba(0, 200, 255, 0.9);
+            color: white;
+        }
+
+        .control-button.tesela-active:hover {
+            background-color: rgba(0, 180, 230, 0.9);
+        }
 
         #formInmueble {
             text-align: left;
@@ -308,6 +378,18 @@ if (!$_SESSION['swlogin']) {
             .swal2-popup {
                 width: 95% !important;
             }
+
+            .minimap-controls {
+                top: 5px;
+                right: 5px;
+                gap: 3px;
+            }
+
+            .control-button {
+                width: 25px;
+                height: 25px;
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
@@ -360,10 +442,16 @@ if (!$_SESSION['swlogin']) {
                 <div class="col-md-6 mb-3">
                     <div class="mb-3" id="mapContainer" style="height: 300px;">
                         <div id="miniMap" style="height: 100%; width: 100%;"></div>
+                        <div class="minimap-controls">
+                            <button id="zoomInBtn" class="control-button" title="Acercar" aria-label="Acercar mapa">+</button>
+                            <button id="zoomOutBtn" class="control-button" title="Alejar" aria-label="Alejar mapa">−</button>
+                            <button id="satelitalBtn" class="control-button satelital tesela-active" title="Mostrar/Ocultar Capa Satelital" aria-label="Capa Satelital" style="outline-style: none;">
+                                <i class="fa fa-globe" aria-hidden="true"></i>
+                            </button>
+                        </div>
                     </div>
                     <div id="geoStatus" class="mt-2 small"></div>
                 </div>
-
 
                 <div class="col-md-6 mb-3">
                     <label for="numeroInmueble" class="form-label">Número de Inmueble</label>
@@ -760,106 +848,6 @@ if (!$_SESSION['swlogin']) {
 
     }
 
-    /* function setupGeolocation() {
-        const btnObtenerUbicacion = document.getElementById("btnObtenerUbicacion");
-        const geolocalizacionInput = document.getElementById("geolocalizacion");
-        const geoStatus = document.getElementById("geoStatus");
-        const mapContainer = document.getElementById("mapContainer");
-        const miniMap = document.getElementById("miniMap");
-
-        if (!btnObtenerUbicacion || !geolocalizacionInput || !geoStatus) {
-            console.warn("No se encontraron los elementos necesarios para la geolocalización");
-            return;
-        }
-
-        btnObtenerUbicacion.addEventListener("click", () => {
-            // Verificar si el navegador soporta geolocalización
-            if (!navigator.geolocation) {
-                geoStatus.innerHTML = '<span class="text-danger">Error: Su navegador no soporta geolocalización.</span>';
-                return;
-            }
-
-            // Mostrar estado de carga
-            geoStatus.innerHTML = '<span class="text-info"><i class="fa fa-spinner fa-spin"></i> Obteniendo ubicación...</span>';
-
-            // Opciones para la geolocalización
-            const options = {
-                enableHighAccuracy: true, // Alta precisión
-                timeout: 10000, // 10 segundos de timeout
-                maximumAge: 0, // No usar cache
-            };
-
-            // Obtener la posición actual
-            navigator.geolocation.getCurrentPosition(
-                // Éxito
-                (position) => {
-                    const latitude = position.coords.latitude;
-                    const longitude = position.coords.longitude;
-                    const accuracy = position.coords.accuracy;
-
-                    // Formatear y mostrar las coordenadas
-                    geolocalizacionInput.value = `${latitude}, ${longitude}`;
-                    geoStatus.innerHTML = `<span class="text-success">
-                    <i class="fa fa-check-circle"></i> Ubicación obtenida con precisión de ${Math.round(accuracy)} metros
-                </span>`;
-
-                    // Mostrar el mapa
-                    if (mapContainer && miniMap) {
-                        mapContainer.style.display = "block";
-
-                        // Verificar si Leaflet está disponible
-                        if (typeof L !== "undefined") {
-                            // Inicializar el mapa con Leaflet
-                            const map = L.map(miniMap).setView([latitude, longitude], 15);
-
-                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                            }).addTo(map);
-
-                            L.marker([latitude, longitude]).addTo(map);
-                        } else {
-                            // Alternativa si Leaflet no está disponible
-                            miniMap.innerHTML = `
-                            <div class="d-flex justify-content-center align-items-center h-100 bg-light">
-                                <p class="text-center text-muted">
-                                    <i class="fa fa-map-marker fa-2x mb-2"></i><br>
-                                    Ubicación capturada:<br>
-                                    Lat: ${latitude.toFixed(6)}<br>
-                                    Lng: ${longitude.toFixed(6)}
-                                </p>
-                            </div>
-                        `;
-                            console.warn('Leaflet (L) no está disponible. Asegúrate de incluir la biblioteca correctamente.');
-                        }
-                    }
-                },
-                // Error
-                (error) => {
-                    let errorMessage = "";
-                    switch (error.code) {
-                        case error.PERMISSION_DENIED:
-                            errorMessage = "Usuario denegó la solicitud de geolocalización.";
-                            break;
-                        case error.POSITION_UNAVAILABLE:
-                            errorMessage = "La información de ubicación no está disponible.";
-                            break;
-                        case error.TIMEOUT:
-                            errorMessage = "Se agotó el tiempo para obtener la ubicación.";
-                            break;
-                        case error.UNKNOWN_ERROR:
-                            errorMessage = "Ocurrió un error desconocido.";
-                            break;
-                    }
-                    geoStatus.innerHTML = `<span class="text-danger"><i class="fa fa-exclamation-circle"></i> Error: ${errorMessage}</span>`;
-                    if (mapContainer) {
-                        mapContainer.style.display = "none";
-                    }
-                },
-                options
-            );
-        });
-    } */
-
     function setupGeolocation() {
         const btnObtenerUbicacion = document.getElementById("btnObtenerUbicacion");
         const geolocalizacionInput = document.getElementById("geolocalizacion");
@@ -868,14 +856,66 @@ if (!$_SESSION['swlogin']) {
 
         let map = null;
         let marker = null;
+        let satelliteLayer = null;
+        let satelitalActive = true;
 
         // Inicializar el mapa visible por defecto en El Alto
         if (typeof L !== "undefined" && miniMap) {
-            map = L.map(miniMap).setView([-16.5, -68.15], 13); // Vista predeterminada
+            map = L.map(miniMap, {
+                zoomControl: false // Desactivar controles de zoom por defecto
+            }).setView([-16.5, -68.15], 13); // Vista predeterminada
 
+            // Capa base OpenStreetMap
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: 'DATM'
             }).addTo(map);
+
+            // Capa satelital
+            satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                maxZoom: 19
+            }).addTo(map);
+
+            // Función para alternar la capa satelital
+            function toggleSatelliteLayer() {
+                const button = document.getElementById('satelitalBtn');
+                
+                try {
+                    if (satelitalActive) {
+                        // Desactivar capa satelital
+                        if (map.hasLayer(satelliteLayer)) {
+                            map.removeLayer(satelliteLayer);
+                            console.log('Capa satelital removida del mapa');
+                        }
+                        button.classList.remove('tesela-active');
+                        satelitalActive = false;
+                    } else {
+                        // Activar capa satelital
+                        if (!map.hasLayer(satelliteLayer)) {
+                            map.addLayer(satelliteLayer);
+                            console.log('Capa satelital añadida al mapa');
+                        }
+                        button.classList.add('tesela-active');
+                        satelitalActive = true;
+                    }
+                } catch (error) {
+                    console.error('Error toggling capa satelital:', error);
+                }
+            }
+
+            // Función para zoom in
+            function zoomIn() {
+                map.zoomIn();
+            }
+
+            // Función para zoom out
+            function zoomOut() {
+                map.zoomOut();
+            }
+
+            // Event listeners para los botones de control
+            document.getElementById('zoomInBtn').addEventListener('click', zoomIn);
+            document.getElementById('zoomOutBtn').addEventListener('click', zoomOut);
+            document.getElementById('satelitalBtn').addEventListener('click', toggleSatelliteLayer);
 
             // Permitir selección manual en cualquier momento
             map.on('click', function(e) {
@@ -959,7 +999,6 @@ if (!$_SESSION['swlogin']) {
             );
         });
     }
-
 
     $(document).ready(function() {
 

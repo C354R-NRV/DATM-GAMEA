@@ -195,6 +195,39 @@
             background-color: rgba(0, 128, 0, 0.9);
         }
 
+        .control-button.satelital {
+            background-color: rgba(29, 25, 22, 0.8);
+        }
+
+        .control-button.satelital.tesela-active {
+            background-color: rgba(29, 25, 22, 0.8);
+        }
+
+        .control-button.satelital:hover {
+            background-color: rgba(36, 29, 27, 0.9)
+        }
+
+        .control-button.oscurecer {
+            background-color: rgba(50, 50, 50, 0.8);
+        }
+
+        .control-button.oscurecer.tesela-active {
+            background-color: rgba(75, 75, 75, 0.9);
+        }
+
+        .control-button.oscurecer:hover {
+            background-color: rgba(75, 75, 75, 0.9);
+        }
+
+        .dark-overlay {
+            fill: rgba(0, 0, 0, 0.7);
+            stroke: rgba(100, 100, 100, 0.8);
+            stroke-width: 2;
+            stroke-dasharray: 5, 5;
+            transition: fill 0.3s ease;
+        }
+
+
         .search-container {
             position: absolute;
             top: 10px;
@@ -370,12 +403,14 @@
         }
 
         .marker-cluster-small {
-            background-color: rgba(226, 140, 140, 0.6) !important;
+            background-color: rgba(255, 183, 183, 0.6) !important;
         }
 
         .marker-cluster-small div {
-            background-color: rgba(255, 49, 49, 0.6) !important;
+            background-color: rgba(255, 0, 0, 0.6) !important;
             animation: pulseAnimation 2.8s infinite ease-in-out;
+            color:rgb(255, 255, 255);
+            font-weight: bold;
         }
 
         .card-inmueble {
@@ -389,7 +424,7 @@
             font-size: 1.1rem;
             margin-bottom: 8px;
             text-align: center;
-            color: #0f6c91;
+            color: #39b6e7;
         }
 
         .carrusel {
@@ -430,6 +465,7 @@
             font-size: 14px;
             margin-top: 10px;
             word-wrap: break-word;
+            padding-left: 0.4rem;
         }
 
         @media (max-width: 500px) {
@@ -444,6 +480,13 @@
 
         .leaflet-popup-content {
             margin: 5px 2px 13px 2px !important;
+        }
+
+        .leaflet-popup-content-wrapper,
+        .leaflet-popup-tip {
+            background: #313030 !important;
+            color: rgb(240, 240, 240) !important;
+            box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
         }
     </style>
 </head>
@@ -481,8 +524,15 @@
                     <button id="teselaLineasBtn" class="control-button" title="Mostrar/Ocultar Líneas Vectoriales" aria-label="Líneas Vectoriales">
                         <i class="fa fa-minus" aria-hidden="true"></i>
                     </button>
-                    <button id="teselaPoligonosBtn" class="control-button" title="Mostrar/Ocultar Polígonos Vectoriales" aria-label="Polígonos Vectoriales">
+                    <button id="teselaPoligonosBtn" class="control-button" title="Mostrar/Ocultar Polígonos Vectoriales" aria-label="Polígonos Vectoriales" style="outline-style: none;">
                         <i class="fa fa-square-o" aria-hidden="true"></i>
+                    </button>
+                    <!-- Nuevo botón para capa satelital -->
+                    <button id="satelitalBtn" class="control-button satelital" title="Mostrar/Ocultar Capa Satelital" aria-label="Capa Satelital" style="outline-style: none;">
+                        <i class="fa fa-globe" aria-hidden="true"></i>
+                    </button>
+                    <button id="oscurecerBtn" class="control-button oscurecer" title="Oscurecer El Alto" aria-label="Oscurecer El Alto" style="outline-style: none;">
+                        <i class="fa fa-moon-o" aria-hidden="true"></i>
                     </button>
                 </div>
                 <div id="statusMessage" class="status-message" role="alert"></div>
@@ -510,14 +560,41 @@
             maxZoom: 19
         }).setView([-16.5, -68.175], 13);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        // Capa base OpenStreetMap
+        const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             maxZoom: 19
         }).addTo(map);
-        
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: 'Tiles © Esri'
+
+        // Capa satelital de ArcGIS
+        const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 19
         }).addTo(map);
+
+        // Definir el polígono de El Alto (coordenadas aproximadas)
+        const elAltoCoordinates = [
+            [-16.45, -68.25],
+            [-16.45, -68.10],
+            [-16.55, -68.10],
+            [-16.55, -68.25],
+            [-16.628626, -68.275051],
+            [-16.587372, -68.215312]
+        ];
+
+        // Crear el polígono oscuro para El Alto
+        const darkOverlay = L.polygon(elAltoCoordinates, {
+            className: 'dark-overlay',
+            fillColor: 'black',
+            fillOpacity: 0.7,
+            color: '#666',
+            weight: 2,
+            dashArray: '5, 5'
+        });
+
+        // Variable para controlar el estado del oscurecimiento
+        let oscurecerActive = false;
+
+
         let userLocationMarker = null;
         let initialMarkerData = [];
         let allLeafletMarkers = [];
@@ -529,12 +606,14 @@
         let debounceTimer;
         let totalMarkersCount = 0;
 
-        // Estado de las teselas vectoriales
+        // Estado de las teselas vectoriales y capa satelital
         let teselaStates = {
             puntos: false,
             lineas: false,
             poligonos: false
         };
+
+        let satelitalActive = true; // La capa satelital está activa por defecto
 
         // Configuración mejorada para carga por lotes
         const BATCH_SIZE = 500;
@@ -554,9 +633,74 @@
                 Zoom: ${zoom} | 
                 Marcadores: ${markersCount} | 
                 Teselas: ${vectorLayersActive} | 
+                Satelital: ${satelitalActive ? 'ON' : 'OFF'} |
+                Oscurecer: ${oscurecerActive ? 'ON' : 'OFF'} |
                 Lat: ${center.lat.toFixed(4)} | 
                 Lng: ${center.lng.toFixed(4)}
             `;
+        }
+
+        function toggleDarkOverlay() {
+            const button = document.getElementById('oscurecerBtn');
+
+            try {
+                if (oscurecerActive) {
+                    // Desactivar oscurecimiento
+                    if (map.hasLayer(darkOverlay)) {
+                        map.removeLayer(darkOverlay);
+                        console.log('Capa oscura removida del mapa');
+                    }
+                    button.classList.remove('tesela-active');
+                    showStatusMessage('Oscurecimiento desactivado', 'info');
+                    oscurecerActive = false;
+                } else {
+                    // Activar oscurecimiento
+                    if (!map.hasLayer(darkOverlay)) {
+                        map.addLayer(darkOverlay);
+                        console.log('Capa oscura añadida al mapa');
+                    }
+                    button.classList.add('tesela-active');
+                    showStatusMessage('Oscurecimiento activado', 'success');
+                    oscurecerActive = true;
+                }
+
+                updateDebugInfo();
+            } catch (error) {
+                console.error('Error toggling capa oscura:', error);
+                showStatusMessage('Error manipulando capa oscura', 'error');
+            }
+        }
+
+        // Función para alternar la capa satelital
+        function toggleSatelliteLayer() {
+            const button = document.getElementById('satelitalBtn');
+
+            try {
+                if (satelitalActive) {
+                    // Desactivar capa satelital
+                    if (map.hasLayer(satelliteLayer)) {
+                        map.removeLayer(satelliteLayer);
+                        console.log('Capa satelital removida del mapa');
+                    }
+                    button.classList.remove('tesela-active');
+                    showStatusMessage('Capa satelital desactivada', 'info');
+                    satelitalActive = false;
+                } else {
+                    // Activar capa satelital
+                    if (!map.hasLayer(satelliteLayer)) {
+                        map.addLayer(satelliteLayer);
+                        console.log('Capa satelital añadida al mapa');
+                    }
+                    button.classList.add('tesela-active');
+                    showStatusMessage('Capa satelital activada', 'success');
+                    satelitalActive = true;
+                }
+
+                updateDebugInfo();
+            } catch (error) {
+                console.error('Error toggling capa satelital:', error);
+                showStatusMessage('Error manipulando capa satelital', 'error');
+            }
         }
 
         // Inicializar capas vectoriales con configuración mejorada
@@ -1192,6 +1336,12 @@
 
                 console.log("MarkerClusterGroup inicializado en startup:", markerClusterGroup);
 
+                // Inicializar el estado del botón satelital
+                const satelitalBtn = document.getElementById('satelitalBtn');
+                if (satelitalActive) {
+                    satelitalBtn.classList.add('tesela-active');
+                }
+
                 setTimeout(() => {
                     initializeVectorLayers();
 
@@ -1256,6 +1406,15 @@
 
                     document.getElementById('teselaPoligonosBtn').addEventListener('click', function() {
                         toggleVectorLayer('poligonos');
+                    });
+
+                    // Event listener para el botón satelital
+                    document.getElementById('satelitalBtn').addEventListener('click', function() {
+                        toggleSatelliteLayer();
+                    });
+
+                    document.getElementById('oscurecerBtn').addEventListener('click', function() {
+                        toggleDarkOverlay();
                     });
 
                     searchInput.addEventListener('keypress', function(e) {
