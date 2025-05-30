@@ -658,8 +658,8 @@ if (!$_SESSION['swlogin']) {
         var documento = $("#documento").val();
         var nombreTitular = $("#nombreTitular").val();
         var catastral = $("#catastral").val();
-        if (numInmueble && numInmueble.length <= 8) {
-            errores.push('El numero del inmueble tiene que tener mas de 8 caracteres');
+        if (numInmueble && numInmueble.length <= 5) {
+            errores.push('El numero del inmueble tiene que tener mas de 5 caracteres');
         }
         if (catastral && catastral.length <= 5) {
             errores.push('El codigo catastral tiene que tener mas de 6 caracteres');

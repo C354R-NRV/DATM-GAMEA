@@ -21,7 +21,7 @@ try {
 
     $filtro  = '';
     if ($numInmueble != '') {
-        $filtro .= " and trim(numero_inmueble) = trim('$numInmueble') ";
+        $filtro .= " and trim(a.numero_inmueble) = trim('$numInmueble') ";
     }
     if ($nombreTitular != '') {
         $filtro .= " and trim(upper(concat(nombre_rsocial, ' ', primer_apellido_sigla, ' ', segundo_apellido, ' ', apellido_esposo)))   like upper(concat('%', replace('$nombreTitular', ' ', '%'),'%'))  ";
@@ -33,7 +33,7 @@ try {
         $filtro .= " and trim(codigo_catastral)  like '$catastral%' ";
     }
 
-    $query = "SELECT 
+    $query = "SELECT  distinct
             a.numero_inmueble, 
             a.codigo_catastral,  
 
