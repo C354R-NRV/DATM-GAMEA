@@ -227,7 +227,6 @@
             transition: fill 0.3s ease;
         }
 
-
         .search-container {
             position: absolute;
             top: 10px;
@@ -397,11 +396,6 @@
             }
         }
 
-        .individual-pulsing-marker .leaflet-marker-icon {
-            animation: pulseAnimation 1.8s infinite ease-in-out;
-            transform-origin: center bottom;
-        }
-
         .marker-cluster-small {
             background-color: rgba(255, 183, 183, 0.6) !important;
         }
@@ -409,7 +403,7 @@
         .marker-cluster-small div {
             background-color: rgba(255, 0, 0, 0.6) !important;
             animation: pulseAnimation 2.8s infinite ease-in-out;
-            color:rgb(255, 255, 255);
+            color: rgb(255, 255, 255);
             font-weight: bold;
         }
 
@@ -488,6 +482,48 @@
             color: rgb(240, 240, 240) !important;
             box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
         }
+
+        .puntoMarca {
+            background-color: #00f3ff;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+
+            /* Neon glow effect */
+            box-shadow:
+                0 0 4px #fff,
+                0 0 8px #fff,
+                0 0 12px #17b9c1,
+                0 0 18px #17b9c1,
+                0 0 24px #4cf0f8,
+                0 0 30px #4cf0f8;
+
+            border: none;
+            /* Remove original border, rely on glow */
+
+            /* Apply the animation */
+            animation: pulseAnimation 2s infinite ease-in-out;
+        }
+
+        .pulsing-marker div {
+            animation: pulseAnimation 2.8s infinite ease-in-out;
+        }
+
+        .individual-pulsing-marker .leaflet-marker-icon {
+            animation: pulseAnimation 1.8s infinite ease-in-out;
+            transform-origin: center bottom;
+        }
+
+        /* Estilos para el marcador de coordenadas clickeadas */
+        .clicked-coordinates-marker {
+            background-color: #ff6b35;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 8px rgba(255, 107, 53, 0.8);
+            animation: pulseAnimation 1.5s infinite ease-in-out;
+        }
     </style>
 </head>
 
@@ -502,7 +538,7 @@
                             type="text"
                             id="searchInput"
                             class="search-input"
-                            placeholder="Buscar inmuebles, contribuyentes o números..."
+                            placeholder="Buscar inmuebles, contribuyentes o números... (Click en el mapa para obtener coordenadas)"
                             aria-label="Buscar inmuebles, contribuyentes o números">
                         <button id="clearSearch" class="clear-search" title="Limpiar búsqueda" aria-label="Limpiar búsqueda">×</button>
                     </div>
@@ -573,12 +609,171 @@
 
         // Definir el polígono de El Alto (coordenadas aproximadas)
         const elAltoCoordinates = [
-            [-16.45, -68.25],
-            [-16.45, -68.10],
-            [-16.55, -68.10],
-            [-16.55, -68.25],
-            [-16.628626, -68.275051],
-            [-16.587372, -68.215312]
+            [-16.570318, -68.223770],
+            [-16.573455, -68.206022],
+            [-16.610100, -68.239861],
+            [-16.612269, -68.234636],
+            [-16.627248, -68.205689],
+            [-16.656082, -68.179661],
+            [-16.659251, -68.172585],
+            [-16.659179, -68.172489],
+            [-16.660389, -68.170263],
+            [-16.661391, -68.169179],
+            [-16.663472, -68.167951],
+            [-16.664783, -68.165821],
+            [-16.665024, -68.165928],
+            [-16.665631, -68.165274],
+            [-16.667039, -68.164673],
+            [-16.659443, -68.142507],
+            [-16.655938, -68.136896],
+            [-16.644765, -68.125556],
+            [-16.641979, -68.119397],
+            [-16.635164, -68.108250],
+            [-16.634444, -68.130877],
+            [-16.621173, -68.128340],
+            [-16.613339, -68.143923],
+            [-16.605638, -68.153558],
+            [-16.597793, -68.158638],
+            [-16.594123, -68.167334],
+            [-16.586719, -68.169651],
+            [-16.584190, -68.174007],
+            [-16.581126, -68.175080],
+            [-16.580591, -68.178749],
+            [-16.579501, -68.180144],
+            [-16.576354, -68.182118],
+            [-16.574833, -68.184693],
+            [-16.573146, -68.185015],
+            [-16.570123, -68.183534],
+            [-16.567141, -68.180509],
+            [-16.564734, -68.179414],
+            [-16.561649, -68.180594],
+            [-16.555664, -68.175960],
+            [-16.555294, -68.174114],
+            [-16.550131, -68.173707],
+            [-16.550131, -68.174222],
+            [-16.546902, -68.173385],
+            [-16.544948, -68.170810],
+            [-16.546984, -68.170316],
+            [-16.547262, -68.168728],
+            [-16.548887, -68.166357],
+            [-16.546943, -68.163729],
+            [-16.542397, -68.160381],
+            [-16.541523, -68.153772],
+            [-16.541945, -68.149953],
+            [-16.539846, -68.146359],
+            [-16.536823, -68.145919],
+            [-16.533737, -68.149384],
+            [-16.530518, -68.147287],
+            [-16.529469, -68.145608],
+            [-16.528636, -68.144857],
+            [-16.524897, -68.147104],
+            [-16.521626, -68.148311],
+            [-16.521374, -68.148327],
+            [-16.520443, -68.149422],
+            [-16.518345, -68.149894],
+            [-16.517717, -68.150575],
+            [-16.512615, -68.153005],
+            [-16.512667, -68.152587],
+            [-16.511823, -68.153177],
+            [-16.511726, -68.152876],
+            [-16.508696, -68.154561],
+            [-16.507379, -68.155757],
+            [-16.507858, -68.156186],
+            [-16.505368, -68.158686],
+            [-16.502452, -68.161840],
+            [-16.499922, -68.163310],
+            [-16.497982, -68.163455],
+            [-16.496722, -68.164667],
+            [-16.496835, -68.164834],
+            [-16.496357, -68.165199],
+            [-16.495745, -68.166615],
+            [-16.495431, -68.166835],
+            [-16.495164, -68.167639],
+            [-16.491543, -68.170536],
+            [-16.490648, -68.171083],
+            [-16.488353, -68.170933],
+            [-16.487937, -68.170456],
+            [-16.487613, -68.170434],
+            [-16.487150, -68.170499],
+            [-16.486954, -68.170418],
+            [-16.483868, -68.168197],
+            [-16.482134, -68.166915],
+            [-16.480478, -68.167275],
+            [-16.482510, -68.165392],
+            [-16.482633, -68.164265],
+            [-16.482284, -68.163503],
+            [-16.479866, -68.163815],
+            [-16.479537, -68.164963],
+            [-16.477170, -68.166647],
+            [-16.476440, -68.166711],
+            [-16.475946, -68.167398],
+            [-16.469907, -68.167967],
+            [-16.457776, -68.162162],
+            [-16.457385, -68.160338],
+            [-16.455245, -68.159072],
+            [-16.448186, -68.157442],
+            [-16.432957, -68.156991],
+            [-16.427997, -68.149459],
+            [-16.400354, -68.149588],
+            [-16.367930, -68.145940],
+            [-16.358089, -68.143644],
+            [-16.350224, -68.138494],
+            [-16.327615, -68.139868],
+            [-16.320263, -68.145533],
+            [-16.316515, -68.150382],
+            [-16.285169, -68.157613],
+            [-16.278681, -68.155575],
+            [-16.262656, -68.153708],
+            [-16.570318, -68.223770],
+            [-16.572028, -68.225361],
+            [-16.572079, -68.225484],
+            [-16.571830, -68.226146],
+            [-16.570251, -68.230969],
+            [-16.569403, -68.233632],
+            [-16.566791, -68.241765],
+            [-16.565084, -68.246934],
+            [-16.562822, -68.253422],
+            [-16.560796, -68.259398],
+            [-16.560780, -68.259478],
+            [-16.560467, -68.259197],
+            [-16.559559, -68.251263],
+            [-16.551157, -68.245456],
+            [-16.543755, -68.236749],
+            [-16.535774, -68.245161],
+            [-16.528492, -68.251941],
+            [-16.529376, -68.255707],
+            [-16.521662, -68.261061],
+            [-16.528965, -68.269022],
+            [-16.539661, -68.280351],
+            [-16.528615, -68.290436],
+            [-16.523781, -68.293676],
+            [-16.510461, -68.287675],
+            [-16.510378, -68.295657],
+            [-16.510728, -68.297374],
+            [-16.511140, -68.301622],
+            [-16.512806, -68.307330],
+            [-16.501794, -68.320105],
+            [-16.490020, -68.314769],
+            [-16.477613, -68.308482],
+            [-16.468415, -68.301058],
+            [-16.470720, -68.297625],
+            [-16.466861, -68.295382],
+            [-16.463116, -68.293000],
+            [-16.459278, -68.289621],
+            [-16.446602, -68.280094],
+            [-16.430075, -68.267498],
+            [-16.433204, -68.263593],
+            [-16.412539, -68.253250],
+            [-16.393025, -68.243551],
+            [-16.383556, -68.216000],
+            [-16.336778, -68.205357],
+            [-16.302841, -68.185101],
+            [-16.292543, -68.170166],
+            [-16.277713, -68.165617],
+            [-16.277381, -68.165585],
+            [-16.262676, -68.153719],
+            [-16.262656, -68.153708],
+
         ];
 
         // Crear el polígono oscuro para El Alto
@@ -591,11 +786,10 @@
             dashArray: '5, 5'
         });
 
-        // Variable para controlar el estado del oscurecimiento
         let oscurecerActive = false;
 
-
         let userLocationMarker = null;
+        let clickedCoordinatesMarker = null; // Variable para el marcador de coordenadas clickeadas
         let initialMarkerData = [];
         let allLeafletMarkers = [];
         let markerClusterGroup;
@@ -621,6 +815,110 @@
         const MIN_ZOOM_FOR_LOADING = 10;
         const MAX_ZOOM_FOR_VECTOR = 18;
 
+        // Función para manejar clicks en el mapa y obtener coordenadas
+        function handleMapClick(e) {
+            const lat = e.latlng.lat;
+            const lng = e.latlng.lng;
+
+            // Formatear las coordenadas con 6 decimales
+            const formattedCoordinates = `Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`;
+            const coordinatesArray = `[${lat.toFixed(6)}, ${lng.toFixed(6)}]`;
+
+            // Mostrar las coordenadas en el input de búsqueda
+            const searchInput = document.getElementById('searchInput');
+            searchInput.value = formattedCoordinates;
+
+            // Copiar coordenadas al portapapeles
+            copyToClipboard(coordinatesArray);
+
+            // Remover marcador anterior si existe
+            if (clickedCoordinatesMarker) {
+                map.removeLayer(clickedCoordinatesMarker);
+            }
+
+            // Crear un marcador en el punto clickeado
+            const clickedIcon = L.divIcon({
+                className: 'clicked-coordinates-marker-container',
+                html: '<div class="clicked-coordinates-marker"></div>',
+                iconSize: [20, 20],
+                iconAnchor: [10, 10]
+            });
+
+            clickedCoordinatesMarker = L.marker([lat, lng], {
+                icon: clickedIcon
+            }).addTo(map);
+
+            // Crear popup con las coordenadas
+            const popupContent = `
+                <div class="popup-content">
+                    <div class="popup-title">Coordenadas Seleccionadas</div>
+                    <div class="popup-description">
+                        <strong>[${lat.toFixed(6)}, ${lng.toFixed(6)}]</strong><br>
+                        <small style="color: #00C8FF;">✓ Copiado al portapapeles</small>
+                    </div>
+                </div>
+            `;
+
+            clickedCoordinatesMarker.bindPopup(popupContent).openPopup();
+
+            // Mostrar mensaje de confirmación
+            showStatusMessage('Coordenadas obtenidas y copiadas al portapapeles', 'success');
+
+            // Log para debug
+            console.log('Coordenadas clickeadas:', {
+                lat,
+                lng
+            });
+            console.log('Coordenadas copiadas:', coordinatesArray);
+        }
+
+        // Función para copiar texto al portapapeles
+        function copyToClipboard(text) {
+            // Verificar si la API del portapapeles está disponible
+            if (navigator.clipboard && window.isSecureContext) {
+                // Usar la API moderna del portapapeles
+                navigator.clipboard.writeText(text).then(() => {
+                    console.log('Coordenadas copiadas al portapapeles:', text);
+                }).catch(err => {
+                    console.error('Error al copiar al portapapeles:', err);
+                    // Fallback al método tradicional
+                    fallbackCopyToClipboard(text);
+                });
+            } else {
+                // Fallback para navegadores que no soportan la API moderna
+                fallbackCopyToClipboard(text);
+            }
+        }
+
+        // Función fallback para copiar al portapapeles
+        function fallbackCopyToClipboard(text) {
+            try {
+                // Crear un elemento de texto temporal
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+
+                // Seleccionar y copiar el texto
+                textArea.focus();
+                textArea.select();
+
+                const successful = document.execCommand('copy');
+                document.body.removeChild(textArea);
+
+                if (successful) {
+                    console.log('Coordenadas copiadas al portapapeles (fallback):', text);
+                } else {
+                    console.error('Error al copiar al portapapeles con método fallback');
+                    showStatusMessage('Error al copiar coordenadas al portapapeles', 'error');
+                }
+            } catch (err) {
+                console.error('Error en fallback de copia:', err);
+                showStatusMessage('Error al copiar coordenadas al portapapeles', 'error');
+            }
+        }
         // Debug info
         function updateDebugInfo() {
             const debugDiv = document.getElementById('debugInfo');
@@ -924,7 +1222,18 @@
 
                     loadedMarkerIds.add(item.id);
 
-                    const marker = L.marker(item.position).bindPopup(item.html);
+                    // Crear un icono personalizado circular con efecto pulsante
+                    const pulsingIcon = L.divIcon({
+                        className: 'pulsing-marker',
+                        html: '<div class="puntoMarca"></div>',
+                        iconSize: [16, 16],
+                        iconAnchor: [8, 8]
+                    });
+
+                    const marker = L.marker(item.position, {
+                        icon: pulsingIcon,
+                        className: 'individual-pulsing-marker'
+                    }).bindPopup(item.html);
 
                     marker.originalData = {
                         id: item.id,
@@ -1180,6 +1489,13 @@
         function clearSearch() {
             const searchInput = document.getElementById('searchInput');
             searchInput.value = '';
+
+            // Remover marcador de coordenadas si existe
+            if (clickedCoordinatesMarker) {
+                map.removeLayer(clickedCoordinatesMarker);
+                clickedCoordinatesMarker = null;
+            }
+
             filterMarkers('');
             searchInput.focus();
         }
@@ -1352,6 +1668,8 @@
 
                     loadMarkersInViewport();
 
+                    /* map.on('click', handleMapClick); */
+
                     map.on('moveend', function() {
                         clearTimeout(debounceTimer);
                         debounceTimer = setTimeout(() => {
@@ -1453,6 +1771,10 @@
             container.dataset.index = index;
             document.getElementById(`img-${id}`).src = "../static/ufpredial/" + images[index];
         }
+
+        $(document).ready(function() {
+            toggleDarkOverlay();
+        });
     </script>
 </body>
 

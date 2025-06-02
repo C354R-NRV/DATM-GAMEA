@@ -252,6 +252,8 @@ if (!$_SESSION['swlogin']) {
             justify-content: center;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
+            outline: none !important;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .control-button:hover {
@@ -275,26 +277,47 @@ if (!$_SESSION['swlogin']) {
             background-color: rgba(50, 50, 50, 0.8);
         }
 
+        .control-button:focus {
+            outline: none !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+        }
+
         /* Estilos específicos para botón satelital */
         .control-button.satelital {
             background-color: rgba(29, 25, 22, 0.8);
         }
 
         .control-button.satelital.tesela-active {
-            background-color: rgba(29, 25, 22, 0.8);
+            background-color: rgba(0, 200, 255, 0.9);
+            color: white;
         }
 
         .control-button.satelital:hover {
             background-color: rgba(36, 29, 27, 0.9)
         }
 
-        .control-button.tesela-active {
-            background-color: rgba(0, 200, 255, 0.9);
-            color: white;
-        }
-
         .control-button.tesela-active:hover {
             background-color: rgba(0, 180, 230, 0.9);
+        }
+
+        /* Estilos específicos para móviles */
+        @media (max-width: 768px) {
+            .control-button {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+            
+            .minimap-controls {
+                top: 5px;
+                right: 5px;
+                gap: 3px;
+            }
         }
 
         #formInmueble {
@@ -368,7 +391,6 @@ if (!$_SESSION['swlogin']) {
         }
 
         @media (max-width: 600px) {
-
             .result-table th,
             .result-table td {
                 font-size: 12px;
@@ -377,18 +399,6 @@ if (!$_SESSION['swlogin']) {
 
             .swal2-popup {
                 width: 95% !important;
-            }
-
-            .minimap-controls {
-                top: 5px;
-                right: 5px;
-                gap: 3px;
-            }
-
-            .control-button {
-                width: 25px;
-                height: 25px;
-                font-size: 0.8rem;
             }
         }
     </style>
@@ -420,7 +430,7 @@ if (!$_SESSION['swlogin']) {
     ?>
 
     <div class="container mt-5">
-        <h1>Formulario de Registro de Inmueble <button class="buscar_" id="abrirFormulario"> <i class="fa fa-search" aria-hidden="true"></i> </button> </h1>
+        <h1>Formulario de Registro de Inmueble <button class="buscar_" id="abrirFormulario" type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button> </h1>
         <form id="formularioInmueble">
             <div class="row">
 
@@ -443,9 +453,9 @@ if (!$_SESSION['swlogin']) {
                     <div class="mb-3" id="mapContainer" style="height: 300px;">
                         <div id="miniMap" style="height: 100%; width: 100%;"></div>
                         <div class="minimap-controls">
-                            <button id="zoomInBtn" class="control-button" title="Acercar" aria-label="Acercar mapa">+</button>
-                            <button id="zoomOutBtn" class="control-button" title="Alejar" aria-label="Alejar mapa">−</button>
-                            <button id="satelitalBtn" class="control-button satelital tesela-active" title="Mostrar/Ocultar Capa Satelital" aria-label="Capa Satelital" style="outline-style: none;">
+                            <button id="zoomInBtn" type="button" class="control-button" title="Acercar" aria-label="Acercar mapa">+</button>
+                            <button id="zoomOutBtn" type="button" class="control-button" title="Alejar" aria-label="Alejar mapa">−</button>
+                            <button id="satelitalBtn" type="button" class="control-button satelital tesela-active" title="Mostrar/Ocultar Capa Satelital" aria-label="Capa Satelital">
                                 <i class="fa fa-globe" aria-hidden="true"></i>
                             </button>
                         </div>
@@ -875,47 +885,65 @@ if (!$_SESSION['swlogin']) {
                 maxZoom: 19
             }).addTo(map);
 
-            // Función para alternar la capa satelital
-            function toggleSatelliteLayer() {
-                const button = document.getElementById('satelitalBtn');
-                
-                try {
-                    if (satelitalActive) {
-                        // Desactivar capa satelital
-                        if (map.hasLayer(satelliteLayer)) {
-                            map.removeLayer(satelliteLayer);
-                            console.log('Capa satelital removida del mapa');
-                        }
-                        button.classList.remove('tesela-active');
-                        satelitalActive = false;
-                    } else {
-                        // Activar capa satelital
-                        if (!map.hasLayer(satelliteLayer)) {
-                            map.addLayer(satelliteLayer);
-                            console.log('Capa satelital añadida al mapa');
-                        }
-                        button.classList.add('tesela-active');
-                        satelitalActive = true;
-                    }
-                } catch (error) {
-                    console.error('Error toggling capa satelital:', error);
-                }
-            }
-
-            // Función para zoom in
-            function zoomIn() {
+            // Función para manejar el botón de zoom in
+            document.getElementById('zoomInBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
                 map.zoomIn();
-            }
+                this.blur(); // Quitar el foco del botón
+            });
 
-            // Función para zoom out
-            function zoomOut() {
+            // Función para manejar el botón de zoom out
+            document.getElementById('zoomOutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
                 map.zoomOut();
-            }
+                this.blur(); // Quitar el foco del botón
+            });
 
-            // Event listeners para los botones de control
-            document.getElementById('zoomInBtn').addEventListener('click', zoomIn);
-            document.getElementById('zoomOutBtn').addEventListener('click', zoomOut);
-            document.getElementById('satelitalBtn').addEventListener('click', toggleSatelliteLayer);
+            // Función para alternar la capa satelital
+            document.getElementById('satelitalBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                if (satelitalActive) {
+                    map.removeLayer(satelliteLayer);
+                    this.classList.remove('tesela-active');
+                    satelitalActive = false;
+                } else {
+                    map.addLayer(satelliteLayer);
+                    this.classList.add('tesela-active');
+                    satelitalActive = true;
+                }
+                
+                this.blur(); // Quitar el foco del botón
+            });
+
+            // Mejorar la experiencia táctil en dispositivos móviles
+            if ('ontouchstart' in window) {
+                const mapButtons = document.querySelectorAll('.control-button');
+                
+                mapButtons.forEach(button => {
+                    // Prevenir comportamiento por defecto en eventos táctiles
+                    button.addEventListener('touchstart', function(e) {
+                        e.stopPropagation();
+                    }, { passive: true });
+                    
+                    // Manejar el evento touchend para ejecutar la acción
+                    button.addEventListener('touchend', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // Simular un clic en el botón
+                        this.click();
+                        
+                        // Prevenir scroll no deseado
+                        setTimeout(() => {
+                            window.scrollTo(0, window.scrollY);
+                        }, 10);
+                    });
+                });
+            }
 
             // Permitir selección manual en cualquier momento
             map.on('click', function(e) {
