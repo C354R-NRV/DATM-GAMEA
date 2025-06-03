@@ -161,45 +161,54 @@
             background-color: rgba(50, 50, 50, 0.8);
         }
 
-        /* Estilos específicos para botones de teselas */
-        .control-button.tesela-active {
+        /* Estilos específicos para botones de capas GeoJSON */
+        .control-button.geojson-active {
             background-color: rgba(0, 200, 255, 0.9);
             color: white;
         }
 
-        .control-button.tesela-active:hover {
+        .control-button.geojson-active:hover {
             background-color: rgba(0, 180, 230, 0.9);
         }
 
-        .control-button.tesela-puntos {
+        .control-button.geojson-puntos {
             background-color: rgba(255, 0, 0, 0.8);
         }
 
-        .control-button.tesela-puntos.tesela-active {
+        .control-button.geojson-puntos.geojson-active {
             background-color: rgba(255, 0, 0, 0.9);
         }
 
-        .control-button.tesela-lineas {
+        .control-button.geojson-lineas {
             background-color: rgba(0, 0, 255, 0.8);
         }
 
-        .control-button.tesela-lineas.tesela-active {
+        .control-button.geojson-lineas.geojson-active {
             background-color: rgba(0, 0, 255, 0.9);
         }
 
-        .control-button.tesela-poligonos {
+        .control-button.geojson-poligonos {
             background-color: rgba(0, 128, 0, 0.8);
         }
 
-        .control-button.tesela-poligonos.tesela-active {
+        .control-button.geojson-poligonos.geojson-active {
             background-color: rgba(0, 128, 0, 0.9);
+        }
+
+        /* Nuevo estilo para la capa de códigos */
+        .control-button.geojson-codigos {
+            background-color: rgba(255, 165, 0, 0.8);
+        }
+
+        .control-button.geojson-codigos.geojson-active {
+            background-color: rgba(255, 165, 0, 0.9);
         }
 
         .control-button.satelital {
             background-color: rgba(29, 25, 22, 0.8);
         }
 
-        .control-button.satelital.tesela-active {
+        .control-button.satelital.geojson-active {
             background-color: rgba(29, 25, 22, 0.8);
         }
 
@@ -211,7 +220,7 @@
             background-color: rgba(50, 50, 50, 0.8);
         }
 
-        .control-button.oscurecer.tesela-active {
+        .control-button.oscurecer.geojson-active {
             background-color: rgba(75, 75, 75, 0.9);
         }
 
@@ -524,6 +533,23 @@
             box-shadow: 0 0 8px rgba(255, 107, 53, 0.8);
             animation: pulseAnimation 1.5s infinite ease-in-out;
         }
+
+        /* Estilos para marcadores de códigos */
+        .codigo-marker {
+            background-color: #FFA500;
+            color: white;
+            border: 2px solid white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            animation: pulseAnimation 2s infinite ease-in-out;
+        }
     </style>
 </head>
 
@@ -553,16 +579,16 @@
                     <button id="zoomOutBtn" class="control-button" title="Alejar" aria-label="Alejar mapa">−</button>
                     <button id="homeBtn" class="control-button" title="Inicio" aria-label="Volver" style="outline-style: none;"><i class="fa fa-home" aria-hidden="true"></i></button>
 
-                    <!-- Botones para controlar teselas vectoriales -->
-                    <button id="teselaPuntosBtn" class="control-button" title="Mostrar/Ocultar Puntos Vectoriales" aria-label="Puntos Vectoriales">
-                        <i class="fa fa-circle" aria-hidden="true"></i>
+                    <!-- Botones para controlar capas GeoJSON -->
+                    <button id="geojsonBtn" class="control-button" title="Mostrar/Ocultar Capa El Alto" aria-label="Capa El Alto">
+                        <i class="fa fa-map-o" aria-hidden="true"></i>
                     </button>
-                    <button id="teselaLineasBtn" class="control-button" title="Mostrar/Ocultar Líneas Vectoriales" aria-label="Líneas Vectoriales">
-                        <i class="fa fa-minus" aria-hidden="true"></i>
+
+                    <!-- Nuevo botón para la capa de códigos -->
+                    <button id="codigosBtn" class="control-button geojson-codigos" title="Mostrar/Ocultar Códigos" aria-label="Capa Códigos">
+                        <i class="fa fa-tags" aria-hidden="true"></i>
                     </button>
-                    <button id="teselaPoligonosBtn" class="control-button" title="Mostrar/Ocultar Polígonos Vectoriales" aria-label="Polígonos Vectoriales" style="outline-style: none;">
-                        <i class="fa fa-square-o" aria-hidden="true"></i>
-                    </button>
+
                     <!-- Nuevo botón para capa satelital -->
                     <button id="satelitalBtn" class="control-button satelital" title="Mostrar/Ocultar Capa Satelital" aria-label="Capa Satelital" style="outline-style: none;">
                         <i class="fa fa-globe" aria-hidden="true"></i>
@@ -583,13 +609,9 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 
-    <!-- Cargar VectorGrid después de Leaflet -->
-    <script src="https://cdn.jsdelivr.net/npm/leaflet.vectorgrid@1.3.0/dist/Leaflet.VectorGrid.bundled.min.js"></script>
-
     <script>
         // Verificar que las bibliotecas se cargaron correctamente
         console.log('Leaflet version:', L.version);
-        console.log('VectorGrid available:', typeof L.vectorGrid !== 'undefined');
 
         const map = L.map('map', {
             zoomControl: false,
@@ -606,6 +628,201 @@
         const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             maxZoom: 19
         }).addTo(map);
+
+        // Datos GeoJSON de códigos (embebidos directamente)
+
+
+        const codigosGeoJSONData = {
+            "type": "FeatureCollection",
+            "name": "cod_elalto_FINAL",
+            "crs": {
+                "type": "name",
+                "properties": {
+                    "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+                }
+            },
+            "features": [{
+                    "type": "Feature",
+                    "properties": {
+                        "fid": 1,
+                        "Layer": "MASTER",
+                        "PaperSpace": null,
+                        "SubClasses": "AcDbEntity:AcDbText:AcDbText",
+                        "Linetype": null,
+                        "EntityHandle": "5161ECAE",
+                        "Text": " CHARAPAQUI \"1\""
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            -68.21013425628281,
+                            -16.53928395862762,
+                            0
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "fid": 2,
+                        "Layer": "MASTER",
+                        "PaperSpace": null,
+                        "SubClasses": "AcDbEntity:AcDbText:AcDbText",
+                        "Linetype": null,
+                        "EntityHandle": "5161ECAF",
+                        "Text": "  EL INGENIO DISTRITO 1-U.V.2"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            -68.20734300298943,
+                            -16.474625230530684,
+                            0
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "fid": 3,
+                        "Layer": "MASTER",
+                        "PaperSpace": null,
+                        "SubClasses": "AcDbEntity:AcDbText:AcDbText",
+                        "Linetype": null,
+                        "EntityHandle": "5161ECB0",
+                        "Text": "11"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            -68.18563945641391,
+                            -16.550921291640922,
+                            0
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "fid": 4,
+                        "Layer": "MASTER",
+                        "PaperSpace": null,
+                        "SubClasses": "AcDbEntity:AcDbText:AcDbText",
+                        "Linetype": null,
+                        "EntityHandle": "5161ECB1",
+                        "Text": "10"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            -68.18558349371388,
+                            -16.550968980686594,
+                            0
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "fid": 5,
+                        "Layer": "MASTER",
+                        "PaperSpace": null,
+                        "SubClasses": "AcDbEntity:AcDbText:AcDbText",
+                        "Linetype": null,
+                        "EntityHandle": "5161ECB3",
+                        "Text": "ALTO LIMA 3ra.SEC"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            -68.18056048284289,
+                            -16.47919776913767,
+                            0
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "fid": 6,
+                        "Layer": "MASTER",
+                        "PaperSpace": null,
+                        "SubClasses": "AcDbEntity:AcDbText:AcDbText",
+                        "Linetype": null,
+                        "EntityHandle": "5161ECB4",
+                        "Text": "ALTO LIMA 3ra.SEC"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            -68.18056048284289,
+                            -16.47919776913767,
+                            0
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "fid": 7,
+                        "Layer": "MASTER",
+                        "PaperSpace": null,
+                        "SubClasses": "AcDbEntity:AcDbText:AcDbText",
+                        "Linetype": null,
+                        "EntityHandle": "5161ECB5",
+                        "Text": "M Z A.  A"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            -68.19931795516639,
+                            -16.57583380437045,
+                            0
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "fid": 8,
+                        "Layer": "MASTER",
+                        "PaperSpace": null,
+                        "SubClasses": "AcDbEntity:AcDbText:AcDbText",
+                        "Linetype": null,
+                        "EntityHandle": "5161ECB5",
+                        "Text": "MZA.  B"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            -68.19997326956134,
+                            -16.576517879539015,
+                            0
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "fid": 9,
+                        "Layer": "MASTER",
+                        "PaperSpace": null,
+                        "SubClasses": "AcDbEntity:AcDbText:AcDbText",
+                        "Linetype": null,
+                        "EntityHandle": "5161ECB5",
+                        "Text": "1"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            -68.1987848945819,
+                            -16.575144452472337,
+                            0
+                        ]
+                    }
+                }
+            ]
+        };
 
         // Definir el polígono de El Alto (coordenadas aproximadas)
         const elAltoCoordinates = [
@@ -773,7 +990,6 @@
             [-16.277381, -68.165585],
             [-16.262676, -68.153719],
             [-16.262656, -68.153708],
-
         ];
 
         // Crear el polígono oscuro para El Alto
@@ -787,33 +1003,318 @@
         });
 
         let oscurecerActive = false;
-
         let userLocationMarker = null;
-        let clickedCoordinatesMarker = null; // Variable para el marcador de coordenadas clickeadas
+        let clickedCoordinatesMarker = null;
         let initialMarkerData = [];
         let allLeafletMarkers = [];
         let markerClusterGroup;
-        let vectorLayers = {};
         let isDataLoading = false;
         let currentBounds = null;
         let loadedMarkerIds = new Set();
         let debounceTimer;
         let totalMarkersCount = 0;
 
-        // Estado de las teselas vectoriales y capa satelital
-        let teselaStates = {
-            puntos: false,
-            lineas: false,
-            poligonos: false
-        };
+        // Variables para capas GeoJSON
+        let geojsonLayer = null;
+        let geojsonData = null;
+        let geojsonActive = false;
 
-        let satelitalActive = true; // La capa satelital está activa por defecto
+        // Variables para la nueva capa de códigos
+        let codigosLayer = null;
+        let codigosActive = false;
+
+        // Estado de la capa satelital
+        let satelitalActive = true;
 
         // Configuración mejorada para carga por lotes
         const BATCH_SIZE = 500;
         const BATCH_DELAY = 30;
         const MIN_ZOOM_FOR_LOADING = 10;
-        const MAX_ZOOM_FOR_VECTOR = 18;
+
+        // Función para crear la capa de códigos GeoJSON
+        function createCodigosLayer(data) {
+            if (!data || !data.features) {
+                console.error('Datos de códigos GeoJSON inválidos');
+                return null;
+            }
+
+            return L.geoJSON(data, {
+                pointToLayer: function(feature, latlng) {
+                    // Crear marcador personalizado para códigos
+                    const codigoIcon = L.divIcon({
+                        className: 'codigo-marker-container',
+                        html: '<div class="codigo-marker">C</div>',
+                        iconSize: [24, 24],
+                        iconAnchor: [12, 12]
+                    });
+
+                    return L.marker(latlng, {
+                        icon: codigoIcon
+                    });
+                },
+                onEachFeature: function(feature, layer) {
+                    // Crear popup con información del código
+                    let popupContent = '<div class="popup-content">';
+                    popupContent += '<div class="popup-title">Código de Área</div>';
+                    popupContent += '<div class="popup-description">';
+
+                    // Mostrar el texto principal
+                    if (feature.properties && feature.properties.Text) {
+                        popupContent += `<strong>Código:</strong> ${feature.properties.Text}<br>`;
+                    }
+
+                    // Mostrar otras propiedades relevantes
+                    if (feature.properties) {
+                        if (feature.properties.Layer) {
+                            popupContent += `<strong>Capa:</strong> ${feature.properties.Layer}<br>`;
+                        }
+                        if (feature.properties.EntityHandle) {
+                            popupContent += `<strong>ID:</strong> ${feature.properties.EntityHandle}<br>`;
+                        }
+                    }
+
+                    // Mostrar coordenadas
+                    const coords = feature.geometry.coordinates;
+                    popupContent += `<strong>Coordenadas:</strong><br>`;
+                    popupContent += `Lat: ${coords[1].toFixed(6)}<br>`;
+                    popupContent += `Lng: ${coords[0].toFixed(6)}`;
+
+                    popupContent += '</div></div>';
+
+                    layer.bindPopup(popupContent);
+
+                    // Agregar eventos
+                    layer.on('click', function(e) {
+                        console.log('Click en código:', feature.properties.Text);
+                    });
+                }
+            });
+        }
+
+        // Función para alternar la capa de códigos
+        function toggleCodigosLayer() {
+            const button = document.getElementById('codigosBtn');
+
+            try {
+                if (codigosActive) {
+                    // Desactivar capa de códigos
+                    if (codigosLayer && map.hasLayer(codigosLayer)) {
+                        map.removeLayer(codigosLayer);
+                        console.log('Capa de códigos removida del mapa');
+                    }
+                    button.classList.remove('geojson-active');
+                    showStatusMessage('Capa de códigos desactivada', 'info');
+                    codigosActive = false;
+                } else {
+                    // Activar capa de códigos
+                    if (!codigosLayer) {
+                        // Crear capa si no existe
+                        codigosLayer = createCodigosLayer(codigosGeoJSONData);
+                        if (!codigosLayer) {
+                            showStatusMessage('Error creando capa de códigos', 'error');
+                            return;
+                        }
+                    }
+
+                    if (!map.hasLayer(codigosLayer)) {
+                        map.addLayer(codigosLayer);
+                        console.log('Capa de códigos añadida al mapa');
+                    }
+
+                    button.classList.add('geojson-active');
+                    showStatusMessage(`Capa de códigos activada (${codigosGeoJSONData.features.length} puntos)`, 'success');
+                    codigosActive = true;
+                }
+
+                updateDebugInfo();
+            } catch (error) {
+                console.error('Error toggling capa de códigos:', error);
+                showStatusMessage('Error manipulando capa de códigos', 'error');
+            }
+        }
+
+        // Función para cargar archivo GeoJSON
+        async function loadGeoJSONData() {
+            try {
+                showStatusMessage('Cargando datos GeoJSON...', 'info');
+                showLoader();
+
+                // Intentar cargar el archivo GeoJSON
+                const response = await fetch('../static/geojson/cod_elalto2.geojson');
+
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                if (!data || !data.features) {
+                    throw new Error('Archivo GeoJSON inválido o sin features');
+                }
+
+                geojsonData = data;
+                console.log('Datos GeoJSON cargados:', data);
+                console.log('Número de features:', data.features.length);
+
+                showStatusMessage(`GeoJSON cargado: ${data.features.length} features`, 'success');
+                return data;
+
+            } catch (error) {
+                console.error('Error cargando GeoJSON:', error);
+                showStatusMessage(`Error cargando GeoJSON: ${error.message}`, 'error');
+                return null;
+            } finally {
+                hideLoader();
+            }
+        }
+
+        // Función para crear la capa GeoJSON con estilos
+        function createGeoJSONLayer(data) {
+            if (!data || !data.features) {
+                console.error('Datos GeoJSON inválidos');
+                return null;
+            }
+
+            return L.geoJSON(data, {
+                style: function(feature) {
+                    // Estilos basados en el tipo de geometría
+                    const geometryType = feature.geometry.type;
+
+                    switch (geometryType) {
+                        case 'Point':
+                        case 'MultiPoint':
+                            return {
+                                radius: 6,
+                                    fillColor: '#ff0000',
+                                    color: '#ff3333',
+                                    weight: 2,
+                                    opacity: 0.9,
+                                    fillOpacity: 0.7
+                            };
+                        case 'LineString':
+                        case 'MultiLineString':
+                            return {
+                                color: '#0000ff',
+                                    weight: 3,
+                                    opacity: 0.8,
+                                    dashArray: '5, 5'
+                            };
+                        case 'Polygon':
+                        case 'MultiPolygon':
+                            return {
+                                color: '#008000',
+                                    weight: 2,
+                                    opacity: 0.8,
+                                    fillColor: '#4CAF50',
+                                    fillOpacity: 0.3
+                            };
+                        default:
+                            return {
+                                color: '#666666',
+                                    weight: 2,
+                                    opacity: 0.7
+                            };
+                    }
+                },
+                pointToLayer: function(feature, latlng) {
+                    // Para puntos, crear marcadores circulares
+                    return L.circleMarker(latlng, {
+                        radius: 6,
+                        fillColor: '#ff0000',
+                        color: '#ff3333',
+                        weight: 2,
+                        opacity: 0.9,
+                        fillOpacity: 0.7
+                    });
+                },
+                onEachFeature: function(feature, layer) {
+                    // Agregar popup con información de la feature
+                    let popupContent = '<div class="popup-content">';
+                    popupContent += '<div class="popup-title">Feature GeoJSON</div>';
+                    popupContent += '<div class="popup-description">';
+
+                    // Mostrar propiedades de la feature
+                    if (feature.properties) {
+                        Object.keys(feature.properties).forEach(key => {
+                            const value = feature.properties[key];
+                            if (value !== null && value !== undefined && value !== '') {
+                                popupContent += `<strong>${key}:</strong> ${value}<br>`;
+                            }
+                        });
+                    }
+
+                    popupContent += `<strong>Tipo:</strong> ${feature.geometry.type}<br>`;
+                    popupContent += '</div></div>';
+
+                    layer.bindPopup(popupContent);
+
+                    // Agregar eventos
+                    layer.on('click', function(e) {
+                        console.log('Click en feature GeoJSON:', feature);
+                    });
+                }
+            });
+        }
+
+        // Función para alternar la capa GeoJSON
+        async function toggleGeoJSONLayer() {
+            const button = document.getElementById('geojsonBtn');
+
+            try {
+                if (geojsonActive) {
+                    // Desactivar capa GeoJSON
+                    if (geojsonLayer && map.hasLayer(geojsonLayer)) {
+                        map.removeLayer(geojsonLayer);
+                        console.log('Capa GeoJSON removida del mapa');
+                    }
+                    button.classList.remove('geojson-active');
+                    showStatusMessage('Capa GeoJSON desactivada', 'info');
+                    geojsonActive = false;
+                } else {
+                    // Activar capa GeoJSON
+                    if (!geojsonData) {
+                        // Cargar datos si no están cargados
+                        geojsonData = await loadGeoJSONData();
+                        if (!geojsonData) {
+                            return; // Error al cargar
+                        }
+                    }
+
+                    if (!geojsonLayer) {
+                        // Crear capa si no existe
+                        geojsonLayer = createGeoJSONLayer(geojsonData);
+                        if (!geojsonLayer) {
+                            showStatusMessage('Error creando capa GeoJSON', 'error');
+                            return;
+                        }
+                    }
+
+                    if (!map.hasLayer(geojsonLayer)) {
+                        map.addLayer(geojsonLayer);
+                        console.log('Capa GeoJSON añadida al mapa');
+
+                        // Ajustar vista a los datos GeoJSON
+                        try {
+                            const bounds = geojsonLayer.getBounds();
+                            if (bounds.isValid()) {
+                                map.fitBounds(bounds.pad(0.1));
+                            }
+                        } catch (boundsError) {
+                            console.warn('No se pudo ajustar la vista a los datos GeoJSON:', boundsError);
+                        }
+                    }
+
+                    button.classList.add('geojson-active');
+                    showStatusMessage('Capa GeoJSON activada', 'success');
+                    geojsonActive = true;
+                }
+
+                updateDebugInfo();
+            } catch (error) {
+                console.error('Error toggling capa GeoJSON:', error);
+                showStatusMessage('Error manipulando capa GeoJSON', 'error');
+            }
+        }
 
         // Función para manejar clicks en el mapa y obtener coordenadas
         function handleMapClick(e) {
@@ -874,18 +1375,14 @@
 
         // Función para copiar texto al portapapeles
         function copyToClipboard(text) {
-            // Verificar si la API del portapapeles está disponible
             if (navigator.clipboard && window.isSecureContext) {
-                // Usar la API moderna del portapapeles
                 navigator.clipboard.writeText(text).then(() => {
                     console.log('Coordenadas copiadas al portapapeles:', text);
                 }).catch(err => {
                     console.error('Error al copiar al portapapeles:', err);
-                    // Fallback al método tradicional
                     fallbackCopyToClipboard(text);
                 });
             } else {
-                // Fallback para navegadores que no soportan la API moderna
                 fallbackCopyToClipboard(text);
             }
         }
@@ -893,7 +1390,6 @@
         // Función fallback para copiar al portapapeles
         function fallbackCopyToClipboard(text) {
             try {
-                // Crear un elemento de texto temporal
                 const textArea = document.createElement('textarea');
                 textArea.value = text;
                 textArea.style.position = 'fixed';
@@ -901,7 +1397,6 @@
                 textArea.style.top = '-999999px';
                 document.body.appendChild(textArea);
 
-                // Seleccionar y copiar el texto
                 textArea.focus();
                 textArea.select();
 
@@ -919,18 +1414,19 @@
                 showStatusMessage('Error al copiar coordenadas al portapapeles', 'error');
             }
         }
+
         // Debug info
         function updateDebugInfo() {
             const debugDiv = document.getElementById('debugInfo');
             const zoom = map.getZoom();
             const center = map.getCenter();
             const markersCount = allLeafletMarkers.length;
-            const vectorLayersActive = Object.keys(teselaStates).filter(key => teselaStates[key]).length;
 
             debugDiv.innerHTML = `
                 Zoom: ${zoom} | 
                 Marcadores: ${markersCount} | 
-                Teselas: ${vectorLayersActive} | 
+                GeoJSON: ${geojsonActive ? 'ON' : 'OFF'} | 
+                Códigos: ${codigosActive ? 'ON' : 'OFF'} | 
                 Satelital: ${satelitalActive ? 'ON' : 'OFF'} |
                 Oscurecer: ${oscurecerActive ? 'ON' : 'OFF'} |
                 Lat: ${center.lat.toFixed(4)} | 
@@ -943,21 +1439,19 @@
 
             try {
                 if (oscurecerActive) {
-                    // Desactivar oscurecimiento
                     if (map.hasLayer(darkOverlay)) {
                         map.removeLayer(darkOverlay);
                         console.log('Capa oscura removida del mapa');
                     }
-                    button.classList.remove('tesela-active');
+                    button.classList.remove('geojson-active');
                     showStatusMessage('Oscurecimiento desactivado', 'info');
                     oscurecerActive = false;
                 } else {
-                    // Activar oscurecimiento
                     if (!map.hasLayer(darkOverlay)) {
                         map.addLayer(darkOverlay);
                         console.log('Capa oscura añadida al mapa');
                     }
-                    button.classList.add('tesela-active');
+                    button.classList.add('geojson-active');
                     showStatusMessage('Oscurecimiento activado', 'success');
                     oscurecerActive = true;
                 }
@@ -975,21 +1469,19 @@
 
             try {
                 if (satelitalActive) {
-                    // Desactivar capa satelital
                     if (map.hasLayer(satelliteLayer)) {
                         map.removeLayer(satelliteLayer);
                         console.log('Capa satelital removida del mapa');
                     }
-                    button.classList.remove('tesela-active');
+                    button.classList.remove('geojson-active');
                     showStatusMessage('Capa satelital desactivada', 'info');
                     satelitalActive = false;
                 } else {
-                    // Activar capa satelital
                     if (!map.hasLayer(satelliteLayer)) {
                         map.addLayer(satelliteLayer);
                         console.log('Capa satelital añadida al mapa');
                     }
-                    button.classList.add('tesela-active');
+                    button.classList.add('geojson-active');
                     showStatusMessage('Capa satelital activada', 'success');
                     satelitalActive = true;
                 }
@@ -998,168 +1490,6 @@
             } catch (error) {
                 console.error('Error toggling capa satelital:', error);
                 showStatusMessage('Error manipulando capa satelital', 'error');
-            }
-        }
-
-        // Inicializar capas vectoriales con configuración mejorada
-        function initializeVectorLayers() {
-            console.log('Inicializando capas vectoriales...');
-
-            if (typeof L.vectorGrid === 'undefined') {
-                console.error('L.vectorGrid no está disponible. Las teselas vectoriales no funcionarán.');
-                showStatusMessage('Error: Biblioteca de teselas vectoriales no cargada', 'error');
-                return;
-            }
-
-            try {
-                // Capa de puntos vectoriales - configuración mejorada
-                vectorLayers.puntos = L.vectorGrid.protobuf('../static/teselas/puntos/{z}/{x}/{y}.pbf', {
-                    vectorTileLayerStyles: {
-                        puntos: {
-                            radius: function(zoom) {
-                                return Math.max(3, Math.min(8, zoom - 8));
-                            },
-                            color: '#ff0000',
-                            fillColor: '#ff3333',
-                            weight: 1,
-                            opacity: 0.9,
-                            fillOpacity: 0.7
-                        }
-                    },
-                    interactive: true,
-                    getFeatureId: function(f) {
-                        return f.properties.id || f.properties.fid;
-                    },
-                    maxNativeZoom: 18,
-                    minZoom: 8,
-                    maxZoom: 19
-                });
-
-                // Capa de líneas - configuración mejorada
-                vectorLayers.lineas = L.vectorGrid.protobuf('../static/teselas/lineas/{z}/{x}/{y}.pbf', {
-                    vectorTileLayerStyles: {
-                        lineas: {
-                            color: '#0000ff',
-                            weight: function(zoom) {
-                                return Math.max(1, Math.min(4, zoom - 10));
-                            },
-                            opacity: 0.8,
-                            dashArray: '5, 5'
-                        }
-                    },
-                    interactive: true,
-                    getFeatureId: function(f) {
-                        return f.properties.id || f.properties.fid;
-                    },
-                    maxNativeZoom: 18,
-                    minZoom: 8,
-                    maxZoom: 19
-                });
-
-                // Capa de polígonos - configuración mejorada
-                vectorLayers.poligonos = L.vectorGrid.protobuf('../static/teselas/poligonos/{z}/{x}/{y}.pbf', {
-                    vectorTileLayerStyles: {
-                        poligonos: {
-                            color: '#008000',
-                            weight: function(zoom) {
-                                return Math.max(1, Math.min(3, zoom - 12));
-                            },
-                            opacity: 0.8,
-                            fillColor: '#4CAF50',
-                            fillOpacity: function(zoom) {
-                                return Math.max(0.2, Math.min(0.5, (zoom - 10) * 0.1));
-                            }
-                        }
-                    },
-                    interactive: true,
-                    getFeatureId: function(f) {
-                        return f.properties.id || f.properties.fid;
-                    },
-                    maxNativeZoom: 18,
-                    minZoom: 8,
-                    maxZoom: 19
-                });
-
-                // Configurar eventos para las capas vectoriales
-                Object.keys(vectorLayers).forEach(key => {
-                    vectorLayers[key].on('click', function(e) {
-                        console.log('Click en capa vectorial:', key, e);
-                        if (e.layer && e.layer.properties) {
-                            const props = e.layer.properties;
-                            const popupContent = `
-                                <div class="popup-content">
-                                    <div class="popup-title">Tesela ${key.charAt(0).toUpperCase() + key.slice(1)}</div>
-                                    <div class="popup-description">
-                                        <strong>ID:</strong> ${props.id || props.fid || 'N/A'}<br>
-                                        <strong>Tipo:</strong> ${key}<br>
-                                        ${props.name ? '<strong>Nombre:</strong> ' + props.name + '<br>' : ''}
-                                        ${props.description ? '<strong>Descripción:</strong> ' + props.description : ''}
-                                    </div>
-                                </div>
-                            `;
-                            L.popup()
-                                .setLatLng(e.latlng)
-                                .setContent(popupContent)
-                                .openOn(map);
-                        }
-                    });
-
-                    vectorLayers[key].on('loading', function() {
-                        console.log(`Cargando teselas ${key}...`);
-                    });
-
-                    vectorLayers[key].on('load', function() {
-                        console.log(`Teselas ${key} cargadas`);
-                    });
-
-                    vectorLayers[key].on('tileerror', function(e) {
-                        console.warn(`Error cargando tesela ${key}:`, e);
-                    });
-                });
-
-                console.log('Capas vectoriales inicializadas:', Object.keys(vectorLayers));
-                showStatusMessage('Capas vectoriales inicializadas correctamente', 'success');
-
-            } catch (error) {
-                console.error('Error inicializando capas vectoriales:', error);
-                showStatusMessage('Error inicializando teselas vectoriales', 'error');
-            }
-        }
-
-        function toggleVectorLayer(layerName, forceState = null) {
-            if (!vectorLayers[layerName]) {
-                console.error(`Capa ${layerName} no existe`);
-                showStatusMessage(`Error: Capa ${layerName} no disponible`, 'error');
-                return;
-            }
-
-            const currentState = forceState !== null ? forceState : !teselaStates[layerName];
-            const button = document.getElementById(`tesela${layerName.charAt(0).toUpperCase() + layerName.slice(1)}Btn`);
-
-            console.log(`Toggling ${layerName} to ${currentState}`);
-
-            try {
-                if (currentState) {
-                    if (!map.hasLayer(vectorLayers[layerName])) {
-                        map.addLayer(vectorLayers[layerName]);
-                        console.log(`Capa ${layerName} añadida al mapa`);
-                    }
-                    button.classList.add('tesela-active');
-                    showStatusMessage(`Tesela ${layerName} activada`, 'success');
-                } else {
-                    if (map.hasLayer(vectorLayers[layerName])) {
-                        map.removeLayer(vectorLayers[layerName]);
-                        console.log(`Capa ${layerName} removida del mapa`);
-                    }
-                    button.classList.remove('tesela-active');
-                    showStatusMessage(`Tesela ${layerName} desactivada`, 'info');
-                }
-
-                teselaStates[layerName] = currentState;
-                updateDebugInfo();
-            } catch (error) {
-                console.error(`Error toggling capa ${layerName}:`, error);
-                showStatusMessage(`Error manipulando capa ${layerName}`, 'error');
             }
         }
 
@@ -1174,7 +1504,6 @@
                     map.removeLayer(markerClusterGroup);
                 }
 
-                // Crear nuevo grupo de marcadores con manejo de errores
                 markerClusterGroup = L.markerClusterGroup({
                     chunkedLoading: true,
                     chunkInterval: 50,
@@ -1222,7 +1551,6 @@
 
                     loadedMarkerIds.add(item.id);
 
-                    // Crear un icono personalizado circular con efecto pulsante
                     const pulsingIcon = L.divIcon({
                         className: 'pulsing-marker',
                         html: '<div class="puntoMarca"></div>',
@@ -1301,7 +1629,6 @@
             const sw = expandedBounds.getSouthWest();
             const ne = expandedBounds.getNorthEast();
 
-            // Usar el backend corregido
             const url = `../php/ufPuntosGet.php?minLat=${sw.lat}&maxLat=${ne.lat}&minLng=${sw.lng}&maxLng=${ne.lng}&zoom=${zoom}&limit=2000`;
 
             console.log('Cargando datos desde:', url);
@@ -1351,7 +1678,6 @@
                         if (newData.length > 0) {
                             console.log(`Procesando ${newData.length} nuevos marcadores`);
 
-                            // Asegurarse de que markerClusterGroup esté inicializado
                             if (!markerClusterGroup) {
                                 console.log("Inicializando markerClusterGroup");
                                 initializeMarkers();
@@ -1490,7 +1816,6 @@
             const searchInput = document.getElementById('searchInput');
             searchInput.value = '';
 
-            // Remover marcador de coordenadas si existe
             if (clickedCoordinatesMarker) {
                 map.removeLayer(clickedCoordinatesMarker);
                 clickedCoordinatesMarker = null;
@@ -1655,12 +1980,10 @@
                 // Inicializar el estado del botón satelital
                 const satelitalBtn = document.getElementById('satelitalBtn');
                 if (satelitalActive) {
-                    satelitalBtn.classList.add('tesela-active');
+                    satelitalBtn.classList.add('geojson-active');
                 }
 
                 setTimeout(() => {
-                    initializeVectorLayers();
-
                     if (markerClusterGroup && !map.hasLayer(markerClusterGroup)) {
                         map.addLayer(markerClusterGroup);
                         console.log("MarkerClusterGroup añadido al mapa");
@@ -1668,6 +1991,7 @@
 
                     loadMarkersInViewport();
 
+                    // Habilitar clicks en el mapa para obtener coordenadas
                     /* map.on('click', handleMapClick); */
 
                     map.on('moveend', function() {
@@ -1714,16 +2038,14 @@
                     document.getElementById('zoomOutBtn').addEventListener('click', zoomOut);
                     document.getElementById('homeBtn').addEventListener('click', homeBtn);
 
-                    document.getElementById('teselaPuntosBtn').addEventListener('click', function() {
-                        toggleVectorLayer('puntos');
+                    // Event listener para el botón GeoJSON
+                    document.getElementById('geojsonBtn').addEventListener('click', function() {
+                        toggleGeoJSONLayer();
                     });
 
-                    document.getElementById('teselaLineasBtn').addEventListener('click', function() {
-                        toggleVectorLayer('lineas');
-                    });
-
-                    document.getElementById('teselaPoligonosBtn').addEventListener('click', function() {
-                        toggleVectorLayer('poligonos');
+                    // Event listener para el nuevo botón de códigos
+                    document.getElementById('codigosBtn').addEventListener('click', function() {
+                        toggleCodigosLayer();
                     });
 
                     // Event listener para el botón satelital
