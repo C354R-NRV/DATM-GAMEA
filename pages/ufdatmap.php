@@ -498,7 +498,6 @@
             height: 12px;
             border-radius: 50%;
 
-            /* Neon glow effect */
             box-shadow:
                 0 0 4px #fff,
                 0 0 8px #fff,
@@ -508,9 +507,7 @@
                 0 0 30px #4cf0f8;
 
             border: none;
-            /* Remove original border, rely on glow */
 
-            /* Apply the animation */
             animation: pulseAnimation 2s infinite ease-in-out;
         }
 
@@ -523,7 +520,6 @@
             transform-origin: center bottom;
         }
 
-        /* Estilos para el marcador de coordenadas clickeadas */
         .clicked-coordinates-marker {
             background-color: #ff6b35;
             width: 14px;
@@ -534,21 +530,32 @@
             animation: pulseAnimation 1.5s infinite ease-in-out;
         }
 
-        /* Estilos para marcadores de códigos */
         .codigo-marker {
             background-color: #FFA500;
-            color: white;
+            color: black;
             border: 2px solid white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            border-radius: 5%;
+            width: 3rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
             font-weight: bold;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-            animation: pulseAnimation 2s infinite ease-in-out;
+            animation: pulseAnimation 6s infinite ease-in-out;
+        }
+
+        .codigo-markerInm {
+            background-color: #FFA500;
+            color: black;
+            border: 2px solid white;
+            border-radius: 50%;
+            width: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            animation: pulseAnimation 6s infinite ease-in-out;
         }
     </style>
 </head>
@@ -577,14 +584,16 @@
                     <button id="locationBtn" class="control-button" title="Mostrar mi ubicación" aria-label="Mostrar mi ubicación"><i class="fa fa-map-marker" aria-hidden="true"></i></button>
                     <button id="zoomInBtn" class="control-button" title="Acercar" aria-label="Acercar mapa">+</button>
                     <button id="zoomOutBtn" class="control-button" title="Alejar" aria-label="Alejar mapa">−</button>
-                    <button id="homeBtn" class="control-button" title="Inicio" aria-label="Volver" style="outline-style: none;"><i class="fa fa-home" aria-hidden="true"></i></button>
+                    <button id="homeBtn" class="control-button" title="Inicio" aria-label="Volver" style="outline-style: none;">
 
-                    <!-- Botones para controlar capas GeoJSON -->
-                    <button id="geojsonBtn" class="control-button" title="Mostrar/Ocultar Capa El Alto" aria-label="Capa El Alto">
-                        <i class="fa fa-map-o" aria-hidden="true"></i>
-                    </button>
+                        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                    </button> 
 
                     <!-- Nuevo botón para la capa de códigos -->
+                    <button id="inmueblesBtn" class="control-button geojson-codigos" title="Mostrar/Ocultar Códigos" aria-label="Capa Códigos">
+                        <i class="fa fa-home" aria-hidden="true"></i>
+                    </button>
+
                     <button id="codigosBtn" class="control-button geojson-codigos" title="Mostrar/Ocultar Códigos" aria-label="Capa Códigos">
                         <i class="fa fa-tags" aria-hidden="true"></i>
                     </button>
@@ -632,197 +641,8 @@
         // Datos GeoJSON de códigos (embebidos directamente)
 
 
-        const codigosGeoJSONData = {
-            "type": "FeatureCollection",
-            "name": "cod_elalto_FINAL",
-            "crs": {
-                "type": "name",
-                "properties": {
-                    "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
-                }
-            },
-            "features": [{
-                    "type": "Feature",
-                    "properties": {
-                        "fid": 1,
-                        "Layer": "MASTER",
-                        "PaperSpace": null,
-                        "SubClasses": "AcDbEntity:AcDbText:AcDbText",
-                        "Linetype": null,
-                        "EntityHandle": "5161ECAE",
-                        "Text": " CHARAPAQUI \"1\""
-                    },
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": [
-                            -68.21013425628281,
-                            -16.53928395862762,
-                            0
-                        ]
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "properties": {
-                        "fid": 2,
-                        "Layer": "MASTER",
-                        "PaperSpace": null,
-                        "SubClasses": "AcDbEntity:AcDbText:AcDbText",
-                        "Linetype": null,
-                        "EntityHandle": "5161ECAF",
-                        "Text": "  EL INGENIO DISTRITO 1-U.V.2"
-                    },
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": [
-                            -68.20734300298943,
-                            -16.474625230530684,
-                            0
-                        ]
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "properties": {
-                        "fid": 3,
-                        "Layer": "MASTER",
-                        "PaperSpace": null,
-                        "SubClasses": "AcDbEntity:AcDbText:AcDbText",
-                        "Linetype": null,
-                        "EntityHandle": "5161ECB0",
-                        "Text": "11"
-                    },
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": [
-                            -68.18563945641391,
-                            -16.550921291640922,
-                            0
-                        ]
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "properties": {
-                        "fid": 4,
-                        "Layer": "MASTER",
-                        "PaperSpace": null,
-                        "SubClasses": "AcDbEntity:AcDbText:AcDbText",
-                        "Linetype": null,
-                        "EntityHandle": "5161ECB1",
-                        "Text": "10"
-                    },
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": [
-                            -68.18558349371388,
-                            -16.550968980686594,
-                            0
-                        ]
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "properties": {
-                        "fid": 5,
-                        "Layer": "MASTER",
-                        "PaperSpace": null,
-                        "SubClasses": "AcDbEntity:AcDbText:AcDbText",
-                        "Linetype": null,
-                        "EntityHandle": "5161ECB3",
-                        "Text": "ALTO LIMA 3ra.SEC"
-                    },
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": [
-                            -68.18056048284289,
-                            -16.47919776913767,
-                            0
-                        ]
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "properties": {
-                        "fid": 6,
-                        "Layer": "MASTER",
-                        "PaperSpace": null,
-                        "SubClasses": "AcDbEntity:AcDbText:AcDbText",
-                        "Linetype": null,
-                        "EntityHandle": "5161ECB4",
-                        "Text": "ALTO LIMA 3ra.SEC"
-                    },
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": [
-                            -68.18056048284289,
-                            -16.47919776913767,
-                            0
-                        ]
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "properties": {
-                        "fid": 7,
-                        "Layer": "MASTER",
-                        "PaperSpace": null,
-                        "SubClasses": "AcDbEntity:AcDbText:AcDbText",
-                        "Linetype": null,
-                        "EntityHandle": "5161ECB5",
-                        "Text": "M Z A.  A"
-                    },
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": [
-                            -68.19931795516639,
-                            -16.57583380437045,
-                            0
-                        ]
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "properties": {
-                        "fid": 8,
-                        "Layer": "MASTER",
-                        "PaperSpace": null,
-                        "SubClasses": "AcDbEntity:AcDbText:AcDbText",
-                        "Linetype": null,
-                        "EntityHandle": "5161ECB5",
-                        "Text": "MZA.  B"
-                    },
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": [
-                            -68.19997326956134,
-                            -16.576517879539015,
-                            0
-                        ]
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "properties": {
-                        "fid": 9,
-                        "Layer": "MASTER",
-                        "PaperSpace": null,
-                        "SubClasses": "AcDbEntity:AcDbText:AcDbText",
-                        "Linetype": null,
-                        "EntityHandle": "5161ECB5",
-                        "Text": "1"
-                    },
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": [
-                            -68.1987848945819,
-                            -16.575144452472337,
-                            0
-                        ]
-                    }
-                }
-            ]
-        };
+        let codigosGeoJSONData = {};
+        let codigosGeoJSONDataInm = {};
 
         // Definir el polígono de El Alto (coordenadas aproximadas)
         const elAltoCoordinates = [
@@ -1021,7 +841,9 @@
 
         // Variables para la nueva capa de códigos
         let codigosLayer = null;
+        let codigosLayerInm = null;
         let codigosActive = false;
+        let inmueblesActive = false;
 
         // Estado de la capa satelital
         let satelitalActive = true;
@@ -1032,8 +854,8 @@
         const MIN_ZOOM_FOR_LOADING = 10;
 
         // Función para crear la capa de códigos GeoJSON
-        function createCodigosLayer(data) {
-            if (!data || !data.features) {
+        function createCodigosLayer(data, modulo) {
+            if (!data) {
                 console.error('Datos de códigos GeoJSON inválidos');
                 return null;
             }
@@ -1041,9 +863,11 @@
             return L.geoJSON(data, {
                 pointToLayer: function(feature, latlng) {
                     // Crear marcador personalizado para códigos
+                    let clase_ = (modulo == 'inmueble' ? 'codigo-markerInm' : 'codigo-marker');
+
                     const codigoIcon = L.divIcon({
                         className: 'codigo-marker-container',
-                        html: '<div class="codigo-marker">C</div>',
+                        html: '<div class="' + clase_ + '">' + feature.properties.Text + '</div>',
                         iconSize: [24, 24],
                         iconAnchor: [12, 12]
                     });
@@ -1053,46 +877,36 @@
                     });
                 },
                 onEachFeature: function(feature, layer) {
-                    // Crear popup con información del código
-                    let popupContent = '<div class="popup-content">';
-                    popupContent += '<div class="popup-title">Código de Área</div>';
-                    popupContent += '<div class="popup-description">';
+                    if (modulo == 'inmueble') {
+                        // Crear popup con información del código
+                        let popupContent = '<div class="popup-content">';
+                        popupContent += '<div class="popup-title">Numero de inmueble catastral</div>';
+                        popupContent += '<div class="popup-description">';
 
-                    // Mostrar el texto principal
-                    if (feature.properties && feature.properties.Text) {
-                        popupContent += `<strong>Código:</strong> ${feature.properties.Text}<br>`;
-                    }
-
-                    // Mostrar otras propiedades relevantes
-                    if (feature.properties) {
-                        if (feature.properties.Layer) {
-                            popupContent += `<strong>Capa:</strong> ${feature.properties.Layer}<br>`;
+                        // Mostrar el texto principal
+                        if (feature.properties && feature.properties.Text) {
+                            popupContent += `<strong>Código:</strong> ${feature.properties.Text}<br>`;
                         }
-                        if (feature.properties.EntityHandle) {
-                            popupContent += `<strong>ID:</strong> ${feature.properties.EntityHandle}<br>`;
-                        }
+
+                        // Mostrar coordenadas
+                        const coords = feature.geometry.coordinates;
+
+                        popupContent += '</div></div>';
+
+                        layer.bindPopup(popupContent);
+
+                        // Agregar eventos
+                        layer.on('click', function(e) {
+                            console.log('Click en código:', feature.properties.Text);
+                        });
                     }
-
-                    // Mostrar coordenadas
-                    const coords = feature.geometry.coordinates;
-                    popupContent += `<strong>Coordenadas:</strong><br>`;
-                    popupContent += `Lat: ${coords[1].toFixed(6)}<br>`;
-                    popupContent += `Lng: ${coords[0].toFixed(6)}`;
-
-                    popupContent += '</div></div>';
-
-                    layer.bindPopup(popupContent);
-
-                    // Agregar eventos
-                    layer.on('click', function(e) {
-                        console.log('Click en código:', feature.properties.Text);
-                    });
                 }
             });
         }
 
         // Función para alternar la capa de códigos
         function toggleCodigosLayer() {
+
             const button = document.getElementById('codigosBtn');
 
             try {
@@ -1101,35 +915,158 @@
                     if (codigosLayer && map.hasLayer(codigosLayer)) {
                         map.removeLayer(codigosLayer);
                         console.log('Capa de códigos removida del mapa');
+                        codigosLayer = null;
+                        codigosGeoJSONData = {};
                     }
                     button.classList.remove('geojson-active');
                     showStatusMessage('Capa de códigos desactivada', 'info');
                     codigosActive = false;
+                    updateDebugInfo();
                 } else {
-                    // Activar capa de códigos
-                    if (!codigosLayer) {
-                        // Crear capa si no existe
-                        codigosLayer = createCodigosLayer(codigosGeoJSONData);
-                        if (!codigosLayer) {
-                            showStatusMessage('Error creando capa de códigos', 'error');
-                            return;
-                        }
+
+                    const bounds = map.getBounds()
+                    const zoom = map.getZoom()
+
+                    console.log(`Cargando datos GeoJSON - Zoom: ${zoom}`)
+
+                    isDataLoading = true
+                    showLoader()
+
+                    const sw = bounds.getSouthWest()
+                    const ne = bounds.getNorthEast()
+
+                    // Determinar límite basado en zoom
+                    let pointLimit = 500 // Valor por defecto para zoom 13
+                    if (zoom > 16) {
+                        // Incrementar el límite a medida que aumenta el zoom
+                        pointLimit = 500 + (zoom - 13) * 250
+                    } else if (zoom < 16) {
+                        // Reducir el límite para zoom menor a 13
+                        pointLimit = Math.max(100, 500 - (13 - zoom) * 100)
                     }
 
-                    if (!map.hasLayer(codigosLayer)) {
-                        map.addLayer(codigosLayer);
-                        console.log('Capa de códigos añadida al mapa');
-                    }
+                    const url_ = `../php/ufPredialGetGeoJson.php?minLat=${sw.lat}&maxLat=${ne.lat}&minLng=${sw.lng}&maxLng=${ne.lng}&zoom=${zoom}&limit=${pointLimit}&modulo=catastro`;
 
-                    button.classList.add('geojson-active');
-                    showStatusMessage(`Capa de códigos activada (${codigosGeoJSONData.features.length} puntos)`, 'success');
-                    codigosActive = true;
+                    $.ajax({
+                        async: true,
+                        type: "POST",
+                        dataType: "html",
+                        contentType: "application/x-www-form-urlencoded",
+                        url: url_,
+                        beforeSend: function() {},
+                        success: function(dat) {
+                            console.log("=========toggleCodigosLayer CATASTRO============");
+                            dat = JSON.parse(dat)
+
+                            codigosGeoJSONData = dat.data;
+                            console.log(codigosGeoJSONData);
+                            if (!codigosLayer) {
+                                codigosLayer = createCodigosLayer(codigosGeoJSONData, 'catastro');
+                                if (!codigosLayer) {
+                                    showStatusMessage('Error creando capa de códigos', 'error');
+                                    return;
+                                }
+                            }
+                            if (!map.hasLayer(codigosLayer)) {
+                                map.addLayer(codigosLayer);
+                                console.log('Capa de códigos añadida al mapa');
+                            }
+                            button.classList.add('geojson-active');
+                            showStatusMessage(`Capa de códigos activada (${codigosGeoJSONData.length} puntos)`, 'success');
+                            codigosActive = true;
+                            updateDebugInfo();
+                        },
+                    });
                 }
 
-                updateDebugInfo();
+
             } catch (error) {
                 console.error('Error toggling capa de códigos:', error);
                 showStatusMessage('Error manipulando capa de códigos', 'error');
+            } finally {
+                hideLoader();
+            }
+        }
+
+        function toggleInmueblesLayer() {
+
+            const button = document.getElementById('inmueblesBtn');
+
+            try {
+                if (inmueblesActive) {
+                    // Desactivar capa de códigos
+                    if (codigosLayerInm && map.hasLayer(codigosLayerInm)) {
+                        map.removeLayer(codigosLayerInm);
+                        codigosLayerInm = null
+                        codigosGeoJSONDataInm = {};
+                        console.log('Capa de inmuebles removida del mapa');
+                    }
+                    button.classList.remove('geojson-active');
+                    showStatusMessage('Capa de inmuebles desactivada', 'info');
+                    inmueblesActive = false;
+                    updateDebugInfo();
+                } else {
+
+                    const bounds = map.getBounds()
+                    const zoom = map.getZoom()
+
+                    console.log(`Cargando datos GeoJSON - Zoom: ${zoom}`)
+
+                    isDataLoading = true
+                    showLoader()
+
+                    const sw = bounds.getSouthWest()
+                    const ne = bounds.getNorthEast()
+
+                    // Determinar límite basado en zoom
+                    let pointLimit = 500 // Valor por defecto para zoom 13
+                    if (zoom > 16) {
+                        // Incrementar el límite a medida que aumenta el zoom
+                        pointLimit = 500 + (zoom - 13) * 250
+
+
+                        const url_ = `../php/ufPredialGetGeoJson.php?minLat=${sw.lat}&maxLat=${ne.lat}&minLng=${sw.lng}&maxLng=${ne.lng}&zoom=${zoom}&limit=${pointLimit}&modulo=inmueble`;
+
+                        $.ajax({
+                            async: true,
+                            type: "POST",
+                            dataType: "html",
+                            contentType: "application/x-www-form-urlencoded",
+                            url: url_,
+                            beforeSend: function() {},
+                            success: function(dat) {
+                                console.log("=========togglecodigosLayerInm INMUEBLE============");
+                                dat = JSON.parse(dat)
+
+                                codigosGeoJSONDataInm = dat.data;
+                                console.log(codigosGeoJSONDataInm);
+                                if (!codigosLayerInm) {
+                                    codigosLayerInm = createCodigosLayer(codigosGeoJSONDataInm, 'inmueble');
+                                    if (!codigosLayerInm) {
+                                        showStatusMessage('Error creando capa de códigos', 'error');
+                                        return;
+                                    }
+                                }
+                                if (!map.hasLayer(codigosLayerInm)) {
+                                    map.addLayer(codigosLayerInm);
+                                    console.log('Capa de códigos añadida al mapa');
+                                }
+                                button.classList.add('geojson-active');
+                                showStatusMessage(`Capa de códigos activada (${codigosGeoJSONDataInm.length} puntos)`, 'success');
+                                inmueblesActive = true;
+                                updateDebugInfo();
+                            },
+                        });
+                    } else {
+                        alert("el zoom minimo para ver inmuebles es 16");
+                    }
+                }
+
+            } catch (error) {
+                console.error('Error toggling capa de códigos:', error);
+                showStatusMessage('Error manipulando capa de códigos', 'error');
+            } finally {
+                hideLoader();
             }
         }
 
@@ -1255,67 +1192,6 @@
                 }
             });
         }
-
-        // Función para alternar la capa GeoJSON
-        async function toggleGeoJSONLayer() {
-            const button = document.getElementById('geojsonBtn');
-
-            try {
-                if (geojsonActive) {
-                    // Desactivar capa GeoJSON
-                    if (geojsonLayer && map.hasLayer(geojsonLayer)) {
-                        map.removeLayer(geojsonLayer);
-                        console.log('Capa GeoJSON removida del mapa');
-                    }
-                    button.classList.remove('geojson-active');
-                    showStatusMessage('Capa GeoJSON desactivada', 'info');
-                    geojsonActive = false;
-                } else {
-                    // Activar capa GeoJSON
-                    if (!geojsonData) {
-                        // Cargar datos si no están cargados
-                        geojsonData = await loadGeoJSONData();
-                        if (!geojsonData) {
-                            return; // Error al cargar
-                        }
-                    }
-
-                    if (!geojsonLayer) {
-                        // Crear capa si no existe
-                        geojsonLayer = createGeoJSONLayer(geojsonData);
-                        if (!geojsonLayer) {
-                            showStatusMessage('Error creando capa GeoJSON', 'error');
-                            return;
-                        }
-                    }
-
-                    if (!map.hasLayer(geojsonLayer)) {
-                        map.addLayer(geojsonLayer);
-                        console.log('Capa GeoJSON añadida al mapa');
-
-                        // Ajustar vista a los datos GeoJSON
-                        try {
-                            const bounds = geojsonLayer.getBounds();
-                            if (bounds.isValid()) {
-                                map.fitBounds(bounds.pad(0.1));
-                            }
-                        } catch (boundsError) {
-                            console.warn('No se pudo ajustar la vista a los datos GeoJSON:', boundsError);
-                        }
-                    }
-
-                    button.classList.add('geojson-active');
-                    showStatusMessage('Capa GeoJSON activada', 'success');
-                    geojsonActive = true;
-                }
-
-                updateDebugInfo();
-            } catch (error) {
-                console.error('Error toggling capa GeoJSON:', error);
-                showStatusMessage('Error manipulando capa GeoJSON', 'error');
-            }
-        }
-
         // Función para manejar clicks en el mapa y obtener coordenadas
         function handleMapClick(e) {
             const lat = e.latlng.lat;
@@ -1427,6 +1303,7 @@
                 Marcadores: ${markersCount} | 
                 GeoJSON: ${geojsonActive ? 'ON' : 'OFF'} | 
                 Códigos: ${codigosActive ? 'ON' : 'OFF'} | 
+                Inmuebles: ${inmueblesActive ? 'ON' : 'OFF'} | 
                 Satelital: ${satelitalActive ? 'ON' : 'OFF'} |
                 Oscurecer: ${oscurecerActive ? 'ON' : 'OFF'} |
                 Lat: ${center.lat.toFixed(4)} | 
@@ -2038,14 +1915,12 @@
                     document.getElementById('zoomOutBtn').addEventListener('click', zoomOut);
                     document.getElementById('homeBtn').addEventListener('click', homeBtn);
 
-                    // Event listener para el botón GeoJSON
-                    document.getElementById('geojsonBtn').addEventListener('click', function() {
-                        toggleGeoJSONLayer();
-                    });
-
                     // Event listener para el nuevo botón de códigos
                     document.getElementById('codigosBtn').addEventListener('click', function() {
                         toggleCodigosLayer();
+                    });
+                    document.getElementById('inmueblesBtn').addEventListener('click', function() {
+                        toggleInmueblesLayer();
                     });
 
                     // Event listener para el botón satelital
