@@ -30,7 +30,7 @@ try {
         $filtro .= " and trim(documento_identidad)  like '$documento%' ";
     }
     if ($catastral != '') {
-        $filtro .= " and trim(codigo_catastral)  like '$catastral%' ";
+        $filtro .= " and trim(a.codigo_catastral)  like '$catastral%' ";
     }
 
     $query = "SELECT  distinct

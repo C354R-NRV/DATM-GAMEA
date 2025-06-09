@@ -161,7 +161,6 @@
             background-color: rgba(50, 50, 50, 0.8);
         }
 
-        /* Estilos específicos para botones de capas GeoJSON */
         .control-button.geojson-active {
             background-color: rgba(0, 200, 255, 0.9);
             color: white;
@@ -171,31 +170,6 @@
             background-color: rgba(0, 180, 230, 0.9);
         }
 
-        .control-button.geojson-puntos {
-            background-color: rgba(255, 0, 0, 0.8);
-        }
-
-        .control-button.geojson-puntos.geojson-active {
-            background-color: rgba(255, 0, 0, 0.9);
-        }
-
-        .control-button.geojson-lineas {
-            background-color: rgba(0, 0, 255, 0.8);
-        }
-
-        .control-button.geojson-lineas.geojson-active {
-            background-color: rgba(0, 0, 255, 0.9);
-        }
-
-        .control-button.geojson-poligonos {
-            background-color: rgba(0, 128, 0, 0.8);
-        }
-
-        .control-button.geojson-poligonos.geojson-active {
-            background-color: rgba(0, 128, 0, 0.9);
-        }
-
-        /* Nuevo estilo para la capa de códigos */
         .control-button.geojson-codigos {
             background-color: rgba(255, 165, 0, 0.8);
         }
@@ -348,7 +322,6 @@
             display: none !important;
         }
 
-        /* Debug info */
         .debug-info {
             position: absolute;
             bottom: 10px;
@@ -362,7 +335,6 @@
             font-family: monospace;
         }
 
-        /* Spinner de carga */
         .loader {
             position: absolute;
             top: 50%;
@@ -415,6 +387,98 @@
             color: rgb(255, 255, 255);
             font-weight: bold;
         }
+
+        .leaflet-popup-content {
+            margin: 5px 2px 13px 2px !important;
+        }
+
+        .leaflet-popup-content-wrapper,
+        .leaflet-popup-tip {
+            background: #313030 !important;
+            color: rgb(240, 240, 240) !important;
+            box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
+        }
+
+        .puntoMarca {
+            background-color: #00f3ff;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            box-shadow:
+                0 0 4px #fff,
+                0 0 8px #fff,
+                0 0 12px #17b9c1,
+                0 0 18px #17b9c1,
+                0 0 24px #4cf0f8,
+                0 0 30px #4cf0f8;
+            border: none;
+            animation: pulseAnimation 2s infinite ease-in-out;
+        }
+
+        .pulsing-marker div {
+            animation: pulseAnimation 2.8s infinite ease-in-out;
+        }
+
+        .individual-pulsing-marker .leaflet-marker-icon {
+            animation: pulseAnimation 1.8s infinite ease-in-out;
+            transform-origin: center bottom;
+        }
+
+        .clicked-coordinates-marker {
+            background-color: #ff6b35;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 8px rgba(255, 107, 53, 0.8);
+            animation: pulseAnimation 1.5s infinite ease-in-out;
+        }
+
+        .codigo-marker {
+            background-color: #FFA500;
+            color: black;
+            border: 2px solid white;
+            border-radius: 5%;
+            width: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            animation: pulseAnimation 6s infinite ease-in-out;
+        }
+
+        .codigo-markerInm {
+            background-color: #FFA500;
+            color: black;
+            border: 2px solid white;
+            border-radius: 50%;
+            width: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            animation: pulseAnimation 6s infinite ease-in-out;
+        }
+
+        /* Indicador de carga dinámica */
+        .dynamic-loading-indicator {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background-color: rgba(0, 200, 255, 0.9);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            display: none;
+            animation: pulseAnimation 1s infinite ease-in-out;
+        }
+
+
 
         .card-inmueble {
             max-width: 100%;
@@ -480,88 +544,10 @@
                 font-size: 14px;
             }
         }
-
-        .leaflet-popup-content {
-            margin: 5px 2px 13px 2px !important;
-        }
-
-        .leaflet-popup-content-wrapper,
-        .leaflet-popup-tip {
-            background: #313030 !important;
-            color: rgb(240, 240, 240) !important;
-            box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
-        }
-
-        .puntoMarca {
-            background-color: #00f3ff;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-
-            box-shadow:
-                0 0 4px #fff,
-                0 0 8px #fff,
-                0 0 12px #17b9c1,
-                0 0 18px #17b9c1,
-                0 0 24px #4cf0f8,
-                0 0 30px #4cf0f8;
-
-            border: none;
-
-            animation: pulseAnimation 2s infinite ease-in-out;
-        }
-
-        .pulsing-marker div {
-            animation: pulseAnimation 2.8s infinite ease-in-out;
-        }
-
-        .individual-pulsing-marker .leaflet-marker-icon {
-            animation: pulseAnimation 1.8s infinite ease-in-out;
-            transform-origin: center bottom;
-        }
-
-        .clicked-coordinates-marker {
-            background-color: #ff6b35;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            border: 3px solid white;
-            box-shadow: 0 0 8px rgba(255, 107, 53, 0.8);
-            animation: pulseAnimation 1.5s infinite ease-in-out;
-        }
-
-        .codigo-marker {
-            background-color: #FFA500;
-            color: black;
-            border: 2px solid white;
-            border-radius: 5%;
-            width: 3rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-            animation: pulseAnimation 6s infinite ease-in-out;
-        }
-
-        .codigo-markerInm {
-            background-color: #FFA500;
-            color: black;
-            border: 2px solid white;
-            border-radius: 50%;
-            width: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-            animation: pulseAnimation 6s infinite ease-in-out;
-        }
     </style>
 </head>
 
 <body>
-
     <main>
         <div class="container">
             <div id="map">
@@ -585,12 +571,10 @@
                     <button id="zoomInBtn" class="control-button" title="Acercar" aria-label="Acercar mapa">+</button>
                     <button id="zoomOutBtn" class="control-button" title="Alejar" aria-label="Alejar mapa">−</button>
                     <button id="homeBtn" class="control-button" title="Inicio" aria-label="Volver" style="outline-style: none;">
-
                         <i class="fa fa-arrow-left" aria-hidden="true"></i>
-                    </button> 
+                    </button>
 
-                    <!-- Nuevo botón para la capa de códigos -->
-                    <button id="inmueblesBtn" class="control-button geojson-codigos" title="Mostrar/Ocultar Códigos" aria-label="Capa Códigos">
+                    <button id="inmueblesBtn" class="control-button geojson-codigos" title="Mostrar/Ocultar Inmuebles" aria-label="Capa Inmuebles">
                         <i class="fa fa-home" aria-hidden="true"></i>
                     </button>
 
@@ -598,7 +582,6 @@
                         <i class="fa fa-tags" aria-hidden="true"></i>
                     </button>
 
-                    <!-- Nuevo botón para capa satelital -->
                     <button id="satelitalBtn" class="control-button satelital" title="Mostrar/Ocultar Capa Satelital" aria-label="Capa Satelital" style="outline-style: none;">
                         <i class="fa fa-globe" aria-hidden="true"></i>
                     </button>
@@ -607,19 +590,23 @@
                     </button>
                 </div>
                 <div id="statusMessage" class="status-message" role="alert"></div>
+                <div id="dynamicLoadingIndicator" class="dynamic-loading-indicator">Cargando datos...</div>
                 <div id="loader" class="loader"></div>
                 <div id="debugInfo" class="debug-info"></div>
             </div>
         </div>
     </main>
 
-    <!-- Scripts en orden correcto -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 
     <script>
-        // Verificar que las bibliotecas se cargaron correctamente
+        $(document).ready(function() {
+            toggleDarkOverlay();
+        });
+
+
         console.log('Leaflet version:', L.version);
 
         const map = L.map('map', {
@@ -627,24 +614,49 @@
             maxZoom: 19
         }).setView([-16.5, -68.175], 13);
 
-        // Capa base OpenStreetMap
+        // Capas base
         const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             maxZoom: 19
         }).addTo(map);
 
-        // Capa satelital de ArcGIS
         const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             maxZoom: 19
         }).addTo(map);
 
-        // Datos GeoJSON de códigos (embebidos directamente)
-
-
+        // Variables globales
         let codigosGeoJSONData = {};
         let codigosGeoJSONDataInm = {};
+        let codigosLayer = null;
+        let codigosLayerInm = null;
+        let codigosActive = false;
+        let inmueblesActive = false;
+        let satelitalActive = true;
+        let oscurecerActive = false;
+        let userLocationMarker = null;
+        let clickedCoordinatesMarker = null;
+        let initialMarkerData = [];
+        let allLeafletMarkers = [];
+        let markerClusterGroup;
+        let isDataLoading = false;
+        let isGeoJsonLoading = false;
+        let currentBounds = null;
+        let loadedMarkerIds = new Set();
+        let debounceTimer;
+        let totalMarkersCount = 0;
+        let dynamicLoadingTimer;
 
-        // Definir el polígono de El Alto (coordenadas aproximadas)
+        // Configuración para carga dinámica
+        const DYNAMIC_LOADING_CONFIG = {
+            BATCH_SIZE: 500,
+            BATCH_DELAY: 30,
+            MIN_ZOOM_FOR_LOADING: 10,
+            DEBOUNCE_DELAY: 300,
+            BOUNDS_PADDING: 0.2,
+            MAX_POINTS_PER_REQUEST: 2000
+        };
+
+        // Polígono de El Alto
         const elAltoCoordinates = [
             [-16.570318, -68.223770],
             [-16.573455, -68.206022],
@@ -812,7 +824,6 @@
             [-16.262656, -68.153708],
         ];
 
-        // Crear el polígono oscuro para El Alto
         const darkOverlay = L.polygon(elAltoCoordinates, {
             className: 'dark-overlay',
             fillColor: 'black',
@@ -822,476 +833,47 @@
             dashArray: '5, 5'
         });
 
-        let oscurecerActive = false;
-        let userLocationMarker = null;
-        let clickedCoordinatesMarker = null;
-        let initialMarkerData = [];
-        let allLeafletMarkers = [];
-        let markerClusterGroup;
-        let isDataLoading = false;
-        let currentBounds = null;
-        let loadedMarkerIds = new Set();
-        let debounceTimer;
-        let totalMarkersCount = 0;
-
-        // Variables para capas GeoJSON
-        let geojsonLayer = null;
-        let geojsonData = null;
-        let geojsonActive = false;
-
-        // Variables para la nueva capa de códigos
-        let codigosLayer = null;
-        let codigosLayerInm = null;
-        let codigosActive = false;
-        let inmueblesActive = false;
-
-        // Estado de la capa satelital
-        let satelitalActive = true;
-
-        // Configuración mejorada para carga por lotes
-        const BATCH_SIZE = 500;
-        const BATCH_DELAY = 30;
-        const MIN_ZOOM_FOR_LOADING = 10;
-
-        // Función para crear la capa de códigos GeoJSON
-        function createCodigosLayer(data, modulo) {
-            if (!data) {
-                console.error('Datos de códigos GeoJSON inválidos');
-                return null;
-            }
-
-            return L.geoJSON(data, {
-                pointToLayer: function(feature, latlng) {
-                    // Crear marcador personalizado para códigos
-                    let clase_ = (modulo == 'inmueble' ? 'codigo-markerInm' : 'codigo-marker');
-
-                    const codigoIcon = L.divIcon({
-                        className: 'codigo-marker-container',
-                        html: '<div class="' + clase_ + '">' + feature.properties.Text + '</div>',
-                        iconSize: [24, 24],
-                        iconAnchor: [12, 12]
-                    });
-
-                    return L.marker(latlng, {
-                        icon: codigoIcon
-                    });
-                },
-                onEachFeature: function(feature, layer) {
-                    if (modulo == 'inmueble') {
-                        // Crear popup con información del código
-                        let popupContent = '<div class="popup-content">';
-                        popupContent += '<div class="popup-title">Numero de inmueble catastral</div>';
-                        popupContent += '<div class="popup-description">';
-
-                        // Mostrar el texto principal
-                        if (feature.properties && feature.properties.Text) {
-                            popupContent += `<strong>Código:</strong> ${feature.properties.Text}<br>`;
-                        }
-
-                        // Mostrar coordenadas
-                        const coords = feature.geometry.coordinates;
-
-                        popupContent += '</div></div>';
-
-                        layer.bindPopup(popupContent);
-
-                        // Agregar eventos
-                        layer.on('click', function(e) {
-                            console.log('Click en código:', feature.properties.Text);
-                        });
-                    }
-                }
-            });
+        // Funciones de utilidad
+        function logDebug(message) {
+            console.log(`[DynamicMap] ${message}`);
         }
 
-        // Función para alternar la capa de códigos
-        function toggleCodigosLayer() {
+        function showDynamicLoadingIndicator() {
+            const indicator = document.getElementById('dynamicLoadingIndicator');
+            indicator.style.display = 'block';
 
-            const button = document.getElementById('codigosBtn');
-
-            try {
-                if (codigosActive) {
-                    // Desactivar capa de códigos
-                    if (codigosLayer && map.hasLayer(codigosLayer)) {
-                        map.removeLayer(codigosLayer);
-                        console.log('Capa de códigos removida del mapa');
-                        codigosLayer = null;
-                        codigosGeoJSONData = {};
-                    }
-                    button.classList.remove('geojson-active');
-                    showStatusMessage('Capa de códigos desactivada', 'info');
-                    codigosActive = false;
-                    updateDebugInfo();
-                } else {
-
-                    const bounds = map.getBounds()
-                    const zoom = map.getZoom()
-
-                    console.log(`Cargando datos GeoJSON - Zoom: ${zoom}`)
-
-                    isDataLoading = true
-                    showLoader()
-
-                    const sw = bounds.getSouthWest()
-                    const ne = bounds.getNorthEast()
-
-                    // Determinar límite basado en zoom
-                    let pointLimit = 500 // Valor por defecto para zoom 13
-                    if (zoom > 16) {
-                        // Incrementar el límite a medida que aumenta el zoom
-                        pointLimit = 500 + (zoom - 13) * 250
-                    } else if (zoom < 16) {
-                        // Reducir el límite para zoom menor a 13
-                        pointLimit = Math.max(100, 500 - (13 - zoom) * 100)
-                    }
-
-                    const url_ = `../php/ufPredialGetGeoJson.php?minLat=${sw.lat}&maxLat=${ne.lat}&minLng=${sw.lng}&maxLng=${ne.lng}&zoom=${zoom}&limit=${pointLimit}&modulo=catastro`;
-
-                    $.ajax({
-                        async: true,
-                        type: "POST",
-                        dataType: "html",
-                        contentType: "application/x-www-form-urlencoded",
-                        url: url_,
-                        beforeSend: function() {},
-                        success: function(dat) {
-                            console.log("=========toggleCodigosLayer CATASTRO============");
-                            dat = JSON.parse(dat)
-
-                            codigosGeoJSONData = dat.data;
-                            console.log(codigosGeoJSONData);
-                            if (!codigosLayer) {
-                                codigosLayer = createCodigosLayer(codigosGeoJSONData, 'catastro');
-                                if (!codigosLayer) {
-                                    showStatusMessage('Error creando capa de códigos', 'error');
-                                    return;
-                                }
-                            }
-                            if (!map.hasLayer(codigosLayer)) {
-                                map.addLayer(codigosLayer);
-                                console.log('Capa de códigos añadida al mapa');
-                            }
-                            button.classList.add('geojson-active');
-                            showStatusMessage(`Capa de códigos activada (${codigosGeoJSONData.length} puntos)`, 'success');
-                            codigosActive = true;
-                            updateDebugInfo();
-                        },
-                    });
-                }
-
-
-            } catch (error) {
-                console.error('Error toggling capa de códigos:', error);
-                showStatusMessage('Error manipulando capa de códigos', 'error');
-            } finally {
-                hideLoader();
-            }
+            // Auto-hide después de 3 segundos
+            clearTimeout(dynamicLoadingTimer);
+            dynamicLoadingTimer = setTimeout(() => {
+                indicator.style.display = 'none';
+            }, 3000);
         }
 
-        function toggleInmueblesLayer() {
-
-            const button = document.getElementById('inmueblesBtn');
-
-            try {
-                if (inmueblesActive) {
-                    // Desactivar capa de códigos
-                    if (codigosLayerInm && map.hasLayer(codigosLayerInm)) {
-                        map.removeLayer(codigosLayerInm);
-                        codigosLayerInm = null
-                        codigosGeoJSONDataInm = {};
-                        console.log('Capa de inmuebles removida del mapa');
-                    }
-                    button.classList.remove('geojson-active');
-                    showStatusMessage('Capa de inmuebles desactivada', 'info');
-                    inmueblesActive = false;
-                    updateDebugInfo();
-                } else {
-
-                    const bounds = map.getBounds()
-                    const zoom = map.getZoom()
-
-                    console.log(`Cargando datos GeoJSON - Zoom: ${zoom}`)
-
-                    isDataLoading = true
-                    showLoader()
-
-                    const sw = bounds.getSouthWest()
-                    const ne = bounds.getNorthEast()
-
-                    // Determinar límite basado en zoom
-                    let pointLimit = 500 // Valor por defecto para zoom 13
-                    if (zoom > 16) {
-                        // Incrementar el límite a medida que aumenta el zoom
-                        pointLimit = 500 + (zoom - 13) * 250
-
-
-                        const url_ = `../php/ufPredialGetGeoJson.php?minLat=${sw.lat}&maxLat=${ne.lat}&minLng=${sw.lng}&maxLng=${ne.lng}&zoom=${zoom}&limit=${pointLimit}&modulo=inmueble`;
-
-                        $.ajax({
-                            async: true,
-                            type: "POST",
-                            dataType: "html",
-                            contentType: "application/x-www-form-urlencoded",
-                            url: url_,
-                            beforeSend: function() {},
-                            success: function(dat) {
-                                console.log("=========togglecodigosLayerInm INMUEBLE============");
-                                dat = JSON.parse(dat)
-
-                                codigosGeoJSONDataInm = dat.data;
-                                console.log(codigosGeoJSONDataInm);
-                                if (!codigosLayerInm) {
-                                    codigosLayerInm = createCodigosLayer(codigosGeoJSONDataInm, 'inmueble');
-                                    if (!codigosLayerInm) {
-                                        showStatusMessage('Error creando capa de códigos', 'error');
-                                        return;
-                                    }
-                                }
-                                if (!map.hasLayer(codigosLayerInm)) {
-                                    map.addLayer(codigosLayerInm);
-                                    console.log('Capa de códigos añadida al mapa');
-                                }
-                                button.classList.add('geojson-active');
-                                showStatusMessage(`Capa de códigos activada (${codigosGeoJSONDataInm.length} puntos)`, 'success');
-                                inmueblesActive = true;
-                                updateDebugInfo();
-                            },
-                        });
-                    } else {
-                        alert("el zoom minimo para ver inmuebles es 16");
-                    }
-                }
-
-            } catch (error) {
-                console.error('Error toggling capa de códigos:', error);
-                showStatusMessage('Error manipulando capa de códigos', 'error');
-            } finally {
-                hideLoader();
-            }
+        function hideDynamicLoadingIndicator() {
+            const indicator = document.getElementById('dynamicLoadingIndicator');
+            indicator.style.display = 'none';
+            clearTimeout(dynamicLoadingTimer);
         }
 
-        // Función para cargar archivo GeoJSON
-        async function loadGeoJSONData() {
-            try {
-                showStatusMessage('Cargando datos GeoJSON...', 'info');
-                showLoader();
+        function showStatusMessage(message, type = 'info') {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.textContent = message;
+            statusDiv.className = `status-message ${type}`;
+            statusDiv.style.display = 'block';
 
-                // Intentar cargar el archivo GeoJSON
-                const response = await fetch('../static/geojson/cod_elalto2.geojson');
-
-                if (!response.ok) {
-                    throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
-                }
-
-                const data = await response.json();
-
-                if (!data || !data.features) {
-                    throw new Error('Archivo GeoJSON inválido o sin features');
-                }
-
-                geojsonData = data;
-                console.log('Datos GeoJSON cargados:', data);
-                console.log('Número de features:', data.features.length);
-
-                showStatusMessage(`GeoJSON cargado: ${data.features.length} features`, 'success');
-                return data;
-
-            } catch (error) {
-                console.error('Error cargando GeoJSON:', error);
-                showStatusMessage(`Error cargando GeoJSON: ${error.message}`, 'error');
-                return null;
-            } finally {
-                hideLoader();
-            }
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 4000);
         }
 
-        // Función para crear la capa GeoJSON con estilos
-        function createGeoJSONLayer(data) {
-            if (!data || !data.features) {
-                console.error('Datos GeoJSON inválidos');
-                return null;
-            }
-
-            return L.geoJSON(data, {
-                style: function(feature) {
-                    // Estilos basados en el tipo de geometría
-                    const geometryType = feature.geometry.type;
-
-                    switch (geometryType) {
-                        case 'Point':
-                        case 'MultiPoint':
-                            return {
-                                radius: 6,
-                                    fillColor: '#ff0000',
-                                    color: '#ff3333',
-                                    weight: 2,
-                                    opacity: 0.9,
-                                    fillOpacity: 0.7
-                            };
-                        case 'LineString':
-                        case 'MultiLineString':
-                            return {
-                                color: '#0000ff',
-                                    weight: 3,
-                                    opacity: 0.8,
-                                    dashArray: '5, 5'
-                            };
-                        case 'Polygon':
-                        case 'MultiPolygon':
-                            return {
-                                color: '#008000',
-                                    weight: 2,
-                                    opacity: 0.8,
-                                    fillColor: '#4CAF50',
-                                    fillOpacity: 0.3
-                            };
-                        default:
-                            return {
-                                color: '#666666',
-                                    weight: 2,
-                                    opacity: 0.7
-                            };
-                    }
-                },
-                pointToLayer: function(feature, latlng) {
-                    // Para puntos, crear marcadores circulares
-                    return L.circleMarker(latlng, {
-                        radius: 6,
-                        fillColor: '#ff0000',
-                        color: '#ff3333',
-                        weight: 2,
-                        opacity: 0.9,
-                        fillOpacity: 0.7
-                    });
-                },
-                onEachFeature: function(feature, layer) {
-                    // Agregar popup con información de la feature
-                    let popupContent = '<div class="popup-content">';
-                    popupContent += '<div class="popup-title">Feature GeoJSON</div>';
-                    popupContent += '<div class="popup-description">';
-
-                    // Mostrar propiedades de la feature
-                    if (feature.properties) {
-                        Object.keys(feature.properties).forEach(key => {
-                            const value = feature.properties[key];
-                            if (value !== null && value !== undefined && value !== '') {
-                                popupContent += `<strong>${key}:</strong> ${value}<br>`;
-                            }
-                        });
-                    }
-
-                    popupContent += `<strong>Tipo:</strong> ${feature.geometry.type}<br>`;
-                    popupContent += '</div></div>';
-
-                    layer.bindPopup(popupContent);
-
-                    // Agregar eventos
-                    layer.on('click', function(e) {
-                        console.log('Click en feature GeoJSON:', feature);
-                    });
-                }
-            });
-        }
-        // Función para manejar clicks en el mapa y obtener coordenadas
-        function handleMapClick(e) {
-            const lat = e.latlng.lat;
-            const lng = e.latlng.lng;
-
-            // Formatear las coordenadas con 6 decimales
-            const formattedCoordinates = `Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`;
-            const coordinatesArray = `[${lat.toFixed(6)}, ${lng.toFixed(6)}]`;
-
-            // Mostrar las coordenadas en el input de búsqueda
-            const searchInput = document.getElementById('searchInput');
-            searchInput.value = formattedCoordinates;
-
-            // Copiar coordenadas al portapapeles
-            copyToClipboard(coordinatesArray);
-
-            // Remover marcador anterior si existe
-            if (clickedCoordinatesMarker) {
-                map.removeLayer(clickedCoordinatesMarker);
-            }
-
-            // Crear un marcador en el punto clickeado
-            const clickedIcon = L.divIcon({
-                className: 'clicked-coordinates-marker-container',
-                html: '<div class="clicked-coordinates-marker"></div>',
-                iconSize: [20, 20],
-                iconAnchor: [10, 10]
-            });
-
-            clickedCoordinatesMarker = L.marker([lat, lng], {
-                icon: clickedIcon
-            }).addTo(map);
-
-            // Crear popup con las coordenadas
-            const popupContent = `
-                <div class="popup-content">
-                    <div class="popup-title">Coordenadas Seleccionadas</div>
-                    <div class="popup-description">
-                        <strong>[${lat.toFixed(6)}, ${lng.toFixed(6)}]</strong><br>
-                        <small style="color: #00C8FF;">✓ Copiado al portapapeles</small>
-                    </div>
-                </div>
-            `;
-
-            clickedCoordinatesMarker.bindPopup(popupContent).openPopup();
-
-            // Mostrar mensaje de confirmación
-            showStatusMessage('Coordenadas obtenidas y copiadas al portapapeles', 'success');
-
-            // Log para debug
-            console.log('Coordenadas clickeadas:', {
-                lat,
-                lng
-            });
-            console.log('Coordenadas copiadas:', coordinatesArray);
+        function showLoader() {
+            document.getElementById('loader').style.display = 'block';
         }
 
-        // Función para copiar texto al portapapeles
-        function copyToClipboard(text) {
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(text).then(() => {
-                    console.log('Coordenadas copiadas al portapapeles:', text);
-                }).catch(err => {
-                    console.error('Error al copiar al portapapeles:', err);
-                    fallbackCopyToClipboard(text);
-                });
-            } else {
-                fallbackCopyToClipboard(text);
-            }
+        function hideLoader() {
+            document.getElementById('loader').style.display = 'none';
         }
 
-        // Función fallback para copiar al portapapeles
-        function fallbackCopyToClipboard(text) {
-            try {
-                const textArea = document.createElement('textarea');
-                textArea.value = text;
-                textArea.style.position = 'fixed';
-                textArea.style.left = '-999999px';
-                textArea.style.top = '-999999px';
-                document.body.appendChild(textArea);
-
-                textArea.focus();
-                textArea.select();
-
-                const successful = document.execCommand('copy');
-                document.body.removeChild(textArea);
-
-                if (successful) {
-                    console.log('Coordenadas copiadas al portapapeles (fallback):', text);
-                } else {
-                    console.error('Error al copiar al portapapeles con método fallback');
-                    showStatusMessage('Error al copiar coordenadas al portapapeles', 'error');
-                }
-            } catch (err) {
-                console.error('Error en fallback de copia:', err);
-                showStatusMessage('Error al copiar coordenadas al portapapeles', 'error');
-            }
-        }
-
-        // Debug info
         function updateDebugInfo() {
             const debugDiv = document.getElementById('debugInfo');
             const zoom = map.getZoom();
@@ -1301,7 +883,6 @@
             debugDiv.innerHTML = `
                 Zoom: ${zoom} | 
                 Marcadores: ${markersCount} | 
-                GeoJSON: ${geojsonActive ? 'ON' : 'OFF'} | 
                 Códigos: ${codigosActive ? 'ON' : 'OFF'} | 
                 Inmuebles: ${inmueblesActive ? 'ON' : 'OFF'} | 
                 Satelital: ${satelitalActive ? 'ON' : 'OFF'} |
@@ -1311,183 +892,16 @@
             `;
         }
 
-        function toggleDarkOverlay() {
-            const button = document.getElementById('oscurecerBtn');
-
-            try {
-                if (oscurecerActive) {
-                    if (map.hasLayer(darkOverlay)) {
-                        map.removeLayer(darkOverlay);
-                        console.log('Capa oscura removida del mapa');
-                    }
-                    button.classList.remove('geojson-active');
-                    showStatusMessage('Oscurecimiento desactivado', 'info');
-                    oscurecerActive = false;
-                } else {
-                    if (!map.hasLayer(darkOverlay)) {
-                        map.addLayer(darkOverlay);
-                        console.log('Capa oscura añadida al mapa');
-                    }
-                    button.classList.add('geojson-active');
-                    showStatusMessage('Oscurecimiento activado', 'success');
-                    oscurecerActive = true;
-                }
-
-                updateDebugInfo();
-            } catch (error) {
-                console.error('Error toggling capa oscura:', error);
-                showStatusMessage('Error manipulando capa oscura', 'error');
-            }
-        }
-
-        // Función para alternar la capa satelital
-        function toggleSatelliteLayer() {
-            const button = document.getElementById('satelitalBtn');
-
-            try {
-                if (satelitalActive) {
-                    if (map.hasLayer(satelliteLayer)) {
-                        map.removeLayer(satelliteLayer);
-                        console.log('Capa satelital removida del mapa');
-                    }
-                    button.classList.remove('geojson-active');
-                    showStatusMessage('Capa satelital desactivada', 'info');
-                    satelitalActive = false;
-                } else {
-                    if (!map.hasLayer(satelliteLayer)) {
-                        map.addLayer(satelliteLayer);
-                        console.log('Capa satelital añadida al mapa');
-                    }
-                    button.classList.add('geojson-active');
-                    showStatusMessage('Capa satelital activada', 'success');
-                    satelitalActive = true;
-                }
-
-                updateDebugInfo();
-            } catch (error) {
-                console.error('Error toggling capa satelital:', error);
-                showStatusMessage('Error manipulando capa satelital', 'error');
-            }
-        }
-
-        function initializeMarkers() {
-            if (!window.map) {
-                console.error("Map not initialized");
-                return;
-            }
-
-            try {
-                if (markerClusterGroup) {
-                    map.removeLayer(markerClusterGroup);
-                }
-
-                markerClusterGroup = L.markerClusterGroup({
-                    chunkedLoading: true,
-                    chunkInterval: 50,
-                    chunkDelay: 25,
-                    maxClusterRadius: function(zoom) {
-                        return zoom < 15 ? 80 : 40;
-                    },
-                    spiderfyOnMaxZoom: true,
-                    showCoverageOnHover: false,
-                    zoomToBoundsOnClick: true,
-                    disableClusteringAtZoom: 18
-                });
-
-                console.log("MarkerClusterGroup initialized:", markerClusterGroup);
-
-                if (initialMarkerData.length > 0) {
-                    processMarkersInBatches(initialMarkerData, 0);
-                } else {
-                    map.addLayer(markerClusterGroup);
-                    hideLoader();
-                }
-            } catch (error) {
-                console.error("Error initializing markers:", error);
-                showStatusMessage("Error al inicializar marcadores", "error");
-                hideLoader();
-            }
-        }
-
-        function processMarkersInBatches(data, startIndex) {
-            try {
-                if (!markerClusterGroup) {
-                    console.error("markerClusterGroup is undefined");
-                    showStatusMessage("Error: Grupo de marcadores no inicializado", "error");
-                    hideLoader();
-                    return;
-                }
-
-                const endIndex = Math.min(startIndex + BATCH_SIZE, data.length);
-                const currentBatch = data.slice(startIndex, endIndex);
-
-                const batchMarkers = currentBatch.map(item => {
-                    if (loadedMarkerIds.has(item.id)) {
-                        return null;
-                    }
-
-                    loadedMarkerIds.add(item.id);
-
-                    const pulsingIcon = L.divIcon({
-                        className: 'pulsing-marker',
-                        html: '<div class="puntoMarca"></div>',
-                        iconSize: [16, 16],
-                        iconAnchor: [8, 8]
-                    });
-
-                    const marker = L.marker(item.position, {
-                        icon: pulsingIcon,
-                        className: 'individual-pulsing-marker'
-                    }).bindPopup(item.html);
-
-                    marker.originalData = {
-                        id: item.id,
-                        title: item.title || '',
-                        nombre_razon: item.nombre_razon || '',
-                        codigo_catastral: item.codigo_catastral || '',
-                        numero_inmueble: item.numero_inmueble || '',
-                        description: item.description || '',
-                        type: item.numero_inmueble || '',
-                        position: item.position,
-                        html: item.html
-                    };
-
-                    return marker;
-                }).filter(marker => marker !== null);
-
-                if (batchMarkers.length > 0) {
-                    markerClusterGroup.addLayers(batchMarkers);
-                    allLeafletMarkers = allLeafletMarkers.concat(batchMarkers);
-                }
-
-                if (endIndex < data.length) {
-                    setTimeout(() => {
-                        processMarkersInBatches(data, endIndex);
-                    }, BATCH_DELAY);
-                } else {
-                    if (!map.hasLayer(markerClusterGroup)) {
-                        map.addLayer(markerClusterGroup);
-                    }
-                    updateResultsCount(allLeafletMarkers.length, totalMarkersCount);
-                    updateDebugInfo();
-                    hideLoader();
-                }
-            } catch (error) {
-                console.error("Error processing markers batch:", error);
-                showStatusMessage("Error procesando marcadores", "error");
-                hideLoader();
-            }
-        }
-
+        // Función para cargar marcadores desde la base de datos
         function loadMarkersInViewport() {
             if (isDataLoading) return;
 
             const bounds = map.getBounds();
             const zoom = map.getZoom();
 
-            console.log(`Intentando cargar marcadores - Zoom: ${zoom}, Min requerido: ${MIN_ZOOM_FOR_LOADING}`);
+            console.log(`Intentando cargar marcadores - Zoom: ${zoom}, Min requerido: ${DYNAMIC_LOADING_CONFIG.MIN_ZOOM_FOR_LOADING}`);
 
-            if (zoom < MIN_ZOOM_FOR_LOADING) {
+            if (zoom < DYNAMIC_LOADING_CONFIG.MIN_ZOOM_FOR_LOADING) {
                 console.log('Zoom insuficiente para cargar marcadores');
                 return;
             }
@@ -1500,13 +914,13 @@
             isDataLoading = true;
             showLoader();
 
-            const expandedBounds = bounds.pad(0.2);
+            const expandedBounds = bounds.pad(DYNAMIC_LOADING_CONFIG.BOUNDS_PADDING);
             currentBounds = expandedBounds;
 
             const sw = expandedBounds.getSouthWest();
             const ne = expandedBounds.getNorthEast();
 
-            const url = `../php/ufPuntosGet.php?minLat=${sw.lat}&maxLat=${ne.lat}&minLng=${sw.lng}&maxLng=${ne.lng}&zoom=${zoom}&limit=2000`;
+            const url = `../php/ufPuntosGet.php?minLat=${sw.lat}&maxLat=${ne.lat}&minLng=${sw.lng}&maxLng=${ne.lng}&zoom=${zoom}&limit=${DYNAMIC_LOADING_CONFIG.MAX_POINTS_PER_REQUEST}`;
 
             console.log('Cargando datos desde:', url);
 
@@ -1583,6 +997,118 @@
                 });
         }
 
+        // Función para inicializar marcadores
+        function initializeMarkers() {
+            if (!window.map) {
+                console.error("Map not initialized");
+                return;
+            }
+
+            try {
+                if (markerClusterGroup) {
+                    map.removeLayer(markerClusterGroup);
+                }
+
+                markerClusterGroup = L.markerClusterGroup({
+                    chunkedLoading: true,
+                    chunkInterval: 50,
+                    chunkDelay: 25,
+                    maxClusterRadius: function(zoom) {
+                        return zoom < 15 ? 80 : 40;
+                    },
+                    spiderfyOnMaxZoom: true,
+                    showCoverageOnHover: false,
+                    zoomToBoundsOnClick: true,
+                    disableClusteringAtZoom: 18
+                });
+
+                console.log("MarkerClusterGroup initialized:", markerClusterGroup);
+
+                if (initialMarkerData.length > 0) {
+                    processMarkersInBatches(initialMarkerData, 0);
+                } else {
+                    map.addLayer(markerClusterGroup);
+                    hideLoader();
+                }
+            } catch (error) {
+                console.error("Error initializing markers:", error);
+                showStatusMessage("Error al inicializar marcadores", "error");
+                hideLoader();
+            }
+        }
+
+        // Función para procesar marcadores en lotes
+        function processMarkersInBatches(data, startIndex) {
+            try {
+                if (!markerClusterGroup) {
+                    console.error("markerClusterGroup is undefined");
+                    showStatusMessage("Error: Grupo de marcadores no inicializado", "error");
+                    hideLoader();
+                    return;
+                }
+
+                const endIndex = Math.min(startIndex + DYNAMIC_LOADING_CONFIG.BATCH_SIZE, data.length);
+                const currentBatch = data.slice(startIndex, endIndex);
+
+                const batchMarkers = currentBatch.map(item => {
+                    if (loadedMarkerIds.has(item.id)) {
+                        return null;
+                    }
+
+                    loadedMarkerIds.add(item.id);
+
+                    const pulsingIcon = L.divIcon({
+                        className: 'pulsing-marker',
+                        html: '<div class="puntoMarca"></div>',
+                        iconSize: [16, 16],
+                        iconAnchor: [8, 8]
+                    });
+
+                    const marker = L.marker(item.position, {
+                        icon: pulsingIcon,
+                        className: 'individual-pulsing-marker'
+                    }).bindPopup(item.html);
+
+                    marker.originalData = {
+                        id: item.id,
+                        title: item.title || '',
+                        nombre_razon: item.nombre_razon || '',
+                        codigo_catastral: item.codigo_catastral || '',
+                        numero_inmueble: item.numero_inmueble || '',
+                        description: item.description || '',
+                        type: item.numero_inmueble || '',
+                        position: item.position,
+                        html: item.html
+                    };
+
+                    return marker;
+                }).filter(marker => marker !== null);
+
+                if (batchMarkers.length > 0) {
+                    markerClusterGroup.addLayers(batchMarkers);
+                    allLeafletMarkers = allLeafletMarkers.concat(batchMarkers);
+                }
+
+                if (endIndex < data.length) {
+                    setTimeout(() => {
+                        processMarkersInBatches(data, endIndex);
+                    }, DYNAMIC_LOADING_CONFIG.BATCH_DELAY);
+                } else {
+                    if (!map.hasLayer(markerClusterGroup)) {
+                        map.addLayer(markerClusterGroup);
+                    }
+                    updateResultsCount(allLeafletMarkers.length, totalMarkersCount);
+                    updateDebugInfo();
+                    hideLoader();
+                }
+            } catch (error) {
+                console.error("Error processing markers batch:", error);
+                showStatusMessage("Error procesando marcadores", "error");
+                hideLoader();
+            }
+        }
+
+        // Función para filtrar marcadores
         function filterMarkers(searchTerm) {
             const term = searchTerm.toLowerCase().trim();
             let visibleCount = 0;
@@ -1647,6 +1173,7 @@
             }, 25);
         }
 
+        // Función para mostrar todos los marcadores
         function showAllMarkers() {
             if (!markerClusterGroup) return;
 
@@ -1678,6 +1205,7 @@
             }, 25);
         }
 
+        // Función para actualizar contador de resultados
         function updateResultsCount(count, total) {
             const resultsElement = document.getElementById('resultsCount');
             if (total === undefined) total = totalMarkersCount || allLeafletMarkers.length;
@@ -1689,6 +1217,7 @@
             }
         }
 
+        // Función para limpiar búsqueda
         function clearSearch() {
             const searchInput = document.getElementById('searchInput');
             searchInput.value = '';
@@ -1702,6 +1231,7 @@
             searchInput.focus();
         }
 
+        // Función para ajustar el mapa a los marcadores visibles
         function fitMapToVisibleMarkers() {
             if (markerClusterGroup && markerClusterGroup.getLayers().length > 0) {
                 const bounds = markerClusterGroup.getBounds();
@@ -1732,23 +1262,299 @@
             }
         }
 
-        function showStatusMessage(message, type = 'info') {
-            const statusDiv = document.getElementById('statusMessage');
-            statusDiv.textContent = message;
-            statusDiv.className = `status-message ${type}`;
-            statusDiv.style.display = 'block';
+        // Función mejorada para carga dinámica de datos GeoJSON
+        function loadGeoJSONDataDynamically(modulo, forceReload = false) {
+            if (isGeoJsonLoading && !forceReload) {
+                logDebug('Ya hay una carga de GeoJSON en progreso, saltando...');
+                return Promise.resolve();
+            }
 
-            setTimeout(() => {
-                statusDiv.style.display = 'none';
-            }, 4000);
+            const bounds = map.getBounds();
+            const zoom = map.getZoom();
+
+            logDebug(`Cargando datos GeoJSON dinámicamente - Módulo: ${modulo}, Zoom: ${zoom}`);
+
+            // Verificar zoom mínimo para inmuebles
+            if (modulo === 'inmueble' && zoom < 16) {
+                showStatusMessage('Zoom mínimo para ver inmuebles es 16', 'info');
+                return Promise.resolve();
+            }
+
+            isGeoJsonLoading = true;
+            showDynamicLoadingIndicator();
+
+            const sw = bounds.getSouthWest();
+            const ne = bounds.getNorthEast();
+
+            // Determinar límite basado en zoom
+            let pointLimit = DYNAMIC_LOADING_CONFIG.MAX_POINTS_PER_REQUEST;
+            if (zoom > 16) {
+                pointLimit = Math.min(pointLimit + (zoom - 16) * 250, 5000);
+            } else if (zoom < 13) {
+                pointLimit = Math.max(100, pointLimit - (13 - zoom) * 100);
+            }
+
+            const url = `../php/ufPredialGetGeoJson.php?minLat=${sw.lat}&maxLat=${ne.lat}&minLng=${sw.lng}&maxLng=${ne.lng}&zoom=${zoom}&limit=${pointLimit}&modulo=${modulo}`;
+
+            return fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    logDebug(`Datos recibidos para ${modulo}:`, data);
+
+                    if (data.data && Array.isArray(data.data)) {
+                        // Actualizar datos según el módulo
+                        if (modulo === 'catastro') {
+                            codigosGeoJSONData = data.data;
+                            updateCodigosLayer();
+                            console.log("updateCodigosLayer");
+                        } else if (modulo === 'inmueble') {
+                            codigosGeoJSONDataInm = data.data;
+                            updateInmueblesLayer();
+                            console.log("updateInmueblesLayer");
+                        }
+
+                        // Mostrar información de tiles cargados si está disponible
+                        if (data.meta && data.meta.loadedTiles) {
+                            const tilesInfo = data.meta.loadedTiles.map(tile =>
+                                `${tile.tileKey}: ${tile.totalFeaturesLoaded}/${tile.totalFeaturesInTile}`
+                            ).join(', ');
+                            logDebug(`Tiles cargados: ${tilesInfo}`);
+                        }
+
+                        showStatusMessage(
+                            `${modulo === 'catastro' ? 'Códigos' : 'Inmuebles'} actualizados: ${data.data.length} puntos`,
+                            'success'
+                        );
+                    } else {
+                        throw new Error('Formato de datos inválido');
+                    }
+                })
+                .catch(error => {
+                    console.error(`Error cargando datos de ${modulo}:`, error);
+                    showStatusMessage(`Error cargando ${modulo}: ${error.message}`, 'error');
+                })
+                .finally(() => {
+                    isGeoJsonLoading = false;
+                    hideDynamicLoadingIndicator();
+                    updateDebugInfo();
+                });
         }
 
-        function showLoader() {
-            document.getElementById('loader').style.display = 'block';
+        // Función para crear capa de códigos GeoJSON
+        function createCodigosLayer(data, modulo) {
+            if (!data || !Array.isArray(data)) {
+                console.error('Datos de códigos GeoJSON inválidos');
+                return null;
+            }
+
+            // Convertir array de features a formato GeoJSON
+            const geojsonData = {
+                type: "FeatureCollection",
+                features: data
+            };
+
+            return L.geoJSON(geojsonData, {
+                pointToLayer: function(feature, latlng) {
+                    let clase_ = (modulo === 'inmueble' ? 'codigo-markerInm' : 'codigo-marker');
+
+                    const codigoIcon = L.divIcon({
+                        className: 'codigo-marker-container',
+                        html: '<div class="' + clase_ + '">' + feature.properties.Text + '</div>',
+                        iconSize: [24, 24],
+                        iconAnchor: [12, 12]
+                    });
+
+                    return L.marker(latlng, {
+                        icon: codigoIcon
+                    });
+                },
+                onEachFeature: function(feature, layer) {
+                    if (modulo === 'inmueble') {
+                        let popupContent = '<div class="popup-content">';
+                        popupContent += '<div class="popup-title">Número de inmueble catastral</div>';
+                        popupContent += '<div class="popup-description">';
+
+                        if (feature.properties && feature.properties.Text) {
+                            popupContent += `<strong>Código:</strong> ${feature.properties.Text}<br>`;
+                        }
+
+                        popupContent += '</div></div>';
+                        layer.bindPopup(popupContent);
+                    }
+                }
+            });
         }
 
-        function hideLoader() {
-            document.getElementById('loader').style.display = 'none';
+        // Funciones para actualizar capas
+        function updateCodigosLayer() {
+            if (codigosActive && codigosGeoJSONData.length > 0) {
+                // Remover capa anterior si existe
+                if (codigosLayer && map.hasLayer(codigosLayer)) {
+                    map.removeLayer(codigosLayer);
+                }
+
+                // Crear nueva capa
+                codigosLayer = createCodigosLayer(codigosGeoJSONData, 'catastro');
+                if (codigosLayer) {
+                    map.addLayer(codigosLayer);
+                    logDebug(`Capa de códigos actualizada: ${codigosGeoJSONData.length} puntos`);
+                }
+            }
+        }
+
+        function updateInmueblesLayer() {
+            if (inmueblesActive && codigosGeoJSONDataInm.length > 0) {
+                // Remover capa anterior si existe
+                if (codigosLayerInm && map.hasLayer(codigosLayerInm)) {
+                    map.removeLayer(codigosLayerInm);
+                }
+
+                // Crear nueva capa
+                codigosLayerInm = createCodigosLayer(codigosGeoJSONDataInm, 'inmueble');
+                if (codigosLayerInm) {
+                    map.addLayer(codigosLayerInm);
+                    logDebug(`Capa de inmuebles actualizada: ${codigosGeoJSONDataInm.length} puntos`);
+                }
+            }
+        }
+
+        // Función para alternar capa de códigos con carga dinámica
+        function toggleCodigosLayer() {
+            const button = document.getElementById('codigosBtn');
+
+            if (codigosActive) {
+                // Desactivar capa
+                if (codigosLayer && map.hasLayer(codigosLayer)) {
+                    map.removeLayer(codigosLayer);
+                    codigosLayer = null;
+                    codigosGeoJSONData = [];
+                }
+                button.classList.remove('geojson-active');
+                showStatusMessage('Capa de códigos desactivada', 'info');
+                codigosActive = false;
+            } else {
+                // Activar capa
+                codigosActive = true;
+                button.classList.add('geojson-active');
+                loadGeoJSONDataDynamically('catastro', true);
+            }
+
+            updateDebugInfo();
+        }
+
+        // Función para alternar capa de inmuebles con carga dinámica
+        function toggleInmueblesLayer() {
+            const button = document.getElementById('inmueblesBtn');
+
+            if (inmueblesActive) {
+                // Desactivar capa
+                if (codigosLayerInm && map.hasLayer(codigosLayerInm)) {
+                    map.removeLayer(codigosLayerInm);
+                    codigosLayerInm = null;
+                    codigosGeoJSONDataInm = [];
+                }
+                button.classList.remove('geojson-active');
+                showStatusMessage('Capa de inmuebles desactivada', 'info');
+                inmueblesActive = false;
+            } else {
+                // Activar capa
+                const zoom = map.getZoom();
+                if (zoom < 16) {
+                    showStatusMessage('El zoom mínimo para ver inmuebles es 16', 'error');
+                    return;
+                }
+
+                inmueblesActive = true;
+                button.classList.add('geojson-active');
+                loadGeoJSONDataDynamically('inmueble', true);
+            }
+
+            updateDebugInfo();
+        }
+
+        // Función para manejar movimiento del mapa con carga dinámica
+        function handleMapMovement() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                logDebug('Mapa movido, verificando si necesita cargar datos...');
+
+                // Cargar marcadores desde la base de datos
+                loadMarkersInViewport();
+
+                // Cargar datos para capas GeoJSON activas
+                const promises = [];
+
+                if (codigosActive) {
+                    logDebug(' ============ Mapa movido codigosActive ==================');
+                    promises.push(loadGeoJSONDataDynamically('catastro'));
+                }
+
+                if (inmueblesActive) {
+                    const zoom = map.getZoom();
+                    if (zoom >= 16) {
+                        logDebug(' ============ Mapa movido inmueblesActive ==================');
+                        promises.push(loadGeoJSONDataDynamically('inmueble'));
+                    } else {
+                        logDebug('Zoom insuficiente para cargar inmuebles');
+                    }
+                }
+
+                // Actualizar debug info después de todas las cargas
+                Promise.all(promises).then(() => {
+                    updateDebugInfo();
+                });
+
+            }, DYNAMIC_LOADING_CONFIG.DEBOUNCE_DELAY);
+        }
+
+        // Funciones de control del mapa
+        function toggleSatelliteLayer() {
+            const button = document.getElementById('satelitalBtn');
+
+            if (satelitalActive) {
+                if (map.hasLayer(satelliteLayer)) {
+                    map.removeLayer(satelliteLayer);
+                }
+                button.classList.remove('geojson-active');
+                showStatusMessage('Capa satelital desactivada', 'info');
+                satelitalActive = false;
+            } else {
+                if (!map.hasLayer(satelliteLayer)) {
+                    map.addLayer(satelliteLayer);
+                }
+                button.classList.add('geojson-active');
+                showStatusMessage('Capa satelital activada', 'success');
+                satelitalActive = true;
+            }
+
+            updateDebugInfo();
+        }
+
+        function toggleDarkOverlay() {
+            const button = document.getElementById('oscurecerBtn');
+
+            if (oscurecerActive) {
+                if (map.hasLayer(darkOverlay)) {
+                    map.removeLayer(darkOverlay);
+                }
+                button.classList.remove('geojson-active');
+                showStatusMessage('Oscurecimiento desactivado', 'info');
+                oscurecerActive = false;
+            } else {
+                if (!map.hasLayer(darkOverlay)) {
+                    map.addLayer(darkOverlay);
+                }
+                button.classList.add('geojson-active');
+                showStatusMessage('Oscurecimiento activado', 'success');
+                oscurecerActive = true;
+            }
+
+            updateDebugInfo();
         }
 
         function getUserLocation() {
@@ -1788,9 +1594,9 @@
                         icon: userIcon
                     }).addTo(map);
 
-                    const userPopupContent =
-                        `<div class="popup-content">
-                            <div class="popup-title">Tu estas acá</div> 
+                    const userPopupContent = `
+                        <div class="popup-content">
+                            <div class="popup-title">Tu estás acá</div> 
                         </div>`;
                     userLocationMarker.bindPopup(userPopupContent).openPopup();
                     map.setView([lat, lng], 16);
@@ -1831,123 +1637,131 @@
         }
 
         function homeBtn() {
-            window.location.href = "ufPredialList.php"
+            window.location.href = "ufPredialList.php";
         }
 
-        function initializeApp() {
-            showStatusMessage('Inicializando aplicación...', 'info');
-            showLoader();
+        // Función para manejar clicks en el mapa y obtener coordenadas
+        function handleMapClick(e) {
+            const lat = e.latlng.lat;
+            const lng = e.latlng.lng;
 
-            try {
-                markerClusterGroup = L.markerClusterGroup({
-                    chunkedLoading: true,
-                    chunkInterval: 50,
-                    chunkDelay: 25,
-                    maxClusterRadius: function(zoom) {
-                        return zoom < 15 ? 80 : 40;
-                    },
-                    spiderfyOnMaxZoom: true,
-                    showCoverageOnHover: false,
-                    zoomToBoundsOnClick: true,
-                    disableClusteringAtZoom: 18
+            // Formatear las coordenadas con 6 decimales
+            const formattedCoordinates = `Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`;
+            const coordinatesArray = `[${lat.toFixed(6)}, ${lng.toFixed(6)}]`;
+
+            // Mostrar las coordenadas en el input de búsqueda
+            const searchInput = document.getElementById('searchInput');
+            searchInput.value = formattedCoordinates;
+
+            // Copiar coordenadas al portapapeles
+            copyToClipboard(coordinatesArray);
+
+            // Remover marcador anterior si existe
+            if (clickedCoordinatesMarker) {
+                map.removeLayer(clickedCoordinatesMarker);
+            }
+
+            // Crear un marcador en el punto clickeado
+            const clickedIcon = L.divIcon({
+                className: 'clicked-coordinates-marker-container',
+                html: '<div class="clicked-coordinates-marker"></div>',
+                iconSize: [20, 20],
+                iconAnchor: [10, 10]
+            });
+
+            clickedCoordinatesMarker = L.marker([lat, lng], {
+                icon: clickedIcon
+            }).addTo(map);
+
+            // Crear popup con las coordenadas
+            const popupContent = `
+                <div class="popup-content">
+                    <div class="popup-title">Coordenadas Seleccionadas</div>
+                    <div class="popup-description">
+                        <strong>[${lat.toFixed(6)}, ${lng.toFixed(6)}]</strong><br>
+                        <small style="color: #00C8FF;">Coordenadas copiadas al portapapeles</small>
+                    </div>
+                </div>`;
+
+            clickedCoordinatesMarker.bindPopup(popupContent).openPopup();
+
+            showStatusMessage('Coordenadas copiadas al portapapeles', 'success');
+        }
+
+        // Función para copiar al portapapeles
+        function copyToClipboard(text) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).catch(err => {
+                    console.error('Error al copiar al portapapeles:', err);
                 });
-
-                console.log("MarkerClusterGroup inicializado en startup:", markerClusterGroup);
-
-                // Inicializar el estado del botón satelital
-                const satelitalBtn = document.getElementById('satelitalBtn');
-                if (satelitalActive) {
-                    satelitalBtn.classList.add('geojson-active');
+            } else {
+                // Fallback para navegadores más antiguos
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                } catch (err) {
+                    console.error('Error al copiar al portapapeles:', err);
                 }
-
-                setTimeout(() => {
-                    if (markerClusterGroup && !map.hasLayer(markerClusterGroup)) {
-                        map.addLayer(markerClusterGroup);
-                        console.log("MarkerClusterGroup añadido al mapa");
-                    }
-
-                    loadMarkersInViewport();
-
-                    // Habilitar clicks en el mapa para obtener coordenadas
-                    /* map.on('click', handleMapClick); */
-
-                    map.on('moveend', function() {
-                        clearTimeout(debounceTimer);
-                        debounceTimer = setTimeout(() => {
-                            loadMarkersInViewport();
-                            updateDebugInfo();
-                        }, 200);
-                    });
-
-                    map.on('zoomend', function() {
-                        clearTimeout(debounceTimer);
-                        debounceTimer = setTimeout(() => {
-                            loadMarkersInViewport();
-                            updateDebugInfo();
-                        }, 200);
-                    });
-
-                    map.on('move', updateDebugInfo);
-                    map.on('zoom', updateDebugInfo);
-
-                    const searchInput = document.getElementById('searchInput');
-                    const clearButton = document.getElementById('clearSearch');
-                    const showAllButton = document.getElementById('showAllBtn');
-
-                    searchInput.addEventListener('input', function(e) {
-                        clearTimeout(debounceTimer);
-                        debounceTimer = setTimeout(() => {
-                            filterMarkers(e.target.value);
-                        }, 200);
-                    });
-
-                    clearButton.addEventListener('click', clearSearch);
-
-                    showAllButton.addEventListener('click', function() {
-                        clearSearch();
-                        setTimeout(() => {
-                            fitMapToVisibleMarkers();
-                        }, 100);
-                    });
-
-                    document.getElementById('locationBtn').addEventListener('click', getUserLocation);
-                    document.getElementById('zoomInBtn').addEventListener('click', zoomIn);
-                    document.getElementById('zoomOutBtn').addEventListener('click', zoomOut);
-                    document.getElementById('homeBtn').addEventListener('click', homeBtn);
-
-                    // Event listener para el nuevo botón de códigos
-                    document.getElementById('codigosBtn').addEventListener('click', function() {
-                        toggleCodigosLayer();
-                    });
-                    document.getElementById('inmueblesBtn').addEventListener('click', function() {
-                        toggleInmueblesLayer();
-                    });
-
-                    // Event listener para el botón satelital
-                    document.getElementById('satelitalBtn').addEventListener('click', function() {
-                        toggleSatelliteLayer();
-                    });
-
-                    document.getElementById('oscurecerBtn').addEventListener('click', function() {
-                        toggleDarkOverlay();
-                    });
-
-                    searchInput.addEventListener('keypress', function(e) {
-                        if (e.key === 'Enter') {
-                            filterMarkers(e.target.value);
-                        }
-                    });
-
-                    updateDebugInfo();
-                    console.log('Aplicación inicializada correctamente');
-                    hideLoader();
-                }, 300);
-            } catch (error) {
-                console.error("Error en inicialización:", error);
-                showStatusMessage("Error al inicializar la aplicación", "error");
-                hideLoader();
+                document.body.removeChild(textArea);
             }
         }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar marcadores
+            initializeMarkers();
+
+            // Event listeners para controles
+            document.getElementById('locationBtn').addEventListener('click', getUserLocation);
+            document.getElementById('zoomInBtn').addEventListener('click', zoomIn);
+            document.getElementById('zoomOutBtn').addEventListener('click', zoomOut);
+            document.getElementById('homeBtn').addEventListener('click', homeBtn);
+            document.getElementById('codigosBtn').addEventListener('click', toggleCodigosLayer);
+            document.getElementById('inmueblesBtn').addEventListener('click', toggleInmueblesLayer);
+            document.getElementById('satelitalBtn').addEventListener('click', toggleSatelliteLayer);
+            document.getElementById('oscurecerBtn').addEventListener('click', toggleDarkOverlay);
+
+            // Event listeners para búsqueda
+            const searchInput = document.getElementById('searchInput');
+            const clearSearchBtn = document.getElementById('clearSearch');
+            const showAllBtn = document.getElementById('showAllBtn');
+
+            searchInput.addEventListener('input', function() {
+                filterMarkers(this.value);
+            });
+
+            clearSearchBtn.addEventListener('click', clearSearch);
+            showAllBtn.addEventListener('click', showAllMarkers);
+
+            // Event listeners para el mapa
+            map.on('moveend', handleMapMovement);
+            map.on('zoomend', handleMapMovement);
+            /* map.on('click', handleMapClick);   -- para mostrar coordenadas segun se haga click en el mapa*/
+
+            // Cargar datos iniciales
+            setTimeout(() => {
+                loadMarkersInViewport();
+            }, 1000);
+
+            // Actualizar debug info inicial
+            updateDebugInfo();
+
+            console.log('Sistema de mapas dinámico inicializado correctamente');
+        });
+
+        // Actualizar debug info cuando cambie el zoom
+        map.on('zoomend', updateDebugInfo);
+        map.on('moveend', updateDebugInfo);
+
+        console.log('Script de mapa cargado completamente');
+
 
         document.addEventListener('DOMContentLoaded', initializeApp);
 
@@ -1968,10 +1782,6 @@
             container.dataset.index = index;
             document.getElementById(`img-${id}`).src = "../static/ufpredial/" + images[index];
         }
-
-        $(document).ready(function() {
-            toggleDarkOverlay();
-        });
     </script>
 </body>
 

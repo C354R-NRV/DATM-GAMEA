@@ -224,7 +224,6 @@ if (!$_SESSION['swlogin']) {
             z-index: 0;
         }
 
-        /* Estilos para los controles del miniMap */
         .minimap-controls {
             position: absolute;
             top: 10px;
@@ -282,7 +281,6 @@ if (!$_SESSION['swlogin']) {
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
         }
 
-        /* Estilos específicos para botón satelital */
         .control-button.satelital {
             background-color: rgba(29, 25, 22, 0.8);
         }
@@ -300,7 +298,6 @@ if (!$_SESSION['swlogin']) {
             background-color: rgba(0, 180, 230, 0.9);
         }
 
-        /* Estilos específicos para móviles */
         @media (max-width: 768px) {
             .control-button {
                 width: 35px;
@@ -312,7 +309,7 @@ if (!$_SESSION['swlogin']) {
                 -ms-user-select: none;
                 user-select: none;
             }
-            
+
             .minimap-controls {
                 top: 5px;
                 right: 5px;
@@ -391,6 +388,7 @@ if (!$_SESSION['swlogin']) {
         }
 
         @media (max-width: 600px) {
+
             .result-table th,
             .result-table td {
                 font-size: 12px;
@@ -430,7 +428,8 @@ if (!$_SESSION['swlogin']) {
     ?>
 
     <div class="container mt-5">
-        <h1>Formulario de Registro de Inmueble <button class="buscar_" id="abrirFormulario" type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button> </h1>
+        <h1>Formulario de Registro de Inmueble</h1>
+        <div style="text-align:right;"><button class="buscar_" id="abrirFormulario" type="button">Busqueda de inmueble <i class="fa fa-search" aria-hidden="true"></i> </button></div>
         <form id="formularioInmueble">
             <div class="row">
 
@@ -749,7 +748,7 @@ if (!$_SESSION['swlogin']) {
     });
 
     function buscarInmueble() {
-        //#bodyInmuebles 
+
 
         var errores = [];
         var numInmueble = $("#numInmueble").val();
@@ -791,8 +790,9 @@ if (!$_SESSION['swlogin']) {
         datos =
             "&numInmueble=" + numInmueble +
             "&nombreTitular=" + nombreTitular +
+            "&catastral=" + catastral +
             "&documento=" + documento;
-
+        console.log(datos);
         $.ajax({
             async: true,
             type: "POST",
@@ -841,7 +841,7 @@ if (!$_SESSION['swlogin']) {
 
         var servicio = ($('#servicio_uf' + cnt).val() ? $('#servicio_uf' + cnt).val() : $('#servicio' + cnt).val());
 
-        // Convertir la cadena a un array y limpiar espacios
+
         var listaServicios = servicio.split(',').map(function(item) {
             return item.trim().toUpperCase();
         });
@@ -869,43 +869,38 @@ if (!$_SESSION['swlogin']) {
         let satelliteLayer = null;
         let satelitalActive = true;
 
-        // Inicializar el mapa visible por defecto en El Alto
         if (typeof L !== "undefined" && miniMap) {
             map = L.map(miniMap, {
-                zoomControl: false // Desactivar controles de zoom por defecto
-            }).setView([-16.5, -68.15], 13); // Vista predeterminada
+                zoomControl: false
 
-            // Capa base OpenStreetMap
+            }).setView([-16.5, -68.15], 13);
+
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: 'DATM'
             }).addTo(map);
 
-            // Capa satelital
             satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                 maxZoom: 19
             }).addTo(map);
 
-            // Función para manejar el botón de zoom in
             document.getElementById('zoomInBtn').addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 map.zoomIn();
-                this.blur(); // Quitar el foco del botón
+                this.blur();
             });
 
-            // Función para manejar el botón de zoom out
             document.getElementById('zoomOutBtn').addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 map.zoomOut();
-                this.blur(); // Quitar el foco del botón
+                this.blur();
             });
 
-            // Función para alternar la capa satelital
             document.getElementById('satelitalBtn').addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 if (satelitalActive) {
                     map.removeLayer(satelliteLayer);
                     this.classList.remove('tesela-active');
@@ -915,29 +910,27 @@ if (!$_SESSION['swlogin']) {
                     this.classList.add('tesela-active');
                     satelitalActive = true;
                 }
-                
-                this.blur(); // Quitar el foco del botón
+
+                this.blur();
             });
 
-            // Mejorar la experiencia táctil en dispositivos móviles
             if ('ontouchstart' in window) {
                 const mapButtons = document.querySelectorAll('.control-button');
-                
+
                 mapButtons.forEach(button => {
-                    // Prevenir comportamiento por defecto en eventos táctiles
+
                     button.addEventListener('touchstart', function(e) {
                         e.stopPropagation();
-                    }, { passive: true });
-                    
-                    // Manejar el evento touchend para ejecutar la acción
+                    }, {
+                        passive: true
+                    });
+
                     button.addEventListener('touchend', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        
-                        // Simular un clic en el botón
+
                         this.click();
-                        
-                        // Prevenir scroll no deseado
+
                         setTimeout(() => {
                             window.scrollTo(0, window.scrollY);
                         }, 10);
@@ -945,7 +938,6 @@ if (!$_SESSION['swlogin']) {
                 });
             }
 
-            // Permitir selección manual en cualquier momento
             map.on('click', function(e) {
                 const {
                     lat,
@@ -970,7 +962,6 @@ if (!$_SESSION['swlogin']) {
             return;
         }
 
-        // Botón de geolocalización automática
         btnObtenerUbicacion.addEventListener("click", () => {
             if (!navigator.geolocation) {
                 geoStatus.innerHTML = '<span class="text-danger">Error: Su navegador no soporta geolocalización.</span>';
@@ -1050,86 +1041,79 @@ if (!$_SESSION['swlogin']) {
             console.warn("Flatpickr no está disponible. Asegúrate de incluir la librería.")
         }
 
-        // Create preview containers
         $("#imagenPrincipal").after('<div id="imagenPrincipalPreview" class="mt-2 image-preview-container"></div>')
         $("#imagenesAdicionales").after(
             '<div id="imagenesAdicionalesPreview" class="mt-2 d-flex flex-wrap gap-2 image-preview-container"></div>',
         )
 
-        // Add CSS for preview containers
         $("head").append(`
-    <style>
-      .image-preview-container {
-        min-height: 100px;
-      }
-      .preview-item {
-        position: relative;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        padding: 5px;
-        margin-bottom: 10px;
-        background-color: #f8f9fa;
-      }
-      .preview-item img {
-        max-width: 100%;
-        max-height: 200px;
-        display: block;
-        margin: 0 auto;
-      }
-      .preview-item .preview-info {
-        font-size: 12px;
-        color: #6c757d;
-        margin-top: 5px;
-        text-align: center;
-      }
-      .preview-item .remove-image {
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        background-color: rgba(255, 255, 255, 0.7);
-        border-radius: 50%;
-        width: 24px;
-        height: 24px;
-        text-align: center;
-        line-height: 24px;
-        cursor: pointer;
-        color: #dc3545;
-      }
-      .compression-slider {
-        width: 100%;
-        margin: 10px 0;
-      }
-      .compression-value {
-        text-align: center;
-        font-weight: bold;
-      }
-    </style>
-  `)
+            <style>
+            .image-preview-container {
+                min-height: 100px;
+            }
+            .preview-item {
+                position: relative;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                padding: 5px;
+                margin-bottom: 10px;
+                background-color: #f8f9fa;
+            }
+            .preview-item img {
+                max-width: 100%;
+                max-height: 200px;
+                display: block;
+                margin: 0 auto;
+            }
+            .preview-item .preview-info {
+                font-size: 12px;
+                color: #6c757d;
+                margin-top: 5px;
+                text-align: center;
+            }
+            .preview-item .remove-image {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                background-color: rgba(255, 255, 255, 0.7);
+                border-radius: 50%;
+                width: 24px;
+                height: 24px;
+                text-align: center;
+                line-height: 24px;
+                cursor: pointer;
+                color: #dc3545;
+            }
+            .compression-slider {
+                width: 100%;
+                margin: 10px 0;
+            }
+            .compression-value {
+                text-align: center;
+                font-weight: bold;
+            }
+            </style>
+        `)
 
-        // Global variable to store compressed images
         let compressedImages = {
             main: null,
             additional: [],
         }
 
-        // Default compression quality
         let compressionQuality = 0.7
 
-        // Add compression quality slider
         $("#imagenPrincipal").after(`
-    <div class="mt-2">
-        <label for="compressionQuality" class="form-label">Calidad de compresión: <span id="qualityValue">70%</span></label>
-        <input type="range" class="form-range compression-slider" id="compressionQuality" min="0.1" max="1" step="0.1" value="0.7">
-        </div>
-    `)
+            <div class="mt-2">
+                <label for="compressionQuality" class="form-label">Calidad de compresión: <span id="qualityValue">70%</span></label>
+                <input type="range" class="form-range compression-slider" id="compressionQuality" min="0.1" max="1" step="0.1" value="0.7">
+                </div>
+            `)
 
-        // Update compression quality value when slider changes
         $("#compressionQuality").on("input", function() {
             compressionQuality = Number.parseFloat($(this).val())
             $("#qualityValue").text(Math.round(compressionQuality * 100) + "%")
         })
 
-        // Handle main image selection
         $("#imagenPrincipal").on("change", (e) => {
             const file = e.target.files[0]
             if (!file) return
@@ -1139,20 +1123,16 @@ if (!$_SESSION['swlogin']) {
                 return
             }
 
-            // Clear previous preview
             $("#imagenPrincipalPreview").empty()
 
-            // Show loading indicator
             $("#imagenPrincipalPreview").html(
                 '<div class="text-center"><i class="fa fa-spinner fa-spin"></i> Procesando imagen...</div>',
             )
 
-            // Create preview with original image
             const reader = new FileReader()
             reader.onload = (e) => {
                 const originalSize = (file.size / 1024).toFixed(2)
 
-                // Compress the image
                 compressImage(file, compressionQuality)
                     .then((compressedBlob) => {
                         compressedImages.main = new File([compressedBlob], file.name, {
@@ -1163,19 +1143,18 @@ if (!$_SESSION['swlogin']) {
                         const compressedSize = (compressedBlob.size / 1024).toFixed(2)
                         const savings = (100 - (compressedBlob.size / file.size) * 100).toFixed(2)
 
-                        // Create preview element
-                        $("#imagenPrincipalPreview").html(`
-          <div class="preview-item">
-            <img src="${URL.createObjectURL(compressedBlob)}" alt="Vista previa">
-            <div class="preview-info">
-              <strong>${file.name}</strong><br>
-              Original: ${originalSize} KB | Comprimido: ${compressedSize} KB | Ahorro: ${savings}%
-            </div>
-            <div class="remove-image" title="Eliminar imagen"><i class="fa fa-times"></i></div>
-          </div>
-        `)
 
-                        // Handle remove button
+                        $("#imagenPrincipalPreview").html(`
+                            <div class="preview-item">
+                                <img src="${URL.createObjectURL(compressedBlob)}" alt="Vista previa">
+                                <div class="preview-info">
+                                <strong>${file.name}</strong><br>
+                                Original: ${originalSize} KB | Comprimido: ${compressedSize} KB | Ahorro: ${savings}%
+                                </div>
+                                <div class="remove-image" title="Eliminar imagen"><i class="fa fa-times"></i></div>
+                            </div>
+                            `)
+
                         $(".remove-image").on("click", () => {
                             $("#imagenPrincipal").val("")
                             $("#imagenPrincipalPreview").empty()
@@ -1190,22 +1169,18 @@ if (!$_SESSION['swlogin']) {
             reader.readAsDataURL(file)
         })
 
-        // Handle additional images selection
         $("#imagenesAdicionales").on("change", (e) => {
             const files = e.target.files
             if (!files || files.length === 0) return
 
-            // Clear previous previews
             $("#imagenesAdicionalesPreview").empty()
             compressedImages.additional = []
 
-            // Process each file
             Array.from(files).forEach((file, index) => {
                 if (!file.type.match("image.*")) {
                     return
                 }
 
-                // Create a placeholder for this image
                 const previewId = `additional-preview-${index}`
                 $("#imagenesAdicionalesPreview").append(`
         <div id="${previewId}" class="preview-item" style="width: 200px;">
@@ -1213,7 +1188,6 @@ if (!$_SESSION['swlogin']) {
             </div>
         `)
 
-                // Compress the image
                 compressImage(file, compressionQuality)
                     .then((compressedBlob) => {
                         const compressedFile = new File([compressedBlob], file.name, {
@@ -1227,7 +1201,7 @@ if (!$_SESSION['swlogin']) {
                         const compressedSize = (compressedBlob.size / 1024).toFixed(2)
                         const savings = (100 - (compressedBlob.size / file.size) * 100).toFixed(2)
 
-                        // Update the placeholder with the actual preview
+
                         $(`#${previewId}`).html(`
             <img src="${URL.createObjectURL(compressedBlob)}" alt="Vista previa">
             <div class="preview-info">
@@ -1243,12 +1217,10 @@ if (!$_SESSION['swlogin']) {
                     })
             })
 
-            // Handle remove buttons for additional images (delegated event)
             $("#imagenesAdicionalesPreview").on("click", ".remove-image", function() {
                 const index = $(this).data("index")
                 $(this).closest(".preview-item").remove()
 
-                // We can't easily remove just one file from the file input, so we'll handle this during form submission
                 compressedImages.additional[index] = null
             })
         })
@@ -1270,13 +1242,11 @@ if (!$_SESSION['swlogin']) {
                 }
             });
 
-            // Validar geolocalización
             if ($('#geolocalizacion').val() === '') {
                 errores.push('Debe obtener la geolocalización del inmueble');
                 $('#geolocalizacion').addClass('is-invalid');
             }
 
-            // Validar formato de teléfono
             var telefonoRegex = /^\d{8}$/;
             if ($('#contactoTitular').val() !== '' && !telefonoRegex.test($('#contactoTitular').val())) {
                 errores.push('El teléfono del titular debe tener 8 dígitos');
@@ -1371,7 +1341,6 @@ if (!$_SESSION['swlogin']) {
                             alert("Los datos se han guardado correctamente");
                         }
 
-                        // Reset the form
                         $("#formularioInmueble")[0].reset();
                         $("#imagenPrincipalPreview, #imagenesAdicionalesPreview").empty();
                         compressedImages = {
@@ -1394,7 +1363,7 @@ if (!$_SESSION['swlogin']) {
                 error: (xhr, status, error) => {
                     console.error("Error en la solicitud Ajax:", error);
 
-                    // Try to parse response if available
+
                     let errorMessage = "No se pudo conectar con el servidor. Por favor, inténtelo de nuevo.";
                     try {
                         if (xhr.responseText) {
@@ -1419,12 +1388,10 @@ if (!$_SESSION['swlogin']) {
                 },
             });
 
-            // Mark as submitted to prevent double submission
             $.data(this, "submitted", true)
             return false
         })
 
-        // Image compression function
         function compressImage(image, quality) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader()
@@ -1434,11 +1401,10 @@ if (!$_SESSION['swlogin']) {
                     img.src = event.target.result
 
                     img.onload = () => {
-                        // Calculate new dimensions while maintaining aspect ratio
+
                         let width = img.width
                         let height = img.height
 
-                        // Limit max dimensions to 1600px (optional, for very large images)
                         const maxDimension = 1600
                         if (width > maxDimension || height > maxDimension) {
                             if (width > height) {
@@ -1456,10 +1422,8 @@ if (!$_SESSION['swlogin']) {
                         canvas.width = width
                         canvas.height = height
 
-                        // Draw image on canvas
                         ctx.drawImage(img, 0, 0, width, height)
 
-                        // Convert to blob with specified quality
                         canvas.toBlob(
                             (blob) => {
                                 resolve(blob)
