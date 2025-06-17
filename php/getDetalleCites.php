@@ -16,7 +16,7 @@ if (isset($filtroFechaIni) and trim($filtroFechaIni) != '' and isset($filtroFech
 }
 
 if (isset($filtroCodigoSolicitud) and trim($filtroCodigoSolicitud) != ''  ) {
-    $filtro .= " and a.cite like '$filtroCodigoSolicitud' ";
+    $filtro .= " and a.cite like '%$filtroCodigoSolicitud%' ";
 }
 
 // Query to get the maximum correlative for the given unit and code

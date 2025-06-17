@@ -26,6 +26,8 @@ if (!$_SESSION['swlogin']) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
     <style>
         .btn-flotante {
             position: fixed;
@@ -171,10 +173,54 @@ if (!$_SESSION['swlogin']) {
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             position: relative;
+            height: 300px;
         }
 
         #mapContainer:hover {
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Estilos para el mapa en pantalla completa */
+        #mapContainer.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 9999;
+            border-radius: 0;
+            margin: 0;
+        }
+
+        /* Estilos para el botón de pantalla completa */
+        .control-button.fullscreen {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .control-button.fullscreen.active {
+            background-color: rgba(255, 0, 0, 0.8);
+        }
+
+        /* Estilos para el botón de oscurecer */
+        .control-button.oscurecer {
+            background-color: rgba(50, 50, 50, 0.8);
+        }
+
+        .control-button.oscurecer.geojson-active {
+            background-color: rgba(75, 75, 75, 0.9);
+        }
+
+        .control-button.oscurecer:hover {
+            background-color: rgba(75, 75, 75, 0.9);
+        }
+
+        /* Estilos para el overlay oscuro */
+        .dark-overlay {
+            fill: rgba(0, 0, 0, 0.7);
+            stroke: rgba(100, 100, 100, 0.8);
+            stroke-width: 2;
+            stroke-dasharray: 5, 5;
+            transition: fill 0.3s ease;
         }
 
         .buscar_ {
@@ -286,7 +332,7 @@ if (!$_SESSION['swlogin']) {
         }
 
         .control-button.satelital.tesela-active {
-            background-color: rgba(0, 200, 255, 0.9);
+            background-color: rgba(34, 39, 41, 0.9);
             color: white;
         }
 
@@ -295,7 +341,115 @@ if (!$_SESSION['swlogin']) {
         }
 
         .control-button.tesela-active:hover {
+            background-color: rgba(33, 36, 37, 0.9);
+        }
+
+        /* Nuevos estilos para botones de inmuebles y códigos */
+        .control-button.geojson-codigos {
+            background-color: rgba(255, 165, 0, 0.8);
+        }
+
+        .control-button.geojson-codigos.geojson-active {
+            background-color: rgba(255, 165, 0, 0.9);
+            color: white;
+        }
+
+        .control-button.geojson-codigos:hover {
+            background-color: rgba(255, 140, 0, 0.9);
+        }
+
+        .control-button.geojson-active {
+            background-color: rgba(0, 200, 255, 0.9);
+            color: white;
+        }
+
+        .control-button.geojson-active:hover {
             background-color: rgba(0, 180, 230, 0.9);
+        }
+
+        /* Estilos para marcadores de códigos */
+        .codigo-marker {
+            background-color: #FFA500;
+            color: black;
+            border: 2px solid white;
+            border-radius: 5%;
+            width: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            animation: pulseAnimation 6s infinite ease-in-out;
+        }
+
+        .codigo-markerInm {
+            background-color: #FFA500;
+            color: black;
+            border: 2px solid white;
+            border-radius: 50%;
+            width: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            animation: pulseAnimation 6s infinite ease-in-out;
+        }
+
+        @keyframes pulseAnimation {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.15);
+                opacity: 0.85;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Indicador de carga dinámica */
+        .dynamic-loading-indicator {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background-color: rgba(0, 200, 255, 0.9);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            display: none;
+            animation: pulseAnimation 1s infinite ease-in-out;
+        }
+
+        .status-message {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            display: none;
+            white-space: nowrap;
+        }
+
+        .status-message.error {
+            background-color: rgba(255, 0, 0, 0.8);
+        }
+
+        .status-message.success {
+            background-color: rgba(0, 200, 0, 0.8);
         }
 
         @media (max-width: 768px) {
@@ -331,6 +485,11 @@ if (!$_SESSION['swlogin']) {
 
         #formInmueble input.swal2-input {
             width: 100% !important;
+            margin: 5px 0 15px 0;
+        }
+
+        #formInmueble select.swal2-input {
+            width: 27% !important;
             margin: 5px 0 15px 0;
         }
 
@@ -445,7 +604,7 @@ if (!$_SESSION['swlogin']) {
                             <i class="fa fa-map-marker me-1"></i> Obtener Ubicación
                         </button>
                     </div>
-                    <div class="form-text">Haga clic en el botón para obtener la ubicación actual desde su dispositivo.</div>
+                    <div class="form-text">Abrir coordenada en <a id="googlemap" href="#" target="_blank">google maps.</a></div>
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -454,10 +613,24 @@ if (!$_SESSION['swlogin']) {
                         <div class="minimap-controls">
                             <button id="zoomInBtn" type="button" class="control-button" title="Acercar" aria-label="Acercar mapa">+</button>
                             <button id="zoomOutBtn" type="button" class="control-button" title="Alejar" aria-label="Alejar mapa">−</button>
+                            <!-- <button id="inmueblesBtn" class="control-button geojson-codigos" title="Mostrar/Ocultar Inmuebles" aria-label="Capa Inmuebles" style="outline-style: none;">
+                                <i class="fa fa-home" aria-hidden="true"></i>
+                            </button> -->
+                            <!-- <button id="codigosBtn" class="control-button geojson-codigos" title="Mostrar/Ocultar Códigos" aria-label="Capa Códigos">
+                                <i class="fa fa-tags" aria-hidden="true"></i>
+                            </button> -->
                             <button id="satelitalBtn" type="button" class="control-button satelital tesela-active" title="Mostrar/Ocultar Capa Satelital" aria-label="Capa Satelital">
                                 <i class="fa fa-globe" aria-hidden="true"></i>
                             </button>
+                            <button id="oscurecerBtn" class="control-button oscurecer" title="Oscurecer El Alto" aria-label="Oscurecer El Alto" style="outline-style: none;">
+                                <i class="fa fa-moon-o" aria-hidden="true"></i>
+                            </button>
+                            <button id="fullscreenBtn" class="control-button fullscreen" title="Pantalla Completa" aria-label="Pantalla Completa">
+                                <i class="fa fa-expand" aria-hidden="true"></i>
+                            </button>
                         </div>
+                        <div id="statusMessage" class="status-message" role="alert"></div>
+                        <div id="dynamicLoadingIndicator" class="dynamic-loading-indicator">Cargando datos...</div>
                     </div>
                     <div id="geoStatus" class="mt-2 small"></div>
                 </div>
@@ -614,7 +787,7 @@ if (!$_SESSION['swlogin']) {
                     <input type="text" class="form-control" id="no_formulario" name="no_formulario">
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label for="hhrr_" class="form-label">HHRR</label>
+                    <label for="hhrr_" class="form-label">Hoja de ruta</label>
                     <input type="text" class="form-control" id="hhrr_" name="hhrr_">
                 </div>
 
@@ -692,6 +865,7 @@ if (!$_SESSION['swlogin']) {
 <script src="../js/mainRecursoIa.js"></script>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
@@ -700,11 +874,38 @@ if (!$_SESSION['swlogin']) {
     $('#abrirFormulario').on('click', function() {
         Swal.fire({
             title: 'BÚSQUEDA DE INMUEBLE',
-            html: `
-            <div class="loadGral"></div>
-        <div id="formInmueble">
+            html: ` 
+            <div class="loadGral"></div> 
+        <div id="formInmueble"> 
+            <div style="width:100vh;">
+            <label>UBICACION NIVEL 1, DISTRITO</label>   
+            <select id= "ubicacion1" class="swal2-input select2_1" onchange="cargarNivel(2);">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="NO DEFINIDO">NO DEFINIDO</option>
+                <option value="OTRA JURISDICCION">OTRA JURISDICCION</option>
+                <option value="TODOS" selected>TODOS</option>
+            </select> 
+
+            <select id= "ubicacion2" class="swal2-input select2_2" multiple onchange="cargarNivel(3);"></select> 
+
+            <select id= "ubicacion3" class="swal2-input select2_3" multiple></select>
+            </div>
+
             <label>NUMERO DE INMUEBLE</label>
-            <input type="number" id="numInmueble" class="swal2-input">
+            <input type="text" id="numInmueble" class="swal2-input">
         
             <label>CODIGO CATASTRAL</label>
             <input type="text" id="catastral" class="swal2-input" placeholder="XXX-XXX-XXX">
@@ -714,7 +915,13 @@ if (!$_SESSION['swlogin']) {
 
             <label>NOMBRE DE TITULAR</label>
             <input type="text" id="nombreTitular" class="swal2-input" placeholder="Nombres Paterno Materno">
-
+            
+            
+            <label>NUMERO DE PLACA - VEHICULO CIRCUNDANTE</label>
+            <input type="text" id="no_placa" class="swal2-input" placeholder="Numero de placa sin GUION y continuado">
+            
+            <label>NOMBRE DEL LOCAL COMERCIAL</label>
+            <input type="text" id="actividad_eco" class="swal2-input" placeholder="Escriba exactamente el nombre del local comercial expuesto en dicho local, no incluya palabras como : local, salon, tienda.">
 
             <button id="buscarBtn" onclick="buscarInmueble()" class="swal2-confirm swal2-styled btn-buscar_"  >BUSCAR</button>
 
@@ -739,6 +946,15 @@ if (!$_SESSION['swlogin']) {
             </div>
         </div>
         `,
+            didOpen: () => {
+
+                $('.select2_1').select2({
+                    dropdownParent: $('.swal2-popup'),
+                    placeholder: "Seleccione",
+                    allowClear: true,
+                    tags: true
+                });
+            },
             showConfirmButton: false,
             width: '90%',
             customClass: {
@@ -748,24 +964,36 @@ if (!$_SESSION['swlogin']) {
     });
 
     function buscarInmueble() {
-
-
         var errores = [];
         var numInmueble = $("#numInmueble").val();
         var documento = $("#documento").val();
         var nombreTitular = $("#nombreTitular").val();
         var catastral = $("#catastral").val();
-        if (numInmueble && numInmueble.length <= 5) {
-            errores.push('El numero del inmueble tiene que tener mas de 5 caracteres');
+        var actividad_eco = $("#actividad_eco").val();
+        var no_placa = $("#no_placa").val();
+        var ubicacion1 = $("#ubicacion1").val();
+        var ubicacion2 = $("#ubicacion2").val();
+        var ubicacion3 = $("#ubicacion3").val();
+
+
+
+        if (numInmueble && numInmueble.length <= 4) {
+            errores.push('El numero del inmueble tiene que tener más de 4 caracteres');
         }
         if (catastral && catastral.length <= 5) {
-            errores.push('El codigo catastral tiene que tener mas de 6 caracteres');
+            errores.push('El codigo catastral tiene que tener más de 6 caracteres');
         }
-        if (nombreTitular && nombreTitular.length <= 5) {
-            errores.push('Agrega Nombre y apellido minimamente de la persona separado por un espacio');
+        if (nombreTitular && nombreTitular.length <= 4) {
+            errores.push('Agrega Nombre y/o apellido minimamente de la persona, tambien separado por un espacio, con una cantidad de 4 caracteres');
         }
         if (documento && documento.length <= 4) {
-            errores.push('El numero de documento tiene que tener mas de 5 digitos');
+            errores.push('El numero de documento tiene que tener más de 5 digitos');
+        }
+        if (actividad_eco && actividad_eco.length <= 3) {
+            errores.push('El nombre de la actividad economica tiene que tener más de 3 digitos');
+        }
+        if (no_placa && no_placa.length <= 4) {
+            errores.push('El numero de placa tiene que tener más de 4 digitos');
         }
 
         if (errores.length > 0) {
@@ -790,7 +1018,12 @@ if (!$_SESSION['swlogin']) {
         datos =
             "&numInmueble=" + numInmueble +
             "&nombreTitular=" + nombreTitular +
+            "&actividad_eco=" + actividad_eco +
+            "&no_placa=" + no_placa +
             "&catastral=" + catastral +
+            "&ubicacion1=" + ubicacion1 +
+            "&ubicacion2=" + ubicacion2 +
+            "&ubicacion3=" + ubicacion3 +
             "&documento=" + documento;
         console.log(datos);
         $.ajax({
@@ -804,22 +1037,23 @@ if (!$_SESSION['swlogin']) {
                 loadGralOn();
             },
             success: function(dat) {
+                console.log(dat);
                 dat = JSON.parse(dat)
+                console.log(dat.sql);
                 loadGralOff();
                 $('#bodyInmuebles').html(dat.html);
 
-                $("#numInmueble").val();
+                $("#numInmueble").val('');
                 $("#documento").val('');
                 $("#nombreTitular").val('');
                 $("#catastral").val('');
+                $("#no_placa").val('');
+                $("#actividad_eco").val('');
             },
         });
-
-
     }
 
     function seleccionarInmueble(cnt) {
-
         Swal.close();
         $('#numeroInmueble').val($('#numero_inmueble' + cnt).val());
         $('#codigo_catastro').val($('#codigo_catastral' + cnt).val());
@@ -841,7 +1075,6 @@ if (!$_SESSION['swlogin']) {
 
         var servicio = ($('#servicio_uf' + cnt).val() ? $('#servicio_uf' + cnt).val() : $('#servicio' + cnt).val());
 
-
         var listaServicios = servicio.split(',').map(function(item) {
             return item.trim().toUpperCase();
         });
@@ -855,7 +1088,6 @@ if (!$_SESSION['swlogin']) {
                 $(this).prop('checked', false);
             }
         });
-
     }
 
     function setupGeolocation() {
@@ -869,10 +1101,247 @@ if (!$_SESSION['swlogin']) {
         let satelliteLayer = null;
         let satelitalActive = true;
 
+        // Variables para las nuevas capas GeoJSON
+        let codigosGeoJSONData = [];
+        let codigosGeoJSONDataInm = [];
+        let codigosLayer = null;
+        let codigosLayerInm = null;
+        let codigosActive = false;
+        let inmueblesActive = false;
+        let isGeoJsonLoading = false;
+        let dynamicLoadingTimer;
+
+        // Funciones de utilidad para mostrar mensajes
+        function showStatusMessage(message, type = 'info') {
+            const statusDiv = document.getElementById('statusMessage');
+            if (statusDiv) {
+                statusDiv.textContent = message;
+                statusDiv.className = `status-message ${type}`;
+                statusDiv.style.display = 'block';
+
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        function showDynamicLoadingIndicator() {
+            const indicator = document.getElementById('dynamicLoadingIndicator');
+            if (indicator) {
+                indicator.style.display = 'block';
+                clearTimeout(dynamicLoadingTimer);
+                dynamicLoadingTimer = setTimeout(() => {
+                    indicator.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        function hideDynamicLoadingIndicator() {
+            const indicator = document.getElementById('dynamicLoadingIndicator');
+            if (indicator) {
+                indicator.style.display = 'none';
+                clearTimeout(dynamicLoadingTimer);
+            }
+        }
+
+        // Función para cargar datos GeoJSON dinámicamente
+        function loadGeoJSONDataDynamically(modulo, forceReload = false) {
+            if (isGeoJsonLoading && !forceReload) {
+                console.log('Ya hay una carga de GeoJSON en progreso, saltando...');
+                return Promise.resolve();
+            }
+
+            const bounds = map.getBounds();
+            const zoom = map.getZoom();
+
+            console.log(`Cargando datos GeoJSON dinámicamente - Módulo: ${modulo}, Zoom: ${zoom}`);
+
+            // Verificar zoom mínimo para inmuebles
+            if (modulo === 'inmueble' && zoom < 16) {
+                showStatusMessage('Zoom mínimo para ver inmuebles es 16', 'info');
+                return Promise.resolve();
+            }
+
+            isGeoJsonLoading = true;
+            showDynamicLoadingIndicator();
+
+            const sw = bounds.getSouthWest();
+            const ne = bounds.getNorthEast();
+
+            let pointLimit = 2000;
+            if (zoom > 16) {
+                pointLimit = Math.min(pointLimit + (zoom - 16) * 250, 5000);
+            } else if (zoom < 13) {
+                pointLimit = Math.max(100, pointLimit - (13 - zoom) * 100);
+            }
+
+            const url = `../php/ufPredialGetGeoJson.php?minLat=${sw.lat}&maxLat=${ne.lat}&minLng=${sw.lng}&maxLng=${ne.lng}&zoom=${zoom}&limit=${pointLimit}&modulo=${modulo}`;
+
+            return fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(`Datos recibidos para ${modulo}:`, data);
+
+                    if (data.data && Array.isArray(data.data)) {
+                        if (modulo === 'catastro') {
+                            codigosGeoJSONData = data.data;
+                            updateCodigosLayer();
+                        } else if (modulo === 'inmueble') {
+                            codigosGeoJSONDataInm = data.data;
+                            updateInmueblesLayer();
+                        }
+
+                        showStatusMessage(
+                            `${modulo === 'catastro' ? 'Códigos' : 'Inmuebles'} actualizados: ${data.data.length} puntos`,
+                            'success'
+                        );
+                    } else {
+                        throw new Error('Formato de datos inválido');
+                    }
+                })
+                .catch(error => {
+                    console.error(`Error cargando datos de ${modulo}:`, error);
+                    showStatusMessage(`Error cargando ${modulo}: ${error.message}`, 'error');
+                })
+                .finally(() => {
+                    isGeoJsonLoading = false;
+                    hideDynamicLoadingIndicator();
+                });
+        }
+
+        // Función para crear capa de códigos GeoJSON
+        function createCodigosLayer(data, modulo) {
+            if (!data || !Array.isArray(data)) {
+                console.error('Datos de códigos GeoJSON inválidos');
+                return null;
+            }
+
+            const geojsonData = {
+                type: "FeatureCollection",
+                features: data
+            };
+
+            return L.geoJSON(geojsonData, {
+                pointToLayer: function(feature, latlng) {
+                    let clase_ = (modulo === 'inmueble' ? 'codigo-markerInm' : 'codigo-marker');
+
+                    const codigoIcon = L.divIcon({
+                        className: 'codigo-marker-container',
+                        html: '<div class="' + clase_ + '">' + feature.properties.Text + '</div>',
+                        iconSize: [24, 24],
+                        iconAnchor: [12, 12]
+                    });
+
+                    return L.marker(latlng, {
+                        icon: codigoIcon
+                    });
+                },
+                onEachFeature: function(feature, layer) {
+                    if (modulo === 'inmueble') {
+                        let popupContent = '<div class="popup-content">';
+                        popupContent += '<div class="popup-title">Número de inmueble catastral</div>';
+                        popupContent += '<div class="popup-description">';
+
+                        if (feature.properties && feature.properties.Text) {
+                            popupContent += `<strong>Código:</strong> ${feature.properties.Text}<br>`;
+                        }
+
+                        popupContent += '</div></div>';
+                        layer.bindPopup(popupContent);
+                    }
+                }
+            });
+        }
+
+        // Funciones para actualizar capas
+        function updateCodigosLayer() {
+            if (codigosActive && codigosGeoJSONData.length > 0) {
+                if (codigosLayer && map.hasLayer(codigosLayer)) {
+                    map.removeLayer(codigosLayer);
+                }
+
+                codigosLayer = createCodigosLayer(codigosGeoJSONData, 'catastro');
+                if (codigosLayer) {
+                    map.addLayer(codigosLayer);
+                    console.log(`Capa de códigos actualizada: ${codigosGeoJSONData.length} puntos`);
+                }
+            }
+        }
+
+        function updateInmueblesLayer() {
+            if (inmueblesActive && codigosGeoJSONDataInm.length > 0) {
+                if (codigosLayerInm && map.hasLayer(codigosLayerInm)) {
+                    map.removeLayer(codigosLayerInm);
+                }
+
+                codigosLayerInm = createCodigosLayer(codigosGeoJSONDataInm, 'inmueble');
+                if (codigosLayerInm) {
+                    map.addLayer(codigosLayerInm);
+                    console.log(`Capa de inmuebles actualizada: ${codigosGeoJSONDataInm.length} puntos`);
+                }
+            }
+        }
+
+        // Función para alternar capa de códigos
+        function toggleCodigosLayer() {
+            const button = document.getElementById('codigosBtn');
+
+            if (codigosActive) {
+                if (codigosLayer && map.hasLayer(codigosLayer)) {
+                    map.removeLayer(codigosLayer);
+                    codigosLayer = null;
+                    codigosGeoJSONData = [];
+                }
+                button.classList.remove('geojson-active');
+                showStatusMessage('Capa de códigos desactivada', 'info');
+                codigosActive = false;
+            } else {
+                const zoom = map.getZoom();
+                if (zoom < 16) {
+                    showStatusMessage('El zoom mínimo para ver los códigos es 16, zoom actual: ' + zoom, 'error');
+                    return;
+                }
+
+                codigosActive = true;
+                button.classList.add('geojson-active');
+                loadGeoJSONDataDynamically('catastro', true);
+            }
+        }
+
+        // Función para alternar capa de inmuebles
+        function toggleInmueblesLayer() {
+            const button = document.getElementById('inmueblesBtn');
+
+            if (inmueblesActive) {
+                if (codigosLayerInm && map.hasLayer(codigosLayerInm)) {
+                    map.removeLayer(codigosLayerInm);
+                    codigosLayerInm = null;
+                    codigosGeoJSONDataInm = [];
+                }
+                button.classList.remove('geojson-active');
+                showStatusMessage('Capa de inmuebles desactivada', 'info');
+                inmueblesActive = false;
+            } else {
+                const zoom = map.getZoom();
+                if (zoom < 18) {
+                    showStatusMessage('El zoom mínimo para ver inmuebles es 18, zoom actual: ' + zoom, 'error');
+                    return;
+                }
+
+                inmueblesActive = true;
+                button.classList.add('geojson-active');
+                loadGeoJSONDataDynamically('inmueble', true);
+            }
+        }
+
         if (typeof L !== "undefined" && miniMap) {
             map = L.map(miniMap, {
                 zoomControl: false
-
             }).setView([-16.5, -68.15], 13);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -883,6 +1352,7 @@ if (!$_SESSION['swlogin']) {
                 maxZoom: 19
             }).addTo(map);
 
+            // Event listeners para los controles del mapa
             document.getElementById('zoomInBtn').addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -905,20 +1375,61 @@ if (!$_SESSION['swlogin']) {
                     map.removeLayer(satelliteLayer);
                     this.classList.remove('tesela-active');
                     satelitalActive = false;
+                    showStatusMessage('Capa satelital desactivada', 'info');
                 } else {
                     map.addLayer(satelliteLayer);
                     this.classList.add('tesela-active');
                     satelitalActive = true;
+                    showStatusMessage('Capa satelital activada', 'success');
                 }
 
                 this.blur();
+            });
+
+            // Event listeners para los nuevos botones
+            /* document.getElementById('inmueblesBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleInmueblesLayer();
+                this.blur();
+            });
+
+            document.getElementById('codigosBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleCodigosLayer();
+                this.blur();
+            }); */
+
+            // Event listener para movimiento del mapa
+            map.on('moveend', function() {
+                if (codigosActive) {
+                    loadGeoJSONDataDynamically('catastro');
+                }
+                if (inmueblesActive) {
+                    const zoom = map.getZoom();
+                    if (zoom >= 16) {
+                        loadGeoJSONDataDynamically('inmueble');
+                    }
+                }
+            });
+
+            map.on('zoomend', function() {
+                if (codigosActive) {
+                    loadGeoJSONDataDynamically('catastro');
+                }
+                if (inmueblesActive) {
+                    const zoom = map.getZoom();
+                    if (zoom >= 16) {
+                        loadGeoJSONDataDynamically('inmueble');
+                    }
+                }
             });
 
             if ('ontouchstart' in window) {
                 const mapButtons = document.querySelectorAll('.control-button');
 
                 mapButtons.forEach(button => {
-
                     button.addEventListener('touchstart', function(e) {
                         e.stopPropagation();
                     }, {
@@ -954,6 +1465,9 @@ if (!$_SESSION['swlogin']) {
                 geoStatus.innerHTML = `<span class="text-success">
                 <i class="fa fa-check-circle"></i> Ubicación seleccionada manualmente.
             </span>`;
+
+                $('#googlemap').attr("href", "https://www.google.com/maps?q=" + lat + "," + lng);
+
             });
         }
 
@@ -987,6 +1501,8 @@ if (!$_SESSION['swlogin']) {
                     <i class="fa fa-check-circle"></i> Ubicación obtenida con precisión de ${Math.round(accuracy)} metros
                 </span>`;
 
+                    $('#googlemap').attr("href", "https://www.google.com/maps?q=" + latitude + "," + longitude);
+
                     if (map) {
                         map.setView([latitude, longitude], 15);
 
@@ -1017,6 +1533,263 @@ if (!$_SESSION['swlogin']) {
                 options
             );
         });
+
+
+        // Variables para pantalla completa
+        let isFullscreen = false;
+        let darkOverlayLayer = null;
+        let darkOverlayActive = false;
+
+        // Coordenadas del polígono de El Alto (ejemplo)
+        const elAltoCoordinates = [
+            [-16.570318, -68.223770],
+            [-16.573455, -68.206022],
+            [-16.610100, -68.239861],
+            [-16.612269, -68.234636],
+            [-16.627248, -68.205689],
+            [-16.656082, -68.179661],
+            [-16.659251, -68.172585],
+            [-16.659179, -68.172489],
+            [-16.660389, -68.170263],
+            [-16.661391, -68.169179],
+            [-16.663472, -68.167951],
+            [-16.664783, -68.165821],
+            [-16.665024, -68.165928],
+            [-16.665631, -68.165274],
+            [-16.667039, -68.164673],
+            [-16.659443, -68.142507],
+            [-16.655938, -68.136896],
+            [-16.644765, -68.125556],
+            [-16.641979, -68.119397],
+            [-16.635164, -68.108250],
+            [-16.634444, -68.130877],
+            [-16.621173, -68.128340],
+            [-16.613339, -68.143923],
+            [-16.605638, -68.153558],
+            [-16.597793, -68.158638],
+            [-16.594123, -68.167334],
+            [-16.586719, -68.169651],
+            [-16.584190, -68.174007],
+            [-16.581126, -68.175080],
+            [-16.580591, -68.178749],
+            [-16.579501, -68.180144],
+            [-16.576354, -68.182118],
+            [-16.574833, -68.184693],
+            [-16.573146, -68.185015],
+            [-16.570123, -68.183534],
+            [-16.567141, -68.180509],
+            [-16.564734, -68.179414],
+            [-16.561649, -68.180594],
+            [-16.555664, -68.175960],
+            [-16.555294, -68.174114],
+            [-16.550131, -68.173707],
+            [-16.550131, -68.174222],
+            [-16.546902, -68.173385],
+            [-16.544948, -68.170810],
+            [-16.546984, -68.170316],
+            [-16.547262, -68.168728],
+            [-16.548887, -68.166357],
+            [-16.546943, -68.163729],
+            [-16.542397, -68.160381],
+            [-16.541523, -68.153772],
+            [-16.541945, -68.149953],
+            [-16.539846, -68.146359],
+            [-16.536823, -68.145919],
+            [-16.533737, -68.149384],
+            [-16.530518, -68.147287],
+            [-16.529469, -68.145608],
+            [-16.528636, -68.144857],
+            [-16.524897, -68.147104],
+            [-16.521626, -68.148311],
+            [-16.521374, -68.148327],
+            [-16.520443, -68.149422],
+            [-16.518345, -68.149894],
+            [-16.517717, -68.150575],
+            [-16.512615, -68.153005],
+            [-16.512667, -68.152587],
+            [-16.511823, -68.153177],
+            [-16.511726, -68.152876],
+            [-16.508696, -68.154561],
+            [-16.507379, -68.155757],
+            [-16.507858, -68.156186],
+            [-16.505368, -68.158686],
+            [-16.502452, -68.161840],
+            [-16.499922, -68.163310],
+            [-16.497982, -68.163455],
+            [-16.496722, -68.164667],
+            [-16.496835, -68.164834],
+            [-16.496357, -68.165199],
+            [-16.495745, -68.166615],
+            [-16.495431, -68.166835],
+            [-16.495164, -68.167639],
+            [-16.491543, -68.170536],
+            [-16.490648, -68.171083],
+            [-16.488353, -68.170933],
+            [-16.487937, -68.170456],
+            [-16.487613, -68.170434],
+            [-16.487150, -68.170499],
+            [-16.486954, -68.170418],
+            [-16.483868, -68.168197],
+            [-16.482134, -68.166915],
+            [-16.480478, -68.167275],
+            [-16.482510, -68.165392],
+            [-16.482633, -68.164265],
+            [-16.482284, -68.163503],
+            [-16.479866, -68.163815],
+            [-16.479537, -68.164963],
+            [-16.477170, -68.166647],
+            [-16.476440, -68.166711],
+            [-16.475946, -68.167398],
+            [-16.469907, -68.167967],
+            [-16.457776, -68.162162],
+            [-16.457385, -68.160338],
+            [-16.455245, -68.159072],
+            [-16.448186, -68.157442],
+            [-16.432957, -68.156991],
+            [-16.427997, -68.149459],
+            [-16.400354, -68.149588],
+            [-16.367930, -68.145940],
+            [-16.358089, -68.143644],
+            [-16.350224, -68.138494],
+            [-16.327615, -68.139868],
+            [-16.320263, -68.145533],
+            [-16.316515, -68.150382],
+            [-16.285169, -68.157613],
+            [-16.278681, -68.155575],
+            [-16.262656, -68.153708],
+            [-16.570318, -68.223770],
+            [-16.572028, -68.225361],
+            [-16.572079, -68.225484],
+            [-16.571830, -68.226146],
+            [-16.570251, -68.230969],
+            [-16.569403, -68.233632],
+            [-16.566791, -68.241765],
+            [-16.565084, -68.246934],
+            [-16.562822, -68.253422],
+            [-16.560796, -68.259398],
+            [-16.560780, -68.259478],
+            [-16.560467, -68.259197],
+            [-16.559559, -68.251263],
+            [-16.551157, -68.245456],
+            [-16.543755, -68.236749],
+            [-16.535774, -68.245161],
+            [-16.528492, -68.251941],
+            [-16.529376, -68.255707],
+            [-16.521662, -68.261061],
+            [-16.528965, -68.269022],
+            [-16.539661, -68.280351],
+            [-16.528615, -68.290436],
+            [-16.523781, -68.293676],
+            [-16.510461, -68.287675],
+            [-16.510378, -68.295657],
+            [-16.510728, -68.297374],
+            [-16.511140, -68.301622],
+            [-16.512806, -68.307330],
+            [-16.501794, -68.320105],
+            [-16.490020, -68.314769],
+            [-16.477613, -68.308482],
+            [-16.468415, -68.301058],
+            [-16.470720, -68.297625],
+            [-16.466861, -68.295382],
+            [-16.463116, -68.293000],
+            [-16.459278, -68.289621],
+            [-16.446602, -68.280094],
+            [-16.430075, -68.267498],
+            [-16.433204, -68.263593],
+            [-16.412539, -68.253250],
+            [-16.393025, -68.243551],
+            [-16.383556, -68.216000],
+            [-16.336778, -68.205357],
+            [-16.302841, -68.185101],
+            [-16.292543, -68.170166],
+            [-16.277713, -68.165617],
+            [-16.277381, -68.165585],
+            [-16.262676, -68.153719],
+            [-16.262656, -68.153708],
+        ];
+
+        // Event listener para el botón de pantalla completa
+        document.getElementById('fullscreenBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const mapContainer = document.getElementById('mapContainer');
+            const fullscreenIcon = this.querySelector('i');
+
+            if (!isFullscreen) {
+                // Activar pantalla completa
+                mapContainer.classList.add('fullscreen');
+                fullscreenIcon.className = 'fa fa-compress';
+                this.classList.add('active');
+                this.title = 'Salir de Pantalla Completa';
+                isFullscreen = true;
+                showStatusMessage('Modo pantalla completa activado', 'success');
+
+                // Invalidar el tamaño del mapa después de un pequeño delay
+                setTimeout(() => {
+                    map.invalidateSize();
+                }, 100);
+            } else {
+                // Desactivar pantalla completa
+                mapContainer.classList.remove('fullscreen');
+                fullscreenIcon.className = 'fa fa-expand';
+                this.classList.remove('active');
+                this.title = 'Pantalla Completa';
+                isFullscreen = false;
+                showStatusMessage('Modo pantalla completa desactivado', 'info');
+
+                // Invalidar el tamaño del mapa después de un pequeño delay
+                setTimeout(() => {
+                    map.invalidateSize();
+                }, 100);
+            }
+
+            this.blur();
+        });
+
+        // Event listener para el botón de oscurecer
+        document.getElementById('oscurecerBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (darkOverlayActive) {
+                // Desactivar overlay oscuro
+                if (darkOverlayLayer && map.hasLayer(darkOverlayLayer)) {
+                    map.removeLayer(darkOverlayLayer);
+                    darkOverlayLayer = null;
+                }
+                this.classList.remove('geojson-active');
+                darkOverlayActive = false;
+                showStatusMessage('Overlay oscuro desactivado', 'info');
+            } else {
+                // Activar overlay oscuro
+                darkOverlayLayer = L.polygon(elAltoCoordinates, {
+                    className: 'dark-overlay',
+                    fillColor: '#000000',
+                    fillOpacity: 0.7,
+                    color: '#666666',
+                    weight: 2,
+                    opacity: 0.8,
+                    dashArray: '5, 5'
+                }).addTo(map);
+
+                this.classList.add('geojson-active');
+                darkOverlayActive = true;
+                showStatusMessage('Overlay oscuro activado', 'success');
+            }
+
+            this.blur();
+        });
+
+        // Event listener para salir de pantalla completa con la tecla Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && isFullscreen) {
+                document.getElementById('fullscreenBtn').click();
+            }
+        });
+
+
+
     }
 
     $(document).ready(function() {
@@ -1248,6 +2021,7 @@ if (!$_SESSION['swlogin']) {
             }
 
             var telefonoRegex = /^\d{8}$/;
+            var numeroInmuebleRegex = /^\d{5}$/;
             if ($('#contactoTitular').val() !== '' && !telefonoRegex.test($('#contactoTitular').val())) {
                 errores.push('El teléfono del titular debe tener 8 dígitos');
                 $('#contactoTitular').addClass('is-invalid');
@@ -1256,6 +2030,11 @@ if (!$_SESSION['swlogin']) {
             if ($('#contactoApoderado').val() !== '' && !telefonoRegex.test($('#contactoApoderado').val())) {
                 errores.push('El teléfono del apoderado debe tener 8 dígitos');
                 $('#contactoApoderado').addClass('is-invalid');
+            }
+
+            if ($('#numeroInmueble').val() !== '' && !numeroInmuebleRegex.test($('#numeroInmueble').val())) {
+                errores.push('El numero de inmueble tiene que tener al menos 5  dígitos');
+                $('#numeroInmueble').addClass('is-invalid');
             }
 
             if ($('#imagenPrincipal')[0].files.length === 0) {
@@ -1445,7 +2224,49 @@ if (!$_SESSION['swlogin']) {
                 reader.readAsDataURL(image)
             })
         }
-    })
+    });
+
+    function cargarNivel(nivel) {
+        let dato = {
+            ubicacion1: $('#ubicacion1').val(),
+            ubicacion2: $('#ubicacion2').val(),
+            nivel: nivel
+        };
+
+        $.ajax({
+            async: true, 
+            type: "POST", 
+            dataType: "json", 
+            contentType: "application/x-www-form-urlencoded", 
+            url: "../php/ufUbicacionNivel.php", 
+            data: dato,
+            beforeSend: function() {
+                loadGralOn();
+            },
+            success: function(dat) {
+
+                console.log("======================");
+                console.log(dat);
+                loadGralOff();
+                let $select = $('.select2_' + nivel); 
+                if ($select.hasClass('select2-hidden-accessible')) {
+                    $select.select2('destroy');
+                } 
+                $select.html(dat.html); 
+                $select.attr('multiple', 'multiple'); 
+                $select.select2({
+                    dropdownParent: $('.swal2-popup'),
+                    placeholder: "Seleccione o escriba",
+                    tags: true, 
+                    width: '26%'  
+                });
+            },
+            error: function(xhr) {
+                loadGralOff();
+                console.error("Error al cargar opciones:", xhr.responseText);
+            }
+        });
+    }
 </script>
 
 </html>

@@ -22,9 +22,11 @@ FROM uf_predial a
 INNER JOIN ( 
     SELECT numero_inmueble, MAX(id) AS max_id 
     FROM uf_predial 
+    where  estado_
     GROUP BY numero_inmueble 
 ) b ON a.numero_inmueble = b.numero_inmueble AND a.id = b.max_id 
 where 1 = 1 
+        and a.estado_
     $filtro  
 ORDER BY a.id;";
 
@@ -37,7 +39,7 @@ foreach ($result as $key => $item) {
 
     $html = '<div style="text-align:center;">';
 
-    $html .= '<a class="btn btn-secondary" title="ver historial" onclick="verHistorialPredial(' . $item['numero_inmueble'] . ')" role="button"><i class="fa fa-history" style="color:#fff;" aria-hidden="true"></i></a>';
+    $html .= '<a class="btn btn-secondary" title="ver historial" onclick="verHistorialPredial(\'' . $item['numero_inmueble'] . '\')" role="button"><i class="fa fa-history" style="color:#fff;" aria-hidden="true"></i></a>';
 
     $html .= '</div>';
 

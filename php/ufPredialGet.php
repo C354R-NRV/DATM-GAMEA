@@ -18,10 +18,37 @@ foreach ($_POST as $clave => $valor) {
 }
 
 try {
+    if ($actividad_eco != '') {
+        $filtro .= " and trim(documento_identidad) in (SELECT distinct documento_identidad
+        FROM actividad_univ a where upper(a.razon_social) like upper ('%$actividad_eco%' )) ";
+    }
+    if ($no_placa != '') {
+        $filtro .= " and trim(documento_identidad) in ( SELECT  documento_identidad
+        FROM vehiculo_univ a where upper(a.nro_pta) like upper ('%$no_placa%') ) ";
+    }
+    if ($ubicacion1 != 'TODOS') {
+        if ($ubicacion1 == '5') {
+            $filtro .= " and (trim(a.ubicacion_nivel1) like '% $ubicacion1' or trim(a.ubicacion_nivel1) = '%:$ubicacion1') ";
+        } elseif ($ubicacion1 == 'OTRA JURISDICCION') {
+            $filtro .= " and trim(a.ubicacion_nivel1) like '%$ubicacion1' ";
+        } else {
+            $filtro .= " and trim(a.ubicacion_nivel1) like '% $ubicacion1' ";
+        }
+    }
 
-    $filtro  = '';
+    if ($ubicacion2 != 'TODOS' and $ubicacion2 != 'null' and $ubicacion2 != '') {
+        $filtro .= " and  TRIM(REPLACE(REPLACE(REPLACE(a.ubicacion_nivel2, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) like '$ubicacion2' ";
+    }
+    if ($ubicacion3 != 'TODOS' and $ubicacion3 != 'null' and $ubicacion3 != '') {
+        $filtro .= " and  TRIM(replace(replace(replace(a.ubicacion_nivel3, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) like '$ubicacion3' ";
+    }
+    $numInmueble = strtoupper($numInmueble);
     if ($numInmueble != '') {
-        $filtro .= " and trim(a.numero_inmueble) = trim('$numInmueble') ";
+        if (str_contains($numInmueble, "INM-")) {
+            $filtro .= " and trim(b.numero_inmueble) = upper(trim('$numInmueble')) ";
+        } else {
+            $filtro .= " and trim(a.numero_inmueble) = upper(trim('$numInmueble')) ";
+        }
     }
     if ($nombreTitular != '') {
         $filtro .= " and trim(upper(concat(nombre_rsocial, ' ', primer_apellido_sigla, ' ', segundo_apellido, ' ', apellido_esposo)))   like upper(concat('%', replace('$nombreTitular', ' ', '%'),'%'))  ";
@@ -34,9 +61,9 @@ try {
     }
 
     $query = "SELECT  distinct
-            a.numero_inmueble, 
+            COALESCE(a.numero_inmueble, b.numero_inmueble) numero_inmueble, 
             a.codigo_catastral,  
-
+            
             TRIM(REPLACE(REPLACE(REPLACE(REPLACE(
                 COALESCE(b.ubicacion_nivel1, a.ubicacion_nivel1), 
                 'DISTRITO:', ''), 
@@ -84,27 +111,45 @@ try {
                 WHERE ps.idpredial = b.id ) servicio_uf, 
                 
             b.no_plantas, 
-            b.no_concluidos,
-            b.no_brutos, 
-            b.contacto_apoderado, 
+            b.no_concluidos,        
+            b.no_brutos,            
+            b.contacto_apoderado,   
             b.latitud, 
-            b.longitud
+            b.longitud ";
 
+    if (str_contains($numInmueble, "INM-")) {
+        $query .= " 
+        FROM (
+            SELECT DISTINCT ON (numero_inmueble) *
+            FROM uf_predial
+            where estado_
+            ORDER BY uf_predial.numero_inmueble, uf_predial.id DESC  
+        ) b 
+        LEFT JOIN inmueble_univ a  ON b.numero_inmueble::text = a.numero_inmueble::text 
+    where 1=1 ";
+    } else {
+        $query .= " 
         FROM inmueble_univ a
         LEFT JOIN (
             SELECT DISTINCT ON (numero_inmueble) *
             FROM uf_predial
+            where estado_
             ORDER BY uf_predial.numero_inmueble, uf_predial.id DESC  
         ) b ON b.numero_inmueble::text = a.numero_inmueble::text
-    where 1=1 
-    $filtro  
-    ";
+    where 1=1 ";
+    }
+    $query .= " $filtro ";
+
+
 
     $stmt = $cons->query($query);
     $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $tabla = '';
     $cnt = 0;
+
+
+
     foreach ($resultados as $key => $value) {
         $tabla .= "<tr>
             <td>" . $value['numero_inmueble'] . "</td>

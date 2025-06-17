@@ -20,7 +20,14 @@ try {
 
     // Validate and get form data
     $geolocalizacion = isset($_POST['geolocalizacion']) ? limpiarDato($_POST['geolocalizacion']) : '';
-    $numero_inmueble = isset($_POST['numeroInmueble']) ? intval($_POST['numeroInmueble']) : 0;
+
+    $numero_inmueble =  intval($_POST['numeroInmueble']);
+    if (TRIM($_POST['numeroInmueble']) == '') {
+        $query = "SELECT COUNT(*) correlativo FROM uf_predial where numero_inmueble like 'INM%' and estado_ ";
+        $stmt = $cons->query($query);
+        $extension = $stmt->fetch(PDO::FETCH_ASSOC);
+        $numero_inmueble =  "INM-" . $extension['correlativo'];
+    }
     $codigo_catastral = isset($_POST['codigo_catastro']) ? limpiarDato($_POST['codigo_catastro']) : '';
 
     $tipologia = isset($_POST['tipologia']) ? limpiarDato($_POST['tipologia']) : '';
@@ -116,6 +123,7 @@ try {
         if ($esMultiple) {
             $totalArchivos = count($_FILES['imagenesAdicionales']['name']);
 
+
             for ($i = 0; $i < $totalArchivos; $i++) {
                 if ($_FILES['imagenesAdicionales']['error'][$i] === UPLOAD_ERR_OK) {
                     $nombreOriginal = $_FILES['imagenesAdicionales']['name'][$i];
@@ -161,15 +169,19 @@ try {
                 no_concluidos, no_brutos, imagen_principal, 
                 imagen_adicional, 
                 numero_inmueble, descripcion, hhrr, 
-                fecha_apersonamiento, latitud, longitud, idusuario, fregistro_, contacto_apoderado,  contacto_titular, video ) VALUES (
+                fecha_apersonamiento, latitud, longitud, idusuario, fregistro_, contacto_apoderado,  contacto_titular, video , idestado_fiscalizacion ) VALUES (
                 :nombre_razon, :nombre_apoderado, :ubicacion_nivel1, :ubicacion_nivel2, :ubicacion_nivel3, :no_puerta,
                 :codigo_catastral, :no_formulario, :via, 
                 :tipologia, :no_plantas, 
                 :no_concluidos, :no_brutos, :imagen_principal, 
                 :imagen_adicional, 
                 :numero_inmueble, :descripcion, :hhrr, 
-                :fecha_apersonamiento, :latitud, :longitud, :idusuario, :fregistro_ , :contacto_apoderado,  :contacto_titular, :video
+                :fecha_apersonamiento, :latitud, :longitud, :idusuario, :fregistro_ , :contacto_apoderado,  :contacto_titular, :video, :idestado_fiscalizacion
                 )";
+
+    $idestado_fiscalizacion = 1;
+
+
 
     $stmt = $cons->prepare($query);
     $stmt->bindParam(':nombre_razon', $nombre_titular);
@@ -190,12 +202,19 @@ try {
     $stmt->bindParam(':numero_inmueble', $numero_inmueble);
     $stmt->bindParam(':descripcion', $descripcion);
     $stmt->bindParam(':hhrr', $hhrr_);
+
+    if ($fechaApersonamiento == date('d/m/Y') or  $fechaApersonamiento == date('Y-m-d')) {
+        $fechaApersonamiento .= ' ' . date('H:i:s');
+    } else {
+        $fechaApersonamiento .= ' 07:00:00';
+    }
     $stmt->bindParam(':fecha_apersonamiento', $fechaApersonamiento);
     $stmt->bindParam(':latitud', $latitud);
     $stmt->bindParam(':longitud', $longitud);
     $stmt->bindParam(':contacto_apoderado', $contactoApoderado);
     $stmt->bindParam(':contacto_titular', $contactoTitular);
     $stmt->bindParam(':video', $videoInmueble);
+    $stmt->bindParam(':idestado_fiscalizacion', $idestado_fiscalizacion);
 
     $idusuario = $_SESSION['idusuario'];
     $stmt->bindParam(':idusuario', $idusuario);

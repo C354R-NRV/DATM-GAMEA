@@ -1,3 +1,9 @@
+<?php
+session_start();
+if (!$_SESSION['swlogin']) {
+    echo "<script>window.location.href = 'index.php';</script>";
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -11,7 +17,7 @@
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.css">
     <style>
         body {
             margin: 0;
@@ -390,29 +396,79 @@
 
         .leaflet-popup-content {
             margin: 5px 2px 13px 2px !important;
+            width: 40vh !important;
         }
 
         .leaflet-popup-content-wrapper,
         .leaflet-popup-tip {
-            background: #313030 !important;
+            background: #191c1c !important;
             color: rgb(240, 240, 240) !important;
             box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
         }
 
         .puntoMarca {
             background-color: #00f3ff;
-            width: 12px;
-            height: 12px;
+            width: 0.9rem;
+            height: 0.9rem;
             border-radius: 50%;
             box-shadow:
-                0 0 4px #fff,
-                0 0 8px #fff,
-                0 0 12px #17b9c1,
+                0 0 6px #fff,
+                0 0 0.9rem #fff,
                 0 0 18px #17b9c1,
-                0 0 24px #4cf0f8,
-                0 0 30px #4cf0f8;
-            border: none;
-            animation: pulseAnimation 2s infinite ease-in-out;
+                0 0 24px #17b9c1,
+                0 0 30px #4cf0f8,
+                0 0 36px #4cf0f8;
+            border: 2px solid #fff;
+            animation: pulseAnimation 5s infinite ease-in-out;
+        }
+
+        /* Nuevo estilo para marcadores de hoy */
+        .puntoMarcaHoy {
+            background-color: #fbff00;
+            width: 0.9rem;
+            height: 0.9rem;
+            border-radius: 50%;
+            box-shadow:
+                0 0 6px #fff,
+                0 0 0.9rem #fff,
+                0 0 18px #d5d809,
+                0 0 24px #d5d809,
+                0 0 30px #fbff00,
+                0 0 36px #fbff00;
+            border: 2px solid #fff;
+            animation: pulseAnimation 1.5s infinite ease-in-out;
+        }
+
+        .puntoActualizado {
+            background-color: #0ecc08;
+            width: 0.9rem;
+            height: 0.9rem;
+            border-radius: 50%;
+            box-shadow:
+                0 0 6px #fff,
+                0 0 0.9rem #fff,
+                0 0 18px #0ecc08,
+                0 0 24px #0ecc08,
+                0 0 30px #0ecc08,
+                0 0 36px #0ecc08;
+            border: 2px solid #fff;
+            animation: pulseAnimation 1.5s infinite ease-in-out;
+        }
+
+        .puntoRevelde {
+            background-color: #ff0040;
+            width: 0.9rem;
+            height: 0.9rem;
+            border-radius: 50%;
+            box-shadow:
+                0 0 6px #fff,
+                0 0 0.9rem #fff,
+                0 0 18px #ff0040,
+                0 0 24px #ff0040,
+                0 0 30px #ff0040,
+                0 0 36px #ff0040;
+            border: 2px solid #fff;
+            animation: pulseAnimation 1.5s infinite ease-in-out;
         }
 
         .pulsing-marker div {
@@ -478,8 +534,6 @@
             animation: pulseAnimation 1s infinite ease-in-out;
         }
 
-
-
         .card-inmueble {
             max-width: 100%;
             box-sizing: border-box;
@@ -491,19 +545,18 @@
             font-size: 1.1rem;
             margin-bottom: 8px;
             text-align: center;
-            color: #39b6e7;
+            color: #01f3ff;
         }
 
         .carrusel {
             position: relative;
             width: 100%;
-            max-height: 300px;
             overflow: hidden;
         }
 
         .carrusel-img {
             width: 100%;
-            height: auto;
+            max-height: 40vh;
             display: block;
             object-fit: contain;
         }
@@ -544,68 +597,179 @@
                 font-size: 14px;
             }
         }
+
+        .info-container {
+            display: flex;
+            flex-wrap: wrap;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .info-row {
+            display: flex;
+            width: 100%;
+            padding: 4px 0;
+            border-bottom: 1px solid #313437;
+        }
+
+        .info-label {
+            flex: 1;
+            font-weight: bold;
+            min-width: 120px;
+            color: #00c7d1;
+        }
+
+        .info-value {
+            flex: 2;
+        }
+
+        @media (max-width: 500px) {
+            .info-row {
+                flex-direction: column;
+            }
+
+            .info-label,
+            .info-value {
+                flex: none;
+                width: 100%;
+
+            }
+
+            .info-label {
+                font-size: 10px;
+            }
+        }
+
+
+        .icon-buttons {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 10px 0;
+        }
+
+        .icon-buttons i {
+            font-size: 0.9rem;
+            padding: 10px;
+            border: 2px solid;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .icon-buttons i:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 8px;
+        }
+
+        .icon-check {
+            color: #00ff00;
+            border-color: #00ff00;
+            box-shadow: 0 0 4px #00ff00;
+        }
+
+        .icon-refresh {
+            color: #00bfff;
+            border-color: #00bfff;
+            box-shadow: 0 0 4px #00bfff;
+        }
+
+        .icon-warning {
+            color: #ff0033;
+            border-color: #ff0033;
+            box-shadow: 0 0 4px #ff0033;
+        }
+
+        .loadGralOn {
+            position: fixed;
+            z-index: 999;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 100%;
+            background-color: #121212;
+            opacity: 0.8;
+            filter: alpha(opacity=80);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loadGralOn img {
+            height: 6em;
+        }
+
+        .loadGralOff {
+            display: none;
+            height: 0%;
+            width: 0%;
+        }
     </style>
 </head>
 
 <body>
+    <div class="loadGral"></div>
     <main>
-        <div class="container">
-            <div id="map">
-                <div class="search-container">
-                    <div class="search-input-container">
-                        <input
-                            type="text"
-                            id="searchInput"
-                            class="search-input"
-                            placeholder="Buscar inmuebles, contribuyentes o números... (Click en el mapa para obtener coordenadas)"
-                            aria-label="Buscar inmuebles, contribuyentes o números">
-                        <button id="clearSearch" class="clear-search" title="Limpiar búsqueda" aria-label="Limpiar búsqueda">×</button>
-                    </div>
-                    <div class="search-results">
-                        <span id="resultsCount" class="results-count" aria-live="polite"></span>
-                        <button id="showAllBtn" class="show-all-btn">Mostrar todos</button>
-                    </div>
+        <div id="map">
+            <div class="search-container">
+                <div class="search-input-container">
+                    <input
+                        type="text"
+                        id="searchInput"
+                        class="search-input"
+                        placeholder="Buscar inmuebles, contribuyentes o números... (Click en el mapa para obtener coordenadas)"
+                        aria-label="Buscar inmuebles, contribuyentes o números">
+                    <button id="clearSearch" class="clear-search" title="Limpiar búsqueda" aria-label="Limpiar búsqueda">×</button>
                 </div>
-                <div class="map-controls">
-                    <button id="locationBtn" class="control-button" title="Mostrar mi ubicación" aria-label="Mostrar mi ubicación"><i class="fa fa-map-marker" aria-hidden="true"></i></button>
-                    <button id="zoomInBtn" class="control-button" title="Acercar" aria-label="Acercar mapa">+</button>
-                    <button id="zoomOutBtn" class="control-button" title="Alejar" aria-label="Alejar mapa">−</button>
-                    <button id="homeBtn" class="control-button" title="Inicio" aria-label="Volver" style="outline-style: none;">
-                        <i class="fa fa-arrow-left" aria-hidden="true"></i>
-                    </button>
-
-                    <button id="inmueblesBtn" class="control-button geojson-codigos" title="Mostrar/Ocultar Inmuebles" aria-label="Capa Inmuebles">
-                        <i class="fa fa-home" aria-hidden="true"></i>
-                    </button>
-
-                    <button id="codigosBtn" class="control-button geojson-codigos" title="Mostrar/Ocultar Códigos" aria-label="Capa Códigos">
-                        <i class="fa fa-tags" aria-hidden="true"></i>
-                    </button>
-
-                    <button id="satelitalBtn" class="control-button satelital" title="Mostrar/Ocultar Capa Satelital" aria-label="Capa Satelital" style="outline-style: none;">
-                        <i class="fa fa-globe" aria-hidden="true"></i>
-                    </button>
-                    <button id="oscurecerBtn" class="control-button oscurecer" title="Oscurecer El Alto" aria-label="Oscurecer El Alto" style="outline-style: none;">
-                        <i class="fa fa-moon-o" aria-hidden="true"></i>
-                    </button>
+                <div class="search-results">
+                    <span id="resultsCount" class="results-count" aria-live="polite"></span>
+                    <button id="showAllBtn" class="show-all-btn">Mostrar todos</button>
                 </div>
-                <div id="statusMessage" class="status-message" role="alert"></div>
-                <div id="dynamicLoadingIndicator" class="dynamic-loading-indicator">Cargando datos...</div>
-                <div id="loader" class="loader"></div>
-                <div id="debugInfo" class="debug-info"></div>
             </div>
+            <div class="map-controls">
+                <button id="locationBtn" class="control-button" title="Mostrar mi ubicación" aria-label="Mostrar mi ubicación"><i class="fa fa-map-marker" aria-hidden="true"></i></button>
+                <button id="zoomInBtn" class="control-button" title="Acercar" aria-label="Acercar mapa">+</button>
+                <button id="zoomOutBtn" class="control-button" title="Alejar" aria-label="Alejar mapa">−</button>
+                <button id="homeBtn" class="control-button" title="Inicio" aria-label="Volver" style="outline-style: none;">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                </button>
+
+                <button id="inmueblesBtn" class="control-button geojson-codigos" title="Mostrar/Ocultar Inmuebles" aria-label="Capa Inmuebles">
+                    <i class="fa fa-home" aria-hidden="true"></i>
+                </button>
+
+                <button id="codigosBtn" class="control-button geojson-codigos" title="Mostrar/Ocultar Códigos" aria-label="Capa Códigos">
+                    <i class="fa fa-tags" aria-hidden="true"></i>
+                </button>
+
+                <button id="satelitalBtn" class="control-button satelital" title="Mostrar/Ocultar Capa Satelital" aria-label="Capa Satelital" style="outline-style: none;">
+                    <i class="fa fa-globe" aria-hidden="true"></i>
+                </button>
+                <button id="oscurecerBtn" class="control-button oscurecer" title="Oscurecer El Alto" aria-label="Oscurecer El Alto" style="outline-style: none;">
+                    <i class="fa fa-moon-o" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div id="statusMessage" class="status-message" role="alert"></div>
+            <div id="dynamicLoadingIndicator" class="dynamic-loading-indicator">Cargando datos...</div>
+            <div id="loader" class="loader"></div>
+            <div id="debugInfo" class="debug-info"></div>
         </div>
     </main>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <script src="../js/jquery-confirm.js"></script>
+    <script src="../js/mainv2.js"></script>
     <script>
         $(document).ready(function() {
             toggleDarkOverlay();
         });
-
 
         console.log('Leaflet version:', L.version);
 
@@ -616,7 +780,7 @@
 
         // Capas base
         const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            attribution: 'DATM',
             maxZoom: 19
         }).addTo(map);
 
@@ -645,6 +809,9 @@
         let debounceTimer;
         let totalMarkersCount = 0;
         let dynamicLoadingTimer;
+
+        // NUEVA VARIABLE: Control para puntos agrupados
+        let ALLOW_GROUPED_POINTS = false; // Cambiar a false para desactivar agrupación
 
         // Configuración para carga dinámica
         const DYNAMIC_LOADING_CONFIG = {
@@ -863,7 +1030,7 @@
 
             setTimeout(() => {
                 statusDiv.style.display = 'none';
-            }, 4000);
+            }, 5000);
         }
 
         function showLoader() {
@@ -887,12 +1054,25 @@
                 Inmuebles: ${inmueblesActive ? 'ON' : 'OFF'} | 
                 Satelital: ${satelitalActive ? 'ON' : 'OFF'} |
                 Oscurecer: ${oscurecerActive ? 'ON' : 'OFF'} |
+                Agrupados: ${ALLOW_GROUPED_POINTS ? 'ON' : 'OFF'} |
                 Lat: ${center.lat.toFixed(4)} | 
                 Lng: ${center.lng.toFixed(4)}
             `;
         }
 
-        // Función para cargar marcadores desde la base de datos
+        // NUEVA FUNCIÓN: Verificar si una fecha es hoy
+        function isToday(dateString) {
+            if (!dateString) return false;
+
+            const today = new Date();
+            const checkDate = new Date(dateString);
+
+            return today.getFullYear() === checkDate.getFullYear() &&
+                today.getMonth() === checkDate.getMonth() &&
+                today.getDate() === checkDate.getDate();
+        }
+
+        // Función para cargar marcadores desde la base de datos (MEJORADA)
         function loadMarkersInViewport() {
             if (isDataLoading) return;
 
@@ -903,6 +1083,12 @@
 
             if (zoom < DYNAMIC_LOADING_CONFIG.MIN_ZOOM_FOR_LOADING) {
                 console.log('Zoom insuficiente para cargar marcadores');
+                return;
+            }
+
+            // MEJORA: Solo cargar si no hay capas GeoJSON activas o si ambas están activas
+            if (codigosActive && !inmueblesActive) {
+                console.log('Solo códigos activos, no cargar marcadores individuales');
                 return;
             }
 
@@ -997,7 +1183,7 @@
                 });
         }
 
-        // Función para inicializar marcadores
+        // Función para inicializar marcadores (MEJORADA)
         function initializeMarkers() {
             if (!window.map) {
                 console.error("Map not initialized");
@@ -1009,18 +1195,21 @@
                     map.removeLayer(markerClusterGroup);
                 }
 
-                markerClusterGroup = L.markerClusterGroup({
+                // MEJORA: Configurar clustering basado en la variable de control
+                const clusterOptions = {
                     chunkedLoading: true,
                     chunkInterval: 50,
                     chunkDelay: 25,
-                    maxClusterRadius: function(zoom) {
+                    maxClusterRadius: ALLOW_GROUPED_POINTS ? function(zoom) {
                         return zoom < 15 ? 80 : 40;
-                    },
+                    } : 0, // 0 desactiva el clustering
                     spiderfyOnMaxZoom: true,
                     showCoverageOnHover: false,
                     zoomToBoundsOnClick: true,
-                    disableClusteringAtZoom: 18
-                });
+                    disableClusteringAtZoom: ALLOW_GROUPED_POINTS ? 18 : 1
+                };
+
+                markerClusterGroup = L.markerClusterGroup(clusterOptions);
 
                 console.log("MarkerClusterGroup initialized:", markerClusterGroup);
 
@@ -1037,7 +1226,7 @@
             }
         }
 
-        // Función para procesar marcadores en lotes
+        // Función para procesar marcadores en lotes (MEJORADA)
         function processMarkersInBatches(data, startIndex) {
             try {
                 if (!markerClusterGroup) {
@@ -1057,9 +1246,21 @@
 
                     loadedMarkerIds.add(item.id);
 
+                    // MEJORA: Verificar si es visita de hoy y usar marcador apropiado
+                    const isVisitToday = item.is_visit_today;
+                    console.log("===> numero_inmueble:" + item.numero_inmueble);
+                    console.log("===> isVisitToday:" + isVisitToday);
+
+
+                    let markerClass = isVisitToday ? 'puntoMarcaHoy' : 'puntoMarca';
+                    if (item.estado_fiscalizacion == 'PROCESADO')
+                        markerClass = 'puntoActualizado';
+                    if (item.estado_fiscalizacion == 'DESACATO')
+                        markerClass = 'puntoRevelde';
+
                     const pulsingIcon = L.divIcon({
                         className: 'pulsing-marker',
-                        html: '<div class="puntoMarca"></div>',
+                        html: `<div class="${markerClass}"></div>`,
                         iconSize: [16, 16],
                         iconAnchor: [8, 8]
                     });
@@ -1078,7 +1279,11 @@
                         description: item.description || '',
                         type: item.numero_inmueble || '',
                         position: item.position,
-                        html: item.html
+                        html: item.html,
+                        fecha_apersonamiento: item.fecha_apersonamiento || null,
+                        usuario: item.usuario || null,
+                        no_formulario: item.no_formulario || null,
+                        isVisitToday: isVisitToday
                     };
 
                     return marker;
@@ -1111,6 +1316,7 @@
         // Función para filtrar marcadores
         function filterMarkers(searchTerm) {
             const term = searchTerm.toLowerCase().trim();
+            console.log("term:" + term);
             let visibleCount = 0;
 
             if (!markerClusterGroup || !allLeafletMarkers) return;
@@ -1133,16 +1339,23 @@
                     for (let i = startIndex; i < endIndex; i++) {
                         const marker = allLeafletMarkers[i];
                         const data = marker.originalData || {};
-
+                        console.log(data);
                         const title = String(data.title || '').toLowerCase();
                         const nombre = String(data.nombre_razon || '').toLowerCase();
                         const codigo = String(data.codigo_catastral || '').toLowerCase();
                         const numero = String(data.numero_inmueble || '').toLowerCase();
+                        const usuario = String(data.usuario || '').toLowerCase();
+                        const no_formulario = String(data.no_formulario || '').toLowerCase();
+                        const fecha_apersonamiento = String(data.fecha_apersonamiento || '').toLowerCase();
 
+                        console.log("fecha_apersonamiento:" + fecha_apersonamiento);
                         const matchesSearch = term === '' ||
                             title.includes(term) ||
                             nombre.includes(term) ||
                             codigo.includes(term) ||
+                            fecha_apersonamiento.includes(term) ||
+                            usuario.includes(term) ||
+                            no_formulario.includes(term) ||
                             numero.includes(term);
 
                         if (matchesSearch) {
@@ -1262,7 +1475,7 @@
             }
         }
 
-        // Función mejorada para carga dinámica de datos GeoJSON
+        // Función mejorada para carga dinámica de datos GeoJSON (CORREGIDA)
         function loadGeoJSONDataDynamically(modulo, forceReload = false) {
             if (isGeoJsonLoading && !forceReload) {
                 logDebug('Ya hay una carga de GeoJSON en progreso, saltando...');
@@ -1439,6 +1652,12 @@
                 codigosActive = false;
             } else {
                 // Activar capa
+                const zoom = map.getZoom();
+                if (zoom < 16) {
+                    showStatusMessage('El zoom mínimo para ver los codigos es 16, zoom actual:' + zoom, 'error');
+                    return;
+                }
+
                 codigosActive = true;
                 button.classList.add('geojson-active');
                 loadGeoJSONDataDynamically('catastro', true);
@@ -1464,8 +1683,8 @@
             } else {
                 // Activar capa
                 const zoom = map.getZoom();
-                if (zoom < 16) {
-                    showStatusMessage('El zoom mínimo para ver inmuebles es 16', 'error');
+                if (zoom < 18) {
+                    showStatusMessage('El zoom mínimo para ver inmuebles es 18, zoom actual:' + zoom, 'error');
                     return;
                 }
 
@@ -1477,14 +1696,16 @@
             updateDebugInfo();
         }
 
-        // Función para manejar movimiento del mapa con carga dinámica
+        // Función para manejar movimiento del mapa con carga dinámica (MEJORADA)
         function handleMapMovement() {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
                 logDebug('Mapa movido, verificando si necesita cargar datos...');
 
-                // Cargar marcadores desde la base de datos
-                loadMarkersInViewport();
+                // MEJORA: Cargar marcadores solo si no hay capas GeoJSON activas o ambas están activas
+                if (!codigosActive || inmueblesActive) {
+                    loadMarkersInViewport();
+                }
 
                 // Cargar datos para capas GeoJSON activas
                 const promises = [];
@@ -1640,6 +1861,33 @@
             window.location.href = "ufPredialList.php";
         }
 
+        // NUEVA FUNCIÓN: Alternar agrupación de puntos
+        function toggleGroupedPoints() {
+            ALLOW_GROUPED_POINTS = !ALLOW_GROUPED_POINTS;
+
+            // Reinicializar marcadores con nueva configuración
+            if (markerClusterGroup) {
+                const currentMarkers = allLeafletMarkers.slice(); // Copia de marcadores
+                allLeafletMarkers = [];
+                loadedMarkerIds.clear();
+
+                // Reinicializar con nueva configuración
+                initializeMarkers();
+
+                // Recargar marcadores
+                if (currentMarkers.length > 0) {
+                    const markerData = currentMarkers.map(marker => marker.originalData);
+                    processMarkersInBatches(markerData, 0);
+                }
+            }
+
+            showStatusMessage(
+                `Agrupación de puntos ${ALLOW_GROUPED_POINTS ? 'activada' : 'desactivada'}`,
+                'success'
+            );
+            updateDebugInfo();
+        }
+
         // Función para manejar clicks en el mapa y obtener coordenadas
         function handleMapClick(e) {
             const lat = e.latlng.lat;
@@ -1745,6 +1993,13 @@
             map.on('zoomend', handleMapMovement);
             /* map.on('click', handleMapClick);   -- para mostrar coordenadas segun se haga click en el mapa*/
 
+            // NUEVO: Event listener para alternar agrupación (tecla G)
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'g' || e.key === 'G') {
+                    toggleGroupedPoints();
+                }
+            });
+
             // Cargar datos iniciales
             setTimeout(() => {
                 loadMarkersInViewport();
@@ -1761,7 +2016,6 @@
         map.on('moveend', updateDebugInfo);
 
         console.log('Script de mapa cargado completamente');
-
 
         document.addEventListener('DOMContentLoaded', initializeApp);
 
@@ -1781,6 +2035,64 @@
             index = (index - 1 + images.length) % images.length;
             container.dataset.index = index;
             document.getElementById(`img-${id}`).src = "../static/ufpredial/" + images[index];
+        }
+
+        function actualizarEstado(id, inmueble, estado) {
+            let estado_ = (estado ? 'ACTUALIZADO SIN OBSERVACIONES' : 'CONTRIBUYENTE DESACATÓ LA FISCALIZACIÓN');
+            let type = (estado ? 'green' : 'red');
+            let btnClass = (estado ? 'btn-green' : 'btn-red');
+            $.confirm({
+                title: "Confirme",
+                content: `Por favor confirme el cambio de estado a ${estado_} del inmueble  ${inmueble}<br><textarea id="observacionEstado" placeholder="Redacte la observción o anotacion técnica si corresponde" class="form-control"></textarea>`,
+                type: type,
+                typeAnimated: true,
+                columnClass: "col-md-6 col-md-offset-6 col-xs-8 col-xs-offset-8",
+                buttons: {
+                    cancel: {
+                        text: "Cerrar",
+                        action: function() {},
+                    },
+                    guardar: {
+                        text: "Confirmar",
+                        btnClass: btnClass,
+                        action: function() {
+                            console.log("ajax para actualizar estado");
+                            datos = "&id=" + id + "&estado=" + (estado ? '2' : '3') + "&inmueble=" + inmueble + "&observacionEstado=" + $('#observacionEstado').val();
+                            $.ajax({
+                                async: true,
+                                type: "POST",
+                                dataType: "html",
+                                contentType: "application/x-www-form-urlencoded",
+                                url: "../php/ufSaveCambioEstado.php",
+                                data: datos,
+                                beforeSend: function() {
+                                    loadGralOn();
+                                },
+                                success: function(e) {
+                                    console.log(e);
+                                    loadGralOff();
+                                    dat = JSON.parse(e)
+                                    if (dat.err == '0') {
+                                        window.location.href = './ufdatmap.php';
+                                    } else {
+                                        $.confirm({
+                                            title: " Error",
+                                            type: "red",
+                                            content: dat.log,
+                                        });
+                                    }
+
+                                },
+                                error: function() {},
+                            });
+                        }
+                    },
+                },
+                onOpenBefore: function() {
+                    $('.jconfirm-title-c').css('text-align', 'center');
+                }
+            });
+            console.log("en funcion, no se presento: " + inmueble);
         }
     </script>
 </body>

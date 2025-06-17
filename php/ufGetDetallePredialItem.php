@@ -21,7 +21,7 @@ TRIM(replace(replace(replace(replace(ubicacion_nivel1, 'DISTRITO:', ''), 'LOTE,'
         WHERE ps.idpredial = a.id ) servicios,   a.numero_inmueble 
         from uf_predial   a 
         left join datm_usuario b on a.idusuario = b.id  
-        where a.numero_inmueble = '$numero_inmueble' order by a.id desc ";
+        where  a.estado_ and  a.numero_inmueble = '$numero_inmueble' order by a.id desc ";
 
 $stmt = $cons->query($query);
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);

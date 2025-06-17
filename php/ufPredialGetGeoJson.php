@@ -15,10 +15,10 @@ foreach ($_GET as $clave => $valor) {
 $tileConfig = [
     'inmueble' => [
         'basePath' => '../static/geojson/tiles/',
-        'filePattern' => 'el_alto_tile_r{row}_c{col}*.geojson', // Patrón más flexible
-        'supportsParts' => true, // Indica que soporta archivos con partes
-        'maxRows' => 4, // Basado en los archivos que veo (r0 a r3)
-        'maxCols' => 4  // Basado en los archivos que veo (c0 a c3)
+        'filePattern' => 'el_alto_tile_r{row}_c{col}*.geojson',
+        'supportsParts' => true,
+        'maxRows' => 4,
+        'maxCols' => 4
     ],
     'catastro' => [
         'basePath' => '../static/geojson/',
@@ -46,6 +46,7 @@ if ($modulo == 'inmueble') {
     }
 }
 
+// MEJORA: Agregar información de fecha actual para comparación
 $response = [
     'data' => $data,
     'meta' => [
@@ -61,7 +62,8 @@ $response = [
             'maxLng' => $maxLng
         ],
         'tile_size' => ($maxLat - $minLat) * ($maxLng - $minLng),
-        'timestamp' => date('Y-m-d H:i:s')
+        'timestamp' => date('Y-m-d H:i:s'),
+        'current_date' => date('Y-m-d') // Para comparar fechas de visita
     ]
 ];
 
@@ -126,6 +128,13 @@ function loadFromTiledFiles($config, $minLat, $maxLat, $minLng, $maxLng, $limit,
                             
                             if ($lat >= $minLat && $lat <= $maxLat && 
                                 $lng >= $minLng && $lng <= $maxLng) {
+                                
+                                // MEJORA: Agregar información de fecha de visita si existe
+                                if (isset($feature['properties']['ultima_visita'])) {
+                                    $feature['properties']['is_visit_today'] = 
+                                        (date('Y-m-d') === date('Y-m-d', strtotime($feature['properties']['ultima_visita'])));
+                                }
+                                
                                 $filteredFeatures[] = $feature;
                                 
                                 // Verificar límite global
@@ -366,6 +375,13 @@ function loadFromGeojsonFile($geojsonFile, $minLat, $maxLat, $minLng, $maxLng, $
 
                 if ($lat >= $minLat && $lat <= $maxLat &&
                     $lng >= $minLng && $lng <= $maxLng) {
+                    
+                    // MEJORA: Agregar información de fecha de visita si existe
+                    if (isset($feature['properties']['ultima_visita'])) {
+                        $feature['properties']['is_visit_today'] = 
+                            (date('Y-m-d') === date('Y-m-d', strtotime($feature['properties']['ultima_visita'])));
+                    }
+                    
                     $filteredFeatures[] = $feature;
 
                     if (count($filteredFeatures) >= $limit) {

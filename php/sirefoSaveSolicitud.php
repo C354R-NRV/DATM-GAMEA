@@ -68,7 +68,7 @@ try {
     $cabecera->hash_imagen = $sha1Hash;
 
     $cabecera->adjunto = $base64Pdf;
-    $cabecera->adjunto_nombre = $fileName; 
+    $cabecera->adjunto_nombre = $fileName;
 
     $query = " select * from datm_usuario where estado like 'DESBLOQUEADO' and rol like 'DIRECCION' ";
     $stmt = $cons->query($query);
@@ -87,7 +87,7 @@ try {
 
     if (empty($srfCabecera)) {
 
-        try { 
+        try {
             $query = "INSERT INTO srf_cabecera_solicitud (
                 adjunto,         adjunto_nombre,        autoridad_cargo,        autoridad_solicitante,        codigo_solicitud,
                 detalle_cantidad,        entidad,        fecha_envio,        fecha_envio_ansi,        gerencia,         
@@ -210,7 +210,7 @@ try {
                         $item->nombre = '';
                         $item->apellido_paterno = '';
                         $item->apellido_materno = '';
-                    } 
+                    }
 
                     $item->id_documento_identidad_tipo = $_POST['item_id_documento_identidad_tipo' . $i];
                     $item->documento_identidad_numero = $_POST['item_documentoIdentidadNumero' . $i];
@@ -423,8 +423,8 @@ try {
                                 $stmt = $cons->prepare($query);
                                 $err = $stmt->execute();
 
-                                $pjson['log'] .= "<br>- ". $campoModificado['campo']." de ".$campoModificado['valor_anterior']." a ". $campoModificado['valor_nuevo'];
-                            } 
+                                $pjson['log'] .= "<br>- " . $campoModificado['campo'] . " de " . $campoModificado['valor_anterior'] . " a " . $campoModificado['valor_nuevo'];
+                            }
                         }
                     }
                 }
@@ -463,7 +463,7 @@ try {
             }
         }
 
-        if (!empty($camposModificados)) { 
+        if (!empty($camposModificados)) {
             foreach ($camposModificados as $campoModificado) {
                 $query = "INSERT INTO srf_cabecera_solicitud_hst (
                         id_cabecera_solicitud,

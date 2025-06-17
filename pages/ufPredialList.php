@@ -625,7 +625,7 @@ if (!$_SESSION['swlogin']) {
                 <div class="info-label">SERVICIOS:</div>
                 <div class="info-value">${element.servicios}</div>
             </div>
-   
+
             <div class="info-item">
                 <div class="info-label">DIRECCIÓN:</div>
                 <div class="info-value">${element.ubicacion_nivel1} ${element.ubicacion_nivel2} ${element.ubicacion_nivel3} ${element.no_puerta}</div>

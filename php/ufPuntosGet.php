@@ -37,24 +37,21 @@ try {
     $minLng = floatval($_GET['minLng']);
     $maxLng = floatval($_GET['maxLng']);
     $zoom = isset($_GET['zoom']) ? intval($_GET['zoom']) : 13;
-    $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 2000; // Cambiado a 2000 para coincidir con frontend
+    $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 2000;
     $masivo = isset($_GET['masivo']) ? intval($_GET['masivo']) : 0;
 
     // Configuración para archivo GeoJSON
     $geojsonFile = '../static/geojson/grupo_numeros_con_guion.geojson';
     $useGeojsonFile = isset($_GET['useGeojson']) ? intval($_GET['useGeojson']) : 0;
 
-    // Determinar límite de puntos basado en zoom (como especificado en el frontend)
-    $zoomBasedLimit = 500; // Valor por defecto para zoom 13
+    // Determinar límite de puntos basado en zoom
+    $zoomBasedLimit = 500;
     if ($zoom > 13) {
-        // Incrementar el límite a medida que aumenta el zoom
         $zoomBasedLimit = 500 + (($zoom - 13) * 250);
     } elseif ($zoom < 13) {
-        // Reducir el límite para zoom menor a 13
         $zoomBasedLimit = max(100, 500 - ((13 - $zoom) * 100));
     }
 
-    // Usar el límite basado en zoom o el límite proporcionado, el que sea menor
     $limit = min($limit, $zoomBasedLimit);
 
     logDebug("Parámetros: minLat=$minLat, maxLat=$maxLat, minLng=$minLng, maxLng=$maxLng, zoom=$zoom, limit=$limit, masivo=$masivo, useGeojson=$useGeojsonFile");
@@ -76,20 +73,17 @@ try {
     $username = 'postgres';
     $password = '1n0v4d05';
 
-    // Determinar fuente de datos - SEPARAR LÓGICA DE GEOJSON
+    // Determinar fuente de datos
     if ($useGeojsonFile && file_exists($geojsonFile)) {
         logDebug("Usando archivo GeoJSON: $geojsonFile");
-        
-        // Cargar datos desde archivo GeoJSON
+
         $data = loadFromGeojsonFile($geojsonFile, $minLat, $maxLat, $minLng, $maxLng, $limit, $zoom);
-        $totalCount = count($data) * 10; // Estimación para archivo GeoJSON
-        
+        $totalCount = count($data) * 10;
     } else {
         logDebug("Modo base de datos activado");
-        
+
         logDebug("Conectando a la base de datos...");
 
-        // Conectar a la base de datos
         $dsn = "pgsql:host=$host;port=$port;dbname=$dbname;";
         $pdo = new PDO($dsn, $username, $password, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -99,28 +93,31 @@ try {
         $pdo->exec("SET NAMES 'UTF8'");
 
         logDebug("Conexión a la base de datos exitosa");
-        
-        // Configuración optimizada para modo masivo desde BD
+
         if ($masivo) {
-            // Modo masivo: optimizaciones especiales
             logDebug("Modo masivo desde BD activado");
-            
-            // Query optimizada para modo masivo con sampling
+
             $sql = "
-                WITH sampled_data AS (
+                WITH sampled_data AS ( 
                     SELECT 
-                        a.id,
-                        a.codigo_catastral,
-                        a.nombre_razon,
-                        a.numero_inmueble,
-                        a.descripcion as direccion,
-                        ST_Y(a.geom) as lat,
-                        ST_X(a.geom) as lng,
-                        a.imagen_principal,
-                        a.imagen_adicional,
-                        to_char(a.fecha_apersonamiento, 'DD/MM/YYYY') AS fecha_apersonamiento,
-                        c.usuario,
-                        -- Agregar sampling basado en zoom
+                        a.id, 
+                        a.codigo_catastral, 
+                        a.nombre_razon, 
+                        a.numero_inmueble, 
+
+                        trim( a.ubicacion_nivel1||' '||a.ubicacion_nivel2 ||' '||a.ubicacion_nivel3 ||' '||a.descripcion ) as direccion, 
+                        ST_Y(a.geom) as lat, 
+                        ST_X(a.geom) as lng, 
+                        a.imagen_principal, 
+                        a.imagen_adicional,  
+                        to_char(a.fecha_apersonamiento, 'DD/MM/YYYY HH24:MI:SS') fecha_apersonamiento, 
+                        a.fecha_apersonamiento as fecha_apersonamiento_raw, 
+                        estado_fiscalizacion, 
+                        to_char(a.fecha_cambio_estado, 'DD/MM/YYYY HH24:MI:SS') fecha_cambio_estado, 
+                        c1.usuario usuario_cambio_estado, 
+                        observacion_estado, 
+                        no_formulario,
+                        c.usuario, 
                         CASE 
                             WHEN :zoom < 13 THEN 
                                 row_number() OVER (
@@ -141,11 +138,14 @@ try {
                     FROM uf_predial a 
                     INNER JOIN ( 
                         SELECT numero_inmueble, MAX(id) AS max_id 
-                        FROM uf_predial 
+                        FROM uf_predial
+                        where  estado_ 
                         GROUP BY numero_inmueble 
                     ) b ON a.numero_inmueble = b.numero_inmueble AND a.id = b.max_id   
                     LEFT JOIN datm_usuario c ON c.id = a.idusuario
-                    WHERE a.geom IS NOT NULL
+                    left join uf_estado_fiscalizacion d on d.idestado_fiscalizacion = a.idestado_fiscalizacion
+                    LEFT JOIN datm_usuario c1 ON c1.id = a.idusuario_cambio_estado
+                    WHERE a.estado_ and a.geom IS NOT NULL
                     AND ST_Intersects(
                         a.geom, 
                         ST_MakeEnvelope(:minLng, :minLat, :maxLng, :maxLat, 4326)
@@ -156,33 +156,38 @@ try {
                 ORDER BY random()
                 LIMIT :limit
             ";
-            
         } else {
-            // Modo normal: usar la lógica original
             logDebug("Modo normal activado");
-            
-            // Query original optimizada
+
             $sql = "
                 SELECT 
                     a.id,
                     a.codigo_catastral,
                     a.nombre_razon,
                     a.numero_inmueble,
-                    a.descripcion as direccion,
+                    trim( a.ubicacion_nivel1||' '||a.ubicacion_nivel2 ||' '||a.ubicacion_nivel3 ||' '||a.descripcion ) as direccion,
                     ST_Y(a.geom) as lat,
                     ST_X(a.geom) as lng,
                     a.imagen_principal,
                     a.imagen_adicional,
-                    to_char(a.fecha_apersonamiento, 'DD/MM/YYYY') AS fecha_apersonamiento,
-                    c.usuario
+                    to_char(a.fecha_apersonamiento, 'DD/MM/YYYY HH24:MI:SS') AS fecha_apersonamiento,
+                    a.fecha_apersonamiento as fecha_apersonamiento_raw,
+                    estado_fiscalizacion, 
+                        to_char(a.fecha_cambio_estado, 'DD/MM/YYYY HH24:MI:SS') fecha_cambio_estado,
+                        c1.usuario usuario_cambio_estado,
+                        observacion_estado,
+                    c.usuario, no_formulario
                 FROM uf_predial a 
                 INNER JOIN ( 
                     SELECT numero_inmueble, MAX(id) AS max_id 
                     FROM uf_predial 
+                    where  estado_ 
                     GROUP BY numero_inmueble 
                 ) b ON a.numero_inmueble = b.numero_inmueble AND a.id = b.max_id   
                 LEFT JOIN datm_usuario c ON c.id = a.idusuario
-                WHERE a.geom IS NOT NULL
+                left join uf_estado_fiscalizacion d on d.idestado_fiscalizacion = a.idestado_fiscalizacion
+                LEFT JOIN datm_usuario c1 ON c1.id = a.idusuario_cambio_estado
+                WHERE  a.estado_ and a.geom IS NOT NULL
                 AND ST_Intersects(
                     a.geom, 
                     ST_MakeEnvelope(:minLng, :minLat, :maxLng, :maxLat, 4326)
@@ -205,12 +210,10 @@ try {
         $stmt->bindValue(':maxLng', $maxLng, PDO::PARAM_STR);
         $stmt->bindValue(':zoom', $zoom, PDO::PARAM_INT);
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-        
-        // Binding adicional para modo masivo
+
         if ($masivo) {
             $stmt->bindValue(':zoom2', $zoom, PDO::PARAM_INT);
         } else {
-            // Binding adicional para modo normal
             $stmt->bindValue(':minLat2', $minLat, PDO::PARAM_STR);
             $stmt->bindValue(':maxLat2', $maxLat, PDO::PARAM_STR);
             $stmt->bindValue(':minLng2', $minLng, PDO::PARAM_STR);
@@ -222,22 +225,20 @@ try {
 
         logDebug("Query ejecutada. Resultados encontrados: " . count($results));
 
-        // Obtener conteo total para metadatos (optimizado para modo masivo)
         if ($masivo) {
-            // Para modo masivo, estimamos el total basado en sampling
-            $totalCount = count($results) * 10; // Estimación aproximada
+            $totalCount = count($results) * 10;
             logDebug("Conteo estimado para modo masivo: $totalCount");
         } else {
-            // Para modo normal, conteo exacto
             $countSql = "
                 SELECT COUNT(*) as total 
                 FROM uf_predial a 
                 INNER JOIN ( 
                     SELECT DISTINCT numero_inmueble, MAX(id) AS max_id 
                     FROM uf_predial 
+                    where  estado_ 
                     GROUP BY numero_inmueble    
                 ) b ON a.numero_inmueble = b.numero_inmueble AND a.id = b.max_id       
-                WHERE a.geom IS NOT NULL    
+                where  a.estado_ and  a.geom IS NOT NULL    
                 AND ST_Intersects(  
                     a.geom,    
                     ST_MakeEnvelope(:minLng, :minLat, :maxLng, :maxLat, 4326)   
@@ -251,24 +252,29 @@ try {
             $countStmt->bindValue(':maxLng', $maxLng, PDO::PARAM_STR);
             $countStmt->execute();
             $totalCount = $countStmt->fetch()['total'];
-            
+
             logDebug("Conteo exacto: $totalCount");
         }
 
         // Procesar resultados de base de datos
         $data = [];
+        $currentDate = date('Y-m-d'); // Fecha actual para comparación
+
         foreach ($results as $row) {
             try {
-                // Procesar imágenes desde imagen_principal e imagen_adicional
                 $imagenes = processImages($row['imagen_principal'], $row['imagen_adicional']);
 
-                // Crear HTML del popup (optimizado para modo masivo)
                 if ($masivo && $zoom < 14) {
-                    // Popup simplificado para modo masivo en zoom bajo
                     $popupHtml = createSimplifiedPopupHtml($row);
                 } else {
-                    // Popup completo para modo normal o zoom alto
                     $popupHtml = createPopupHtml($row, $imagenes);
+                }
+
+                // MEJORA: Verificar si la fecha de apersonamiento es hoy
+                $isVisitToday = false;
+                if (!empty($row['fecha_apersonamiento_raw'])) {
+                    $visitDate = date('Y-m-d', strtotime($row['fecha_apersonamiento_raw']));
+                    $isVisitToday = ($visitDate === $currentDate);
                 }
 
                 $data[] = [
@@ -280,6 +286,12 @@ try {
                     'numero_inmueble' => $row['numero_inmueble'] ?: 'Sin número',
                     'description' => $row['direccion'] ?: 'Sin dirección',
                     'type' => $row['numero_inmueble'] ?: 'Sin número',
+                    'fecha_apersonamiento' => $row['fecha_apersonamiento'] ?: null,
+                    'fecha_apersonamiento_raw' => $row['fecha_apersonamiento_raw'] ?: null,
+                    'is_visit_today' => $isVisitToday,
+                    'usuario' => $row['usuario'],
+                    'no_formulario' => $row['no_formulario'],
+                    'estado_fiscalizacion' => $row['estado_fiscalizacion'],
                     'html' => $popupHtml
                 ];
             } catch (Exception $e) {
@@ -300,6 +312,7 @@ try {
             'zoom' => $zoom,
             'masivo' => $masivo,
             'source' => ($useGeojsonFile && file_exists($geojsonFile)) ? 'geojson' : 'database',
+            'current_date' => date('Y-m-d'), // Fecha actual para referencia
             'tile_bounds' => [
                 'minLat' => $minLat,
                 'maxLat' => $maxLat,
@@ -313,7 +326,6 @@ try {
 
     logDebug("Enviando respuesta exitosa");
     echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
-    
 } catch (PDOException $e) {
     logDebug("Error de base de datos: " . $e->getMessage());
     http_response_code(500);
@@ -331,127 +343,111 @@ try {
     ], JSON_UNESCAPED_UNICODE);
 }
 
-/**
- * Cargar datos desde archivo GeoJSON optimizado por tiles
- * FUNCIÓN MEJORADA Y OPTIMIZADA
- */
 function loadFromGeojsonFile($geojsonFile, $minLat, $maxLat, $minLng, $maxLng, $limit, $zoom)
 {
     logDebug("Cargando desde archivo GeoJSON: $geojsonFile");
-    
+
     try {
-        // Leer el archivo GeoJSON completo
         $jsonContent = file_get_contents($geojsonFile);
         if ($jsonContent === false) {
             throw new Exception("No se pudo leer el archivo GeoJSON");
         }
-        
+
         $geojson = json_decode($jsonContent, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new Exception("Error decodificando JSON: " . json_last_error_msg());
         }
-        
+
         if (!isset($geojson['features']) || !is_array($geojson['features'])) {
             throw new Exception("Formato GeoJSON inválido: no se encontraron features");
         }
-        
+
         logDebug("GeoJSON cargado correctamente: " . count($geojson['features']) . " features encontrados");
-        
-        // Filtrar features por coordenadas y aplicar límite
+
         $filteredFeatures = [];
         $processedCount = 0;
-        
+
         foreach ($geojson['features'] as $feature) {
             if (count($filteredFeatures) >= $limit) {
                 break;
             }
-            
+
             $processedCount++;
-            
+
             if (isset($feature['geometry']['coordinates'])) {
                 $coords = $feature['geometry']['coordinates'];
                 $lng = floatval($coords[0]);
                 $lat = floatval($coords[1]);
-                
-                // Verificar si está dentro del tile
-                if ($lat >= $minLat && $lat <= $maxLat && 
-                    $lng >= $minLng && $lng <= $maxLng) {
-                    
+
+                if (
+                    $lat >= $minLat && $lat <= $maxLat &&
+                    $lng >= $minLng && $lng <= $maxLng
+                ) {
+
                     $filteredFeatures[] = $feature;
                 }
             }
-            
-            // Log de progreso cada 10000 features
+
             if ($processedCount % 10000 === 0) {
                 logDebug("Procesados $processedCount features, filtrados: " . count($filteredFeatures));
             }
         }
-        
+
         logDebug("Features filtrados por coordenadas: " . count($filteredFeatures));
-        
-        // Convertir features a formato esperado
+
         $data = [];
         foreach ($filteredFeatures as $feature) {
             $coords = $feature['geometry']['coordinates'];
             $properties = $feature['properties'] ?? [];
-            
-            // Extraer el texto del punto (número con guión)
+
             $text = $properties['Text'] ?? $properties['name'] ?? $properties['codigo'] ?? '';
-            
-            // Crear HTML para el popup
+
             $popupHtml = "<div class='popup-content'>";
             $popupHtml .= "<div class='popup-title'>" . htmlspecialchars($text) . "</div>";
             $popupHtml .= "<div class='popup-description'>";
             $popupHtml .= "<strong>Coordenadas:</strong> " . number_format($coords[1], 6) . ", " . number_format($coords[0], 6) . "<br>";
             $popupHtml .= "<strong>Fuente:</strong> GeoJSON<br>";
-            
-            // Agregar todas las propiedades disponibles
+
             foreach ($properties as $key => $value) {
                 if ($key !== 'Text' && !empty($value)) {
                     $popupHtml .= "<strong>" . htmlspecialchars($key) . ":</strong> " . htmlspecialchars($value) . "<br>";
                 }
             }
-            
+
             $popupHtml .= "</div></div>";
-            
-            // Crear el objeto de punto en el formato esperado
+
             $data[] = [
                 'id' => 'geojson_' . ($properties['fid'] ?? $properties['id'] ?? uniqid()),
-                'position' => [floatval($coords[1]), floatval($coords[0])], // [lat, lng]
+                'position' => [floatval($coords[1]), floatval($coords[0])],
                 'title' => $text,
                 'nombre_razon' => $properties['Layer'] ?? 'GeoJSON',
                 'codigo_catastral' => $properties['EntityHandle'] ?? '',
                 'numero_inmueble' => $text,
                 'description' => $properties['SubClasses'] ?? 'Punto GeoJSON',
                 'type' => 'geojson_point',
+                'fecha_apersonamiento' => null, 
+                'is_visit_today' => false,
                 'html' => $popupHtml
             ];
         }
-        
+
         logDebug("Datos procesados desde GeoJSON: " . count($data) . " elementos");
         return $data;
-        
     } catch (Exception $e) {
         logDebug("Error procesando archivo GeoJSON: " . $e->getMessage());
         return [];
     }
 }
 
-/**
- * Procesar imágenes desde campos imagen_principal e imagen_adicional
- */
 function processImages($imagen_principal, $imagen_adicional)
 {
     $imagenes = [];
 
-    // Procesar imagen principal
     if (!empty($imagen_principal) && trim($imagen_principal) !== '') {
         $imagenes[] = trim($imagen_principal);
     }
 
-    // Procesar imagen adicional
     if (!empty($imagen_adicional) && trim($imagen_adicional) !== '') {
-        // Si imagen_adicional contiene múltiples imágenes separadas por coma
         if (strpos($imagen_adicional, ',') !== false) {
             $adicionales = explode(',', $imagen_adicional);
             foreach ($adicionales as $img) {
@@ -468,9 +464,6 @@ function processImages($imagen_principal, $imagen_adicional)
     return $imagenes;
 }
 
-/**
- * Crear HTML del popup completo (modo normal)
- */
 function createPopupHtml($row, $imagenes)
 {
     $id = $row['id'];
@@ -482,7 +475,6 @@ function createPopupHtml($row, $imagenes)
     $html = "<div class='card-inmueble' id='card-{$id}' data-images='" . json_encode($imagenes) . "' data-index='0'>";
     $html .= "<div class='header-numero'>{$numero_inmueble}</div>";
 
-    // Carrusel de imágenes
     if (!empty($imagenes)) {
         $html .= "<div class='carrusel'>";
         $html .= "<img id='img-{$id}' src='../static/ufpredial/{$imagenes[0]}' alt='Imagen del inmueble' class='carrusel-img'>";
@@ -494,22 +486,61 @@ function createPopupHtml($row, $imagenes)
         $html .= "</div>";
     }
 
-    // Información del inmueble
-    $html .= "<div class='info-inmueble'>";
-    $html .= "<strong>Contribuyente:</strong> {$nombre}<br>";
-    $html .= "<strong>Dirección:</strong> {$direccion}<br>";
-    $html .= "<strong>Código catastral:</strong> {$codigo}<br>";
-    $html .= '<strong>Última visita:</strong> ' . ($row['fecha_apersonamiento'] ?? 'N/A') . '<br>';
-    $html .= '<strong>Usuario:</strong> ' . ($row['usuario'] ?? 'N/A');
-    $html .= "</div>";
-    $html .= "</div>";
+    $estado = '<div class="icon-buttons">
+                <i class="fa fa-check icon-check" aria-hidden="true" title="Inmueble actualizado" onclick="actualizarEstado(' . $id . ', \'' . $numero_inmueble . '\',1)"></i> 
+                <i class="fa fa-exclamation-triangle icon-warning" aria-hidden="true" title="Desacato a la fiscalización" onclick="actualizarEstado(' . $id . ',\'' . $numero_inmueble . '\', 0)"></i>
+                </div>';
+    if ($row['estado_fiscalizacion'] != 'VISITADO') {
+        $estado = '<div class="info-row">
+                    <div class="info-label">Estado:</div>
+                    <div class="info-value">' . $row['estado_fiscalizacion']  . '</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Fecha de cambio:</div>
+                    <div class="info-value">' . ($row['fecha_cambio_estado'] ?? 'N/A') . '</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Procesado por:</div>
+                    <div class="info-value">' . ($row['usuario_cambio_estado'] ?? 'N/A') . '</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Obs/Anotación:</div>
+                    <div class="info-value">' . ($row['observacion_estado'] ?? '-') . '</div>
+                </div>
+                ';
+    }
+
+    $html .= '<div class="info-container">
+                <div class="info-row">
+                    <div class="info-label">Contribuyente:</div>
+                    <div class="info-value">' . $nombre . '</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Dirección:</div>
+                    <div class="info-value">' . $direccion . '</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Código catastral:</div>
+                    <div class="info-value">' . $codigo . '</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">No Form:</div>
+                    <div class="info-value">' . $row['no_formulario'] . '</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Última visita:</div>
+                    <div class="info-value">' . ($row['fecha_apersonamiento'] ?? 'N/A') . '</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Usuario:</div>
+                    <div class="info-value">' . ($row['usuario'] ?? 'N/A') . '</div>
+                </div>
+                ' . $estado . '
+            </div>';
 
     return $html;
 }
 
-/**
- * Crear HTML del popup simplificado (modo masivo en zoom bajo)
- */
 function createSimplifiedPopupHtml($row)
 {
     $numero_inmueble = htmlspecialchars($row['numero_inmueble'] ?: 'Sin número');
@@ -526,4 +557,3 @@ function createSimplifiedPopupHtml($row)
 
     return $html;
 }
-?>
