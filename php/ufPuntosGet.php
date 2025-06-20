@@ -100,6 +100,8 @@ try {
             $sql = "
                 WITH sampled_data AS ( 
                     SELECT 
+                        a.cant_act,
+                        a.descripcion_act,
                         a.id, 
                         a.codigo_catastral, 
                         a.nombre_razon, 
@@ -161,6 +163,8 @@ try {
 
             $sql = "
                 SELECT 
+                    a.cant_act,
+                    a.descripcion_act,
                     a.id,
                     a.codigo_catastral,
                     a.nombre_razon,
@@ -425,7 +429,7 @@ function loadFromGeojsonFile($geojsonFile, $minLat, $maxLat, $minLng, $maxLng, $
                 'numero_inmueble' => $text,
                 'description' => $properties['SubClasses'] ?? 'Punto GeoJSON',
                 'type' => 'geojson_point',
-                'fecha_apersonamiento' => null, 
+                'fecha_apersonamiento' => null,
                 'is_visit_today' => false,
                 'html' => $popupHtml
             ];
@@ -488,7 +492,8 @@ function createPopupHtml($row, $imagenes)
 
     $estado = '<div class="icon-buttons">
                 <i class="fa fa-check icon-check" aria-hidden="true" title="Inmueble actualizado" onclick="actualizarEstado(' . $id . ', \'' . $numero_inmueble . '\',1)"></i> 
-                <i class="fa fa-exclamation-triangle icon-warning" aria-hidden="true" title="Desacato a la fiscalización" onclick="actualizarEstado(' . $id . ',\'' . $numero_inmueble . '\', 0)"></i>
+                <a target="_blank" style="color:white;" href="https://www.google.com/maps?q=' . $row['lat'] . ',' . $row['lng'] . '"><i class="fa fa-street-view" aria-hidden="true"></i></a> 
+                <i class="fa fa-exclamation-triangle icon-warning" aria-hidden="true" title="Desacato a la fiscalización" onclick="actualizarEstado(' . $id . ',\'' . $numero_inmueble . '\', 0)"></i> 
                 </div>';
     if ($row['estado_fiscalizacion'] != 'VISITADO') {
         $estado = '<div class="info-row">
@@ -509,6 +514,19 @@ function createPopupHtml($row, $imagenes)
                 </div>
                 ';
     }
+    $act = '';
+    if ($row['cant_act'] > 0) {
+
+        $act = '<div class="info-row">
+                    <div class="info-label">Cantidad Act.:</div>
+                    <div class="info-value">' . $row['cant_act']  . '</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Descripción Act.:</div>
+                    <div class="info-value">' . ($row['descripcion_act'] ?? 'N/A') . '</div>
+                </div> 
+                ';
+    }
 
     $html .= '<div class="info-container">
                 <div class="info-row">
@@ -521,11 +539,7 @@ function createPopupHtml($row, $imagenes)
                 </div>
                 <div class="info-row">
                     <div class="info-label">Código catastral:</div>
-                    <div class="info-value">' . $codigo . '</div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">No Form:</div>
-                    <div class="info-value">' . $row['no_formulario'] . '</div>
+                    <div class="info-value">' . $codigo." ".($row['estado_fiscalizacion'] == 'PROCESADO' ? ' <a target="_blank"  href="https://www.google.com/maps?q=' . $row['lat'] . ',' . $row['lng'] . '"><i class="fa fa-street-view" style="font-size:1.2rem; COLOR: yellow" aria-hidden="true"></i></a>' : '') . '</div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Última visita:</div>
@@ -536,6 +550,7 @@ function createPopupHtml($row, $imagenes)
                     <div class="info-value">' . ($row['usuario'] ?? 'N/A') . '</div>
                 </div>
                 ' . $estado . '
+                ' .  $act . ' 
             </div>';
 
     return $html;

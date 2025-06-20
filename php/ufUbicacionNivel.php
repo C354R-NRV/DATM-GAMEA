@@ -51,11 +51,11 @@ try {
             // Si el valor está en los predefinidos, usar comparación exacta
             if (in_array($valor, $valoresPredefinidos)) {
                 if ($valor == '5') {
-                    $condiciones[] = "(trim($campo) like '% $valor' or TRIM(replace(replace(replace(replace($campo, 'DISTRITO:', ''), 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) = '%:$valor')";
+                    $condiciones[] = "(trim($campo) like '%$valor' or TRIM(replace(replace(replace(replace($campo, 'DISTRITO:', ''), 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) = '%:$valor')";
                 } elseif ($valor == 'OTRA JURISDICCION') {
                     $condiciones[] = "TRIM(replace(replace(replace(replace($campo, 'DISTRITO:', ''), 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) like '%$valor'";
                 } else {
-                    $condiciones[] = "TRIM(replace(replace(replace(replace($campo, 'DISTRITO:', ''), 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) like '% $valor'";
+                    $condiciones[] = "TRIM(replace(replace(replace(replace($campo, 'DISTRITO:', ''), 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) like '%$valor'";
                 }
             } else {
                 // Si es un valor escrito manualmente, usar LIKE con %

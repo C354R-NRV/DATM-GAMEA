@@ -14,10 +14,78 @@ $conn = new Conexion();
 $cons = $conn->conectar();
 
 foreach ($_POST as $clave => $valor) {
-    $$clave = addslashes(trim($valor));
+    if (is_array($valor)) {
+        $$clave = array_map(function ($v) {
+            return addslashes(trim($v));
+        }, $valor);
+    } else {
+        // Si el valor contiene comas, convertirlo a array
+        if (strpos($valor, ',') !== false && in_array($clave, ['ubicacion2', 'ubicacion3'])) {
+            $$clave = array_map(function ($v) {
+                return addslashes(trim($v));
+            }, explode(',', $valor));
+        } else {
+            $$clave = addslashes(trim($valor));
+        }
+    }
 }
 
 try {
+    // Función para generar filtros con valores predefinidos vs escritos manualmente
+    function generarFiltroUbicacion($valores, $campo, $valoresPredefinidos)
+    {
+        if (empty($valores)) {
+            return '';
+        }
+
+        // Si no es array, convertirlo a array
+        if (!is_array($valores)) {
+            // Si contiene comas, dividir por comas
+            if (strpos($valores, ',') !== false) {
+                $valores = explode(',', $valores);
+            } else {
+                $valores = array($valores);
+            }
+        }
+
+        // Limpiar y filtrar valores vacíos, 'TODOS', 'null'
+        $valores = array_filter(array_map('trim', $valores), function ($v) {
+            return !empty($v) && $v != 'TODOS' && $v != 'null';
+        });
+
+        if (empty($valores)) {
+            return '';
+        }
+
+        $condiciones = array();
+
+        foreach ($valores as $valor) {
+            $valor = strtoupper(trim($valor));
+
+            // Si el valor está en los predefinidos, usar comparación exacta
+            if (in_array($valor, $valoresPredefinidos)) {
+                if ($valor == '5') {
+                    $condiciones[] = "(trim($campo) like '% $valor' or TRIM(replace(replace(replace(replace($campo, 'DISTRITO:', ''), 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) = '%:$valor')";
+                } elseif ($valor == 'OTRA JURISDICCION') {
+                    $condiciones[] = "TRIM(replace(replace(replace(replace($campo, 'DISTRITO:', ''), 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) like '%$valor'";
+                } else {
+                    $condiciones[] = "TRIM(replace(replace(replace(replace($campo, 'DISTRITO:', ''), 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) like '%$valor'";
+                }
+            } else {
+                // Si es un valor escrito manualmente, usar LIKE con %
+                $condiciones[] = "TRIM(replace(replace(replace(replace($campo, 'DISTRITO:', ''), 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) like '%$valor%'";
+            }
+        }
+
+        if (!empty($condiciones)) {
+            return ' and (' . implode(' or ', $condiciones) . ')';
+        }
+
+        return '';
+    }
+
+    $filtro = '';
+
     if ($actividad_eco != '') {
         $filtro .= " and trim(documento_identidad) in (SELECT distinct documento_identidad
         FROM actividad_univ a where upper(a.razon_social) like upper ('%$actividad_eco%' )) ";
@@ -26,22 +94,64 @@ try {
         $filtro .= " and trim(documento_identidad) in ( SELECT  documento_identidad
         FROM vehiculo_univ a where upper(a.nro_pta) like upper ('%$no_placa%') ) ";
     }
-    if ($ubicacion1 != 'TODOS') {
-        if ($ubicacion1 == '5') {
-            $filtro .= " and (trim(a.ubicacion_nivel1) like '% $ubicacion1' or trim(a.ubicacion_nivel1) = '%:$ubicacion1') ";
-        } elseif ($ubicacion1 == 'OTRA JURISDICCION') {
-            $filtro .= " and trim(a.ubicacion_nivel1) like '%$ubicacion1' ";
-        } else {
-            $filtro .= " and trim(a.ubicacion_nivel1) like '% $ubicacion1' ";
-        }
+
+    // Valores predefinidos para ubicacion1
+    $valoresPredefinidosNivel1 = array('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', 'NO DEFINIDO', 'OTRA JURISDICCION', 'TODOS');
+
+    // Aplicar filtro para ubicacion1 si no es 'TODOS'
+    if ($ubicacion1 != 'TODOS' && !empty($ubicacion1)) {
+        $filtro .= generarFiltroUbicacion($ubicacion1, 'a.ubicacion_nivel1', $valoresPredefinidosNivel1);
     }
 
-    if ($ubicacion2 != 'TODOS' and $ubicacion2 != 'null' and $ubicacion2 != '') {
-        $filtro .= " and  TRIM(REPLACE(REPLACE(REPLACE(a.ubicacion_nivel2, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) like '$ubicacion2' ";
+    // Para ubicacion2, necesitamos obtener los valores predefinidos dinámicamente
+    $valoresPredefinidosNivel2 = array('TODOS');
+    if (!empty($ubicacion2)) {
+        // Construir filtro temporal para obtener valores predefinidos del nivel 2
+        $filtroTemporal = '';
+        if ($ubicacion1 != 'TODOS' && !empty($ubicacion1)) {
+            $filtroTemporal .= generarFiltroUbicacion($ubicacion1, 'ubicacion_nivel1', $valoresPredefinidosNivel1);
+        }
+
+        $queryNivel2 = "SELECT distinct TRIM(replace(replace(replace(ubicacion_nivel2, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) as ubicacion from inmueble_univ where 1=1 $filtroTemporal order by TRIM(replace(replace(replace(ubicacion_nivel2, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', ''));";
+        $stmtNivel2 = $cons->query($queryNivel2);
+        $resultadosNivel2 = $stmtNivel2->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($resultadosNivel2 as $row) {
+            if (!empty($row['ubicacion'])) {
+                $valoresPredefinidosNivel2[] = $row['ubicacion'];
+            }
+        }
+
+        // Aplicar filtro para ubicacion2
+        $filtro .= generarFiltroUbicacion($ubicacion2, 'a.ubicacion_nivel2', $valoresPredefinidosNivel2);
     }
-    if ($ubicacion3 != 'TODOS' and $ubicacion3 != 'null' and $ubicacion3 != '') {
-        $filtro .= " and  TRIM(replace(replace(replace(a.ubicacion_nivel3, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) like '$ubicacion3' ";
+
+    // Para ubicacion3, necesitamos obtener los valores predefinidos dinámicamente
+    $valoresPredefinidosNivel3 = array('TODOS');
+    if (!empty($ubicacion3)) {
+        // Construir filtro temporal para obtener valores predefinidos del nivel 3
+        $filtroTemporal = '';
+        if ($ubicacion1 != 'TODOS' && !empty($ubicacion1)) {
+            $filtroTemporal .= generarFiltroUbicacion($ubicacion1, 'ubicacion_nivel1', $valoresPredefinidosNivel1);
+        }
+        if (!empty($ubicacion2)) {
+            $filtroTemporal .= generarFiltroUbicacion($ubicacion2, 'ubicacion_nivel2', $valoresPredefinidosNivel2);
+        }
+
+        $queryNivel3 = "SELECT distinct TRIM(replace(replace(replace(ubicacion_nivel3, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) as ubicacion from inmueble_univ where 1=1 $filtroTemporal order by TRIM(replace(replace(replace(ubicacion_nivel3, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', ''));";
+        $stmtNivel3 = $cons->query($queryNivel3);
+        $resultadosNivel3 = $stmtNivel3->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($resultadosNivel3 as $row) {
+            if (!empty($row['ubicacion'])) {
+                $valoresPredefinidosNivel3[] = $row['ubicacion'];
+            }
+        }
+
+        // Aplicar filtro para ubicacion3
+        $filtro .= generarFiltroUbicacion($ubicacion3, 'a.ubicacion_nivel3', $valoresPredefinidosNivel3);
     }
+
     $numInmueble = strtoupper($numInmueble);
     if ($numInmueble != '') {
         if (str_contains($numInmueble, "INM-")) {
@@ -57,7 +167,20 @@ try {
         $filtro .= " and trim(documento_identidad)  like '$documento%' ";
     }
     if ($catastral != '') {
-        $filtro .= " and trim(a.codigo_catastral)  like '$catastral%' ";
+        /* $filtro .= " and trim(a.codigo_catastral)  like '$catastral%' "; */
+        $filtro .= "AND (
+                    (
+                    SELECT
+                    ltrim( partes [ 1 ], '0' ) || '-' || ltrim( partes [ 2 ], '0' ) || '-' || ltrim( partes [ 3 ], '0' ) AS codigo_normalizado 
+                    FROM
+                    ( SELECT regexp_split_to_array( TRIM ( A.codigo_catastral ), '-' ) AS partes ) AS sub 
+                    ) LIKE (
+                    SELECT
+                    ltrim( partes [ 1 ], '0' ) || '-' || ltrim( partes [ 2 ], '0' ) || '-' || ltrim( partes [ 3 ], '0' ) AS codigo_normalizado 
+                    FROM
+                    ( SELECT regexp_split_to_array( TRIM ( '$catastral' ), '-' ) AS partes ) AS sub 
+                    ) || '%' 
+                )";
     }
 
     $query = "SELECT  distinct
@@ -140,15 +263,11 @@ try {
     }
     $query .= " $filtro ";
 
-
-
     $stmt = $cons->query($query);
     $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $tabla = '';
     $cnt = 0;
-
-
 
     foreach ($resultados as $key => $value) {
         $tabla .= "<tr>

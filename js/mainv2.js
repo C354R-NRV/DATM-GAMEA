@@ -36,6 +36,7 @@ var sw_ = true;
     timer = setTimeout(checkEndOfPage, 100); // Espera 100 milisegundos antes de verificar
   }); */
   // Facts counter
+
   $('[data-toggle="counter-up"]').counterUp({
     delay: 10,
     time: 2000,
@@ -1172,13 +1173,13 @@ function formVerificaRegistros() {
       title: "Por favor, ingrese la siguiente información:",
       type: "dark",
       content: content_,
-      buttons: { 
+      buttons: {
         formSubmit: {
           text: "Consultar",
           btnClass: "btn-blue",
           action: function () {
             var formSubmitButton = this.buttons.formSubmit;
-  
+
             if (($("#ci_").val()).length > 4 && ($("#pin_").length === 0 || $("#pin_").val().length > 3)) {
               datos =
                 "&tipodoc_=" + $("#tipodoc_").val() +
@@ -1195,10 +1196,10 @@ function formVerificaRegistros() {
                   formSubmitButton.setText('Procesando...');
                   formSubmitButton.disable();
                   loadGralOn();
-  
+
                 },
                 success: function (e) {
-  
+
                   loadGralOff();
                   formSubmitButton.setText('Consultar');
                   formSubmitButton.enable();
@@ -1256,17 +1257,17 @@ function formVerificaRegistros() {
         cancel: function () { },
       },
       onContentReady: function () {
-        var jc = this; 
+        var jc = this;
         $('#pin_').on('keypress', function (ev) {
           if (ev.which === 13) {
             jc.$$formSubmit.trigger('click');
           }
         });
       },
-    }); 
+    });
   }
 
-  else{
+  else {
     $.confirm({
       title: "Por favor, ingrese la siguiente información:",
       type: "dark",
@@ -1284,7 +1285,7 @@ function formVerificaRegistros() {
           btnClass: "btn-blue",
           action: function () {
             var formSubmitButton = this.buttons.formSubmit;
-  
+
             if (($("#ci_").val()).length > 4 && ($("#pin_").length === 0 || $("#pin_").val().length > 3)) {
               datos =
                 "&tipodoc_=" + $("#tipodoc_").val() +
@@ -1301,10 +1302,10 @@ function formVerificaRegistros() {
                   formSubmitButton.setText('Procesando...');
                   formSubmitButton.disable();
                   loadGralOn();
-  
+
                 },
                 success: function (e) {
-  
+
                   loadGralOff();
                   formSubmitButton.setText('Consultar');
                   formSubmitButton.enable();
@@ -1362,7 +1363,7 @@ function formVerificaRegistros() {
         cancel: function () { },
       },
       onContentReady: function () {
-        var jc = this; 
+        var jc = this;
         $('#pin_').on('keypress', function (ev) {
           if (ev.which === 13) {
             jc.$$formSubmit.trigger('click');

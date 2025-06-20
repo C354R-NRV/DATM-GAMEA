@@ -387,7 +387,7 @@ if (!$_SESSION['swlogin']) {
             color: black;
             border: 2px solid white;
             border-radius: 50%;
-            width: 1rem;
+            width: 1.3rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -558,6 +558,41 @@ if (!$_SESSION['swlogin']) {
                 width: 95% !important;
             }
         }
+
+
+
+
+
+
+
+
+
+
+        /* Estilos para el botón de pre-puntos */
+        .control-button.pre-puntos {
+            background-color: rgba(255, 215, 0, 0.8);
+            color: black;
+        }
+
+        .control-button.pre-puntos.active {
+            background-color: rgba(255, 215, 0, 0.9);
+            color: black;
+        }
+
+        .control-button.pre-puntos:hover {
+            background-color: rgba(255, 215, 0, 0.9);
+        }
+
+        /* Estilos para los marcadores de pre-puntos */
+        .pre-punto-marker {
+            background-color: #feff12;
+            width: 0.9rem;
+            height: 0.9rem;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #fff, 0 0 0.9rem #fff, 0 0 18px rgb(176, 193, 23), 0 0 24px rgb(193, 190, 23), 0 0 30px rgb(248, 231, 76), 0 0 36px rgb(237, 248, 76);
+            border: 2px solid rgb(0, 0, 0);
+            animation: pulseAnimation 5s infinite ease-in-out;
+        }
     </style>
 </head>
 
@@ -613,12 +648,12 @@ if (!$_SESSION['swlogin']) {
                         <div class="minimap-controls">
                             <button id="zoomInBtn" type="button" class="control-button" title="Acercar" aria-label="Acercar mapa">+</button>
                             <button id="zoomOutBtn" type="button" class="control-button" title="Alejar" aria-label="Alejar mapa">−</button>
-                            <!-- <button id="inmueblesBtn" class="control-button geojson-codigos" title="Mostrar/Ocultar Inmuebles" aria-label="Capa Inmuebles" style="outline-style: none;">
+                            <button id="inmueblesBtn" class="control-button geojson-codigos" title="Mostrar/Ocultar Inmuebles" aria-label="Capa Inmuebles" style="outline-style: none;">
                                 <i class="fa fa-home" aria-hidden="true"></i>
-                            </button> -->
-                            <!-- <button id="codigosBtn" class="control-button geojson-codigos" title="Mostrar/Ocultar Códigos" aria-label="Capa Códigos">
+                            </button>
+                            <button id="codigosBtn" class="control-button geojson-codigos" title="Mostrar/Ocultar Códigos" aria-label="Capa Códigos">
                                 <i class="fa fa-tags" aria-hidden="true"></i>
-                            </button> -->
+                            </button>
                             <button id="satelitalBtn" type="button" class="control-button satelital tesela-active" title="Mostrar/Ocultar Capa Satelital" aria-label="Capa Satelital">
                                 <i class="fa fa-globe" aria-hidden="true"></i>
                             </button>
@@ -627,6 +662,9 @@ if (!$_SESSION['swlogin']) {
                             </button>
                             <button id="fullscreenBtn" class="control-button fullscreen" title="Pantalla Completa" aria-label="Pantalla Completa">
                                 <i class="fa fa-expand" aria-hidden="true"></i>
+                            </button>
+                            <button id="prePuntosBtn" class="control-button pre-puntos" title="Buscar Pre-Puntos" aria-label="Buscar Pre-Puntos">
+                                <i class="fa fa-search" aria-hidden="true"></i>
                             </button>
                         </div>
                         <div id="statusMessage" class="status-message" role="alert"></div>
@@ -797,6 +835,19 @@ if (!$_SESSION['swlogin']) {
                                                                                                                         $fecha_ = $fecha->format('Y-m-d');
                                                                                                                         echo $fecha_; ?>">
                 </div>
+
+
+                <div class="col-md-6 mb-3">
+                    <label for="nombre_titular" class="form-label">Cantidad de actividades economicas<span class="text-danger">*</span></label>
+                    <input type="number" min="0" class="form-control" id="cant_act" name="cant_act">
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="contactoTitular" class="form-label">Descripción de la(s) act. </label>
+                    <textarea class="form-control" id="descripcion_act" name="descripcion_act" rows="1"></textarea>
+                </div>
+
+
                 <div class="col-md-12 mb-3">
                     <h5 class="border-bottom pb-2">Información de Contacto</h5>
                 </div>
@@ -807,14 +858,16 @@ if (!$_SESSION['swlogin']) {
                 </div>
 
                 <div class="col-md-6 mb-3">
+                    <label for="contactoTitular" class="form-label">Concato del titular</label>
+                    <input type="tel" class="form-control" id="contactoTitular" name="contactoTitular">
+                </div>
+
+                <div class="col-md-6 mb-3">
                     <label for="nombre_apoderado" class="form-label">Nombre apoderado</label>
                     <input type="text" class="form-control" id="nombre_apoderado" name="nombre_apoderado">
                 </div>
 
-                <div class="col-md-6 mb-3">
-                    <label for="contactoTitular" class="form-label">Concato del titular</label>
-                    <input type="tel" class="form-control" id="contactoTitular" name="contactoTitular">
-                </div>
+
 
                 <div class="col-md-6 mb-3">
                     <label for="contactoApoderado" class="form-label">Contacto del apoderado</label>
@@ -843,6 +896,8 @@ if (!$_SESSION['swlogin']) {
                     <label for="videoInmueble" class="form-label">URL del Video (YouTube, Vimeo, etc.)</label>
                     <input type="url" class="form-control" id="videoInmueble" name="videoInmueble">
                 </div>
+
+
                 <div class="col-md-12" style="text-align: center;">
                     <button type="submit" class="btn btn-primary">
                         <i class="fa fa-floppy-o me-1"></i> Guardar
@@ -980,8 +1035,8 @@ if (!$_SESSION['swlogin']) {
         if (numInmueble && numInmueble.length <= 4) {
             errores.push('El numero del inmueble tiene que tener más de 4 caracteres');
         }
-        if (catastral && catastral.length <= 5) {
-            errores.push('El codigo catastral tiene que tener más de 6 caracteres');
+        if (catastral && catastral.length <= 3) {
+            errores.push('El codigo catastral tiene que tener más de 4 caracteres');
         }
         if (nombreTitular && nombreTitular.length <= 4) {
             errores.push('Agrega Nombre y/o apellido minimamente de la persona, tambien separado por un espacio, con una cantidad de 4 caracteres');
@@ -1111,6 +1166,123 @@ if (!$_SESSION['swlogin']) {
         let isGeoJsonLoading = false;
         let dynamicLoadingTimer;
 
+
+        // Variables para la capa de pre-puntos
+        let prePuntosLayer = null;
+        let prePuntosActive = false;
+        let prePuntosData = [];
+
+
+        // Función para buscar pre-puntos
+        function buscarPrePuntos() {
+            const bounds = map.getBounds();
+            const sw = bounds.getSouthWest();
+            const ne = bounds.getNorthEast();
+
+            const datos = {
+                minLat: sw.lat,
+                maxLat: ne.lat,
+                minLng: sw.lng,
+                maxLng: ne.lng
+            };
+
+            showStatusMessage('Buscando pre-puntos...', 'info');
+
+            $.ajax({
+                url: '../php/ufGetPrePuntos.php',
+                type: 'POST',
+                dataType: 'json',
+                data: datos,
+                beforeSend: function() {
+                    $('#prePuntosBtn').addClass('loading');
+                },
+                success: function(response) {
+                    if (response.success) {
+                        prePuntosData = response.data;
+                        renderPrePuntos();
+                        showStatusMessage(`Se encontraron ${prePuntosData.length} pre-puntos`, 'success');
+                    } else {
+                        showStatusMessage('Error: ' + response.message, 'error');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error en la búsqueda de pre-puntos:', error);
+                    showStatusMessage('Error al buscar pre-puntos', 'error');
+                },
+                complete: function() {
+                    $('#prePuntosBtn').removeClass('loading');
+                }
+            });
+        }
+
+        // Función para renderizar pre-puntos en el mapa
+        function renderPrePuntos() {
+            // Remover capa anterior si existe
+            if (prePuntosLayer && map.hasLayer(prePuntosLayer)) {
+                map.removeLayer(prePuntosLayer);
+            }
+
+            if (prePuntosData.length === 0) {
+                return;
+            }
+
+            prePuntosLayer = L.layerGroup();
+
+            prePuntosData.forEach(function(punto, index) {
+                const lat = parseFloat(punto.latitud);
+                const lng = parseFloat(punto.longitud);
+
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    const prePuntoIcon = L.divIcon({
+                        className: 'pre-punto-marker-container',
+                        html: '<div class="pre-punto-marker"></div>',
+                        iconSize: [20, 20],
+                        iconAnchor: [10, 10]
+                    });
+
+                    const marker = L.marker([lat, lng], {
+                        icon: prePuntoIcon
+                    });
+
+                    const popupContent = `
+                        <div class="popup-content">
+                            <div class="popup-description">
+                                <strong>Detalle:</strong> ${punto.detalle || 'Sin detalle'}<br>
+                                <strong>Creado por:</strong> ${punto.idusuario || 'No especificado'}<br>
+                                <strong>Fecha:</strong> ${punto.fregistro_ || 'No especificada'}<br>
+                                <strong>Ver en google:</strong> <a target="_blank"  href="https://www.google.com/maps?q=${lat},${lng}"><i class="fa fa-street-view" style="font-size:1.2rem;" aria-hidden="true"></i></a>
+                            </div>
+                            <div style="text-align:center;"><button class="form-controller" >USAR BASE</button></div>
+                        </div>
+                    `;
+
+                    marker.bindPopup(popupContent);
+                    prePuntosLayer.addLayer(marker);
+                }
+            });
+
+            map.addLayer(prePuntosLayer);
+            prePuntosActive = true;
+            $('#prePuntosBtn').addClass('active');
+        }
+
+        // Función para alternar la capa de pre-puntos
+        function togglePrePuntos() {
+            if (prePuntosActive) {
+                // Desactivar capa
+                if (prePuntosLayer && map.hasLayer(prePuntosLayer)) {
+                    map.removeLayer(prePuntosLayer);
+                }
+                prePuntosActive = false;
+                $('#prePuntosBtn').removeClass('active');
+                showStatusMessage('Capa de pre-puntos desactivada', 'info');
+            } else {
+                // Activar capa - buscar pre-puntos
+                buscarPrePuntos();
+            }
+        }
+
+
         // Funciones de utilidad para mostrar mensajes
         function showStatusMessage(message, type = 'info') {
             const statusDiv = document.getElementById('statusMessage');
@@ -1157,8 +1329,8 @@ if (!$_SESSION['swlogin']) {
             console.log(`Cargando datos GeoJSON dinámicamente - Módulo: ${modulo}, Zoom: ${zoom}`);
 
             // Verificar zoom mínimo para inmuebles
-            if (modulo === 'inmueble' && zoom < 16) {
-                showStatusMessage('Zoom mínimo para ver inmuebles es 16', 'info');
+            if (modulo === 'inmueble' && zoom < 19) {
+                showStatusMessage('Zoom mínimo para ver inmuebles es 19', 'info');
                 return Promise.resolve();
             }
 
@@ -1168,14 +1340,31 @@ if (!$_SESSION['swlogin']) {
             const sw = bounds.getSouthWest();
             const ne = bounds.getNorthEast();
 
-            let pointLimit = 2000;
-            if (zoom > 16) {
-                pointLimit = Math.min(pointLimit + (zoom - 16) * 250, 5000);
-            } else if (zoom < 13) {
-                pointLimit = Math.max(100, pointLimit - (13 - zoom) * 100);
-            }
+            let pointLimit = 0;
+            let url = '';
 
-            const url = `../php/ufPredialGetGeoJson.php?minLat=${sw.lat}&maxLat=${ne.lat}&minLng=${sw.lng}&maxLng=${ne.lng}&zoom=${zoom}&limit=${pointLimit}&modulo=${modulo}`;
+            if (zoom >= 18) {
+                // Calcular límite basado en los dos niveles de zoom disponibles
+                if (zoom === 18) {
+                    pointLimit = 2000; // Límite para zoom 18
+                } else if (zoom >= 19) {
+                    // Para zoom 19 (máximo en OSM), usar el límite máximo
+                    pointLimit = 4000; // Límite máximo para el zoom más detallado
+                }
+
+                url = `../php/ufPredialGetGeoJson.php?minLat=${sw.lat}&maxLat=${ne.lat}&minLng=${sw.lng}&maxLng=${ne.lng}&zoom=${zoom}&limit=${pointLimit}&modulo=${modulo}`;
+
+                console.log(`Zoom OSM: ${zoom}, Límite de puntos: ${pointLimit}`);
+            } else {
+                // Zoom insuficiente para mostrar información detallada
+                console.log(`Zoom insuficiente: ${zoom}. Acerque más el mapa (zoom 18+) para ver información detallada.`);
+
+                // Opcional: Mostrar mensaje al usuario
+                // alert("Acerque más el mapa para ver la información detallada");
+
+                // Hacer petición con límite 0 o no hacer petición
+                url = `../php/ufPredialGetGeoJson.php?minLat=${sw.lat}&maxLat=${ne.lat}&minLng=${sw.lng}&maxLng=${ne.lng}&zoom=${zoom}&limit=0&modulo=${modulo}`;
+            }
 
             return fetch(url)
                 .then(response => {
@@ -1302,8 +1491,8 @@ if (!$_SESSION['swlogin']) {
                 codigosActive = false;
             } else {
                 const zoom = map.getZoom();
-                if (zoom < 16) {
-                    showStatusMessage('El zoom mínimo para ver los códigos es 16, zoom actual: ' + zoom, 'error');
+                if (zoom < 19) {
+                    showStatusMessage('El zoom mínimo para ver los códigos es 19, zoom actual: ' + zoom, 'error');
                     return;
                 }
 
@@ -1328,8 +1517,8 @@ if (!$_SESSION['swlogin']) {
                 inmueblesActive = false;
             } else {
                 const zoom = map.getZoom();
-                if (zoom < 18) {
-                    showStatusMessage('El zoom mínimo para ver inmuebles es 18, zoom actual: ' + zoom, 'error');
+                if (zoom < 19) {
+                    showStatusMessage('El zoom mínimo para ver inmuebles es 19, zoom actual: ' + zoom, 'error');
                     return;
                 }
 
@@ -1353,6 +1542,14 @@ if (!$_SESSION['swlogin']) {
             }).addTo(map);
 
             // Event listeners para los controles del mapa
+
+            document.getElementById('prePuntosBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                togglePrePuntos();
+                this.blur();
+            });
+
             document.getElementById('zoomInBtn').addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -1386,8 +1583,8 @@ if (!$_SESSION['swlogin']) {
                 this.blur();
             });
 
-            // Event listeners para los nuevos botones
-            /* document.getElementById('inmueblesBtn').addEventListener('click', function(e) {
+
+            document.getElementById('inmueblesBtn').addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 toggleInmueblesLayer();
@@ -1399,16 +1596,15 @@ if (!$_SESSION['swlogin']) {
                 e.stopPropagation();
                 toggleCodigosLayer();
                 this.blur();
-            }); */
+            });
 
-            // Event listener para movimiento del mapa
             map.on('moveend', function() {
                 if (codigosActive) {
                     loadGeoJSONDataDynamically('catastro');
                 }
                 if (inmueblesActive) {
                     const zoom = map.getZoom();
-                    if (zoom >= 16) {
+                    if (zoom >= 19) {
                         loadGeoJSONDataDynamically('inmueble');
                     }
                 }
@@ -1420,7 +1616,7 @@ if (!$_SESSION['swlogin']) {
                 }
                 if (inmueblesActive) {
                     const zoom = map.getZoom();
-                    if (zoom >= 16) {
+                    if (zoom >= 19) {
                         loadGeoJSONDataDynamically('inmueble');
                     }
                 }
@@ -2234,11 +2430,11 @@ if (!$_SESSION['swlogin']) {
         };
 
         $.ajax({
-            async: true, 
-            type: "POST", 
-            dataType: "json", 
-            contentType: "application/x-www-form-urlencoded", 
-            url: "../php/ufUbicacionNivel.php", 
+            async: true,
+            type: "POST",
+            dataType: "json",
+            contentType: "application/x-www-form-urlencoded",
+            url: "../php/ufUbicacionNivel.php",
             data: dato,
             beforeSend: function() {
                 loadGralOn();
@@ -2248,17 +2444,17 @@ if (!$_SESSION['swlogin']) {
                 console.log("======================");
                 console.log(dat);
                 loadGralOff();
-                let $select = $('.select2_' + nivel); 
+                let $select = $('.select2_' + nivel);
                 if ($select.hasClass('select2-hidden-accessible')) {
                     $select.select2('destroy');
-                } 
-                $select.html(dat.html); 
-                $select.attr('multiple', 'multiple'); 
+                }
+                $select.html(dat.html);
+                $select.attr('multiple', 'multiple');
                 $select.select2({
                     dropdownParent: $('.swal2-popup'),
                     placeholder: "Seleccione o escriba",
-                    tags: true, 
-                    width: '26%'  
+                    tags: true,
+                    width: '26%'
                 });
             },
             error: function(xhr) {

@@ -62,6 +62,7 @@ try {
     $no_puerta = isset($_POST['no_puerta']) ? limpiarDato($_POST['no_puerta']) : '';
 
     $descripcion = isset($_POST['descripcion']) ? limpiarDato($_POST['descripcion']) : '';
+
     $no_formulario = isset($_POST['no_formulario']) ? limpiarDato($_POST['no_formulario']) : '';
     $no_formulario = ($no_formulario ? $no_formulario : '0');
 
@@ -75,6 +76,10 @@ try {
     $contactoApoderado = isset($_POST['contactoApoderado']) ? limpiarDato($_POST['contactoApoderado']) : '';
 
     $videoInmueble = isset($_POST['videoInmueble']) ? limpiarDato($_POST['videoInmueble']) : '';
+
+
+    $cant_act = isset($_POST['cant_act']) ? limpiarDato($_POST['cant_act']) : '';
+    $descripcion_act = isset($_POST['descripcion_act']) ? limpiarDato($_POST['descripcion_act']) : '';
 
     // Validate coordinates
     $coordenadas = explode(',', $geolocalizacion);
@@ -169,14 +174,16 @@ try {
                 no_concluidos, no_brutos, imagen_principal, 
                 imagen_adicional, 
                 numero_inmueble, descripcion, hhrr, 
-                fecha_apersonamiento, latitud, longitud, idusuario, fregistro_, contacto_apoderado,  contacto_titular, video , idestado_fiscalizacion ) VALUES (
+                fecha_apersonamiento, latitud, longitud, idusuario, fregistro_, contacto_apoderado,  contacto_titular, video , idestado_fiscalizacion,
+                descripcion_act, cant_act ) VALUES (
                 :nombre_razon, :nombre_apoderado, :ubicacion_nivel1, :ubicacion_nivel2, :ubicacion_nivel3, :no_puerta,
                 :codigo_catastral, :no_formulario, :via, 
                 :tipologia, :no_plantas, 
                 :no_concluidos, :no_brutos, :imagen_principal, 
                 :imagen_adicional, 
                 :numero_inmueble, :descripcion, :hhrr, 
-                :fecha_apersonamiento, :latitud, :longitud, :idusuario, :fregistro_ , :contacto_apoderado,  :contacto_titular, :video, :idestado_fiscalizacion
+                :fecha_apersonamiento, :latitud, :longitud, :idusuario, :fregistro_ , :contacto_apoderado,  :contacto_titular, :video, :idestado_fiscalizacion,
+                :descripcion_act, :cant_act
                 )";
 
     $idestado_fiscalizacion = 1;
@@ -215,6 +222,8 @@ try {
     $stmt->bindParam(':contacto_titular', $contactoTitular);
     $stmt->bindParam(':video', $videoInmueble);
     $stmt->bindParam(':idestado_fiscalizacion', $idestado_fiscalizacion);
+    $stmt->bindParam(':descripcion_act', $descripcion_act);
+    $stmt->bindParam(':cant_act', $cant_act);
 
     $idusuario = $_SESSION['idusuario'];
     $stmt->bindParam(':idusuario', $idusuario);
