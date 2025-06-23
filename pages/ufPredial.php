@@ -1215,7 +1215,6 @@ if (!$_SESSION['swlogin']) {
             });
         }
 
-        // Función para renderizar pre-puntos en el mapa
         function renderPrePuntos() {
             // Remover capa anterior si existe
             if (prePuntosLayer && map.hasLayer(prePuntosLayer)) {
@@ -1226,16 +1225,42 @@ if (!$_SESSION['swlogin']) {
                 return;
             }
 
+            // Función auxiliar para generar box-shadow con el mismo color
+            function generarBoxShadow(colorHex) {
+                return `
+            0 0 6px #fff,
+            0 0 0.9rem #fff,
+            0 0 18px ${colorHex},
+            0 0 24px ${colorHex},
+            0 0 30px ${colorHex},
+            0 0 36px ${colorHex}
+        `;
+            }
+
             prePuntosLayer = L.layerGroup();
+            console.log(prePuntosData);
 
             prePuntosData.forEach(function(punto, index) {
                 const lat = parseFloat(punto.latitud);
                 const lng = parseFloat(punto.longitud);
-
+                const color = (punto.color || '#feff12'); // Color por defecto
+                console.log("color:" + color);
                 if (!isNaN(lat) && !isNaN(lng)) {
+                    const boxShadow = generarBoxShadow(color);
+
                     const prePuntoIcon = L.divIcon({
                         className: 'pre-punto-marker-container',
-                        html: '<div class="pre-punto-marker"></div>',
+                        html: `
+                    <div style="
+                        background-color: ${color};
+                        width: 0.9rem;
+                        height: 0.9rem;
+                        border-radius: 50%;
+                        box-shadow: ${boxShadow};
+                        border: 2px solid #000;
+                        animation: pulseAnimation 5s infinite ease-in-out;
+                    "></div>
+                `,
                         iconSize: [20, 20],
                         iconAnchor: [10, 10]
                     });
@@ -1245,16 +1270,18 @@ if (!$_SESSION['swlogin']) {
                     });
 
                     const popupContent = `
-                        <div class="popup-content">
-                            <div class="popup-description">
-                                <strong>Detalle:</strong> ${punto.detalle || 'Sin detalle'}<br>
-                                <strong>Creado por:</strong> ${punto.idusuario || 'No especificado'}<br>
-                                <strong>Fecha:</strong> ${punto.fregistro_ || 'No especificada'}<br>
-                                <strong>Ver en google:</strong> <a target="_blank"  href="https://www.google.com/maps?q=${lat},${lng}"><i class="fa fa-street-view" style="font-size:1.2rem;" aria-hidden="true"></i></a>
-                            </div>
-                            <div style="text-align:center;"><button class="form-controller" >USAR BASE</button></div>
-                        </div>
-                    `;
+                <div class="popup-content">
+                    <div class="popup-description">
+                        <strong>Detalle:</strong> ${punto.detalle || 'Sin detalle'}<br>
+                        <strong>Creado por:</strong> ${punto.idusuario || 'No especificado'}<br>
+                        <strong>Fecha:</strong> ${punto.fregistro_ || 'No especificada'}<br>
+                        <strong>Ver en google:</strong> 
+                        <a target="_blank" href="https://www.google.com/maps?q=${lat},${lng}">
+                            <i class="fa fa-street-view" style="font-size:1.2rem; color: #15939d" aria-hidden="true"></i>
+                        </a>
+                    </div> 
+                </div>
+            `;
 
                     marker.bindPopup(popupContent);
                     prePuntosLayer.addLayer(marker);
@@ -1265,7 +1292,6 @@ if (!$_SESSION['swlogin']) {
             prePuntosActive = true;
             $('#prePuntosBtn').addClass('active');
         }
-
         // Función para alternar la capa de pre-puntos
         function togglePrePuntos() {
             if (prePuntosActive) {

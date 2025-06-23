@@ -30,8 +30,8 @@ try {
 
 
     $query = "INSERT INTO uf_prepredial 
-                (  latitud, longitud, detalle, idusuario, fregistro_  ) VALUES (
-                    :latitud, :longitud, :detalle, :idusuario, :fregistro_  
+                (  latitud, longitud, detalle, idusuario, fregistro_, color  ) VALUES (
+                    :latitud, :longitud, :detalle, :idusuario, :fregistro_  , :color
                 )";
 
     $idestado_fiscalizacion = 1;
@@ -40,6 +40,7 @@ try {
     $stmt->bindParam(':latitud', $latitud);
     $stmt->bindParam(':longitud', $longitud);
     $stmt->bindParam(':detalle', $detalle);
+    $stmt->bindParam(':color', $color);
 
     $idusuario = $_SESSION['idusuario'];
     $stmt->bindParam(':idusuario', $idusuario);

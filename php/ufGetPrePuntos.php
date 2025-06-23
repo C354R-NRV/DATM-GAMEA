@@ -58,6 +58,7 @@ try {
             a.idusuario,
             a.fregistro_,
             a.estado_,
+            a.color,
             a.idpredial_asociado,
             ST_Distance(
                 a.geom, 
@@ -113,6 +114,7 @@ try {
             'idusuario' => $row['usuario'], 
             'fregistro_' => $fecha,
             'estado_' => $row['estado_'],
+            'color' => $row['color'],
             'idpredial_asociado' => $row['idpredial_asociado'],
             'geom_text' => $row['geom_text'],
             'distancia_centro' => round($row['distancia_centro'], 2)

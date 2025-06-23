@@ -712,46 +712,87 @@ if (!$_SESSION['swlogin']) {
 
         .custom-popup {
             position: fixed;
-            top: 15%;
+            top: 3vh;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translateX(-50%);
             background: white;
-            border: 2px solid #00C8FF;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: 0.2rem solid #00C8FF;
+            border-radius: 0.5rem;
+            padding: 1.2rem;
+            box-shadow: 0 0.3rem 1.2rem rgba(0, 0, 0, 0.3);
             z-index: 2000;
-            min-width: 300px;
+            width: 90vw;
+            max-width: 28rem;
+            /* Aproximadamente 450px */
+            box-sizing: border-box;
+            font-size: 1rem;
         }
 
         .custom-popup h3 {
-            margin: 0 0 15px 0;
+            margin: 0 0 1rem 0;
             color: #00C8FF;
             text-align: center;
+            font-size: 1.2rem;
         }
 
-        .custom-popup input {
+        .custom-popup input[type="text"],
+        .custom-popup input[type="color"] {
             width: 100%;
-            padding: 8px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 0.6rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 0.4rem;
+            font-size: 1rem;
             box-sizing: border-box;
+        }
+
+        .color-picker-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .color-picker-label {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .color-picker-input {
+            margin-left: 0.5rem;
+            height: 2.2rem;
+            width: 3rem;
+            border: none;
+            cursor: pointer;
         }
 
         .custom-popup-buttons {
             display: flex;
-            gap: 10px;
-            justify-content: center;
+            justify-content: space-between;
+            gap: 0.8rem;
         }
 
         .custom-popup-buttons button {
-            padding: 8px 16px;
+            flex: 1;
+            font-size: 1rem;
             border: none;
-            border-radius: 4px;
-            cursor: pointer;
+            border-radius: 0.4rem;
             font-weight: bold;
+            cursor: pointer;
         }
+
+        .btn-save {
+            background-color: #00C8FF;
+            color: white;
+        }
+
+        .btn-closeMap {
+            background-color: #FF4B4B;
+            color: white;
+        }
+
 
         .btn-save {
             background-color: #00C8FF;
@@ -857,6 +898,58 @@ if (!$_SESSION['swlogin']) {
             box-shadow: 0 0 6px #fff, 0 0 0.9rem #fff, 0 0 18px rgb(176, 193, 23), 0 0 24px rgb(193, 190, 23), 0 0 30px rgb(248, 231, 76), 0 0 36px rgb(237, 248, 76);
             border: 2px solid rgb(0, 0, 0);
             animation: pulseAnimation 5s infinite ease-in-out;
+        }
+
+
+
+        /* Estilos para el selector de color */
+        .color-picker-container {
+            /* margin: 10px 0; */
+        }
+
+        .color-picker-label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .color-picker-input {
+            width: 70%;
+            height: 40px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #fff;
+            transition: border-color 0.3s ease;
+        }
+
+        .color-picker-input:hover {
+            border-color: #007bff;
+        }
+
+        .color-picker-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+
+        .color-preview {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .color-value-display {
+            font-size: 11px;
+            color: #888;
+            margin-top: 3px;
+            font-family: monospace;
         }
     </style>
 </head>
@@ -1999,16 +2092,42 @@ if (!$_SESSION['swlogin']) {
                 return;
             }
 
+            // Función auxiliar para generar box-shadow con el mismo color
+            function generarBoxShadow(colorHex) {
+                return `
+            0 0 6px #fff,
+            0 0 0.9rem #fff,
+            0 0 18px ${colorHex},
+            0 0 24px ${colorHex},
+            0 0 30px ${colorHex},
+            0 0 36px ${colorHex}
+        `;
+            }
+
             prePuntosLayer = L.layerGroup();
             console.log(prePuntosData);
+
             prePuntosData.forEach(function(punto, index) {
                 const lat = parseFloat(punto.latitud);
                 const lng = parseFloat(punto.longitud);
-
+                const color = (punto.color || '#feff12'); // Color por defecto
+                console.log("color:" + color);
                 if (!isNaN(lat) && !isNaN(lng)) {
+                    const boxShadow = generarBoxShadow(color);
+
                     const prePuntoIcon = L.divIcon({
                         className: 'pre-punto-marker-container',
-                        html: '<div class="pre-punto-marker"></div>',
+                        html: `
+                    <div style="
+                        background-color: ${color};
+                        width: 0.9rem;
+                        height: 0.9rem;
+                        border-radius: 50%;
+                        box-shadow: ${boxShadow};
+                        border: 2px solid #000;
+                        animation: pulseAnimation 5s infinite ease-in-out;
+                    "></div>
+                `,
                         iconSize: [20, 20],
                         iconAnchor: [10, 10]
                     });
@@ -2018,15 +2137,18 @@ if (!$_SESSION['swlogin']) {
                     });
 
                     const popupContent = `
-                        <div class="popup-content">
-                            <div class="popup-description">
-                                <strong>Detalle:</strong> ${punto.detalle || 'Sin detalle'}<br>
-                                <strong>Creado por:</strong> ${punto.idusuario || 'No especificado'}<br>
-                                <strong>Fecha:</strong> ${punto.fregistro_ || 'No especificada'}<br>
-                                <strong>Ver en google:</strong> <a target="_blank"  href="https://www.google.com/maps?q=${lat},${lng}"><i class="fa fa-street-view" style="font-size:1.2rem; COLOR: yellow" aria-hidden="true"></i></a>
-                            </div> 
-                        </div>
-                    `;
+                <div class="popup-content">
+                    <div class="popup-description">
+                        <strong>Detalle:</strong> ${punto.detalle || 'Sin detalle'}<br>
+                        <strong>Creado por:</strong> ${punto.idusuario || 'No especificado'}<br>
+                        <strong>Fecha:</strong> ${punto.fregistro_ || 'No especificada'}<br>
+                        <strong>Ver en google:</strong> 
+                        <a target="_blank" href="https://www.google.com/maps?q=${lat},${lng}">
+                            <i class="fa fa-street-view" style="font-size:1.2rem; color: yellow" aria-hidden="true"></i>
+                        </a>
+                    </div> 
+                </div>
+            `;
 
                     marker.bindPopup(popupContent);
                     prePuntosLayer.addLayer(marker);
@@ -2314,7 +2436,7 @@ if (!$_SESSION['swlogin']) {
             // Crear marcador en el punto clickeado
             const pointIcon = L.divIcon({
                 className: 'new-point-marker-container',
-                html: '<div style="background-color: #ff6b35; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px rgba(255, 107, 53, 0.8); animation: pulseAnimation 1.5s infinite ease-in-out;"></div>',
+                html: '<div style="background-color: ' + colorPrevio + '; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px rgba(206, 206, 206, 0.8); animation: pulseAnimation 1.5s infinite ease-in-out;"></div>',
                 iconSize: [16, 16],
                 iconAnchor: [8, 8]
             });
@@ -2337,34 +2459,43 @@ if (!$_SESSION['swlogin']) {
 
             showStatusMessage('Punto creado. Complete la información.', 'info');
         }
+
         // Función para mostrar popup personalizado
+        let colorPrevio = '#ff6b35';
+
         function showCustomPopup(lat, lng) {
             // Guardar datos del punto actual
             currentPointData = {
                 lat: lat,
                 lng: lng,
                 marker: newPointMarker,
-                saved: false
+                saved: false,
+                color: colorPrevio
             };
 
             // Crear overlay
             const overlay = document.createElement('div');
             overlay.className = 'popup-overlay';
 
-            // Crear popup
+            // Crear popup con selector de color
             const popup = document.createElement('div');
             popup.className = 'custom-popup';
-            popup.innerHTML = `
-                <h3>Nuevo Punto</h3>
-                <p style="font-size: 12px; color: #666; margin-bottom: 10px;">
-                    Coordenadas: ${lat.toFixed(6)}, ${lng.toFixed(6)}
-                </p>
-                <input type="text" id="pointInput" placeholder="Ingrese descripción del punto..." />
-                <div class="custom-popup-buttons">
-                    <button class="btn-save" onclick="saveNewPoint()">Guardar</button>
-                    <button class="btn-closeMap" onclick="closeCustomPopup(false)">Cerrar</button>
-                </div>
-            `;
+            popup.innerHTML = `          
+        <div class="color-picker-container">
+            <label class="color-picker-label" for="pointColorPicker">
+                Color: 
+                <span class="color-preview" id="colorPreview" style=" DISPLAY:NONE; background-color:rgb(255, 235, 53);"></span>
+                <input type="color" id="pointColorPicker" class="color-picker-input" value="${colorPrevio}" /> 
+            </label> 
+        </div>
+
+        <input type="text" id="pointInput" placeholder="Ingrese descripción del punto..." />
+        
+        <div class="custom-popup-buttons">
+            <button class="btn-save" onclick="saveNewPoint()">Guardar</button>
+            <button class="btn-closeMap" onclick="closeCustomPopup(false)">Cerrar</button>
+        </div>
+    `;
 
             // Agregar al DOM
             document.body.appendChild(overlay);
@@ -2372,8 +2503,37 @@ if (!$_SESSION['swlogin']) {
 
             customPopupElement = popup;
 
-            // Enfocar input después de un breve delay
+            // Configurar event listeners para el selector de color
             setTimeout(() => {
+                const colorPicker = document.getElementById('pointColorPicker');
+                const colorPreview = document.getElementById('colorPreview');
+
+                if (colorPicker) {
+                    colorPicker.addEventListener('input', function(e) {
+                        const selectedColor = e.target.value;
+                        console.log("colorPrevio:" + colorPrevio + " selectedColor:" + selectedColor)
+                        if (colorPrevio != selectedColor) {
+                            colorPrevio = selectedColor;
+                        }
+
+                        // Actualizar preview
+                        colorPreview.style.backgroundColor = selectedColor;
+
+                        // Guardar color en currentPointData
+                        if (currentPointData) {
+                            currentPointData.color = selectedColor;
+                        }
+
+                        // Actualizar el marcador en tiempo real
+                        if (newPointMarker) {
+                            updateMarkerColor(newPointMarker, selectedColor);
+                        }
+
+                        console.log('Color seleccionado:', selectedColor);
+                    });
+                }
+
+                // Enfocar input después de configurar eventos
                 const input = document.getElementById('pointInput');
                 if (input) {
                     input.focus();
@@ -2397,10 +2557,24 @@ if (!$_SESSION['swlogin']) {
             }, 100);
         }
 
+
+        // Función para actualizar el color del marcador
+        function updateMarkerColor(marker, color) {
+            console.log("en updateMarkerColor:" + color);
+            const newIcon = L.divIcon({
+                className: 'new-point-marker-container',
+                html: `<div style="background-color: ${color}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px ${color}80; animation: pulseAnimation 1.5s infinite ease-in-out;"></div>`,
+                iconSize: [16, 16],
+                iconAnchor: [8, 8]
+            });
+            marker.setIcon(newIcon);
+        }
+
         // Función para guardar nuevo punto
         function saveNewPoint() {
             const input = document.getElementById('pointInput');
             const description = input.value.trim();
+            const selectedColor = currentPointData ? currentPointData.color : colorPrevio;
 
             if (description === '') {
                 showStatusMessage('Por favor ingrese una descripción', 'error');
@@ -2414,12 +2588,12 @@ if (!$_SESSION['swlogin']) {
                 currentPointData.timestamp = new Date().toISOString();
             }
 
-            // Cambiar el estilo del marcador a "guardado"
+            // Cambiar el estilo del marcador a "guardado" con el color seleccionado
             if (newPointMarker) {
-                // Crear nuevo icono para punto guardado
+                // Crear nuevo icono para punto guardado con color personalizado
                 const savedPointIcon = L.divIcon({
                     className: 'saved-point-marker-container',
-                    html: '<div style="background-color: #feff12; width: 0.9rem; height: 0.9rem; border-radius: 50%; box-shadow: 0 0 6px #fff, 0 0 0.9rem #fff, 0 0 18px rgb(176, 193, 23), 0 0 24px rgb(193, 190, 23), 0 0 30px rgb(248, 231, 76), 0 0 36px rgb(237, 248, 76); border: 2px solid #fff;   animation: pulseAnimation 5s infinite ease-in-out;"></div>',
+                    html: `<div style="background-color: ${selectedColor}; width: 0.9rem; height: 0.9rem; border-radius: 50%; box-shadow: 0 0 6px #fff, 0 0 0.9rem #fff, 0 0 18px ${selectedColor}, 0 0 24px ${selectedColor}, 0 0 30px ${selectedColor}, 0 0 36px ${selectedColor}; border: 2px solid #fff; animation: pulseAnimation 5s infinite ease-in-out;"></div>`,
                     iconSize: [18, 18],
                     iconAnchor: [9, 9]
                 });
@@ -2433,8 +2607,9 @@ if (!$_SESSION['swlogin']) {
                 <div class="popup-title">Punto Guardado</div>
                 <div class="popup-description">
                     <strong>Descripción:</strong> ${description}<br>
+                    <strong>Color:</strong> <span style="display: inline-block; width: 15px; height: 15px; background-color: ${selectedColor}; border: 1px solid #ccc; border-radius: 3px; vertical-align: middle;"></span> ${selectedColor.toUpperCase()}<br>
                     <strong>Coordenadas:</strong> ${currentPointData.lat.toFixed(6)}, ${currentPointData.lng.toFixed(6)}<br>
-                    <small style="color: #feff12;">Guardado: ${new Date().toLocaleString()}</small>
+                    <small style="color: ${selectedColor};">Guardado: ${new Date().toLocaleString()}</small>
                 </div>
             </div>`;
 
@@ -2443,22 +2618,28 @@ if (!$_SESSION['swlogin']) {
 
                 // Agregar a la lista de puntos guardados
                 savedPoints.push({
-                    id: Date.now(), // ID único basado en timestamp
+                    id: Date.now(),
                     marker: newPointMarker,
                     lat: currentPointData.lat,
                     lng: currentPointData.lng,
                     description: description,
+                    color: selectedColor, // Guardar el color seleccionado
                     timestamp: currentPointData.timestamp
                 });
 
-                console.log('Punto guardado:', savedPoints[savedPoints.length - 1]);
+                console.log('Punto guardado con color:', savedPoints[savedPoints.length - 1]);
             }
+
+            // Datos para enviar al backend (incluyendo color)
             const data = {
                 latitud: currentPointData.lat,
                 longitud: currentPointData.lng,
-                detalle: description
+                detalle: description,
+                color: selectedColor
             };
-            console.log(data);
+
+            console.log('Datos a enviar:', data);
+
             $.ajax({
                 async: true,
                 type: "POST",
@@ -2478,12 +2659,14 @@ if (!$_SESSION['swlogin']) {
             // Cerrar popup (con guardado = true)
             closeCustomPopup(true);
 
-            showStatusMessage(`Punto guardado correctamente. Total puntos: ${savedPoints.length}`, 'success');
+            showStatusMessage(`Punto guardado correctamente con color ${selectedColor.toUpperCase()}. Total puntos: ${savedPoints.length}`, 'success');
 
             // Resetear variables para permitir crear nuevo punto
             newPointMarker = null;
             currentPointData = null;
         }
+
+
         // Función para cerrar popup personalizado
         function closeCustomPopup(wasSaved = false) {
             // Remover popup y overlay
@@ -2537,6 +2720,14 @@ if (!$_SESSION['swlogin']) {
                 e.stopPropagation();
                 e.preventDefault();
                 toggleAddPointMode(e);
+            });
+
+            // Funcionalidad con teclado (Ctrl + Q)
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && (e.key === 'q' || e.key === 'Q')) {
+                    e.preventDefault(); // Prevenir comportamiento por defecto
+                    toggleAddPointMode(e); // Ejecutar la función
+                }
             });
 
             document.getElementById('zoomInBtn').addEventListener('click', zoomIn);
