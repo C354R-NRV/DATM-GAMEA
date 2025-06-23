@@ -102,13 +102,13 @@ if (!$_SESSION['swlogin']) {
         }
 
         .btn-secondary {
-            background-color: #6c757d;
-            border-color: #6c757d;
+            background-color: #ffaaa7;
+            border-color: #b94848;
         }
 
         .btn-secondary:hover {
-            background-color: #5c636a;
-            border-color: #565e64;
+            background-color: rgb(250, 112, 112);
+            border-color: rgb(163, 0, 0);
         }
 
         .btn-outline-secondary {
@@ -226,15 +226,20 @@ if (!$_SESSION['swlogin']) {
         .buscar_ {
             margin: 0;
             border: 0;
-            color: #14afdf;
-            background: #ffffff;
+            color: rgb(255, 255, 255);
+            background-color: #03c1f2;
+            border-color: rgb(0, 139, 173);
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: all 0.2s ease;
         }
 
         .buscar_:hover {
             margin: 0;
             border: 0;
-            color: rgb(6, 136, 196);
-            background: #ffffff;
+            background-color: rgb(11, 157, 215);
+            border-color: rgb(10, 148, 202);
         }
 
         #btnObtenerUbicacion {
@@ -260,10 +265,10 @@ if (!$_SESSION['swlogin']) {
                 border-radius: 6px !important;
             }
 
-            #mapContainer {
+            /* #mapContainer {
                 height: 180px;
                 margin-top: 10px;
-            }
+            } */
         }
 
         #miniMap {
@@ -557,16 +562,7 @@ if (!$_SESSION['swlogin']) {
             .swal2-popup {
                 width: 95% !important;
             }
-        }
-
-
-
-
-
-
-
-
-
+        } 
 
         /* Estilos para el botón de pre-puntos */
         .control-button.pre-puntos {
@@ -592,6 +588,22 @@ if (!$_SESSION['swlogin']) {
             box-shadow: 0 0 6px #fff, 0 0 0.9rem #fff, 0 0 18px rgb(176, 193, 23), 0 0 24px rgb(193, 190, 23), 0 0 30px rgb(248, 231, 76), 0 0 36px rgb(237, 248, 76);
             border: 2px solid rgb(0, 0, 0);
             animation: pulseAnimation 5s infinite ease-in-out;
+        } 
+
+        /* Bloque desplegable */
+        .search-dropdown {
+            display: none;
+            background: #e4f7ff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            animation: slideDown 0.3s ease;
+        }
+
+        .search-dropdown.active {
+            display: block;
         }
     </style>
 </head>
@@ -623,7 +635,6 @@ if (!$_SESSION['swlogin']) {
 
     <div class="container mt-5">
         <h1>Formulario de Registro de Inmueble</h1>
-        <div style="text-align:right;"><button class="buscar_" id="abrirFormulario" type="button">Busqueda de inmueble <i class="fa fa-search" aria-hidden="true"></i> </button></div>
         <form id="formularioInmueble">
             <div class="row">
 
@@ -631,7 +642,7 @@ if (!$_SESSION['swlogin']) {
                     <h5 class="border-bottom pb-2">Ubicación Geográfica</h5>
                 </div>
 
-                <div class="col-md-6 mb-3">
+                <div class="col-md-12 mb-3">
                     <label for="geolocalizacion" class="form-label">Georreferencia <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <input type="text" class="form-control" id="geolocalizacion" name="geolocalizacion" placeholder="Latitud, Longitud" readonly required>
@@ -642,8 +653,8 @@ if (!$_SESSION['swlogin']) {
                     <div class="form-text">Abrir coordenada en <a id="googlemap" href="#" target="_blank">google maps.</a></div>
                 </div>
 
-                <div class="col-md-6 mb-3">
-                    <div class="mb-3" id="mapContainer" style="height: 300px;">
+                <div class="col-md-12 mb-3">
+                    <div class="mb-12" id="mapContainer"  >
                         <div id="miniMap" style="height: 100%; width: 100%;"></div>
                         <div class="minimap-controls">
                             <button id="zoomInBtn" type="button" class="control-button" title="Acercar" aria-label="Acercar mapa">+</button>
@@ -670,7 +681,97 @@ if (!$_SESSION['swlogin']) {
                         <div id="statusMessage" class="status-message" role="alert"></div>
                         <div id="dynamicLoadingIndicator" class="dynamic-loading-indicator">Cargando datos...</div>
                     </div>
-                    <div id="geoStatus" class="mt-2 small"></div>
+                    <div id="geoStatus" class="mt-2 small" style="display:none;"></div>
+                </div>
+
+
+                <div style="text-align:right;">
+                    <button class="buscar_" id="abrirFormulario" type="button">Búsqueda de inmueble <i class="fa fa-search" aria-hidden="true"></i></button>
+                </div>
+
+                <!-- Bloque desplegable -->
+                <div id="searchDropdown" class="search-dropdown">
+                    <div class="row">
+
+                        <div class="col-md-6 mt-3">
+                            <label class="form-label">Código Catastral</label>
+                            <input type="text" id="catastral" class="form-control" placeholder="XXX-XXX-XXX">
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <label class="form-label">Número de Inmueble</label>
+                            <input type="text" id="numInmueble" class="form-control">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Distrito</label>
+                            <select id="ubicacion1" class="form-select select2_1"  onchange="cargarNivel(2);">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                                <option value="13">13</option>
+                                <option value="14">14</option>
+                                <option value="NO DEFINIDO">NO DEFINIDO</option>
+                                <option value="OTRA JURISDICCION">OTRA JURISDICCION</option>
+                                <option value="TODOS" selected>TODOS</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Zona</label>
+                            <select id="ubicacion2" class="form-select select2_2" multiple onchange="cargarNivel(3);"></select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Calle</label>
+                            <select id="ubicacion3" class="form-select select2_3" multiple></select>
+                        </div>
+
+                        <div class="col-md-6 mt-3">
+                            <label class="form-label">Documento de Identificación</label>
+                            <input type="text" id="documento" class="form-control" placeholder="6022061-1A">
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <label class="form-label">Nombre de Titular</label>
+                            <input type="text" id="nombreTitular" class="form-control" placeholder="Nombres Paterno Materno">
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <label class="form-label">Número de Placa</label>
+                            <input type="text" id="no_placa" class="form-control" placeholder="Número de placa">
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <label class="form-label">Nombre del Local Comercial</label>
+                            <input type="text" id="actividad_eco" class="form-control" placeholder="Nombre del local comercial">
+                        </div>
+                        <div class="col-12 mt-3 text-center">
+                            <button id="buscarBtn" onclick="buscarInmueble()" class="btn btn-primary me-2">BUSCAR</button>
+                            <button id="cerrarBusqueda" class="btn btn-secondary">CERRAR</button>
+                        </div>
+                        <div id="resultados" class="mt-4" style="display: none;">
+                            <h5>RESULTADOS</h5>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>No INMUEBLE</th>
+                                            <th>Catastro</th>
+                                            <th>C.I.</th>
+                                            <th>NOMBRE</th>
+                                            <th>DIRECCIÓN</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bodyInmuebles"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -927,95 +1028,22 @@ if (!$_SESSION['swlogin']) {
 
 <script>
     $('#abrirFormulario').on('click', function() {
-        Swal.fire({
-            title: 'BÚSQUEDA DE INMUEBLE',
-            html: ` 
-            <div class="loadGral"></div> 
-        <div id="formInmueble"> 
-            <div style="width:100vh;">
-            <label>UBICACION NIVEL 1, DISTRITO</label>   
-            <select id= "ubicacion1" class="swal2-input select2_1" onchange="cargarNivel(2);">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-                <option value="13">13</option>
-                <option value="14">14</option>
-                <option value="NO DEFINIDO">NO DEFINIDO</option>
-                <option value="OTRA JURISDICCION">OTRA JURISDICCION</option>
-                <option value="TODOS" selected>TODOS</option>
-            </select> 
+        const dropdown = $('#searchDropdown');
+        dropdown.toggleClass('active');
 
-            <select id= "ubicacion2" class="swal2-input select2_2" multiple onchange="cargarNivel(3);"></select> 
+        if (dropdown.hasClass('active')) {
+            // Inicializar Select2 cuando se abre
+            $('#ubicacion1, #ubicacion2, #ubicacion3').select2({
+                placeholder: "Seleccione",
+                allowClear: true,
+                tags: true,
+                width: '100%'
+            });
+        }
+    });
 
-            <select id= "ubicacion3" class="swal2-input select2_3" multiple></select>
-            </div>
-
-            <label>NUMERO DE INMUEBLE</label>
-            <input type="text" id="numInmueble" class="swal2-input">
-        
-            <label>CODIGO CATASTRAL</label>
-            <input type="text" id="catastral" class="swal2-input" placeholder="XXX-XXX-XXX">
-
-            <label>DOCUMENTO DE IDENTIFICACIÓN</label>
-            <input type="text" id="documento" class="swal2-input" placeholder="6022061-1A">
-
-            <label>NOMBRE DE TITULAR</label>
-            <input type="text" id="nombreTitular" class="swal2-input" placeholder="Nombres Paterno Materno">
-            
-            
-            <label>NUMERO DE PLACA - VEHICULO CIRCUNDANTE</label>
-            <input type="text" id="no_placa" class="swal2-input" placeholder="Numero de placa sin GUION y continuado">
-            
-            <label>NOMBRE DEL LOCAL COMERCIAL</label>
-            <input type="text" id="actividad_eco" class="swal2-input" placeholder="Escriba exactamente el nombre del local comercial expuesto en dicho local, no incluya palabras como : local, salon, tienda.">
-
-            <button id="buscarBtn" onclick="buscarInmueble()" class="swal2-confirm swal2-styled btn-buscar_"  >BUSCAR</button>
-
-            <div id="resultados" style="margin-top:20px;">
-                <h3 style="text-align:left;">RESULTADOS</h3>
-                <div class="table-container">
-                    <table class="result-table">
-                        <thead>
-                            <tr>
-                                <th>No INMUEBLE</th>
-                                <th>Catastro</th>
-                                <th>C.I.</th>
-                                <th>NOMBRE</th>
-                                <th>DIRECCIÓN</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody id="bodyInmuebles"> 
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        `,
-            didOpen: () => {
-
-                $('.select2_1').select2({
-                    dropdownParent: $('.swal2-popup'),
-                    placeholder: "Seleccione",
-                    allowClear: true,
-                    tags: true
-                });
-            },
-            showConfirmButton: false,
-            width: '90%',
-            customClass: {
-                popup: 'swal-wide'
-            }
-        });
+    $('#cerrarBusqueda').on('click', function() {
+        $('#searchDropdown').removeClass('active');
     });
 
     function buscarInmueble() {
@@ -1081,6 +1109,7 @@ if (!$_SESSION['swlogin']) {
             "&ubicacion3=" + ubicacion3 +
             "&documento=" + documento;
         console.log(datos);
+
         $.ajax({
             async: true,
             type: "POST",
@@ -1090,6 +1119,7 @@ if (!$_SESSION['swlogin']) {
             data: datos,
             beforeSend: function() {
                 loadGralOn();
+                $('#buscarBtn').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Buscando...');
             },
             success: function(dat) {
                 console.log(dat);
@@ -1097,19 +1127,24 @@ if (!$_SESSION['swlogin']) {
                 console.log(dat.sql);
                 loadGralOff();
                 $('#bodyInmuebles').html(dat.html);
+                $('#resultados').show();
 
-                $("#numInmueble").val('');
-                $("#documento").val('');
-                $("#nombreTitular").val('');
-                $("#catastral").val('');
-                $("#no_placa").val('');
-                $("#actividad_eco").val('');
+                $("#numInmueble, #documento, #nombreTitular, #catastral, #no_placa, #actividad_eco").val('');
+
             },
+            complete: function() {
+                $('#buscarBtn').prop('disabled', false).html('BUSCAR');
+            }
         });
+
+
     }
 
     function seleccionarInmueble(cnt) {
-        Swal.close();
+        /*  Swal.close(); */
+
+        $('#searchDropdown').removeClass('active');
+
         $('#numeroInmueble').val($('#numero_inmueble' + cnt).val());
         $('#codigo_catastro').val($('#codigo_catastral' + cnt).val());
         $('#nombre_titular').val($('#nombre_tit' + cnt).val());
@@ -1557,7 +1592,7 @@ if (!$_SESSION['swlogin']) {
         if (typeof L !== "undefined" && miniMap) {
             map = L.map(miniMap, {
                 zoomControl: false
-            }).setView([-16.5, -68.15], 13);
+            }).setView([-16.51, -68.23], 13);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: 'DATM'
@@ -1928,9 +1963,8 @@ if (!$_SESSION['swlogin']) {
             [-16.277381, -68.165585],
             [-16.262676, -68.153719],
             [-16.262656, -68.153708],
-        ];
+        ]; 
 
-        // Event listener para el botón de pantalla completa
         document.getElementById('fullscreenBtn').addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -1947,10 +1981,11 @@ if (!$_SESSION['swlogin']) {
                 isFullscreen = true;
                 showStatusMessage('Modo pantalla completa activado', 'success');
 
-                // Invalidar el tamaño del mapa después de un pequeño delay
+                // Forzar el redimensionamiento del mapa
                 setTimeout(() => {
-                    map.invalidateSize();
-                }, 100);
+                    map.invalidateSize(true);
+                    map.getContainer().style.height = '100vh';
+                }, 200);
             } else {
                 // Desactivar pantalla completa
                 mapContainer.classList.remove('fullscreen');
@@ -1960,10 +1995,11 @@ if (!$_SESSION['swlogin']) {
                 isFullscreen = false;
                 showStatusMessage('Modo pantalla completa desactivado', 'info');
 
-                // Invalidar el tamaño del mapa después de un pequeño delay
+                // Restaurar el tamaño original
                 setTimeout(() => {
-                    map.invalidateSize();
-                }, 100);
+                    map.getContainer().style.height = '400px';
+                    map.invalidateSize(true);
+                }, 200);
             }
 
             this.blur();
@@ -2454,6 +2490,7 @@ if (!$_SESSION['swlogin']) {
             ubicacion2: $('#ubicacion2').val(),
             nivel: nivel
         };
+        console.log("dato:"+dato);
 
         $.ajax({
             async: true,
@@ -2465,22 +2502,17 @@ if (!$_SESSION['swlogin']) {
             beforeSend: function() {
                 loadGralOn();
             },
-            success: function(dat) {
-
-                console.log("======================");
-                console.log(dat);
+            success: function(dat) { 
                 loadGralOff();
                 let $select = $('.select2_' + nivel);
                 if ($select.hasClass('select2-hidden-accessible')) {
                     $select.select2('destroy');
                 }
-                $select.html(dat.html);
+                $select.html(dat.html); 
                 $select.attr('multiple', 'multiple');
-                $select.select2({
-                    dropdownParent: $('.swal2-popup'),
+                $select.select2({ 
                     placeholder: "Seleccione o escriba",
-                    tags: true,
-                    width: '26%'
+                    tags: true, 
                 });
             },
             error: function(xhr) {
