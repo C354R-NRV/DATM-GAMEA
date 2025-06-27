@@ -82,9 +82,7 @@ try {
         $query = "SELECT distinct TRIM(replace(replace(replace(ubicacion_nivel2, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) as ubicacion from inmueble_univ a where 1=1 $filtro order by TRIM(replace(replace(replace(ubicacion_nivel2, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', ''));";
     }
 
-    if ($nivel == '3') {
-        // Para nivel 3, necesitamos obtener los valores predefinidos del nivel 2 dinámicamente
-        // Primero ejecutamos una consulta para obtener los valores únicos del nivel 2
+    if ($nivel == '3') { 
         $queryNivel2 = "SELECT distinct TRIM(replace(replace(replace(ubicacion_nivel2, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) as ubicacion from inmueble_univ a where 1=1 $filtro order by TRIM(replace(replace(replace(ubicacion_nivel2, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', ''));";
         $stmtNivel2 = $cons->query($queryNivel2);
         $resultadosNivel2 = $stmtNivel2->fetchAll(PDO::FETCH_ASSOC);
@@ -92,9 +90,8 @@ try {
         $valoresPredefinidosNivel2 = array('TODOS');
         foreach ($resultadosNivel2 as $row) {
             $valoresPredefinidosNivel2[] = $row['ubicacion'];
-        }
-
-        // Aplicar filtro para ubicacion2
+        } 
+        
         $filtro .= generarFiltroUbicacion($ubicacion2, 'a.ubicacion_nivel2', $valoresPredefinidosNivel2);
 
         $query = "SELECT distinct TRIM(replace(replace(replace(a.ubicacion_nivel3, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) as ubicacion from inmueble_univ a where 1=1 $filtro order by TRIM(replace(replace(replace(a.ubicacion_nivel3, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', ''));";

@@ -6,6 +6,7 @@ require_once './conexionpsql.php';
 $pjson = array(
     'err' => '0',
     'sql' => '',
+    'sqlTemp' => '',
     'html' => '',
     'msg' => '',
     'log' => ''
@@ -31,7 +32,26 @@ foreach ($_POST as $clave => $valor) {
 }
 
 try {
-    // Función para generar filtros con valores predefinidos vs escritos manualmente
+
+    function completarGuionFinal($valor)
+    {
+        $valor = trim($valor);
+
+        if ($valor === '') {
+            return $valor;
+        }
+
+        if (preg_match('/^\d+-\d+-$/', $valor)) {
+            return $valor;
+        }
+
+        if (preg_match('/^\d+-\d+$/', $valor)) {
+            return $valor . '-';
+        }
+
+        return $valor;
+    }
+
     function generarFiltroUbicacion($valores, $campo, $valoresPredefinidos)
     {
         if (empty($valores)) {
@@ -103,10 +123,8 @@ try {
         $filtro .= generarFiltroUbicacion($ubicacion1, 'a.ubicacion_nivel1', $valoresPredefinidosNivel1);
     }
 
-    // Para ubicacion2, necesitamos obtener los valores predefinidos dinámicamente
     $valoresPredefinidosNivel2 = array('TODOS');
-    if (!empty($ubicacion2)) {
-        // Construir filtro temporal para obtener valores predefinidos del nivel 2
+    if (!empty($ubicacion2)) { 
         $filtroTemporal = '';
         if ($ubicacion1 != 'TODOS' && !empty($ubicacion1)) {
             $filtroTemporal .= generarFiltroUbicacion($ubicacion1, 'ubicacion_nivel1', $valoresPredefinidosNivel1);
@@ -114,6 +132,7 @@ try {
 
         $queryNivel2 = "SELECT distinct TRIM(replace(replace(replace(ubicacion_nivel2, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) as ubicacion from inmueble_univ where 1=1 $filtroTemporal order by TRIM(replace(replace(replace(ubicacion_nivel2, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', ''));";
         $stmtNivel2 = $cons->query($queryNivel2);
+        
         $resultadosNivel2 = $stmtNivel2->fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($resultadosNivel2 as $row) {
@@ -122,14 +141,11 @@ try {
             }
         }
 
-        // Aplicar filtro para ubicacion2
         $filtro .= generarFiltroUbicacion($ubicacion2, 'a.ubicacion_nivel2', $valoresPredefinidosNivel2);
     }
 
-    // Para ubicacion3, necesitamos obtener los valores predefinidos dinámicamente
     $valoresPredefinidosNivel3 = array('TODOS');
     if (!empty($ubicacion3)) {
-        // Construir filtro temporal para obtener valores predefinidos del nivel 3
         $filtroTemporal = '';
         if ($ubicacion1 != 'TODOS' && !empty($ubicacion1)) {
             $filtroTemporal .= generarFiltroUbicacion($ubicacion1, 'ubicacion_nivel1', $valoresPredefinidosNivel1);
@@ -140,6 +156,7 @@ try {
 
         $queryNivel3 = "SELECT distinct TRIM(replace(replace(replace(ubicacion_nivel3, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) as ubicacion from inmueble_univ where 1=1 $filtroTemporal order by TRIM(replace(replace(replace(ubicacion_nivel3, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', ''));";
         $stmtNivel3 = $cons->query($queryNivel3);
+        
         $resultadosNivel3 = $stmtNivel3->fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($resultadosNivel3 as $row) {
@@ -148,7 +165,6 @@ try {
             }
         }
 
-        // Aplicar filtro para ubicacion3
         $filtro .= generarFiltroUbicacion($ubicacion3, 'a.ubicacion_nivel3', $valoresPredefinidosNivel3);
     }
 
@@ -166,8 +182,10 @@ try {
     if ($documento != '') {
         $filtro .= " and trim(documento_identidad)  like '$documento%' ";
     }
+
+    $catastral = completarGuionFinal($catastral);
+
     if ($catastral != '') {
-        /* $filtro .= " and trim(a.codigo_catastral)  like '$catastral%' "; */
         $filtro .= "AND (
                     (
                     SELECT
@@ -238,7 +256,8 @@ try {
             b.no_brutos,            
             b.contacto_apoderado,   
             b.latitud, 
-            b.longitud ";
+            b.longitud,
+            b.cant_act, b.descripcion_act  ";
 
     if (str_contains($numInmueble, "INM-")) {
         $query .= " 
@@ -286,7 +305,7 @@ try {
                 <input type='hidden' value='" . $value['ubicacion_nivel3'] . "' id='ubicacion_nivel3$cnt'>
                 <input type='hidden' value='" . $value['numero_puerta'] . "' id='numero_puerta$cnt'>
                 <input type='hidden' value='" . $value['nombre_apo'] . "' id='nombre_apo$cnt'>
-                <input type='hidden' value='" . $value['direccion_descriptiva'] . "' id='direccion_descriptiva$cnt'>
+                <input type='hidden' value='" . $value['direccion_descriptiva'] . "' id='direccion_descriptiva$cnt'>    
                 <input type='hidden' value='" . $value['material_via'] . "' id='material_via$cnt'>
                 <input type='hidden' value='" . $value['servicio'] . "' id='servicio$cnt'>
                 <input type='hidden' value='" . $value['servicio_uf'] . "' id='servicio_uf$cnt'>
@@ -299,8 +318,10 @@ try {
                 <input type='hidden' value='" . $value['contacto_apoderado'] . "' id='contacto_apoderado$cnt'>
                 <input type='hidden' value='" . $value['latitud'] . "' id='latitud$cnt'>
                 <input type='hidden' value='" . $value['longitud'] . "' id='longitud$cnt'>
+                <input type='hidden' value='" . $value['cant_act'] . "' id='cant_act$cnt'>
+                <input type='hidden' value='" . $value['descripcion_act'] . "' id='descripcion_act$cnt'>
 
-                <button class='seleccionar-btn' onclick='seleccionarInmueble($cnt)'><i class='fa fa-hand-pointer-o' aria-hidden='true'></i></button>
+                <button type='button' class='seleccionar-btn' onclick='seleccionarInmueble($cnt, event); return false;'><i class='fa fa-hand-pointer-o' aria-hidden='true'></i></button>
             </td>
         </tr>";
         $cnt++;

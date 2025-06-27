@@ -176,7 +176,8 @@ try {
                     a.imagen_adicional,
                     to_char(a.fecha_apersonamiento, 'DD/MM/YYYY HH24:MI:SS') AS fecha_apersonamiento,
                     a.fecha_apersonamiento as fecha_apersonamiento_raw,
-                    estado_fiscalizacion, 
+                    estado_fiscalizacion,
+                    a.tipologia,  
                         to_char(a.fecha_cambio_estado, 'DD/MM/YYYY HH24:MI:SS') fecha_cambio_estado,
                         c1.usuario usuario_cambio_estado,
                         observacion_estado,
@@ -296,6 +297,7 @@ try {
                     'usuario' => $row['usuario'],
                     'no_formulario' => $row['no_formulario'],
                     'estado_fiscalizacion' => $row['estado_fiscalizacion'],
+                    'tipologia' => $row['tipologia'],
                     'html' => $popupHtml
                 ];
             } catch (Exception $e) {
@@ -539,7 +541,11 @@ function createPopupHtml($row, $imagenes)
                 </div>
                 <div class="info-row">
                     <div class="info-label">Código catastral:</div>
-                    <div class="info-value">' . $codigo." ".($row['estado_fiscalizacion'] == 'PROCESADO' ? ' <a target="_blank"  href="https://www.google.com/maps?q=' . $row['lat'] . ',' . $row['lng'] . '"><i class="fa fa-street-view" style="font-size:1.2rem; COLOR: yellow" aria-hidden="true"></i></a>' : '') . '</div>
+                    <div class="info-value">' . $codigo . " " . ($row['estado_fiscalizacion'] == 'PROCESADO' ? ' <a target="_blank"  href="https://www.google.com/maps?q=' . $row['lat'] . ',' . $row['lng'] . '"><i class="fa fa-street-view" style="font-size:1.2rem; COLOR: yellow" aria-hidden="true"></i></a>' : '') . '</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Tipologia:</div>
+                    <div class="info-value">' . $row['tipologia'] . '</div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Última visita:</div>

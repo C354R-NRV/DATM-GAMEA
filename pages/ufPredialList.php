@@ -15,7 +15,7 @@ if (!$_SESSION['swlogin']) {
 <html lang="es">
 
 <head>
-    <title>CITES</title>
+    <title>PANEL PREDIAL</title>
     <?php
     echo $twig->render('linkStyle.twig');
     ?>

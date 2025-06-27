@@ -64,11 +64,14 @@ try {
                 a.geom, 
                 ST_Centroid(ST_MakeEnvelope(:minLng, :minLat, :maxLng, :maxLat, 4326))
             ) as distancia_centro,
-            b.usuario 
+            b.usuario ,
+            c.numero_inmueble
+            
         FROM public.uf_prepredial a
-        left join datm_usuario b on  a.idusuario = b.id 
-        WHERE 
-            a.estado_ = true 
+        left join datm_usuario b on  a.idusuario = b.id  
+        left join uf_predial c on c.id = a.idpredial_asociado  
+        WHERE  
+            a.estado_ = true  
             AND a.geom IS NOT NULL
             AND ST_Within(
                 a.geom, 
@@ -106,17 +109,19 @@ try {
         $lat = $row['latitud_calc'] ?? $row['latitud'];
         $lng = $row['longitud_calc'] ?? $row['longitud'];
 
+
         $prePuntos[] = [
             'idprepredial' => $row['idprepredial'],
             'latitud' => $lat,
             'longitud' => $lng,
-            'detalle' => $row['detalle'], 
-            'idusuario' => $row['usuario'], 
+            'detalle' => $row['detalle'],
+            'idusuario' => $row['usuario'],
             'fregistro_' => $fecha,
             'estado_' => $row['estado_'],
             'color' => $row['color'],
             'idpredial_asociado' => $row['idpredial_asociado'],
             'geom_text' => $row['geom_text'],
+            'numero_inmueble' => $row['numero_inmueble'],
             'distancia_centro' => round($row['distancia_centro'], 2)
         ];
     }

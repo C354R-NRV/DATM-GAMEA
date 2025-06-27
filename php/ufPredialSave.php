@@ -10,7 +10,7 @@ $pjson = array(
 );
 
 try {
-    // Check if user is logged in
+
     if (!isset($_SESSION['idusuario'])) {
         throw new Exception("Usuario no autenticado");
     }
@@ -18,10 +18,18 @@ try {
     $conn = new Conexion();
     $cons = $conn->conectar();
 
-    // Validate and get form data
     $geolocalizacion = isset($_POST['geolocalizacion']) ? limpiarDato($_POST['geolocalizacion']) : '';
 
-    $numero_inmueble =  intval($_POST['numeroInmueble']);
+
+    if (substr($_POST['numeroInmueble'], 0, 4) === 'INM-') {
+
+        $numero_inmueble =  ($_POST['numeroInmueble']);
+    } else {
+
+        $numero_inmueble =  intval($_POST['numeroInmueble']);
+    }
+
+
     if (TRIM($_POST['numeroInmueble']) == '') {
         $query = "SELECT COUNT(*) correlativo FROM uf_predial where numero_inmueble like 'INM%' and estado_ ";
         $stmt = $cons->query($query);
@@ -49,6 +57,7 @@ try {
     $via = isset($_POST['via']) ? limpiarDato($_POST['via']) : '';
 
     $no_plantas = isset($_POST['no_plantas']) ? intval($_POST['no_plantas']) : 0;
+    $idprepredial_seleccionado = isset($_POST['idprepredial_seleccionado']) ? intval($_POST['idprepredial_seleccionado']) : 0;
     $no_plantas = ($no_plantas ? $no_plantas : '0');
 
     $no_concluidos = isset($_POST['no_concluidos']) ? intval($_POST['no_concluidos']) : 0;
@@ -69,7 +78,7 @@ try {
     $hhrr_ = isset($_POST['hhrr_']) ? limpiarDato($_POST['hhrr_']) : '';
     $fechaApersonamiento = isset($_POST['fechaApersonamiento']) ? limpiarDato($_POST['fechaApersonamiento']) : '';
 
-    $nombre_titular = isset($_POST['nombre_titular']) ? limpiarDato($_POST['nombre_titular']) : '';
+    $nombre_titular = isset($_POST['nombre_titular']) ? limpiarDato($_POST['nombre_titular']) : 'PROPIETARIO';
     $nombre_apoderado = isset($_POST['nombre_apoderado']) ? limpiarDato($_POST['nombre_apoderado']) : '';
     $contactoTitular = isset($_POST['contactoTitular']) ? limpiarDato($_POST['contactoTitular']) : '';
 
@@ -78,7 +87,7 @@ try {
     $videoInmueble = isset($_POST['videoInmueble']) ? limpiarDato($_POST['videoInmueble']) : '';
 
 
-    $cant_act = isset($_POST['cant_act']) ? limpiarDato($_POST['cant_act']) : '';
+    $cant_act = isset($_POST['cant_act']) ? intval($_POST['cant_act']) : 0;
     $descripcion_act = isset($_POST['descripcion_act']) ? limpiarDato($_POST['descripcion_act']) : '';
 
     // Validate coordinates
@@ -117,7 +126,9 @@ try {
             throw new Exception('Error al guardar la imagen principal');
         }
     } else {
-        throw new Exception('No se ha proporcionado una imagen principal');
+        if ($tipologia == 'OBRA BRUTA') {
+            throw new Exception('No se ha proporcionado una imagen principal');
+        }
     }
 
     // Process additional images
@@ -187,8 +198,6 @@ try {
                 )";
 
     $idestado_fiscalizacion = 1;
-
-
 
     $stmt = $cons->prepare($query);
     $stmt->bindParam(':nombre_razon', $nombre_titular);
@@ -260,6 +269,15 @@ try {
                 // Continue execution even if service insertion fails
             }
         }
+    }
+
+    if ($idprepredial_seleccionado > 0) {
+        $query = "UPDATE uf_prepredial 
+                SET idpredial_asociado = :idpredial_asociado where idprepredial = :idprepredial;";
+        $stmt = $cons->prepare($query);
+        $stmt->bindParam(':idpredial_asociado', $idpredial);
+        $stmt->bindParam(':idprepredial', $idprepredial_seleccionado);
+        $err = $stmt->execute();
     }
 
     $pjson['msg'] = 'Registro guardado exitosamente';

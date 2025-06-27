@@ -94,6 +94,7 @@ if (!$_SESSION['swlogin']) {
         .btn-primary {
             background-color: #03c1f2;
             border-color: rgb(0, 139, 173);
+            border-radius: 6px;
         }
 
         .btn-primary:hover {
@@ -173,7 +174,7 @@ if (!$_SESSION['swlogin']) {
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             position: relative;
-            height: 300px;
+            height: 400px;
         }
 
         #mapContainer:hover {
@@ -198,20 +199,20 @@ if (!$_SESSION['swlogin']) {
         }
 
         .control-button.fullscreen.active {
-            background-color: rgba(255, 0, 0, 0.8);
+            background-color: rgba(255, 165, 0, 0.8);
         }
 
         /* Estilos para el botón de oscurecer */
         .control-button.oscurecer {
-            background-color: rgba(50, 50, 50, 0.8);
+            background-color: rgba(34, 39, 41, 0.9);
         }
 
         .control-button.oscurecer.geojson-active {
-            background-color: rgba(75, 75, 75, 0.9);
+            background-color: rgba(255, 165, 0, 0.8);
         }
 
         .control-button.oscurecer:hover {
-            background-color: rgba(75, 75, 75, 0.9);
+            background-color: rgba(36, 37, 38, 0.9);
         }
 
         /* Estilos para el overlay oscuro */
@@ -337,7 +338,7 @@ if (!$_SESSION['swlogin']) {
         }
 
         .control-button.satelital.tesela-active {
-            background-color: rgba(34, 39, 41, 0.9);
+            background-color: rgba(255, 165, 0, 0.8);
             color: white;
         }
 
@@ -351,25 +352,25 @@ if (!$_SESSION['swlogin']) {
 
         /* Nuevos estilos para botones de inmuebles y códigos */
         .control-button.geojson-codigos {
-            background-color: rgba(255, 165, 0, 0.8);
+            background-color: rgba(34, 39, 41, 0.9);
         }
 
         .control-button.geojson-codigos.geojson-active {
-            background-color: rgba(255, 165, 0, 0.9);
+            background-color: rgba(255, 165, 0, 0.8);
             color: white;
         }
 
         .control-button.geojson-codigos:hover {
-            background-color: rgba(255, 140, 0, 0.9);
+            background-color: rgba(36, 37, 38, 0.9);
         }
 
         .control-button.geojson-active {
-            background-color: rgba(0, 200, 255, 0.9);
+            background-color: rgba(255, 165, 0, 0.8);
             color: white;
         }
 
         .control-button.geojson-active:hover {
-            background-color: rgba(0, 180, 230, 0.9);
+            background-color: rgba(36, 37, 38, 0.9);
         }
 
         /* Estilos para marcadores de códigos */
@@ -562,21 +563,19 @@ if (!$_SESSION['swlogin']) {
             .swal2-popup {
                 width: 95% !important;
             }
-        } 
+        }
 
         /* Estilos para el botón de pre-puntos */
         .control-button.pre-puntos {
-            background-color: rgba(255, 215, 0, 0.8);
-            color: black;
+            background-color: rgba(29, 25, 22, 0.9);
         }
 
         .control-button.pre-puntos.active {
-            background-color: rgba(255, 215, 0, 0.9);
-            color: black;
+            background-color: rgba(255, 165, 0, 0.8);
         }
 
         .control-button.pre-puntos:hover {
-            background-color: rgba(255, 215, 0, 0.9);
+            background-color: rgba(36, 37, 38, 0.9);
         }
 
         /* Estilos para los marcadores de pre-puntos */
@@ -588,7 +587,7 @@ if (!$_SESSION['swlogin']) {
             box-shadow: 0 0 6px #fff, 0 0 0.9rem #fff, 0 0 18px rgb(176, 193, 23), 0 0 24px rgb(193, 190, 23), 0 0 30px rgb(248, 231, 76), 0 0 36px rgb(237, 248, 76);
             border: 2px solid rgb(0, 0, 0);
             animation: pulseAnimation 5s infinite ease-in-out;
-        } 
+        }
 
         /* Bloque desplegable */
         .search-dropdown {
@@ -604,6 +603,115 @@ if (!$_SESSION['swlogin']) {
 
         .search-dropdown.active {
             display: block;
+        }
+
+        .pre-puntos-updating {
+            position: absolute;
+            top: 45px;
+            right: 10px;
+            z-index: 1000;
+            background-color: rgba(255, 215, 0, 0.9);
+            color: black;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            display: none;
+            animation: pulseAnimation 1s infinite ease-in-out;
+        }
+
+
+
+        /* Estilos para el botón de distritos */
+        .control-button.distritos {
+            background-color: rgba(34, 39, 41, 0.9);
+        }
+
+        .control-button.distritos.geojson-active {
+            background-color: rgba(255, 165, 0, 0.8);
+            color: white;
+        }
+
+        .control-button.distritos:hover {
+            background-color: rgba(33, 36, 37, 0.9);
+        }
+
+        /* Estilos para los polígonos de distritos */
+        .distrito-polygon {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        /* Estilos para el tooltip */
+        .distrito-tooltip {
+            background-color: rgba(0, 0, 0, 0.8) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 4px !important;
+            padding: 8px 12px !important;
+            font-size: 14px !important;
+            font-weight: bold !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        .distrito-tooltip::before {
+            border-top-color: rgba(0, 0, 0, 0.8) !important;
+        }
+
+        /* Estilos específicos para cada distrito (opcional) */
+        .distrito-1 {
+            border-color: #FF6B6B !important;
+        }
+
+        .distrito-2 {
+            border-color: #4ECDC4 !important;
+        }
+
+        .distrito-3 {
+            border-color: #45B7D1 !important;
+        }
+
+        .distrito-4 {
+            border-color: #96CEB4 !important;
+        }
+
+        .distrito-5 {
+            border-color: #FFEAA7 !important;
+        }
+
+        .distrito-6 {
+            border-color: #DDA0DD !important;
+        }
+
+        .distrito-7 {
+            border-color: #98D8C8 !important;
+        }
+
+        .distrito-8 {
+            border-color: #F7DC6F !important;
+        }
+
+        .distrito-9 {
+            border-color: #BB8FCE !important;
+        }
+
+        .distrito-10 {
+            border-color: #85C1E9 !important;
+        }
+
+        .distrito-11 {
+            border-color: #F8C471 !important;
+        }
+
+        .distrito-12 {
+            border-color: #82E0AA !important;
+        }
+
+        .distrito-13 {
+            border-color: #F1948A !important;
+        }
+
+        .distrito-14 {
+            border-color: #AED6F1 !important;
         }
     </style>
 </head>
@@ -654,7 +762,7 @@ if (!$_SESSION['swlogin']) {
                 </div>
 
                 <div class="col-md-12 mb-3">
-                    <div class="mb-12" id="mapContainer"  >
+                    <div class="mb-12" id="mapContainer">
                         <div id="miniMap" style="height: 100%; width: 100%;"></div>
                         <div class="minimap-controls">
                             <button id="zoomInBtn" type="button" class="control-button" title="Acercar" aria-label="Acercar mapa">+</button>
@@ -671,12 +779,16 @@ if (!$_SESSION['swlogin']) {
                             <button id="oscurecerBtn" class="control-button oscurecer" title="Oscurecer El Alto" aria-label="Oscurecer El Alto" style="outline-style: none;">
                                 <i class="fa fa-moon-o" aria-hidden="true"></i>
                             </button>
+                            <button id="distritosBtn" class="control-button distritos" title="Mostrar/Ocultar Distritos" aria-label="Capa Distritos">
+                                <i class="fa fa-bookmark" aria-hidden="true"></i>
+                            </button>
                             <button id="fullscreenBtn" class="control-button fullscreen" title="Pantalla Completa" aria-label="Pantalla Completa">
                                 <i class="fa fa-expand" aria-hidden="true"></i>
                             </button>
                             <button id="prePuntosBtn" class="control-button pre-puntos" title="Buscar Pre-Puntos" aria-label="Buscar Pre-Puntos">
                                 <i class="fa fa-search" aria-hidden="true"></i>
                             </button>
+
                         </div>
                         <div id="statusMessage" class="status-message" role="alert"></div>
                         <div id="dynamicLoadingIndicator" class="dynamic-loading-indicator">Cargando datos...</div>
@@ -704,7 +816,7 @@ if (!$_SESSION['swlogin']) {
 
                         <div class="col-md-4">
                             <label class="form-label">Distrito</label>
-                            <select id="ubicacion1" class="form-select select2_1"  onchange="cargarNivel(2);">
+                            <select id="ubicacion1" class="form-select select2_1" onchange="cargarNivel(2);">
                                 <option value="1">1</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>
@@ -776,7 +888,7 @@ if (!$_SESSION['swlogin']) {
 
                 <div class="col-md-6 mb-3">
                     <label for="numeroInmueble" class="form-label">Número de Inmueble</label>
-                    <input type="number" class="form-control" id="numeroInmueble" min="1" name="numeroInmueble">
+                    <input type="text" class="form-control" id="numeroInmueble" min="1" name="numeroInmueble">
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -789,7 +901,7 @@ if (!$_SESSION['swlogin']) {
 
                 <div class="col-md-6 mb-3">
                     <label for="tipologia" class="form-label">Tipología <span class="text-danger">*</span></label>
-                    <select class="form-select" id="tipologia" name="tipologia" required>
+                    <select class="form-select" id="tipologia" name="tipologia">
                         <option value="">Seleccione...</option>
                         <option value="MARGINAL">MARGINAL</option>
                         <option value="ECONOMICA">ECONOMICA</option>
@@ -799,12 +911,13 @@ if (!$_SESSION['swlogin']) {
                         <option value="LUJOSO">LUJOSO</option>
                         <option value="NO DETERMINADO">NO DETERMINADO</option>
                         <option value="NO CORRESPONDE">NO CORRESPONDE</option>
+                        <option value="OBRA BRUTA"> - OBRA BRUTA -</option>
                     </select>
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label for="via" class="form-label">Material via <span class="text-danger">*</span></label>
-                    <select class="form-select" id="via" name="via" required>
+                    <select class="form-select" id="via" name="via">
                         <option value="">Seleccione...</option>
                         <option value="TIERRA">TIERRA</option>
                         <option value="RIPIO">RIPIO</option>
@@ -877,17 +990,17 @@ if (!$_SESSION['swlogin']) {
 
                 <div class="col-md-6 mb-3">
                     <label for="no_plantas" class="form-label">Número de plantas <span class="text-danger">*</span></label>
-                    <input type="number" class="form-control" id="no_plantas" min="1" name="no_plantas" required>
+                    <input type="number" class="form-control" id="no_plantas" min="1" name="no_plantas">
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label for="no_concluidos" class="form-label">Construcciones concluidas <span class="text-danger">*</span></label>
-                    <input type="number" class="form-control" id="no_concluidos" min="1" name="no_concluidos" required>
+                    <input type="number" class="form-control" id="no_concluidos" min="1" name="no_concluidos">
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label for="no_bruto" class="form-label">Construcciones en bruto</label>
-                    <input type="number" class="form-control" id="no_bruto" min="1" name="no_bruto">
+                    <input type="number" class="form-control" id="no_bruto" min="0" name="no_bruto">
                 </div>
                 <div class="col-md-12 mb-3">
                     <h5 class="border-bottom pb-2">Ubicación</h5>
@@ -895,17 +1008,17 @@ if (!$_SESSION['swlogin']) {
 
                 <div class="col-md-6 mb-3">
                     <label for="distrito" class="form-label">Distrito <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="distrito" name="distrito" required>
+                    <input type="text" class="form-control" id="distrito" name="distrito">
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label for="zona" class="form-label">Zona <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="zona" name="zona" required>
+                    <input type="text" class="form-control" id="zona" name="zona">
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label for="calle" class="form-label">Calle(s) <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="calle" name="calle" required>
+                    <input type="text" class="form-control" id="calle" name="calle">
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -955,7 +1068,7 @@ if (!$_SESSION['swlogin']) {
 
                 <div class="col-md-6 mb-3">
                     <label for="nombre_titular" class="form-label">Nombre titular<span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="nombre_titular" name="nombre_titular" required>
+                    <input type="text" class="form-control" id="nombre_titular" name="nombre_titular">
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -979,9 +1092,8 @@ if (!$_SESSION['swlogin']) {
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label for="imagenPrincipal" class="form-label">Imagen Principal <span class="text-danger">*</span></label>
-                    <input class="form-control" type="file" id="imagenPrincipal" name="imagenPrincipal" accept="image/*" capture="environment"
-                        required>
+                    <label for="imagenPrincipal" class="form-label">Imagen Principal</label>
+                    <input class="form-control" type="file" id="imagenPrincipal" name="imagenPrincipal" accept="image/*" capture="environment">
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -1027,12 +1139,13 @@ if (!$_SESSION['swlogin']) {
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 
 <script>
+    let selectedPrePuntoId = null;
+
     $('#abrirFormulario').on('click', function() {
         const dropdown = $('#searchDropdown');
         dropdown.toggleClass('active');
 
         if (dropdown.hasClass('active')) {
-            // Inicializar Select2 cuando se abre
             $('#ubicacion1, #ubicacion2, #ubicacion3').select2({
                 placeholder: "Seleccione",
                 allowClear: true,
@@ -1108,7 +1221,6 @@ if (!$_SESSION['swlogin']) {
             "&ubicacion2=" + ubicacion2 +
             "&ubicacion3=" + ubicacion3 +
             "&documento=" + documento;
-        console.log(datos);
 
         $.ajax({
             async: true,
@@ -1122,9 +1234,7 @@ if (!$_SESSION['swlogin']) {
                 $('#buscarBtn').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Buscando...');
             },
             success: function(dat) {
-                console.log(dat);
-                dat = JSON.parse(dat)
-                console.log(dat.sql);
+                dat = JSON.parse(dat) 
                 loadGralOff();
                 $('#bodyInmuebles').html(dat.html);
                 $('#resultados').show();
@@ -1136,15 +1246,14 @@ if (!$_SESSION['swlogin']) {
                 $('#buscarBtn').prop('disabled', false).html('BUSCAR');
             }
         });
-
-
     }
 
-    function seleccionarInmueble(cnt) {
-        /*  Swal.close(); */
-
+    function seleccionarInmueble(cnt, event = null) {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
         $('#searchDropdown').removeClass('active');
-
         $('#numeroInmueble').val($('#numero_inmueble' + cnt).val());
         $('#codigo_catastro').val($('#codigo_catastral' + cnt).val());
         $('#nombre_titular').val($('#nombre_tit' + cnt).val());
@@ -1162,6 +1271,8 @@ if (!$_SESSION['swlogin']) {
         $('#no_concluidos').val($('#no_concluidos' + cnt).val());
         $('#no_bruto').val($('#no_brutos' + cnt).val());
         $('#contacto_apoderado').val($('#contacto_apoderado' + cnt).val());
+        $('#cant_act').val($('#cant_act' + cnt).val());
+        $('#descripcion_act').val($('#descripcion_act' + cnt).val());
 
         var servicio = ($('#servicio_uf' + cnt).val() ? $('#servicio_uf' + cnt).val() : $('#servicio' + cnt).val());
 
@@ -1178,6 +1289,34 @@ if (!$_SESSION['swlogin']) {
                 $(this).prop('checked', false);
             }
         });
+
+        var latitud = $('#latitud' + cnt).val();
+        var longitud = $('#longitud' + cnt).val();
+
+        if (latitud && longitud && latitud !== '' && longitud !== '') {
+            $('#geolocalizacion').val(latitud + ', ' + longitud);
+
+            $('#googlemap').attr("href", "https://www.google.com/maps?q=" + latitud + "," + longitud);
+
+            if (typeof map !== 'undefined' && map) {
+                map.setView([parseFloat(latitud), parseFloat(longitud)], 19);
+
+                if (typeof marker !== 'undefined' && marker) {
+                    marker.setLatLng([parseFloat(latitud), parseFloat(longitud)]);
+                } else {
+                    marker = L.marker([parseFloat(latitud), parseFloat(longitud)]).addTo(map);
+                }
+            }
+
+            $('#geoStatus').html(`<span class="text-success">
+                                        <i class="fa fa-check-circle"></i> Ubicación establecida desde inmueble seleccionado.
+                                    </span>`).show();
+
+        } else {
+            $('#geoStatus').html(`<span class="text-warning">
+                                        <i class="fa fa-exclamation-triangle"></i> El inmueble seleccionado no tiene coordenadas registradas.
+                                    </span>`).show();
+        }
     }
 
     function setupGeolocation() {
@@ -1186,8 +1325,8 @@ if (!$_SESSION['swlogin']) {
         const geoStatus = document.getElementById("geoStatus");
         const miniMap = document.getElementById("miniMap");
 
-        let map = null;
-        let marker = null;
+        map = null;
+        marker = null;
         let satelliteLayer = null;
         let satelitalActive = true;
 
@@ -1207,9 +1346,137 @@ if (!$_SESSION['swlogin']) {
         let prePuntosActive = false;
         let prePuntosData = [];
 
+        let distritosLayerGroup = null;
+        let distritosActive = false;
+        let currentTooltip = null; // Para el tooltip
 
-        // Función para buscar pre-puntos
-        function buscarPrePuntos() {
+
+        // Event listener para el botón de distritos (mostrar todos a la vez)
+        document.getElementById('distritosBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (distritosActive) {
+                // Desactivar capa de distritos
+                if (distritosLayerGroup && map.hasLayer(distritosLayerGroup)) {
+                    map.removeLayer(distritosLayerGroup);
+                    distritosLayerGroup = null;
+                }
+                // Remover tooltip si existe
+                if (currentTooltip) {
+                    map.closeTooltip(currentTooltip);
+                    currentTooltip = null;
+                }
+                this.classList.remove('geojson-active');
+                distritosActive = false;
+                showStatusMessage('Capa de distritos desactivada', 'info');
+            } else {
+                // Activar capa de distritos - crear todos los polígonos
+                distritosLayerGroup = L.layerGroup();
+
+                // Crear un polígono para cada distrito
+                Object.keys(distritosData).forEach(distritoKey => {
+                    const distritoNum = distritoKey.replace('distrito', '');
+                    const coordinates = distritosData[distritoKey];
+                    const color = distritosColors[distritoKey];
+
+                    const polygon = L.polygon(coordinates, {
+                        className: `distrito-polygon distrito-${distritoNum}`,
+                        fillColor: color,
+                        fillOpacity: 0.3,
+                        color: color,
+                        weight: 2,
+                        opacity: 0.8,
+                        dashArray: '3, 3'
+                    });
+
+                    // Agregar popup para click
+                    polygon.bindPopup(`
+                            <div class="popup-content"> 
+                                <div class="popup-description">
+                                    <strong>Área:</strong> Distrito ${distritoNum} de El Alto<br> 
+                                </div>
+                            </div>
+                        `);
+
+                    // Agregar eventos para tooltip al pasar el mouse
+                    polygon.on('mouseover', function(e) {
+                        // Cambiar estilo al pasar el mouse
+                        this.setStyle({
+                            fillOpacity: 0.5,
+                            weight: 3
+                        });
+
+                        // Crear tooltip
+                        currentTooltip = L.tooltip({
+                                permanent: false,
+                                direction: 'top',
+                                className: 'distrito-tooltip'
+                            })
+                            .setContent(`<strong>Distrito ${distritoNum}</strong>`)
+                            .setLatLng(e.latlng)
+                            .addTo(map);
+                    });
+
+                    polygon.on('mouseout', function(e) {
+                        // Restaurar estilo original
+                        this.setStyle({
+                            fillOpacity: 0.3,
+                            weight: 2
+                        });
+
+                        // Remover tooltip
+                        if (currentTooltip) {
+                            map.closeTooltip(currentTooltip);
+                            currentTooltip = null;
+                        }
+                    });
+
+                    polygon.on('mousemove', function(e) {
+                        // Actualizar posición del tooltip mientras se mueve el mouse
+                        if (currentTooltip) {
+                            currentTooltip.setLatLng(e.latlng);
+                        }
+                    });
+
+                    // Agregar el polígono al grupo
+                    distritosLayerGroup.addLayer(polygon);
+                });
+
+                // Agregar el grupo completo al mapa
+                distritosLayerGroup.addTo(map);
+
+                this.classList.add('geojson-active');
+                distritosActive = true;
+                showStatusMessage('Todos los distritos activados', 'success');
+            }
+
+            this.blur();
+        });
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Crear versión debounced de buscarPrePuntos
+        const debouncedBuscarPrePuntos = debounce(buscarPrePuntos, 500);
+
+        // Función mejorada para buscar pre-puntos
+        function buscarPrePuntos(showMessage = true) {
+            // Verificar si el mapa existe y está inicializado
+            if (!map) {
+                console.warn('Mapa no inicializado');
+                return;
+            }
+
             const bounds = map.getBounds();
             const sw = bounds.getSouthWest();
             const ne = bounds.getNorthEast();
@@ -1221,7 +1488,10 @@ if (!$_SESSION['swlogin']) {
                 maxLng: ne.lng
             };
 
-            showStatusMessage('Buscando pre-puntos...', 'info');
+            /*  // Solo mostrar mensaje de carga en la primera búsqueda o cuando se solicite explícitamente
+             if (showMessage) {
+                 showStatusMessage('Buscando pre-puntos...', 'info');
+             } */
 
             $.ajax({
                 url: '../php/ufGetPrePuntos.php',
@@ -1235,20 +1505,30 @@ if (!$_SESSION['swlogin']) {
                     if (response.success) {
                         prePuntosData = response.data;
                         renderPrePuntos();
-                        showStatusMessage(`Se encontraron ${prePuntosData.length} pre-puntos`, 'success');
+
+                        /* // Solo mostrar mensaje de éxito si se solicita explícitamente
+                        if (showMessage) {
+                            showStatusMessage(`Se encontraron ${prePuntosData.length} pre-puntos`, 'success');
+                        } */
                     } else {
-                        showStatusMessage('Error: ' + response.message, 'error');
+                        if (showMessage) {
+                            showStatusMessage('Error: ' + response.message, 'error');
+                        }
+                        console.error('Error en búsqueda de pre-puntos:', response.message);
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error('Error en la búsqueda de pre-puntos:', error);
-                    showStatusMessage('Error al buscar pre-puntos', 'error');
+                    if (showMessage) {
+                        showStatusMessage('Error al buscar pre-puntos', 'error');
+                    }
                 },
                 complete: function() {
                     $('#prePuntosBtn').removeClass('loading');
                 }
             });
         }
+
 
         function renderPrePuntos() {
             // Remover capa anterior si existe
@@ -1271,15 +1551,17 @@ if (!$_SESSION['swlogin']) {
             0 0 36px ${colorHex}
         `;
             }
-
             prePuntosLayer = L.layerGroup();
-            console.log(prePuntosData);
 
             prePuntosData.forEach(function(punto, index) {
                 const lat = parseFloat(punto.latitud);
                 const lng = parseFloat(punto.longitud);
-                const color = (punto.color || '#feff12'); // Color por defecto
-                console.log("color:" + color);
+                const color = (punto.color || '#fff');
+                let borde_ = '#000';
+                if (punto.idpredial_asociado > 0) {
+                    borde_ = '#fff';
+                }
+                console.log("borde_:" + borde_);
                 if (!isNaN(lat) && !isNaN(lng)) {
                     const boxShadow = generarBoxShadow(color);
 
@@ -1292,7 +1574,7 @@ if (!$_SESSION['swlogin']) {
                         height: 0.9rem;
                         border-radius: 50%;
                         box-shadow: ${boxShadow};
-                        border: 2px solid #000;
+                        border: 2px solid ${borde_};
                         animation: pulseAnimation 5s infinite ease-in-out;
                     "></div>
                 `,
@@ -1304,19 +1586,43 @@ if (!$_SESSION['swlogin']) {
                         icon: prePuntoIcon
                     });
 
+                    // En la función renderPrePuntos, actualizar el popupContent:
+                    let botonUsar = '';
+                    if (!(punto.idpredial_asociado > 0)) {
+                        botonUsar = `</br>
+                                <div style="width:100%;text-align:center; padding:0.4rem 0 0 0;">
+                                    <button class="btn-primary btn-usar-prepunto" 
+                                            data-idprepredial="${punto.idprepredial}" 
+                                            data-lat="${lat}" 
+                                            data-lng="${lng}" 
+                                            data-detalle="${punto.detalle || 'Sin detalle'}"
+                                            type="button"> UTILIZAR </button>
+                                </div>`;
+                    }
+                    let inmueble_ = '';
+                    if (punto.numero_inmueble > 0 && punto.numero_inmueble != '' && punto.numero_inmueble != 'null') {
+                        inmueble_ = `<strong>Inmueble: </strong> 
+                                        <span style="cursor:pointer; font-weight: bold; color:#15939d; " 
+                                            onclick="navigator.clipboard.writeText('${punto.numero_inmueble}')">
+                                            ${punto.numero_inmueble}
+                                        </span><br>`;
+                    }
+
                     const popupContent = `
-                <div class="popup-content">
-                    <div class="popup-description">
-                        <strong>Detalle:</strong> ${punto.detalle || 'Sin detalle'}<br>
-                        <strong>Creado por:</strong> ${punto.idusuario || 'No especificado'}<br>
-                        <strong>Fecha:</strong> ${punto.fregistro_ || 'No especificada'}<br>
-                        <strong>Ver en google:</strong> 
-                        <a target="_blank" href="https://www.google.com/maps?q=${lat},${lng}">
-                            <i class="fa fa-street-view" style="font-size:1.2rem; color: #15939d" aria-hidden="true"></i>
-                        </a>
-                    </div> 
-                </div>
-            `;
+                        <div class="popup-content">
+                            <div class="popup-description">
+                                ${inmueble_}
+                                <strong>Detalle:</strong> ${punto.detalle || 'Sin detalle'}<br>
+                                <strong>Creado por:</strong> ${punto.idusuario || 'No especificado'}<br>
+                                <strong>Fecha:</strong> ${punto.fregistro_ || 'No especificada'}<br>
+                                <strong>Ver en google:</strong> 
+                                <a target="_blank" href="https://www.google.com/maps?q=${lat},${lng}">
+                                    <i class="fa fa-street-view" style="font-size:1.3rem; color: #15939d" aria-hidden="true"></i>
+                                </a>
+                                ${botonUsar}
+                            </div>  
+                        </div>
+                    `;
 
                     marker.bindPopup(popupContent);
                     prePuntosLayer.addLayer(marker);
@@ -1327,6 +1633,7 @@ if (!$_SESSION['swlogin']) {
             prePuntosActive = true;
             $('#prePuntosBtn').addClass('active');
         }
+
         // Función para alternar la capa de pre-puntos
         function togglePrePuntos() {
             if (prePuntosActive) {
@@ -1335,11 +1642,14 @@ if (!$_SESSION['swlogin']) {
                     map.removeLayer(prePuntosLayer);
                 }
                 prePuntosActive = false;
+                prePuntosData = []; // Limpiar datos
                 $('#prePuntosBtn').removeClass('active');
                 showStatusMessage('Capa de pre-puntos desactivada', 'info');
             } else {
-                // Activar capa - buscar pre-puntos
-                buscarPrePuntos();
+                // Activar capa - buscar pre-puntos con mensaje
+                prePuntosActive = true; // Activar antes de buscar
+                $('#prePuntosBtn').addClass('active');
+                buscarPrePuntos(true); // true para mostrar mensajes
             }
         }
 
@@ -1552,7 +1862,7 @@ if (!$_SESSION['swlogin']) {
                 codigosActive = false;
             } else {
                 const zoom = map.getZoom();
-                if (zoom < 19) {
+                if (zoom < 18) {
                     showStatusMessage('El zoom mínimo para ver los códigos es 19, zoom actual: ' + zoom, 'error');
                     return;
                 }
@@ -1603,6 +1913,26 @@ if (!$_SESSION['swlogin']) {
             }).addTo(map);
 
             // Event listeners para los controles del mapa
+
+            $(document).on('click', '.btn-usar-prepunto', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                // Obtener datos del botón
+                const idprepredial = $(this).data('idprepredial');
+                const lat = $(this).data('lat');
+                const lng = $(this).data('lng');
+                const detalle = $(this).data('detalle');
+
+                // Llamar a la función establecerBase
+                establecerBase(idprepredial, lat, lng);
+
+                // Prevenir que el foco salte
+                this.blur();
+
+                return false;
+            });
+
 
             document.getElementById('prePuntosBtn').addEventListener('click', function(e) {
                 e.preventDefault();
@@ -1669,6 +1999,10 @@ if (!$_SESSION['swlogin']) {
                         loadGeoJSONDataDynamically('inmueble');
                     }
                 }
+                // Usar la versión debounced para pre-puntos
+                if (prePuntosActive) {
+                    debouncedBuscarPrePuntos();
+                }
             });
 
             map.on('zoomend', function() {
@@ -1680,6 +2014,10 @@ if (!$_SESSION['swlogin']) {
                     if (zoom >= 19) {
                         loadGeoJSONDataDynamically('inmueble');
                     }
+                }
+                // Usar la versión debounced para pre-puntos
+                if (prePuntosActive) {
+                    debouncedBuscarPrePuntos();
                 }
             });
 
@@ -1796,6 +2134,1892 @@ if (!$_SESSION['swlogin']) {
         let isFullscreen = false;
         let darkOverlayLayer = null;
         let darkOverlayActive = false;
+
+        const distritosData = {
+            distrito1: [
+                [-16.507841, -68.156198],
+                [-16.507841, -68.156197],
+                [-16.507382, -68.155737],
+                [-16.507884, -68.155289],
+                [-16.508726, -68.154538],
+                [-16.508893, -68.154446],
+                [-16.508978, -68.154399],
+                [-16.51172, -68.152886],
+                [-16.511721, -68.152887],
+                [-16.511721, -68.152889],
+                [-16.511765, -68.153002],
+                [-16.511821, -68.153148],
+                [-16.511821, -68.153148],
+                [-16.511822, -68.153147],
+                [-16.512434, -68.152744],
+                [-16.51265, -68.152601],
+                [-16.51265, -68.152603],
+                [-16.51265, -68.152605],
+                [-16.512642, -68.152663],
+                [-16.512633, -68.152736],
+                [-16.512598, -68.153002],
+                [-16.5126, -68.153001],
+                [-16.5126, -68.153001],
+                [-16.51261, -68.152996],
+                [-16.512796, -68.152908],
+                [-16.516695, -68.151065],
+                [-16.51675, -68.151039],
+                [-16.517177, -68.150835],
+                [-16.517977, -68.150794],
+                [-16.517813, -68.150498],
+                [-16.518319, -68.149897],
+                [-16.519204, -68.149787],
+                [-16.519204, -68.149787],
+                [-16.520421, -68.149428],
+                [-16.521368, -68.148341],
+                [-16.521618, -68.148304],
+                [-16.524877, -68.147106],
+                [-16.528789, -68.144554],
+                [-16.52879, -68.144555],
+                [-16.528791, -68.144557],
+                [-16.529371, -68.145697],
+                [-16.529372, -68.145698],
+                [-16.530511, -68.147284],
+                [-16.531354, -68.147847],
+                [-16.531362, -68.147851],
+                [-16.533688, -68.149403],
+                [-16.533688, -68.149403],
+                [-16.533901, -68.149166],
+                [-16.536798, -68.145928],
+                [-16.539842, -68.146387],
+                [-16.539842, -68.146388],
+                [-16.540445, -68.147502],
+                [-16.540498, -68.1476],
+                [-16.541005, -68.148536],
+                [-16.541509, -68.149341],
+                [-16.541883, -68.14994],
+                [-16.541883, -68.149941],
+                [-16.541649, -68.152298],
+                [-16.541626, -68.152531],
+                [-16.5415, -68.153793],
+                [-16.541685, -68.155197],
+                [-16.54175, -68.155684],
+                [-16.542371, -68.160398],
+                [-16.542372, -68.160399],
+                [-16.544525, -68.16199],
+                [-16.545005, -68.162344],
+                [-16.546873, -68.163724],
+                [-16.548855, -68.166314],
+                [-16.54886, -68.16632],
+                [-16.548859, -68.166321],
+                [-16.548129, -68.167406],
+                [-16.547215, -68.168763],
+                [-16.546983, -68.169579],
+                [-16.54695, -68.170329],
+                [-16.546473, -68.170441],
+                [-16.544918, -68.170806],
+                [-16.545698, -68.171862],
+                [-16.545868, -68.172092],
+                [-16.546844, -68.173413],
+                [-16.546845, -68.173413],
+                [-16.548985, -68.173638],
+                [-16.548985, -68.173638],
+                [-16.549272, -68.173793],
+                [-16.549932, -68.174149],
+                [-16.550075, -68.174226],
+                [-16.550075, -68.174226],
+                [-16.550074, -68.174213],
+                [-16.550072, -68.174111],
+                [-16.550066, -68.173821],
+                [-16.550065, -68.173728],
+                [-16.551638, -68.17384],
+                [-16.554375, -68.174037],
+                [-16.555262, -68.1741],
+                [-16.555262, -68.174102],
+                [-16.555294, -68.174259],
+                [-16.555441, -68.174995],
+                [-16.555469, -68.175133],
+                [-16.55553, -68.175436],
+                [-16.555541, -68.17549],
+                [-16.555648, -68.17602],
+                [-16.555675, -68.176511],
+                [-16.555675, -68.176511],
+                [-16.55553, -68.177059],
+                [-16.554535, -68.179582],
+                [-16.554438, -68.179828],
+                [-16.549412, -68.178108],
+                [-16.545168, -68.176655],
+                [-16.540598, -68.175062],
+                [-16.535679, -68.173468],
+                [-16.535666, -68.173464],
+                [-16.535603, -68.173442],
+                [-16.534576, -68.17309],
+                [-16.533195, -68.172622],
+                [-16.529812, -68.171477],
+                [-16.523647, -68.169461],
+                [-16.523454, -68.169397],
+                [-16.523303, -68.169348],
+                [-16.522868, -68.169206],
+                [-16.522677, -68.169143],
+                [-16.51938, -68.16806],
+                [-16.516272, -68.167046],
+                [-16.516244, -68.167035],
+                [-16.512095, -68.165503],
+                [-16.51207, -68.165789],
+                [-16.51177, -68.169185],
+                [-16.511739, -68.169536],
+                [-16.511616, -68.169532],
+                [-16.511567, -68.169487],
+                [-16.507357, -68.165598],
+                [-16.507089, -68.165351],
+                [-16.506587, -68.164889],
+                [-16.506483, -68.164779],
+                [-16.50621, -68.164493],
+                [-16.506052, -68.164329],
+                [-16.505366, -68.163614],
+                [-16.505349, -68.163597],
+                [-16.505348, -68.163596],
+                [-16.505331, -68.163578],
+                [-16.504778, -68.16307],
+                [-16.503986, -68.16279],
+                [-16.503702, -68.162691],
+                [-16.502227, -68.162551],
+                [-16.502012, -68.162084],
+                [-16.502011, -68.162082],
+                [-16.502444, -68.161829],
+                [-16.502814, -68.161429],
+                [-16.502843, -68.161397],
+                [-16.503113, -68.161104],
+                [-16.503118, -68.161099],
+                [-16.503403, -68.160791],
+                [-16.503639, -68.160535],
+                [-16.505118, -68.158933],
+                [-16.507841, -68.156198]
+            ],
+            distrito2: [
+                [-16.555675, -68.176511],
+                [-16.555675, -68.176511],
+                [-16.555648, -68.17602],
+                [-16.557795, -68.177678],
+                [-16.561586, -68.180599],
+                [-16.563567, -68.179845],
+                [-16.564407, -68.179525],
+                [-16.564673, -68.179424],
+                [-16.564673, -68.179424],
+                [-16.566156, -68.180107],
+                [-16.566261, -68.180155],
+                [-16.566495, -68.180263],
+                [-16.567075, -68.18053],
+                [-16.567457, -68.180903],
+                [-16.568148, -68.181577],
+                [-16.569656, -68.183049],
+                [-16.570061, -68.183445],
+                [-16.570242, -68.183535],
+                [-16.571257, -68.184042],
+                [-16.571295, -68.184061],
+                [-16.571777, -68.184302],
+                [-16.573172, -68.184999],
+                [-16.573557, -68.184925],
+                [-16.573571, -68.184971],
+                [-16.573804, -68.185724],
+                [-16.573805, -68.185725],
+                [-16.573807, -68.185731],
+                [-16.570615, -68.185947],
+                [-16.568799, -68.188282],
+                [-16.56795, -68.189373],
+                [-16.566325, -68.191463],
+                [-16.566263, -68.191543],
+                [-16.566464, -68.191744],
+                [-16.567652, -68.192937],
+                [-16.568924, -68.193499],
+                [-16.569146, -68.193274],
+                [-16.570863, -68.194946],
+                [-16.573371, -68.197768],
+                [-16.572539, -68.198908],
+                [-16.572558, -68.198997],
+                [-16.572326, -68.199292],
+                [-16.571695, -68.19877],
+                [-16.571562, -68.198924],
+                [-16.570899, -68.199691],
+                [-16.570128, -68.200512],
+                [-16.569011, -68.201492],
+                [-16.567674, -68.200128],
+                [-16.564805, -68.1972],
+                [-16.564134, -68.196515],
+                [-16.563135, -68.195495],
+                [-16.561641, -68.19397],
+                [-16.561639, -68.193968],
+                [-16.559985, -68.197956],
+                [-16.559959, -68.198021],
+                [-16.559241, -68.199751],
+                [-16.559241, -68.199752],
+                [-16.558671, -68.201127],
+                [-16.55814, -68.202388],
+                [-16.558083, -68.202523],
+                [-16.557712, -68.20342],
+                [-16.557712, -68.20342],
+                [-16.555145, -68.209655],
+                [-16.55513, -68.209692],
+                [-16.55506, -68.20963],
+                [-16.554962, -68.209641],
+                [-16.552232, -68.207017],
+                [-16.550104, -68.20505],
+                [-16.549092, -68.204117],
+                [-16.549078, -68.204105],
+                [-16.546858, -68.202057],
+                [-16.545575, -68.200873],
+                [-16.544009, -68.199429],
+                [-16.542617, -68.198145],
+                [-16.542611, -68.19814],
+                [-16.542577, -68.198109],
+                [-16.540763, -68.196436],
+                [-16.539979, -68.195714],
+                [-16.539979, -68.195714],
+                [-16.538152, -68.194033],
+                [-16.536998, -68.192975],
+                [-16.536941, -68.192923],
+                [-16.536712, -68.192713],
+                [-16.536302, -68.192331],
+                [-16.53455, -68.190718],
+                [-16.53308, -68.189366],
+                [-16.532715, -68.18903],
+                [-16.531658, -68.188065],
+                [-16.529372, -68.185933],
+                [-16.527831, -68.184494],
+                [-16.527045, -68.183768],
+                [-16.526661, -68.183421],
+                [-16.52665, -68.183411],
+                [-16.526645, -68.183407],
+                [-16.524828, -68.181763],
+                [-16.524707, -68.181653],
+                [-16.523436, -68.180498],
+                [-16.522382, -68.179534],
+                [-16.521442, -68.178675],
+                [-16.520334, -68.177662],
+                [-16.517243, -68.174833],
+                [-16.516299, -68.17397],
+                [-16.516251, -68.173927],
+                [-16.516225, -68.173903],
+                [-16.516234, -68.17262],
+                [-16.516267, -68.167733],
+                [-16.516267, -68.167732],
+                [-16.516271, -68.167176],
+                [-16.516272, -68.167046],
+                [-16.51938, -68.16806],
+                [-16.522677, -68.169143],
+                [-16.522868, -68.169206],
+                [-16.523303, -68.169348],
+                [-16.523454, -68.169397],
+                [-16.523647, -68.169461],
+                [-16.529812, -68.171477],
+                [-16.533195, -68.172622],
+                [-16.534576, -68.17309],
+                [-16.535603, -68.173442],
+                [-16.535666, -68.173464],
+                [-16.535679, -68.173468],
+                [-16.540598, -68.175062],
+                [-16.545168, -68.176655],
+                [-16.549412, -68.178108],
+                [-16.554438, -68.179828],
+                [-16.554535, -68.179582],
+                [-16.55553, -68.177059],
+                [-16.555675, -68.176511]
+            ],
+            distrito3: [
+                [-16.521689, -68.192517],
+                [-16.521803, -68.192382],
+                [-16.518009, -68.188892],
+                [-16.517425, -68.188354],
+                [-16.517423, -68.188353],
+                [-16.517424, -68.18833],
+                [-16.517468, -68.186802],
+                [-16.517575, -68.183477],
+                [-16.515964, -68.183406],
+                [-16.51606, -68.179767],
+                [-16.516181, -68.175471],
+                [-16.516225, -68.173903],
+                [-16.516251, -68.173927],
+                [-16.516299, -68.17397],
+                [-16.517243, -68.174833],
+                [-16.520334, -68.177662],
+                [-16.521442, -68.178675],
+                [-16.522382, -68.179534],
+                [-16.523436, -68.180498],
+                [-16.524707, -68.181653],
+                [-16.524828, -68.181763],
+                [-16.526645, -68.183407],
+                [-16.52665, -68.183411],
+                [-16.526661, -68.183421],
+                [-16.527045, -68.183768],
+                [-16.527831, -68.184494],
+                [-16.529372, -68.185933],
+                [-16.531658, -68.188065],
+                [-16.532715, -68.18903],
+                [-16.53308, -68.189366],
+                [-16.53455, -68.190718],
+                [-16.536302, -68.192331],
+                [-16.536712, -68.192713],
+                [-16.536941, -68.192923],
+                [-16.536998, -68.192975],
+                [-16.538152, -68.194033],
+                [-16.539979, -68.195714],
+                [-16.539979, -68.195714],
+                [-16.540763, -68.196436],
+                [-16.542577, -68.198109],
+                [-16.542611, -68.19814],
+                [-16.542617, -68.198145],
+                [-16.544009, -68.199429],
+                [-16.545575, -68.200873],
+                [-16.546858, -68.202057],
+                [-16.549078, -68.204105],
+                [-16.549092, -68.204117],
+                [-16.550104, -68.20505],
+                [-16.552232, -68.207017],
+                [-16.554962, -68.209641],
+                [-16.554673, -68.210311],
+                [-16.554646, -68.210375],
+                [-16.55457, -68.210571],
+                [-16.553974, -68.212097],
+                [-16.55388, -68.21232],
+                [-16.551985, -68.217164],
+                [-16.550554, -68.220811],
+                [-16.550327, -68.220623],
+                [-16.550294, -68.220596],
+                [-16.549553, -68.222428],
+                [-16.549424, -68.222761],
+                [-16.549287, -68.222881],
+                [-16.548808, -68.223955],
+                [-16.548776, -68.224038],
+                [-16.548652, -68.224351],
+                [-16.548649, -68.224358],
+                [-16.548275, -68.225229],
+                [-16.547395, -68.227305],
+                [-16.54652, -68.229375],
+                [-16.545744, -68.231211],
+                [-16.545261, -68.232355],
+                [-16.544451, -68.23454],
+                [-16.544024, -68.235694],
+                [-16.543771, -68.236423],
+                [-16.543739, -68.236514],
+                [-16.543697, -68.236742],
+                [-16.543508, -68.236775],
+                [-16.543412, -68.236792],
+                [-16.541276, -68.237164],
+                [-16.539445, -68.237491],
+                [-16.535214, -68.238016],
+                [-16.531856, -68.238456],
+                [-16.530371, -68.238592],
+                [-16.529668, -68.238657],
+                [-16.529585, -68.238598],
+                [-16.528972, -68.23816],
+                [-16.528859, -68.238079],
+                [-16.528857, -68.238077],
+                [-16.528165, -68.237165],
+                [-16.527895, -68.236502],
+                [-16.527792, -68.236248],
+                [-16.527751, -68.236148],
+                [-16.52762, -68.235826],
+                [-16.52699, -68.232937],
+                [-16.526927, -68.232647],
+                [-16.526916, -68.232626],
+                [-16.526861, -68.232513],
+                [-16.526098, -68.230965],
+                [-16.52525, -68.229659],
+                [-16.525247, -68.229658],
+                [-16.524254, -68.228976],
+                [-16.5234, -68.228389],
+                [-16.522212, -68.227573],
+                [-16.521711, -68.226566],
+                [-16.520927, -68.224994],
+                [-16.520918, -68.224975],
+                [-16.520857, -68.22491],
+                [-16.520831, -68.224883],
+                [-16.520483, -68.224515],
+                [-16.518961, -68.222907],
+                [-16.517406, -68.221265],
+                [-16.516874, -68.22059],
+                [-16.516312, -68.219889],
+                [-16.515713, -68.219151],
+                [-16.515012, -68.218312],
+                [-16.515011, -68.218311],
+                [-16.514729, -68.218096],
+                [-16.514478, -68.2179],
+                [-16.513254, -68.216794],
+                [-16.513181, -68.216329],
+                [-16.51265, -68.215512],
+                [-16.512648, -68.21542],
+                [-16.512647, -68.215351],
+                [-16.512647, -68.215328],
+                [-16.512798, -68.215333],
+                [-16.513206, -68.215347],
+                [-16.51324, -68.213873],
+                [-16.51324, -68.213854],
+                [-16.513249, -68.213854],
+                [-16.513579, -68.213839],
+                [-16.514127, -68.212599],
+                [-16.515113, -68.212593],
+                [-16.515113, -68.212593],
+                [-16.515122, -68.212593],
+                [-16.515134, -68.212174],
+                [-16.515135, -68.212139],
+                [-16.515135, -68.212129],
+                [-16.515136, -68.212119],
+                [-16.515355, -68.204217],
+                [-16.515722, -68.191343],
+                [-16.515724, -68.191265],
+                [-16.517636, -68.1931],
+                [-16.519624, -68.195009],
+                [-16.519664, -68.194961],
+                [-16.521127, -68.193193],
+                [-16.521689, -68.192517]
+            ],
+            distrito4: [
+                [-16.500982, -68.192042],
+                [-16.5033, -68.195526],
+                [-16.50318, -68.196346],
+                [-16.502809, -68.199006],
+                [-16.502982, -68.199179],
+                [-16.50482, -68.201016],
+                [-16.506185, -68.20238],
+                [-16.509746, -68.205939],
+                [-16.510601, -68.206796],
+                [-16.510503, -68.209881],
+                [-16.510423, -68.212423],
+                [-16.510511, -68.212427],
+                [-16.511288, -68.212463],
+                [-16.511759, -68.213806],
+                [-16.511762, -68.213814],
+                [-16.512126, -68.213793],
+                [-16.512103, -68.214651],
+                [-16.512401, -68.215022],
+                [-16.512647, -68.215328],
+                [-16.512647, -68.215351],
+                [-16.512648, -68.21542],
+                [-16.51265, -68.215512],
+                [-16.513181, -68.216329],
+                [-16.513205, -68.216481],
+                [-16.513227, -68.216618],
+                [-16.513254, -68.216794],
+                [-16.514478, -68.2179],
+                [-16.514496, -68.217914],
+                [-16.514729, -68.218096],
+                [-16.515011, -68.218311],
+                [-16.515012, -68.218312],
+                [-16.515713, -68.219151],
+                [-16.51577, -68.219221],
+                [-16.516312, -68.219889],
+                [-16.516874, -68.22059],
+                [-16.517406, -68.221265],
+                [-16.518961, -68.222907],
+                [-16.520483, -68.224515],
+                [-16.520831, -68.224883],
+                [-16.520857, -68.22491],
+                [-16.520918, -68.224975],
+                [-16.520927, -68.224994],
+                [-16.521711, -68.226566],
+                [-16.522212, -68.227573],
+                [-16.5234, -68.228389],
+                [-16.524254, -68.228976],
+                [-16.525247, -68.229658],
+                [-16.52525, -68.229659],
+                [-16.526098, -68.230965],
+                [-16.526861, -68.232513],
+                [-16.526916, -68.232626],
+                [-16.526927, -68.232647],
+                [-16.52699, -68.232937],
+                [-16.52762, -68.235826],
+                [-16.527751, -68.236148],
+                [-16.527792, -68.236248],
+                [-16.527895, -68.236502],
+                [-16.528165, -68.237165],
+                [-16.528857, -68.238077],
+                [-16.528859, -68.238079],
+                [-16.528972, -68.23816],
+                [-16.529585, -68.238598],
+                [-16.529668, -68.238657],
+                [-16.530371, -68.238592],
+                [-16.531856, -68.238456],
+                [-16.535214, -68.238016],
+                [-16.539445, -68.237491],
+                [-16.541276, -68.237164],
+                [-16.543412, -68.236792],
+                [-16.543508, -68.236775],
+                [-16.543697, -68.236742],
+                [-16.543681, -68.236759],
+                [-16.54351, -68.236939],
+                [-16.543159, -68.237306],
+                [-16.538694, -68.241991],
+                [-16.535018, -68.245849],
+                [-16.534499, -68.246393],
+                [-16.53444, -68.246455],
+                [-16.533946, -68.246972],
+                [-16.5298, -68.250668],
+                [-16.528403, -68.251913],
+                [-16.529346, -68.255762],
+                [-16.521667, -68.26103],
+                [-16.521608, -68.261071],
+                [-16.517114, -68.256141],
+                [-16.51677, -68.255764],
+                [-16.516309, -68.254987],
+                [-16.515989, -68.254565],
+                [-16.515984, -68.25456],
+                [-16.515912, -68.254488],
+                [-16.513044, -68.251666],
+                [-16.512943, -68.251491],
+                [-16.512781, -68.250852],
+                [-16.512434, -68.249486],
+                [-16.512283, -68.248992],
+                [-16.511827, -68.248235],
+                [-16.511753, -68.248181],
+                [-16.511458, -68.247968],
+                [-16.511185, -68.247906],
+                [-16.510945, -68.247851],
+                [-16.510317, -68.247811],
+                [-16.509646, -68.247769],
+                [-16.50938, -68.247709],
+                [-16.509054, -68.247637],
+                [-16.50851, -68.247401],
+                [-16.50825, -68.247131],
+                [-16.508056, -68.246929],
+                [-16.508001, -68.246872],
+                [-16.507974, -68.246836],
+                [-16.506616, -68.24502],
+                [-16.505521, -68.243569],
+                [-16.505211, -68.243086],
+                [-16.505079, -68.242655],
+                [-16.504898, -68.242065],
+                [-16.504829, -68.241839],
+                [-16.50463, -68.24148],
+                [-16.503924, -68.240479],
+                [-16.50311, -68.239324],
+                [-16.502949, -68.239133],
+                [-16.502432, -68.238525],
+                [-16.502269, -68.238371],
+                [-16.501972, -68.23809],
+                [-16.500879, -68.237374],
+                [-16.500255, -68.237125],
+                [-16.499208, -68.236522],
+                [-16.498995, -68.236399],
+                [-16.498955, -68.236374],
+                [-16.498768, -68.236257],
+                [-16.498355, -68.235999],
+                [-16.497984, -68.235633],
+                [-16.497474, -68.234959],
+                [-16.497287, -68.234713],
+                [-16.496867, -68.234159],
+                [-16.496833, -68.23412],
+                [-16.496556, -68.233804],
+                [-16.495725, -68.233045],
+                [-16.495377, -68.232714],
+                [-16.49514, -68.232421],
+                [-16.494765, -68.231792],
+                [-16.493794, -68.230604],
+                [-16.493405, -68.230215],
+                [-16.493179, -68.2297],
+                [-16.493173, -68.229686],
+                [-16.493168, -68.229674],
+                [-16.492776, -68.229634],
+                [-16.492648, -68.229621],
+                [-16.490319, -68.229384],
+                [-16.489901, -68.229305],
+                [-16.489104, -68.229157],
+                [-16.48801, -68.228954],
+                [-16.487043, -68.228713],
+                [-16.486698, -68.228615],
+                [-16.4861, -68.228446],
+                [-16.485762, -68.22835],
+                [-16.485712, -68.228336],
+                [-16.485869, -68.227594],
+                [-16.485996, -68.227003],
+                [-16.486399, -68.225107],
+                [-16.486758, -68.223422],
+                [-16.486762, -68.223401],
+                [-16.486778, -68.223329],
+                [-16.48692, -68.222659],
+                [-16.487693, -68.218971],
+                [-16.487802, -68.218432],
+                [-16.488474, -68.215161],
+                [-16.488677, -68.214173],
+                [-16.488866, -68.213253],
+                [-16.489267, -68.211294],
+                [-16.489339, -68.210942],
+                [-16.489374, -68.210771],
+                [-16.489466, -68.210321],
+                [-16.489475, -68.210277],
+                [-16.489923, -68.208071],
+                [-16.490469, -68.205381],
+                [-16.490681, -68.204342],
+                [-16.491065, -68.202446],
+                [-16.491071, -68.202416],
+                [-16.491096, -68.202293],
+                [-16.49116, -68.201969],
+                [-16.491172, -68.201911],
+                [-16.491259, -68.201494],
+                [-16.491265, -68.201465],
+                [-16.491412, -68.200989],
+                [-16.491451, -68.200861],
+                [-16.491689, -68.200255],
+                [-16.492509, -68.198358],
+                [-16.493177, -68.196814],
+                [-16.493999, -68.194944],
+                [-16.494014, -68.194909],
+                [-16.494214, -68.194456],
+                [-16.494251, -68.194373],
+                [-16.494314, -68.19423],
+                [-16.494403, -68.194028],
+                [-16.495122, -68.192407],
+                [-16.49523, -68.192163],
+                [-16.496393, -68.187866],
+                [-16.496412, -68.187871],
+                [-16.496531, -68.187907],
+                [-16.497924, -68.188317],
+                [-16.498236, -68.188426],
+                [-16.49873, -68.188598],
+                [-16.500639, -68.191526],
+                [-16.500982, -68.192042]
+            ],
+            distrito5: [
+                [-16.473735, -68.179379],
+                [-16.475891, -68.181401],
+                [-16.477042, -68.182629],
+                [-16.481294, -68.186753],
+                [-16.484346, -68.189714],
+                [-16.484354, -68.189721],
+                [-16.485037, -68.190383],
+                [-16.486811, -68.192078],
+                [-16.494214, -68.194456],
+                [-16.494014, -68.194909],
+                [-16.493999, -68.194944],
+                [-16.493177, -68.196814],
+                [-16.491689, -68.200255],
+                [-16.491451, -68.200861],
+                [-16.491265, -68.201465],
+                [-16.491172, -68.201911],
+                [-16.491096, -68.202293],
+                [-16.490681, -68.204342],
+                [-16.490469, -68.205381],
+                [-16.489923, -68.208071],
+                [-16.489475, -68.210277],
+                [-16.489374, -68.210771],
+                [-16.488866, -68.213253],
+                [-16.488677, -68.214173],
+                [-16.488474, -68.215161],
+                [-16.487802, -68.218432],
+                [-16.487693, -68.218971],
+                [-16.48692, -68.222659],
+                [-16.486762, -68.223401],
+                [-16.486399, -68.225107],
+                [-16.485996, -68.227003],
+                [-16.485869, -68.227594],
+                [-16.485712, -68.228336],
+                [-16.482739, -68.227718],
+                [-16.48166, -68.227465],
+                [-16.480192, -68.226947],
+                [-16.479827, -68.226781],
+                [-16.479072, -68.226332],
+                [-16.478771, -68.226152],
+                [-16.477605, -68.225218],
+                [-16.476579, -68.224252],
+                [-16.475713, -68.22345],
+                [-16.474789, -68.222681],
+                [-16.474202, -68.222104],
+                [-16.473404, -68.221407],
+                [-16.474526, -68.219526],
+                [-16.474785, -68.219091],
+                [-16.474558, -68.218866],
+                [-16.473289, -68.217609],
+                [-16.471772, -68.216855],
+                [-16.470284, -68.216118],
+                [-16.468788, -68.209881],
+                [-16.468571, -68.208988],
+                [-16.468421, -68.20835],
+                [-16.468393, -68.208238],
+                [-16.467557, -68.205287],
+                [-16.467019, -68.203389],
+                [-16.466279, -68.200905],
+                [-16.466279, -68.200904],
+                [-16.465779, -68.199231],
+                [-16.465655, -68.198817],
+                [-16.464497, -68.195823],
+                [-16.464459, -68.195745],
+                [-16.46337, -68.193498],
+                [-16.462683, -68.192116],
+                [-16.462001, -68.190703],
+                [-16.461411, -68.189587],
+                [-16.461102, -68.188866],
+                [-16.460552, -68.188075],
+                [-16.45955, -68.186719],
+                [-16.459094, -68.186007],
+                [-16.458955, -68.185806],
+                [-16.458145, -68.184532],
+                [-16.455668, -68.181468],
+                [-16.455518, -68.181291],
+                [-16.453871, -68.179265],
+                [-16.453539, -68.17886],
+                [-16.452025, -68.176926],
+                [-16.45136, -68.176093],
+                [-16.449573, -68.173843],
+                [-16.449017, -68.173165],
+                [-16.446965, -68.171095],
+                [-16.444525, -68.168682],
+                [-16.443015, -68.167268],
+                [-16.443914, -68.157351],
+                [-16.444218, -68.157359],
+                [-16.448077, -68.157465],
+                [-16.448078, -68.157466],
+                [-16.451141, -68.158292],
+                [-16.451226, -68.158309],
+                [-16.451703, -68.158404],
+                [-16.451929, -68.158449],
+                [-16.453392, -68.158742],
+                [-16.454197, -68.159662],
+                [-16.457122, -68.162992],
+                [-16.457499, -68.16356],
+                [-16.463124, -68.168985],
+                [-16.467411, -68.173356],
+                [-16.467501, -68.173437],
+                [-16.468839, -68.174773],
+                [-16.472793, -68.17846],
+                [-16.473735, -68.179379]
+            ],
+            distrito6: [
+                [-16.479892, -68.163806],
+                [-16.482276, -68.163516],
+                [-16.482598, -68.164267],
+                [-16.48248, -68.165413],
+                [-16.481693, -68.166179],
+                [-16.480459, -68.167287],
+                [-16.481467, -68.167062],
+                [-16.482117, -68.166916],
+                [-16.482118, -68.166917],
+                [-16.482118, -68.166917],
+                [-16.482118, -68.166917],
+                [-16.484115, -68.168367],
+                [-16.486576, -68.170154],
+                [-16.486589, -68.170164],
+                [-16.486957, -68.170446],
+                [-16.486991, -68.170472],
+                [-16.487134, -68.170496],
+                [-16.487321, -68.170484],
+                [-16.48737, -68.170481],
+                [-16.487417, -68.170478],
+                [-16.487447, -68.17047],
+                [-16.487609, -68.170424],
+                [-16.487916, -68.170468],
+                [-16.488097, -68.170638],
+                [-16.488192, -68.170724],
+                [-16.488342, -68.170927],
+                [-16.488344, -68.170927],
+                [-16.490649, -68.171082],
+                [-16.491538, -68.170535],
+                [-16.49154, -68.170534],
+                [-16.491577, -68.170504],
+                [-16.492407, -68.16983],
+                [-16.495126, -68.167622],
+                [-16.49542, -68.166831],
+                [-16.495705, -68.166634],
+                [-16.495726, -68.166619],
+                [-16.496354, -68.165241],
+                [-16.496372, -68.165201],
+                [-16.496798, -68.164824],
+                [-16.496798, -68.164824],
+                [-16.496801, -68.164822],
+                [-16.496705, -68.164669],
+                [-16.498016, -68.163605],
+                [-16.499898, -68.163316],
+                [-16.499906, -68.163311],
+                [-16.502011, -68.162082],
+                [-16.502013, -68.162084],
+                [-16.502227, -68.162551],
+                [-16.503702, -68.162691],
+                [-16.503986, -68.16279],
+                [-16.504778, -68.16307],
+                [-16.505331, -68.163578],
+                [-16.505348, -68.163596],
+                [-16.505349, -68.163597],
+                [-16.505366, -68.163614],
+                [-16.506053, -68.164329],
+                [-16.50621, -68.164493],
+                [-16.506484, -68.164779],
+                [-16.506587, -68.164889],
+                [-16.507089, -68.165351],
+                [-16.507357, -68.165598],
+                [-16.511568, -68.169487],
+                [-16.511616, -68.169532],
+                [-16.511739, -68.169536],
+                [-16.51177, -68.169185],
+                [-16.51207, -68.165789],
+                [-16.512096, -68.165503],
+                [-16.516244, -68.167035],
+                [-16.516272, -68.167046],
+                [-16.516271, -68.167176],
+                [-16.516267, -68.167732],
+                [-16.516267, -68.167733],
+                [-16.516234, -68.17262],
+                [-16.516225, -68.173903],
+                [-16.516181, -68.175471],
+                [-16.51606, -68.179767],
+                [-16.515964, -68.183406],
+                [-16.517575, -68.183477],
+                [-16.517468, -68.186802],
+                [-16.517424, -68.18833],
+                [-16.517424, -68.188353],
+                [-16.517425, -68.188354],
+                [-16.518009, -68.188892],
+                [-16.521803, -68.192382],
+                [-16.52169, -68.192517],
+                [-16.521127, -68.193193],
+                [-16.519664, -68.194961],
+                [-16.519625, -68.195009],
+                [-16.517636, -68.1931],
+                [-16.515724, -68.191265],
+                [-16.515722, -68.191343],
+                [-16.515356, -68.204217],
+                [-16.515136, -68.212119],
+                [-16.515136, -68.212129],
+                [-16.515135, -68.212139],
+                [-16.515134, -68.212174],
+                [-16.515123, -68.212593],
+                [-16.515113, -68.212593],
+                [-16.515113, -68.212593],
+                [-16.514127, -68.212599],
+                [-16.513579, -68.213839],
+                [-16.513249, -68.213854],
+                [-16.51324, -68.213854],
+                [-16.51324, -68.213873],
+                [-16.513207, -68.215347],
+                [-16.512798, -68.215333],
+                [-16.512647, -68.215328],
+                [-16.512402, -68.215022],
+                [-16.512103, -68.214651],
+                [-16.512126, -68.213793],
+                [-16.511762, -68.213814],
+                [-16.511759, -68.213806],
+                [-16.511288, -68.212463],
+                [-16.510511, -68.212427],
+                [-16.510423, -68.212423],
+                [-16.510504, -68.209881],
+                [-16.510602, -68.206796],
+                [-16.509746, -68.205939],
+                [-16.506185, -68.20238],
+                [-16.504821, -68.201016],
+                [-16.502983, -68.199179],
+                [-16.50281, -68.199006],
+                [-16.503181, -68.196346],
+                [-16.5033, -68.195526],
+                [-16.500982, -68.192042],
+                [-16.500639, -68.191526],
+                [-16.49873, -68.188598],
+                [-16.498236, -68.188426],
+                [-16.497925, -68.188317],
+                [-16.496532, -68.187907],
+                [-16.496412, -68.187871],
+                [-16.496394, -68.187866],
+                [-16.49523, -68.192163],
+                [-16.495122, -68.192407],
+                [-16.494403, -68.194028],
+                [-16.494214, -68.194456],
+                [-16.486811, -68.192078],
+                [-16.485037, -68.190383],
+                [-16.484354, -68.189721],
+                [-16.484346, -68.189714],
+                [-16.481295, -68.186753],
+                [-16.477043, -68.182629],
+                [-16.475892, -68.181401],
+                [-16.473736, -68.179379],
+                [-16.472793, -68.17846],
+                [-16.46884, -68.174773],
+                [-16.467502, -68.173437],
+                [-16.467412, -68.173356],
+                [-16.463125, -68.168985],
+                [-16.457499, -68.16356],
+                [-16.457122, -68.162992],
+                [-16.454197, -68.159662],
+                [-16.453392, -68.158742],
+                [-16.455207, -68.159105],
+                [-16.45617, -68.159697],
+                [-16.457304, -68.160393],
+                [-16.457679, -68.162243],
+                [-16.45803, -68.162427],
+                [-16.460069, -68.163495],
+                [-16.460502, -68.163722],
+                [-16.468833, -68.167445],
+                [-16.468833, -68.167445],
+                [-16.469229, -68.167624],
+                [-16.469901, -68.167933],
+                [-16.474104, -68.16771],
+                [-16.475941, -68.167348],
+                [-16.475944, -68.167345],
+                [-16.476331, -68.166882],
+                [-16.476442, -68.16675],
+                [-16.477142, -68.166614],
+                [-16.478639, -68.165792],
+                [-16.47953, -68.164938],
+                [-16.479892, -68.163806]
+            ],
+            distrito7: [
+                [-16.49556, -68.277335],
+                [-16.493665, -68.279921],
+                [-16.493633, -68.279964],
+                [-16.492694, -68.281225],
+                [-16.492571, -68.281391],
+                [-16.490383, -68.284329],
+                [-16.48968, -68.285273],
+                [-16.490723, -68.286375],
+                [-16.491258, -68.286673],
+                [-16.490275, -68.287953],
+                [-16.490086, -68.288202],
+                [-16.487982, -68.290965],
+                [-16.487366, -68.291774],
+                [-16.486564, -68.291205],
+                [-16.485963, -68.290778],
+                [-16.482676, -68.288464],
+                [-16.482575, -68.288466],
+                [-16.480236, -68.288501],
+                [-16.479976, -68.288818],
+                [-16.479974, -68.28882],
+                [-16.477273, -68.287726],
+                [-16.477268, -68.287724],
+                [-16.474602, -68.291528],
+                [-16.471837, -68.289214],
+                [-16.471474, -68.289134],
+                [-16.470164, -68.288845],
+                [-16.468955, -68.291244],
+                [-16.466886, -68.29535],
+                [-16.462516, -68.292061],
+                [-16.42998, -68.26758],
+                [-16.432758, -68.264197],
+                [-16.433203, -68.263654],
+                [-16.433204, -68.263654],
+                [-16.433203, -68.263653],
+                [-16.433228, -68.263622],
+                [-16.433294, -68.263538],
+                [-16.439819, -68.255253],
+                [-16.44641, -68.246783],
+                [-16.447639, -68.2458],
+                [-16.454042, -68.237753],
+                [-16.458419, -68.230873],
+                [-16.459483, -68.232062],
+                [-16.461183, -68.235054],
+                [-16.462062, -68.236553],
+                [-16.462688, -68.237258],
+                [-16.46477, -68.239077],
+                [-16.465482, -68.239829],
+                [-16.465953, -68.240444],
+                [-16.466869, -68.241358],
+                [-16.468212, -68.242361],
+                [-16.469191, -68.242674],
+                [-16.470515, -68.243288],
+                [-16.473826, -68.247756],
+                [-16.473999, -68.247312],
+                [-16.474329, -68.24647],
+                [-16.475095, -68.246845],
+                [-16.475492, -68.245841],
+                [-16.47579, -68.245192],
+                [-16.4764, -68.244003],
+                [-16.476678, -68.243607],
+                [-16.47796, -68.243528],
+                [-16.477961, -68.243527],
+                [-16.478564, -68.24349],
+                [-16.478815, -68.243487],
+                [-16.479204, -68.243512],
+                [-16.479859, -68.243551],
+                [-16.480073, -68.243563],
+                [-16.480255, -68.243602],
+                [-16.481204, -68.243902],
+                [-16.481746, -68.243962],
+                [-16.48228, -68.244021],
+                [-16.481289, -68.248311],
+                [-16.481154, -68.248892],
+                [-16.481154, -68.248892],
+                [-16.481267, -68.248933],
+                [-16.48171, -68.249096],
+                [-16.482814, -68.246871],
+                [-16.483856, -68.244776],
+                [-16.484634, -68.244801],
+                [-16.485298, -68.244986],
+                [-16.485688, -68.245147],
+                [-16.486499, -68.24551],
+                [-16.487381, -68.245888],
+                [-16.487484, -68.245888],
+                [-16.487484, -68.245888],
+                [-16.48782, -68.24589],
+                [-16.488125, -68.24599],
+                [-16.488491, -68.246176],
+                [-16.489272, -68.246562],
+                [-16.489889, -68.246723],
+                [-16.490486, -68.24703],
+                [-16.492075, -68.247163],
+                [-16.492751, -68.247749],
+                [-16.492755, -68.247752],
+                [-16.493513, -68.248135],
+                [-16.494056, -68.248317],
+                [-16.494957, -68.249039],
+                [-16.495662, -68.249498],
+                [-16.496052, -68.249892],
+                [-16.496556, -68.250231],
+                [-16.497761, -68.251601],
+                [-16.498267, -68.251886],
+                [-16.498277, -68.251892],
+                [-16.498618, -68.25199],
+                [-16.498823, -68.25205],
+                [-16.498522, -68.254882],
+                [-16.498307, -68.256785],
+                [-16.498161, -68.257832],
+                [-16.498101, -68.25827],
+                [-16.497952, -68.258899],
+                [-16.497785, -68.259621],
+                [-16.497643, -68.260239],
+                [-16.497459, -68.260899],
+                [-16.497021, -68.262478],
+                [-16.49687, -68.263044],
+                [-16.496671, -68.263788],
+                [-16.496544, -68.264201],
+                [-16.496518, -68.264285],
+                [-16.496493, -68.26436],
+                [-16.496099, -68.26555],
+                [-16.496049, -68.265703],
+                [-16.496041, -68.26573],
+                [-16.495731, -68.266782],
+                [-16.495678, -68.266963],
+                [-16.495677, -68.266966],
+                [-16.495397, -68.267908],
+                [-16.495311, -68.268198],
+                [-16.495307, -68.268208],
+                [-16.493711, -68.273556],
+                [-16.493332, -68.27459],
+                [-16.492977, -68.275363],
+                [-16.492898, -68.275536],
+                [-16.49556, -68.277335]
+            ],
+            distrito8: [
+                [-16.572326, -68.199292],
+                [-16.572558, -68.198997],
+                [-16.572539, -68.198908],
+                [-16.573371, -68.197768],
+                [-16.570863, -68.194946],
+                [-16.569146, -68.193274],
+                [-16.568924, -68.193499],
+                [-16.567652, -68.192937],
+                [-16.566464, -68.191744],
+                [-16.566263, -68.191543],
+                [-16.566325, -68.191463],
+                [-16.56795, -68.189373],
+                [-16.568799, -68.188282],
+                [-16.570615, -68.185947],
+                [-16.573807, -68.185731],
+                [-16.573805, -68.185725],
+                [-16.573804, -68.185724],
+                [-16.573571, -68.184971],
+                [-16.573557, -68.184925],
+                [-16.574762, -68.184694],
+                [-16.574829, -68.184585],
+                [-16.575038, -68.18425],
+                [-16.575153, -68.184065],
+                [-16.576346, -68.182148],
+                [-16.579052, -68.180373],
+                [-16.579417, -68.180121],
+                [-16.580505, -68.178762],
+                [-16.581075, -68.175178],
+                [-16.584003, -68.174124],
+                [-16.584931, -68.173119],
+                [-16.585409, -68.172602],
+                [-16.585632, -68.171925],
+                [-16.585746, -68.17158],
+                [-16.586535, -68.169663],
+                [-16.590565, -68.168417],
+                [-16.590742, -68.168363],
+                [-16.591909, -68.168002],
+                [-16.592045, -68.16796],
+                [-16.594104, -68.167324],
+                [-16.596793, -68.16097],
+                [-16.597094, -68.160258],
+                [-16.597775, -68.158649],
+                [-16.605578, -68.153554],
+                [-16.61228, -68.145227],
+                [-16.612942, -68.147986],
+                [-16.6131, -68.148646],
+                [-16.613366, -68.149337],
+                [-16.613579, -68.149889],
+                [-16.613714, -68.150239],
+                [-16.613983, -68.151361],
+                [-16.615085, -68.153577],
+                [-16.615705, -68.154822],
+                [-16.616174, -68.156115],
+                [-16.616915, -68.158156],
+                [-16.617737, -68.160423],
+                [-16.618393, -68.162231],
+                [-16.619067, -68.164089],
+                [-16.621078, -68.163142],
+                [-16.622636, -68.162408],
+                [-16.622902, -68.162283],
+                [-16.623668, -68.161755],
+                [-16.625158, -68.160728],
+                [-16.626529, -68.159783],
+                [-16.627717, -68.158965],
+                [-16.62867, -68.158308],
+                [-16.629158, -68.157972],
+                [-16.629733, -68.157756],
+                [-16.631994, -68.156908],
+                [-16.633267, -68.156431],
+                [-16.633619, -68.156299],
+                [-16.633863, -68.156207],
+                [-16.633979, -68.156645],
+                [-16.634074, -68.157008],
+                [-16.633965, -68.157244],
+                [-16.633868, -68.157455],
+                [-16.633772, -68.159967],
+                [-16.633606, -68.164289],
+                [-16.63352, -68.166534],
+                [-16.633447, -68.168455],
+                [-16.633516, -68.168481],
+                [-16.636332, -68.169547],
+                [-16.639963, -68.170922],
+                [-16.642432, -68.171858],
+                [-16.644273, -68.172555],
+                [-16.644017, -68.174131],
+                [-16.64677, -68.175526],
+                [-16.644926, -68.177981],
+                [-16.644873, -68.178102],
+                [-16.643741, -68.180677],
+                [-16.643141, -68.182043],
+                [-16.64294, -68.1825],
+                [-16.642776, -68.182874],
+                [-16.642526, -68.183158],
+                [-16.641324, -68.184527],
+                [-16.64017, -68.185841],
+                [-16.639138, -68.187016],
+                [-16.636482, -68.19004],
+                [-16.633583, -68.19334],
+                [-16.631696, -68.195489],
+                [-16.630509, -68.196839],
+                [-16.629941, -68.197487],
+                [-16.627646, -68.19899],
+                [-16.626304, -68.19987],
+                [-16.62628, -68.199886],
+                [-16.625391, -68.200469],
+                [-16.622445, -68.202399],
+                [-16.619851, -68.204099],
+                [-16.618284, -68.205126],
+                [-16.597658, -68.218641],
+                [-16.602276, -68.223825],
+                [-16.601435, -68.224618],
+                [-16.600143, -68.225835],
+                [-16.604592, -68.230692],
+                [-16.602435, -68.232829],
+                [-16.600812, -68.231336],
+                [-16.600812, -68.231336],
+                [-16.588838, -68.220317],
+                [-16.582464, -68.214451],
+                [-16.580892, -68.213007],
+                [-16.575272, -68.207843],
+                [-16.573909, -68.206589],
+                [-16.573909, -68.206589],
+                [-16.573623, -68.206326],
+                [-16.57351, -68.206222],
+                [-16.573427, -68.206147],
+                [-16.573425, -68.206159],
+                [-16.573422, -68.206177],
+                [-16.573419, -68.206196],
+                [-16.572605, -68.21086],
+                [-16.572231, -68.212936],
+                [-16.572103, -68.213665],
+                [-16.571169, -68.218985],
+                [-16.570913, -68.220554],
+                [-16.570329, -68.223615],
+                [-16.570299, -68.223774],
+                [-16.569171, -68.222687],
+                [-16.566801, -68.220492],
+                [-16.566356, -68.22008],
+                [-16.565597, -68.219377],
+                [-16.561977, -68.216024],
+                [-16.560552, -68.214704],
+                [-16.56044, -68.2146],
+                [-16.557205, -68.211604],
+                [-16.55513, -68.209692],
+                [-16.555145, -68.209655],
+                [-16.557712, -68.20342],
+                [-16.557712, -68.20342],
+                [-16.558083, -68.202523],
+                [-16.55814, -68.202388],
+                [-16.558671, -68.201127],
+                [-16.559241, -68.199752],
+                [-16.559241, -68.199751],
+                [-16.559959, -68.198021],
+                [-16.559985, -68.197956],
+                [-16.561639, -68.193968],
+                [-16.561641, -68.19397],
+                [-16.563135, -68.195495],
+                [-16.564134, -68.196515],
+                [-16.564805, -68.1972],
+                [-16.567674, -68.200128],
+                [-16.569011, -68.201492],
+                [-16.570128, -68.200512],
+                [-16.570899, -68.199691],
+                [-16.571562, -68.198924],
+                [-16.571695, -68.19877],
+                [-16.572326, -68.199292]
+            ],
+            distrito9: [
+                [-16.470164, -68.288845],
+                [-16.471474, -68.289134],
+                [-16.471837, -68.289214],
+                [-16.474602, -68.291528],
+                [-16.477268, -68.287724],
+                [-16.477273, -68.287726],
+                [-16.479974, -68.28882],
+                [-16.479976, -68.288818],
+                [-16.480236, -68.288501],
+                [-16.482575, -68.288466],
+                [-16.482676, -68.288464],
+                [-16.485963, -68.290778],
+                [-16.486564, -68.291205],
+                [-16.487366, -68.291774],
+                [-16.487982, -68.290965],
+                [-16.490086, -68.288202],
+                [-16.490275, -68.287953],
+                [-16.491258, -68.286673],
+                [-16.490723, -68.286375],
+                [-16.48968, -68.285273],
+                [-16.490383, -68.284329],
+                [-16.492571, -68.281391],
+                [-16.492694, -68.281225],
+                [-16.493633, -68.279964],
+                [-16.493665, -68.279921],
+                [-16.495604, -68.277275],
+                [-16.510372, -68.287664],
+                [-16.510308, -68.295737],
+                [-16.510313, -68.295757],
+                [-16.510723, -68.29731],
+                [-16.511107, -68.3016],
+                [-16.511363, -68.30262],
+                [-16.512204, -68.305063],
+                [-16.512294, -68.305325],
+                [-16.51279, -68.30692],
+                [-16.512931, -68.307365],
+                [-16.505831, -68.315467],
+                [-16.50176, -68.32013],
+                [-16.489927, -68.314623],
+                [-16.477447, -68.308413],
+                [-16.468235, -68.301111],
+                [-16.470738, -68.297592],
+                [-16.466886, -68.29535],
+                [-16.468955, -68.291244],
+                [-16.470164, -68.288845]
+            ],
+            distrito10: [
+                [-16.597658, -68.218641],
+                [-16.618284, -68.205126],
+                [-16.619851, -68.204099],
+                [-16.622445, -68.202399],
+                [-16.625391, -68.200469],
+                [-16.62628, -68.199886],
+                [-16.626304, -68.19987],
+                [-16.627646, -68.19899],
+                [-16.629941, -68.197487],
+                [-16.630509, -68.196839],
+                [-16.631696, -68.195489],
+                [-16.633583, -68.19334],
+                [-16.636482, -68.19004],
+                [-16.639138, -68.187016],
+                [-16.64017, -68.185841],
+                [-16.641324, -68.184527],
+                [-16.642526, -68.183158],
+                [-16.642776, -68.182874],
+                [-16.64294, -68.1825],
+                [-16.643141, -68.182043],
+                [-16.643741, -68.180677],
+                [-16.644873, -68.178102],
+                [-16.644926, -68.177981],
+                [-16.64677, -68.175526],
+                [-16.644017, -68.174131],
+                [-16.644273, -68.172555],
+                [-16.642432, -68.171858],
+                [-16.639963, -68.170922],
+                [-16.636332, -68.169547],
+                [-16.633516, -68.168481],
+                [-16.633447, -68.168455],
+                [-16.63352, -68.166534],
+                [-16.633606, -68.164289],
+                [-16.633772, -68.159967],
+                [-16.633868, -68.157455],
+                [-16.633965, -68.157244],
+                [-16.634074, -68.157008],
+                [-16.633979, -68.156645],
+                [-16.633863, -68.156207],
+                [-16.633619, -68.156299],
+                [-16.633267, -68.156431],
+                [-16.631994, -68.156908],
+                [-16.629733, -68.157756],
+                [-16.629158, -68.157972],
+                [-16.62867, -68.158308],
+                [-16.627717, -68.158965],
+                [-16.626529, -68.159783],
+                [-16.625158, -68.160728],
+                [-16.623668, -68.161755],
+                [-16.622902, -68.162283],
+                [-16.622636, -68.162408],
+                [-16.621078, -68.163142],
+                [-16.619067, -68.164089],
+                [-16.618393, -68.162231],
+                [-16.617737, -68.160423],
+                [-16.616915, -68.158156],
+                [-16.616174, -68.156115],
+                [-16.615705, -68.154822],
+                [-16.615085, -68.153577],
+                [-16.613983, -68.151361],
+                [-16.613714, -68.150239],
+                [-16.613579, -68.149889],
+                [-16.613366, -68.149337],
+                [-16.6131, -68.148646],
+                [-16.612942, -68.147986],
+                [-16.61228, -68.145227],
+                [-16.613366, -68.143878],
+                [-16.614272, -68.142076],
+                [-16.61438, -68.141862],
+                [-16.618747, -68.133174],
+                [-16.62118, -68.128335],
+                [-16.634389, -68.130861],
+                [-16.634395, -68.130862],
+                [-16.635121, -68.108266],
+                [-16.635121, -68.108265],
+                [-16.641928, -68.119411],
+                [-16.644773, -68.125552],
+                [-16.655882, -68.136892],
+                [-16.659385, -68.142564],
+                [-16.659868, -68.144114],
+                [-16.659869, -68.144115],
+                [-16.662885, -68.153799],
+                [-16.66389, -68.156836],
+                [-16.664292, -68.158054],
+                [-16.666838, -68.164222],
+                [-16.666984, -68.164688],
+                [-16.666983, -68.164689],
+                [-16.665616, -68.165276],
+                [-16.665616, -68.165276],
+                [-16.664995, -68.165916],
+                [-16.664995, -68.165916],
+                [-16.66476, -68.165823],
+                [-16.664759, -68.165824],
+                [-16.664613, -68.165914],
+                [-16.664114, -68.16712],
+                [-16.663459, -68.167937],
+                [-16.663459, -68.167937],
+                [-16.663177, -68.168062],
+                [-16.662402, -68.168609],
+                [-16.661364, -68.169214],
+                [-16.660734, -68.169741],
+                [-16.660508, -68.170109],
+                [-16.660366, -68.170268],
+                [-16.659163, -68.172495],
+                [-16.659236, -68.172579],
+                [-16.656035, -68.179672],
+                [-16.627217, -68.205683],
+                [-16.616757, -68.226164],
+                [-16.616502, -68.226662],
+                [-16.611615, -68.236229],
+                [-16.611468, -68.236516],
+                [-16.610094, -68.239876],
+                [-16.602435, -68.232829],
+                [-16.604592, -68.230692],
+                [-16.600143, -68.225835],
+                [-16.601435, -68.224618],
+                [-16.602276, -68.223825],
+                [-16.597658, -68.218641]
+            ],
+            distrito11: [
+                [-16.49556, -68.277335],
+                [-16.492898, -68.275536],
+                [-16.492977, -68.275363],
+                [-16.493332, -68.27459],
+                [-16.493711, -68.273556],
+                [-16.495307, -68.268208],
+                [-16.495311, -68.268198],
+                [-16.495397, -68.267908],
+                [-16.495677, -68.266966],
+                [-16.495678, -68.266963],
+                [-16.506774, -68.265884],
+                [-16.508476, -68.27221],
+                [-16.510654, -68.270026],
+                [-16.515873, -68.264526],
+                [-16.516963, -68.263867],
+                [-16.517826, -68.263346],
+                [-16.519862, -68.262117],
+                [-16.519989, -68.262041],
+                [-16.520242, -68.261888],
+                [-16.521608, -68.261071],
+                [-16.525326, -68.265062],
+                [-16.525379, -68.265118],
+                [-16.539667, -68.280456],
+                [-16.539667, -68.280456],
+                [-16.528793, -68.290251],
+                [-16.523745, -68.293691],
+                [-16.510374, -68.287665],
+                [-16.510372, -68.287664],
+                [-16.495604, -68.277275],
+                [-16.49556, -68.277335]
+            ],
+            distrito12: [
+                [-16.571721, -68.225089],
+                [-16.572089, -68.225429],
+                [-16.571887, -68.22602],
+                [-16.569888, -68.232042],
+                [-16.569861, -68.232137],
+                [-16.569296, -68.234072],
+                [-16.565595, -68.245495],
+                [-16.563357, -68.251714],
+                [-16.560833, -68.259307],
+                [-16.560774, -68.259486],
+                [-16.560651, -68.259377],
+                [-16.560651, -68.259377],
+                [-16.560468, -68.259215],
+                [-16.560438, -68.258944],
+                [-16.560019, -68.255219],
+                [-16.55976, -68.252918],
+                [-16.55976, -68.252918],
+                [-16.55976, -68.252918],
+                [-16.559722, -68.252584],
+                [-16.559574, -68.251263],
+                [-16.551138, -68.245459],
+                [-16.54963, -68.243691],
+                [-16.547997, -68.241779],
+                [-16.54643, -68.239943],
+                [-16.546061, -68.23951],
+                [-16.545365, -68.238696],
+                [-16.544256, -68.237397],
+                [-16.543752, -68.236805],
+                [-16.543697, -68.236742],
+                [-16.543739, -68.236514],
+                [-16.543771, -68.236423],
+                [-16.544024, -68.235694],
+                [-16.544451, -68.23454],
+                [-16.545261, -68.232355],
+                [-16.545744, -68.231211],
+                [-16.54652, -68.229375],
+                [-16.547395, -68.227305],
+                [-16.548275, -68.225229],
+                [-16.548649, -68.224358],
+                [-16.548652, -68.224351],
+                [-16.548776, -68.224038],
+                [-16.548808, -68.223955],
+                [-16.549287, -68.222881],
+                [-16.549424, -68.222761],
+                [-16.549553, -68.222428],
+                [-16.550294, -68.220596],
+                [-16.550327, -68.220623],
+                [-16.550554, -68.220811],
+                [-16.551985, -68.217164],
+                [-16.55388, -68.21232],
+                [-16.553974, -68.212097],
+                [-16.55457, -68.210571],
+                [-16.554646, -68.210375],
+                [-16.554673, -68.210311],
+                [-16.554962, -68.209641],
+                [-16.55506, -68.20963],
+                [-16.55513, -68.209692],
+                [-16.557205, -68.211604],
+                [-16.56044, -68.2146],
+                [-16.560552, -68.214704],
+                [-16.561977, -68.216024],
+                [-16.565597, -68.219377],
+                [-16.566356, -68.22008],
+                [-16.566801, -68.220492],
+                [-16.569171, -68.222687],
+                [-16.570299, -68.223774],
+                [-16.570566, -68.224021],
+                [-16.570892, -68.224322],
+                [-16.571719, -68.225087],
+                [-16.571721, -68.225089]
+            ],
+            distrito13: [
+                [-16.433203, -68.263653],
+                [-16.432991, -68.263547],
+                [-16.392718, -68.243374],
+                [-16.383461, -68.216311],
+                [-16.336542, -68.205485],
+                [-16.302625, -68.185324],
+                [-16.292807, -68.170295],
+                [-16.277377, -68.165584],
+                [-16.262662, -68.153722],
+                [-16.262684, -68.153724],
+                [-16.262695, -68.153726],
+                [-16.278695, -68.155565],
+                [-16.285073, -68.157644],
+                [-16.28508, -68.157642],
+                [-16.316459, -68.150355],
+                [-16.320282, -68.145565],
+                [-16.327627, -68.139918],
+                [-16.340143, -68.13921],
+                [-16.350243, -68.138503],
+                [-16.358009, -68.143554],
+                [-16.367961, -68.145928],
+                [-16.367965, -68.145928],
+                [-16.400429, -68.149585],
+                [-16.427974, -68.149443],
+                [-16.429407, -68.151667],
+                [-16.432874, -68.157047],
+                [-16.433252, -68.157058],
+                [-16.433282, -68.157058],
+                [-16.43904, -68.157217],
+                [-16.443914, -68.157351],
+                [-16.443914, -68.157351],
+                [-16.443815, -68.158447],
+                [-16.443295, -68.164175],
+                [-16.443065, -68.16672],
+                [-16.443015, -68.167268],
+                [-16.444525, -68.168682],
+                [-16.446965, -68.171095],
+                [-16.449017, -68.173165],
+                [-16.449573, -68.173843],
+                [-16.45136, -68.176093],
+                [-16.452025, -68.176926],
+                [-16.453539, -68.17886],
+                [-16.453756, -68.179124],
+                [-16.453769, -68.179141],
+                [-16.453871, -68.179265],
+                [-16.455518, -68.181291],
+                [-16.455668, -68.181468],
+                [-16.458145, -68.184532],
+                [-16.458955, -68.185806],
+                [-16.459094, -68.186007],
+                [-16.45955, -68.186719],
+                [-16.460552, -68.188075],
+                [-16.461102, -68.188866],
+                [-16.461411, -68.189587],
+                [-16.462001, -68.190703],
+                [-16.462683, -68.192116],
+                [-16.46337, -68.193498],
+                [-16.464297, -68.195411],
+                [-16.464459, -68.195745],
+                [-16.462963, -68.196045],
+                [-16.462795, -68.196212],
+                [-16.461398, -68.196848],
+                [-16.461893, -68.19716],
+                [-16.463474, -68.197741],
+                [-16.463965, -68.197921],
+                [-16.463675, -68.198123],
+                [-16.462989, -68.198729],
+                [-16.462546, -68.199194],
+                [-16.46227, -68.199087],
+                [-16.461934, -68.198958],
+                [-16.460021, -68.197974],
+                [-16.45892, -68.199228],
+                [-16.458365, -68.198937],
+                [-16.457236, -68.201235],
+                [-16.456504, -68.201],
+                [-16.456199, -68.200952],
+                [-16.455331, -68.200802],
+                [-16.45459, -68.202377],
+                [-16.455357, -68.202474],
+                [-16.455469, -68.204106],
+                [-16.455443, -68.204337],
+                [-16.454997, -68.205927],
+                [-16.453286, -68.206983],
+                [-16.454861, -68.207365],
+                [-16.455553, -68.207533],
+                [-16.454737, -68.208668],
+                [-16.453923, -68.208413],
+                [-16.453879, -68.2084],
+                [-16.453866, -68.208477],
+                [-16.453724, -68.209318],
+                [-16.455437, -68.209812],
+                [-16.455356, -68.210603],
+                [-16.454256, -68.213211],
+                [-16.454218, -68.213548],
+                [-16.454183, -68.213937],
+                [-16.459771, -68.214257],
+                [-16.459776, -68.214257],
+                [-16.462294, -68.213463],
+                [-16.463487, -68.213904],
+                [-16.464007, -68.21409],
+                [-16.464005, -68.214093],
+                [-16.463236, -68.215475],
+                [-16.463959, -68.216068],
+                [-16.461588, -68.219906],
+                [-16.461276, -68.220371],
+                [-16.460904, -68.22086],
+                [-16.460024, -68.222628],
+                [-16.45916, -68.224109],
+                [-16.456823, -68.229089],
+                [-16.458233, -68.230665],
+                [-16.458284, -68.230722],
+                [-16.458419, -68.230873],
+                [-16.454042, -68.237753],
+                [-16.447639, -68.2458],
+                [-16.44641, -68.246783],
+                [-16.439819, -68.255253],
+                [-16.433294, -68.263538],
+                [-16.433228, -68.263622],
+                [-16.433203, -68.263653]
+            ],
+            distrito14: [
+                [-16.455443, -68.204337],
+                [-16.455469, -68.204106],
+                [-16.455357, -68.202474],
+                [-16.45459, -68.202377],
+                [-16.455331, -68.200802],
+                [-16.456199, -68.200952],
+                [-16.456504, -68.201],
+                [-16.457236, -68.201235],
+                [-16.458365, -68.198937],
+                [-16.45892, -68.199228],
+                [-16.460021, -68.197974],
+                [-16.461934, -68.198958],
+                [-16.46227, -68.199087],
+                [-16.462546, -68.199194],
+                [-16.462989, -68.198729],
+                [-16.463675, -68.198123],
+                [-16.463965, -68.197921],
+                [-16.463474, -68.197741],
+                [-16.461893, -68.19716],
+                [-16.461398, -68.196848],
+                [-16.462795, -68.196212],
+                [-16.462963, -68.196045],
+                [-16.464459, -68.195745],
+                [-16.464497, -68.195823],
+                [-16.464706, -68.196364],
+                [-16.465655, -68.198817],
+                [-16.465779, -68.199231],
+                [-16.466279, -68.200904],
+                [-16.466279, -68.200905],
+                [-16.467019, -68.203389],
+                [-16.467557, -68.205287],
+                [-16.468393, -68.208238],
+                [-16.468421, -68.20835],
+                [-16.468571, -68.208988],
+                [-16.468788, -68.209881],
+                [-16.470284, -68.216118],
+                [-16.471772, -68.216855],
+                [-16.472468, -68.217201],
+                [-16.473289, -68.217609],
+                [-16.473385, -68.217704],
+                [-16.474017, -68.21833],
+                [-16.474558, -68.218866],
+                [-16.474785, -68.219091],
+                [-16.474751, -68.219148],
+                [-16.474526, -68.219526],
+                [-16.473404, -68.221407],
+                [-16.474202, -68.222104],
+                [-16.474789, -68.222681],
+                [-16.475713, -68.22345],
+                [-16.476579, -68.224252],
+                [-16.477605, -68.225218],
+                [-16.478771, -68.226152],
+                [-16.479072, -68.226332],
+                [-16.479827, -68.226781],
+                [-16.480192, -68.226947],
+                [-16.48166, -68.227465],
+                [-16.482739, -68.227718],
+                [-16.485712, -68.228336],
+                [-16.485762, -68.22835],
+                [-16.4861, -68.228446],
+                [-16.486698, -68.228615],
+                [-16.487043, -68.228713],
+                [-16.48801, -68.228954],
+                [-16.489104, -68.229157],
+                [-16.489901, -68.229305],
+                [-16.490319, -68.229384],
+                [-16.492648, -68.229621],
+                [-16.492776, -68.229634],
+                [-16.493168, -68.229674],
+                [-16.493173, -68.229686],
+                [-16.493179, -68.2297],
+                [-16.493405, -68.230215],
+                [-16.493794, -68.230604],
+                [-16.494765, -68.231792],
+                [-16.49514, -68.232421],
+                [-16.495377, -68.232714],
+                [-16.495725, -68.233045],
+                [-16.496556, -68.233804],
+                [-16.496833, -68.23412],
+                [-16.496867, -68.234159],
+                [-16.497287, -68.234713],
+                [-16.497474, -68.234959],
+                [-16.497984, -68.235633],
+                [-16.498355, -68.235999],
+                [-16.498768, -68.236257],
+                [-16.498955, -68.236374],
+                [-16.498995, -68.236399],
+                [-16.499208, -68.236522],
+                [-16.500255, -68.237125],
+                [-16.500879, -68.237374],
+                [-16.501972, -68.23809],
+                [-16.502269, -68.238371],
+                [-16.502432, -68.238525],
+                [-16.502949, -68.239133],
+                [-16.50311, -68.239324],
+                [-16.503924, -68.240479],
+                [-16.50463, -68.24148],
+                [-16.504829, -68.241839],
+                [-16.504898, -68.242065],
+                [-16.505079, -68.242655],
+                [-16.505211, -68.243086],
+                [-16.505521, -68.243569],
+                [-16.506616, -68.24502],
+                [-16.507974, -68.246836],
+                [-16.508001, -68.246872],
+                [-16.508056, -68.246929],
+                [-16.50825, -68.247131],
+                [-16.50851, -68.247401],
+                [-16.509054, -68.247637],
+                [-16.50938, -68.247709],
+                [-16.509646, -68.247769],
+                [-16.510317, -68.247811],
+                [-16.510945, -68.247851],
+                [-16.511185, -68.247906],
+                [-16.511458, -68.247968],
+                [-16.511753, -68.248181],
+                [-16.511827, -68.248235],
+                [-16.512283, -68.248992],
+                [-16.512434, -68.249486],
+                [-16.512781, -68.250852],
+                [-16.512943, -68.251491],
+                [-16.513044, -68.251666],
+                [-16.515912, -68.254488],
+                [-16.515984, -68.25456],
+                [-16.515989, -68.254565],
+                [-16.516309, -68.254987],
+                [-16.51677, -68.255764],
+                [-16.517114, -68.256141],
+                [-16.521608, -68.261071],
+                [-16.520242, -68.261888],
+                [-16.519989, -68.262041],
+                [-16.519862, -68.262117],
+                [-16.517826, -68.263346],
+                [-16.516963, -68.263867],
+                [-16.515873, -68.264526],
+                [-16.510654, -68.270026],
+                [-16.508476, -68.27221],
+                [-16.506774, -68.265884],
+                [-16.497037, -68.266831],
+                [-16.495678, -68.266963],
+                [-16.495731, -68.266782],
+                [-16.496041, -68.26573],
+                [-16.496049, -68.265703],
+                [-16.496099, -68.26555],
+                [-16.496493, -68.26436],
+                [-16.496518, -68.264285],
+                [-16.496544, -68.264201],
+                [-16.496671, -68.263788],
+                [-16.49687, -68.263044],
+                [-16.497021, -68.262478],
+                [-16.497459, -68.260899],
+                [-16.497643, -68.260239],
+                [-16.497785, -68.259621],
+                [-16.497952, -68.258899],
+                [-16.498101, -68.25827],
+                [-16.498161, -68.257832],
+                [-16.498307, -68.256785],
+                [-16.498522, -68.254882],
+                [-16.498823, -68.25205],
+                [-16.498618, -68.25199],
+                [-16.498277, -68.251892],
+                [-16.498267, -68.251886],
+                [-16.497761, -68.251601],
+                [-16.496556, -68.250231],
+                [-16.496052, -68.249892],
+                [-16.495662, -68.249498],
+                [-16.494957, -68.249039],
+                [-16.494056, -68.248317],
+                [-16.493513, -68.248135],
+                [-16.492755, -68.247752],
+                [-16.492751, -68.247749],
+                [-16.492075, -68.247163],
+                [-16.490486, -68.24703],
+                [-16.489889, -68.246723],
+                [-16.489272, -68.246562],
+                [-16.488491, -68.246176],
+                [-16.488125, -68.24599],
+                [-16.48782, -68.24589],
+                [-16.487484, -68.245888],
+                [-16.487484, -68.245888],
+                [-16.487381, -68.245888],
+                [-16.486499, -68.24551],
+                [-16.485688, -68.245147],
+                [-16.485298, -68.244986],
+                [-16.484634, -68.244801],
+                [-16.483856, -68.244776],
+                [-16.482814, -68.246871],
+                [-16.48171, -68.249096],
+                [-16.481267, -68.248933],
+                [-16.481154, -68.248892],
+                [-16.481154, -68.248892],
+                [-16.481289, -68.248311],
+                [-16.48228, -68.244021],
+                [-16.481746, -68.243962],
+                [-16.481204, -68.243902],
+                [-16.480255, -68.243602],
+                [-16.480073, -68.243563],
+                [-16.479859, -68.243551],
+                [-16.479204, -68.243512],
+                [-16.478815, -68.243487],
+                [-16.478564, -68.24349],
+                [-16.477961, -68.243527],
+                [-16.47796, -68.243528],
+                [-16.476678, -68.243607],
+                [-16.4764, -68.244003],
+                [-16.47579, -68.245192],
+                [-16.475492, -68.245841],
+                [-16.475095, -68.246845],
+                [-16.474329, -68.24647],
+                [-16.473999, -68.247312],
+                [-16.473826, -68.247756],
+                [-16.470515, -68.243288],
+                [-16.469191, -68.242674],
+                [-16.468212, -68.242361],
+                [-16.466869, -68.241358],
+                [-16.465953, -68.240444],
+                [-16.465482, -68.239829],
+                [-16.46477, -68.239077],
+                [-16.462688, -68.237258],
+                [-16.462062, -68.236553],
+                [-16.461183, -68.235054],
+                [-16.459483, -68.232062],
+                [-16.458284, -68.230722],
+                [-16.458233, -68.230665],
+                [-16.456823, -68.229089],
+                [-16.45916, -68.224109],
+                [-16.460024, -68.222628],
+                [-16.460904, -68.22086],
+                [-16.461276, -68.220371],
+                [-16.461588, -68.219906],
+                [-16.463959, -68.216068],
+                [-16.463236, -68.215475],
+                [-16.464005, -68.214093],
+                [-16.464007, -68.21409],
+                [-16.463487, -68.213904],
+                [-16.462294, -68.213463],
+                [-16.459776, -68.214257],
+                [-16.459771, -68.214257],
+                [-16.454183, -68.213937],
+                [-16.454218, -68.213548],
+                [-16.454256, -68.213211],
+                [-16.455356, -68.210603],
+                [-16.455437, -68.209812],
+                [-16.453724, -68.209318],
+                [-16.453866, -68.208477],
+                [-16.453879, -68.2084],
+                [-16.453923, -68.208413],
+                [-16.454737, -68.208668],
+                [-16.455553, -68.207533],
+                [-16.454861, -68.207365],
+                [-16.453286, -68.206983],
+                [-16.454997, -68.205927],
+                [-16.455443, -68.204337]
+            ]
+        };
+
+        const distritosColors = {
+            distrito1: '#FF6B6B',
+            distrito2: '#4ECDC4',
+            distrito3: '#45B7D1',
+            distrito4: '#96CEB4',
+            distrito5: '#FFEAA7',
+            distrito6: '#DDA0DD',
+            distrito7: '#98D8C8',
+            distrito8: '#F7DC6F',
+            distrito9: '#BB8FCE',
+            distrito10: '#85C1E9',
+            distrito11: '#F8C471',
+            distrito12: '#82E0AA',
+            distrito13: '#F1948A',
+            distrito14: '#AED6F1'
+        };
 
         // Coordenadas del polígono de El Alto (ejemplo)
         const elAltoCoordinates = [
@@ -1963,7 +4187,7 @@ if (!$_SESSION['swlogin']) {
             [-16.277381, -68.165585],
             [-16.262676, -68.153719],
             [-16.262656, -68.153708],
-        ]; 
+        ];
 
         document.getElementById('fullscreenBtn').addEventListener('click', function(e) {
             e.preventDefault();
@@ -2263,39 +4487,41 @@ if (!$_SESSION['swlogin']) {
 
             var errores = [];
 
-            $('input[required], select[required], textarea[required]').each(function() {
-                if ($(this).val() === '') {
-                    var labelText = $(this).prev('label').text().replace(' *', '');
-                    errores.push('El campo "' + labelText + '" es obligatorio');
-                    $(this).addClass('is-invalid');
-                } else {
-                    $(this).removeClass('is-invalid');
-                }
-            });
-
             if ($('#geolocalizacion').val() === '') {
                 errores.push('Debe obtener la geolocalización del inmueble');
                 $('#geolocalizacion').addClass('is-invalid');
             }
 
-            var telefonoRegex = /^\d{8}$/;
-            var numeroInmuebleRegex = /^\d{5}$/;
-            if ($('#contactoTitular').val() !== '' && !telefonoRegex.test($('#contactoTitular').val())) {
-                errores.push('El teléfono del titular debe tener 8 dígitos');
-                $('#contactoTitular').addClass('is-invalid');
-            }
+            if ($('#tipologia').val() == 'OBRA BRUTA') {
+                $('input[required], select[required], textarea[required]').each(function() {
+                    if ($(this).val() === '') {
+                        var labelText = $(this).prev('label').text().replace(' *', '');
+                        errores.push('El campo "' + labelText + '" es obligatorio');
+                        $(this).addClass('is-invalid');
+                    } else {
+                        $(this).removeClass('is-invalid');
+                    }
+                });
 
-            if ($('#contactoApoderado').val() !== '' && !telefonoRegex.test($('#contactoApoderado').val())) {
-                errores.push('El teléfono del apoderado debe tener 8 dígitos');
-                $('#contactoApoderado').addClass('is-invalid');
-            }
+                var telefonoRegex = /^\d{8}$/;
+                var numeroInmuebleRegex = /^\d{5}$/;
+                if ($('#contactoTitular').val() !== '' && !telefonoRegex.test($('#contactoTitular').val())) {
+                    errores.push('El teléfono del titular debe tener 8 dígitos');
+                    $('#contactoTitular').addClass('is-invalid');
+                }
 
-            if ($('#numeroInmueble').val() !== '' && !numeroInmuebleRegex.test($('#numeroInmueble').val())) {
-                errores.push('El numero de inmueble tiene que tener al menos 5  dígitos');
-                $('#numeroInmueble').addClass('is-invalid');
-            }
+                if ($('#contactoApoderado').val() !== '' && !telefonoRegex.test($('#contactoApoderado').val())) {
+                    errores.push('El teléfono del apoderado debe tener 8 dígitos');
+                    $('#contactoApoderado').addClass('is-invalid');
+                }
 
-            if ($('#imagenPrincipal')[0].files.length === 0) {
+                if ($('#numeroInmueble').val() !== '' && ($('#numeroInmueble').val()).length < 5) {
+                    errores.push('El numero de inmueble tiene que tener al menos 5  dígitos');
+                    $('#numeroInmueble').addClass('is-invalid');
+                }
+
+            }
+            if ($('#imagenPrincipal')[0].files.length === 0 && $('#tipologia').val() == 'OBRA BRUTA') {
                 errores.push('Debe seleccionar una imagen principal');
                 $('#imagenPrincipal').addClass('is-invalid');
             }
@@ -2334,6 +4560,14 @@ if (!$_SESSION['swlogin']) {
                     formData.append("imagenesAdicionales[]", file)
                 }
             })
+
+
+            if (selectedPrePuntoId !== null) {
+                formData.append("idprepredial_seleccionado", selectedPrePuntoId);
+                console.log("Enviando idprepredial_seleccionado:", selectedPrePuntoId);
+            } else {
+                formData.append("idprepredial_seleccionado", 0);
+            }
 
             if (typeof Swal !== "undefined") {
                 Swal.fire({
@@ -2482,6 +4716,7 @@ if (!$_SESSION['swlogin']) {
                 reader.readAsDataURL(image)
             })
         }
+        $('.leaflet-control-attribution').hide();
     });
 
     function cargarNivel(nivel) {
@@ -2490,7 +4725,6 @@ if (!$_SESSION['swlogin']) {
             ubicacion2: $('#ubicacion2').val(),
             nivel: nivel
         };
-        console.log("dato:"+dato);
 
         $.ajax({
             async: true,
@@ -2502,17 +4736,17 @@ if (!$_SESSION['swlogin']) {
             beforeSend: function() {
                 loadGralOn();
             },
-            success: function(dat) { 
+            success: function(dat) {
                 loadGralOff();
                 let $select = $('.select2_' + nivel);
                 if ($select.hasClass('select2-hidden-accessible')) {
                     $select.select2('destroy');
                 }
-                $select.html(dat.html); 
+                $select.html(dat.html);
                 $select.attr('multiple', 'multiple');
-                $select.select2({ 
+                $select.select2({
                     placeholder: "Seleccione o escriba",
-                    tags: true, 
+                    tags: true,
                 });
             },
             error: function(xhr) {
@@ -2520,6 +4754,71 @@ if (!$_SESSION['swlogin']) {
                 console.error("Error al cargar opciones:", xhr.responseText);
             }
         });
+    }
+
+    function establecerBase(idprepredial, latitud, longitud) {
+
+        console.log("idprepredial:" + idprepredial);
+        console.log("Estableciendo coordenadas:", latitud, longitud);
+
+        // Guardar el ID del pre-punto seleccionado en la variable global
+        selectedPrePuntoId = idprepredial;
+
+        // Establecer coordenadas en el input de geolocalización
+        $('#geolocalizacion').val(latitud + ', ' + longitud);
+
+        // Actualizar enlace de Google Maps
+        $('#googlemap').attr("href", "https://www.google.com/maps?q=" + latitud + "," + longitud);
+
+        // Actualizar el mapa si existe
+        if (typeof map !== 'undefined' && map) {
+            map.setView([parseFloat(latitud), parseFloat(longitud)], 19);
+
+            // Crear o actualizar el marcador
+            if (typeof marker !== 'undefined' && marker) {
+                marker.setLatLng([parseFloat(latitud), parseFloat(longitud)]);
+            } else {
+                marker = L.marker([parseFloat(latitud), parseFloat(longitud)]).addTo(map);
+            }
+        }
+
+        // Mostrar mensaje de éxito con botón de eliminar
+        $('#geoStatus').html(`<span class="text-success">
+                <i class="fa fa-check-circle"></i> Ubicación establecida desde pre-punto seleccionado.
+                <button id="clearPrePuntoBtn" type="button" class="btn btn-sm ms-2" style="background: none; border: none; color: #dc3545; padding: 2px 6px; margin-left: 8px;" title="Limpiar selección de pre-punto">
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                </button>
+            </span>`).show();
+
+        // Agregar event listener al botón de eliminar
+        $('#clearPrePuntoBtn').on('click', function() {
+            clearPrePuntoSelection();
+        });
+
+        // Opcional: Cerrar el popup después de usar la ubicación
+        if (typeof map !== 'undefined' && map) {
+            map.closePopup();
+        }
+
+        console.log("Pre-punto seleccionado ID:", selectedPrePuntoId);
+    }
+
+    // Función para limpiar la selección del pre-punto
+    function clearPrePuntoSelection() {
+        // Limpiar la variable global
+        selectedPrePuntoId = null;
+
+        // Actualizar el mensaje de estado sin el botón
+        $('#geoStatus').html(`<span class="text-info">
+        <i class="fa fa-info-circle"></i> Selección de pre-punto eliminada. Las coordenadas se mantienen.
+    </span>`).show();
+
+        // Opcional: Ocultar el mensaje después de unos segundos
+        setTimeout(function() {
+            $('#geoStatus').fadeOut();
+        }, 3000);
+
+        console.log("Selección de pre-punto eliminada. selectedPrePuntoId:", selectedPrePuntoId);
     }
 </script>
 
