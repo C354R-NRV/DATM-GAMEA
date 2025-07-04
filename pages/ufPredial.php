@@ -15,7 +15,7 @@ if (!$_SESSION['swlogin']) {
 <html lang="es">
 
 <head>
-    <title>UF-PREDIAL</title>
+    <title>FORM. GEOESPACIAL</title>
     <?php
     echo $twig->render('linkStyle.twig');
     ?>
@@ -385,7 +385,7 @@ if (!$_SESSION['swlogin']) {
             justify-content: center;
             font-weight: bold;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-            animation: pulseAnimation 6s infinite ease-in-out;
+            /* animation: pulseAnimation 6s infinite ease-in-out; */
         }
 
         .codigo-markerInm {
@@ -399,7 +399,7 @@ if (!$_SESSION['swlogin']) {
             justify-content: center;
             font-weight: bold;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-            animation: pulseAnimation 6s infinite ease-in-out;
+            /* animation: pulseAnimation 6s infinite ease-in-out; */
         }
 
         @keyframes pulseAnimation {
@@ -584,9 +584,9 @@ if (!$_SESSION['swlogin']) {
             width: 0.9rem;
             height: 0.9rem;
             border-radius: 50%;
-            box-shadow: 0 0 6px #fff, 0 0 0.9rem #fff, 0 0 18px rgb(176, 193, 23), 0 0 24px rgb(193, 190, 23), 0 0 30px rgb(248, 231, 76), 0 0 36px rgb(237, 248, 76);
+            /* box-shadow: 0 0 6px #fff, 0 0 0.9rem #fff, 0 0 18px rgb(176, 193, 23), 0 0 24px rgb(193, 190, 23), 0 0 30px rgb(248, 231, 76), 0 0 36px rgb(237, 248, 76); */
             border: 2px solid rgb(0, 0, 0);
-            animation: pulseAnimation 5s infinite ease-in-out;
+            /* animation: pulseAnimation 5s infinite ease-in-out; */
         }
 
         /* Bloque desplegable */
@@ -616,7 +616,7 @@ if (!$_SESSION['swlogin']) {
             border-radius: 12px;
             font-size: 0.7rem;
             display: none;
-            animation: pulseAnimation 1s infinite ease-in-out;
+            /* animation: pulseAnimation 1s infinite ease-in-out; */
         }
 
 
@@ -713,6 +713,29 @@ if (!$_SESSION['swlogin']) {
         .distrito-14 {
             border-color: #AED6F1 !important;
         }
+
+
+        /* Estilos para imágenes cargadas desde base de datos */
+        .preview-item.loaded-from-db {
+            border: 2px solid #28a745;
+            background-color: #f8fff9;
+        }
+
+        .preview-item.loaded-from-db .preview-info {
+            color: #155724;
+            font-weight: 500;
+        }
+
+        .preview-item.error-loading {
+            border: 2px solid #dc3545;
+            background-color: #fff5f5;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .preview-item.error-loading .preview-info {
+            color: #721c24;
+        }
     </style>
 </head>
 
@@ -735,7 +758,7 @@ if (!$_SESSION['swlogin']) {
     ?>
     <li class="breadcrumb-item"><a class="text-white" href="index.php">Home</a></li>
     <li class="breadcrumb-item"><a class="text-white">UF</a></li>
-    <li class="breadcrumb-item text-white active" aria-current="page"><a class="text-white" href="ufPredialList.php">Predial</a></li>
+    <li class="breadcrumb-item text-white active" aria-current="page"><a class="text-white" href="ufPredialList.php">Panel</a></li>
     <li class="breadcrumb-item text-white active" aria-current="page">Formulario</li>
     <?php
     echo $twig->render('prebodyltFin.twig');
@@ -862,8 +885,8 @@ if (!$_SESSION['swlogin']) {
                             <input type="text" id="actividad_eco" class="form-control" placeholder="Nombre del local comercial">
                         </div>
                         <div class="col-12 mt-3 text-center">
-                            <button id="buscarBtn" onclick="buscarInmueble()" class="btn btn-primary me-2">BUSCAR</button>
-                            <button id="cerrarBusqueda" class="btn btn-secondary">CERRAR</button>
+                            <button id="buscarBtn" type="button" onclick="buscarInmueble()" class="btn btn-primary me-2">BUSCAR</button>
+                            <button id="cerrarBusqueda" type="button" class="btn btn-secondary">CERRAR</button>
                         </div>
                         <div id="resultados" class="mt-4" style="display: none;">
                             <h5>RESULTADOS</h5>
@@ -1141,7 +1164,18 @@ if (!$_SESSION['swlogin']) {
 <script>
     let selectedPrePuntoId = null;
 
+    compressedImages = {
+        main: null,
+        additional: []
+    };
+
+    let compressionQuality = 0.7;
+
     $('#abrirFormulario').on('click', function() {
+        tooogleSeccionBusqueda()
+    });
+
+    function tooogleSeccionBusqueda() {
         const dropdown = $('#searchDropdown');
         dropdown.toggleClass('active');
 
@@ -1153,8 +1187,7 @@ if (!$_SESSION['swlogin']) {
                 width: '100%'
             });
         }
-    });
-
+    }
     $('#cerrarBusqueda').on('click', function() {
         $('#searchDropdown').removeClass('active');
     });
@@ -1176,8 +1209,8 @@ if (!$_SESSION['swlogin']) {
         if (numInmueble && numInmueble.length <= 4) {
             errores.push('El numero del inmueble tiene que tener más de 4 caracteres');
         }
-        if (catastral && catastral.length <= 3) {
-            errores.push('El codigo catastral tiene que tener más de 4 caracteres');
+        if (catastral && catastral.length <= 2) {
+            errores.push('El codigo catastral tiene que tener más de 3 caracteres');
         }
         if (nombreTitular && nombreTitular.length <= 4) {
             errores.push('Agrega Nombre y/o apellido minimamente de la persona, tambien separado por un espacio, con una cantidad de 4 caracteres');
@@ -1234,7 +1267,8 @@ if (!$_SESSION['swlogin']) {
                 $('#buscarBtn').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Buscando...');
             },
             success: function(dat) {
-                dat = JSON.parse(dat) 
+                dat = JSON.parse(dat);
+                console.log(dat.sql);
                 loadGralOff();
                 $('#bodyInmuebles').html(dat.html);
                 $('#resultados').show();
@@ -1253,7 +1287,10 @@ if (!$_SESSION['swlogin']) {
             event.preventDefault();
             event.stopPropagation();
         }
+
         $('#searchDropdown').removeClass('active');
+
+        // Llenar todos los campos del formulario como ya lo tienes
         $('#numeroInmueble').val($('#numero_inmueble' + cnt).val());
         $('#codigo_catastro').val($('#codigo_catastral' + cnt).val());
         $('#nombre_titular').val($('#nombre_tit' + cnt).val());
@@ -1267,22 +1304,21 @@ if (!$_SESSION['swlogin']) {
         $('#via').val($('#material_via' + cnt).val());
         $('#tipologia').val($('#tipo_construccion' + cnt).val());
 
-        $('#no_plantas').val($('#no_plantas' + cnt).val());
-        $('#no_concluidos').val($('#no_concluidos' + cnt).val());
-        $('#no_bruto').val($('#no_brutos' + cnt).val());
+        $('#no_plantas').val($('#no_plantas' + cnt).val() > 0 ? $('#no_plantas' + cnt).val() : '');
+        $('#no_concluidos').val($('#no_concluidos' + cnt).val() > 0 ? $('#no_concluidos' + cnt).val() : '');
+        $('#no_bruto').val($('#no_brutos' + cnt).val() > 0 ? $('#no_brutos' + cnt).val() : '');
         $('#contacto_apoderado').val($('#contacto_apoderado' + cnt).val());
-        $('#cant_act').val($('#cant_act' + cnt).val());
+        $('#cant_act').val($('#cant_act' + cnt).val() > 0 ? $('#cant_act' + cnt).val() : '');
         $('#descripcion_act').val($('#descripcion_act' + cnt).val());
 
+        // Manejar servicios
         var servicio = ($('#servicio_uf' + cnt).val() ? $('#servicio_uf' + cnt).val() : $('#servicio' + cnt).val());
-
         var listaServicios = servicio.split(',').map(function(item) {
             return item.trim().toUpperCase();
         });
 
         $('input[name="servicio[]"]').each(function() {
             var labelTexto = $(this).closest('.form-check').find('label').text().trim().toUpperCase();
-
             if (listaServicios.includes(labelTexto)) {
                 $(this).prop('checked', true);
             } else {
@@ -1290,17 +1326,16 @@ if (!$_SESSION['swlogin']) {
             }
         });
 
+        // Manejar coordenadas
         var latitud = $('#latitud' + cnt).val();
         var longitud = $('#longitud' + cnt).val();
 
         if (latitud && longitud && latitud !== '' && longitud !== '') {
             $('#geolocalizacion').val(latitud + ', ' + longitud);
-
             $('#googlemap').attr("href", "https://www.google.com/maps?q=" + latitud + "," + longitud);
 
             if (typeof map !== 'undefined' && map) {
                 map.setView([parseFloat(latitud), parseFloat(longitud)], 19);
-
                 if (typeof marker !== 'undefined' && marker) {
                     marker.setLatLng([parseFloat(latitud), parseFloat(longitud)]);
                 } else {
@@ -1308,16 +1343,31 @@ if (!$_SESSION['swlogin']) {
                 }
             }
 
-            $('#geoStatus').html(`<span class="text-success">
-                                        <i class="fa fa-check-circle"></i> Ubicación establecida desde inmueble seleccionado.
-                                    </span>`).show();
+            let auxBotones = `<span class="text-success">
+                                    <i class="fa fa-check-circle"></i> Ubicación establecida desde inmueble seleccionado. `
+            if (selectedPrePuntoId !== null)
+                auxBotones += `<button id="clearPrePuntoBtn" type="button" class="btn btn-sm ms-2" style="background: none; border: none; color: #dc3545; padding: 2px 6px; margin-left: 8px;" title="Limpiar selección de pre-punto">
+                <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>`
+            auxBotones += `</span>`
 
+            $('#geoStatus').html(auxBotones).show();
         } else {
-            $('#geoStatus').html(`<span class="text-warning">
-                                        <i class="fa fa-exclamation-triangle"></i> El inmueble seleccionado no tiene coordenadas registradas.
-                                    </span>`).show();
+            let auxBotones = `<span class="text-success">
+                                    <i class="fa fa-exclamation-triangle"></i> El inmueble seleccionado no tiene coordenadas registradas.`
+            if (selectedPrePuntoId !== null)
+                auxBotones += `<button id="clearPrePuntoBtn" type="button" class="btn btn-sm ms-2" style="background: none; border: none; color: #dc3545; padding: 2px 6px; margin-left: 8px;" title="Limpiar selección de pre-punto">
+                <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>`
+            auxBotones += `</span>`
+
+            $('#geoStatus').html(auxBotones).show();
         }
+
+        // *** NUEVA SECCIÓN: Cargar imágenes desde inputs hidden ***
+        loadImagesFromHiddenInputs(cnt);
     }
+
 
     function setupGeolocation() {
         const btnObtenerUbicacion = document.getElementById("btnObtenerUbicacion");
@@ -1543,12 +1593,12 @@ if (!$_SESSION['swlogin']) {
             // Función auxiliar para generar box-shadow con el mismo color
             function generarBoxShadow(colorHex) {
                 return `
-            0 0 6px #fff,
-            0 0 0.9rem #fff,
-            0 0 18px ${colorHex},
-            0 0 24px ${colorHex},
-            0 0 30px ${colorHex},
-            0 0 36px ${colorHex}
+            0 0 3px #fff,
+            0 0 0.3rem #fff,
+            0 0 4px ${colorHex},
+            0 0 5px ${colorHex},
+            0 0 4px ${colorHex},
+            0 0 5px ${colorHex}
         `;
             }
             prePuntosLayer = L.layerGroup();
@@ -1574,8 +1624,7 @@ if (!$_SESSION['swlogin']) {
                         height: 0.9rem;
                         border-radius: 50%;
                         box-shadow: ${boxShadow};
-                        border: 2px solid ${borde_};
-                        animation: pulseAnimation 5s infinite ease-in-out;
+                        border: 2px solid ${borde_}; 
                     "></div>
                 `,
                         iconSize: [20, 20],
@@ -1591,21 +1640,34 @@ if (!$_SESSION['swlogin']) {
                     if (!(punto.idpredial_asociado > 0)) {
                         botonUsar = `</br>
                                 <div style="width:100%;text-align:center; padding:0.4rem 0 0 0;">
-                                    <button class="btn-primary btn-usar-prepunto" 
+                                    <button class="btn-primary btn-usar-prepunto"   
                                             data-idprepredial="${punto.idprepredial}" 
                                             data-lat="${lat}" 
                                             data-lng="${lng}" 
                                             data-detalle="${punto.detalle || 'Sin detalle'}"
+                                            data-inmueble="${punto.numero_inmueble || ''}"
                                             type="button"> UTILIZAR </button>
                                 </div>`;
                     }
                     let inmueble_ = '';
-                    if (punto.numero_inmueble > 0 && punto.numero_inmueble != '' && punto.numero_inmueble != 'null') {
+                    if (punto.numero_inmueble && punto.numero_inmueble != '' && punto.numero_inmueble != 'null') {
                         inmueble_ = `<strong>Inmueble: </strong> 
                                         <span style="cursor:pointer; font-weight: bold; color:#15939d; " 
-                                            onclick="navigator.clipboard.writeText('${punto.numero_inmueble}')">
+                                            >
                                             ${punto.numero_inmueble}
                                         </span><br>`;
+
+                        botonUsar = `</br>
+                                <div style="width:100%;text-align:center; padding:0.4rem 0 0 0;">
+                                    <button class="btn-primary btn-usar-prepunto"  
+                                            onclick="navigator.clipboard.writeText('${punto.numero_inmueble}')" 
+                                            data-idprepredial="${punto.idprepredial}" 
+                                            data-lat="${lat}" 
+                                            data-lng="${lng}" 
+                                            data-detalle="${punto.detalle || 'Sin detalle'}"
+                                            data-inmueble="${punto.numero_inmueble || ''}"
+                                            type="button"> UTILIZAR </button>
+                                </div>`;
                     }
 
                     const popupContent = `
@@ -1923,6 +1985,12 @@ if (!$_SESSION['swlogin']) {
                 const lat = $(this).data('lat');
                 const lng = $(this).data('lng');
                 const detalle = $(this).data('detalle');
+                console.log('inmueble:' + $(this).data('inmueble'))
+                $('#numInmueble').val($(this).data('inmueble'));
+                if (($(this).data('inmueble')) != '') {
+                    tooogleSeccionBusqueda()
+                    buscarInmueble();
+                }
 
                 // Llamar a la función establecerBase
                 establecerBase(idprepredial, lat, lng);
@@ -2099,7 +2167,7 @@ if (!$_SESSION['swlogin']) {
                     $('#googlemap').attr("href", "https://www.google.com/maps?q=" + latitude + "," + longitude);
 
                     if (map) {
-                        map.setView([latitude, longitude], 15);
+                        map.setView([latitude, longitude], 19);
 
                         if (marker) {
                             marker.setLatLng([latitude, longitude]);
@@ -4189,6 +4257,8 @@ if (!$_SESSION['swlogin']) {
             [-16.262656, -68.153708],
         ];
 
+
+
         document.getElementById('fullscreenBtn').addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -4274,6 +4344,251 @@ if (!$_SESSION['swlogin']) {
 
     }
 
+
+
+    function cargarNivel(nivel) {
+        let dato = {
+            ubicacion1: $('#ubicacion1').val(),
+            ubicacion2: $('#ubicacion2').val(),
+            nivel: nivel
+        };
+
+        $.ajax({
+            async: true,
+            type: "POST",
+            dataType: "json",
+            contentType: "application/x-www-form-urlencoded",
+            url: "../php/ufUbicacionNivel.php",
+            data: dato,
+            beforeSend: function() {
+                loadGralOn();
+            },
+            success: function(dat) {
+                loadGralOff();
+                console.log(dat.queryNivel2);
+                console.log(dat.sql);
+                let $select = $('.select2_' + nivel);
+                if ($select.hasClass('select2-hidden-accessible')) {
+                    $select.select2('destroy');
+                }
+                $select.html(dat.html);
+                $select.attr('multiple', 'multiple');
+                $select.select2({
+                    placeholder: "Seleccione o escriba",
+                    tags: true,
+                });
+            },
+            error: function(xhr) {
+                loadGralOff();
+                console.error("Error al cargar opciones:", xhr.responseText);
+            }
+        });
+    }
+
+    function establecerBase(idprepredial, latitud, longitud) {
+
+        console.log("idprepredial:" + idprepredial);
+        console.log("Estableciendo coordenadas:", latitud, longitud);
+
+        // Guardar el ID del pre-punto seleccionado en la variable global
+        selectedPrePuntoId = idprepredial;
+
+        // Establecer coordenadas en el input de geolocalización
+        $('#geolocalizacion').val(latitud + ', ' + longitud);
+
+        // Actualizar enlace de Google Maps
+        $('#googlemap').attr("href", "https://www.google.com/maps?q=" + latitud + "," + longitud);
+
+        // Actualizar el mapa si existe
+        if (typeof map !== 'undefined' && map) {
+            map.setView([parseFloat(latitud), parseFloat(longitud)], 19);
+
+            // Crear o actualizar el marcador
+            if (typeof marker !== 'undefined' && marker) {
+                marker.setLatLng([parseFloat(latitud), parseFloat(longitud)]);
+            } else {
+                marker = L.marker([parseFloat(latitud), parseFloat(longitud)]).addTo(map);
+            }
+        }
+
+        // Mostrar mensaje de éxito con botón de eliminar
+        $('#geoStatus').html(`<span class="text-success">
+                <i class="fa fa-check-circle"></i> Ubicación establecida desde pre-punto seleccionado.
+                <button id="clearPrePuntoBtn" type="button" class="btn btn-sm ms-2" style="background: none; border: none; color: #dc3545; padding: 2px 6px; margin-left: 8px;" title="Limpiar selección de pre-punto">
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                </button>
+            </span>`).show();
+
+        // Agregar event listener al botón de eliminar
+        $('#clearPrePuntoBtn').on('click', function() {
+            clearPrePuntoSelection();
+        });
+
+        // Opcional: Cerrar el popup después de usar la ubicación
+        if (typeof map !== 'undefined' && map) {
+            map.closePopup();
+        }
+
+        console.log("Pre-punto seleccionado ID:", selectedPrePuntoId);
+
+    }
+
+    // Función para limpiar la selección del pre-punto
+    function clearPrePuntoSelection() {
+        // Limpiar la variable global
+        selectedPrePuntoId = null;
+
+        // Actualizar el mensaje de estado sin el botón
+        $('#geoStatus').html(`<span class="text-info">
+        <i class="fa fa-info-circle"></i> Selección de pre-punto eliminada. Las coordenadas se mantienen.
+    </span>`).show();
+
+        // Opcional: Ocultar el mensaje después de unos segundos
+        setTimeout(function() {
+            $('#geoStatus').fadeOut();
+        }, 3000);
+
+        console.log("Selección de pre-punto eliminada. selectedPrePuntoId:", selectedPrePuntoId);
+    }
+
+
+    function loadImagesFromHiddenInputs(cnt) {
+        // Limpiar previews existentes
+        $("#imagenPrincipalPreview").empty();
+        $("#imagenesAdicionalesPreview").empty();
+
+        // Resetear arrays de imágenes comprimidas
+        compressedImages.main = null;
+        compressedImages.additional = [];
+
+        // Cargar imagen principal
+        const imagenPrincipal = $('#imagen_principal' + cnt).val();
+        if (imagenPrincipal && imagenPrincipal.trim() !== '') {
+            loadImagePreviewFromPath(imagenPrincipal, 'principal');
+        }
+
+        // Cargar imagen adicional
+        const imagenAdicional = $('#imagen_adicional' + cnt).val();
+        if (imagenAdicional && imagenAdicional.trim() !== '') {
+            loadImagePreviewFromPath(imagenAdicional, 'adicional');
+        }
+    }
+
+    function loadImagePreviewFromPath(imagePath, type) {
+        // Construir la URL completa de la imagen
+        const imageUrl = imagePath.startsWith('http') ? imagePath : '../static/ufpredial/' + imagePath;
+
+        // Verificar si la imagen existe antes de mostrarla
+        const img = new Image();
+        img.onload = function() {
+            if (type === 'principal') {
+                $("#imagenPrincipalPreview").html(`
+                <div class="preview-item loaded-from-db">
+                    <img src="${imageUrl}" alt="Imagen Principal" style="max-width: 100%; max-height: 200px;">
+                    <div class="preview-info">
+                        <strong>Imagen Principal (Base de Datos)</strong><br>
+                        <small>${imagePath.substring(imagePath.lastIndexOf('/') + 1)}</small>
+                    </div>
+                    <div class="remove-image" title="Eliminar imagen"><i class="fa fa-times"></i></div>
+                </div>
+            `);
+
+                // IMPORTANTE: Marcar como string para identificar que viene de BD
+                compressedImages.main = imagePath;
+                console.log("Imagen principal cargada desde BD:", imagePath);
+
+            } else if (type === 'adicional') {
+                const previewId = `additional-preview-loaded-${Date.now()}`;
+                $("#imagenesAdicionalesPreview").append(`
+                <div id="${previewId}" class="preview-item loaded-from-db" style="width: 200px;">
+                    <img src="${imageUrl}" alt="Imagen Adicional" style="max-width: 100%; max-height: 150px;">
+                    <div class="preview-info">
+                        <strong>Imagen Adicional (BD)</strong><br>
+                        <small>${imagePath.substring(imagePath.lastIndexOf('/') + 1)}</small>
+                    </div>
+                    <div class="remove-image" title="Eliminar imagen"><i class="fa fa-times"></i></div>
+                </div>
+            `);
+
+                // IMPORTANTE: Agregar como string para identificar que viene de BD
+                compressedImages.additional.push(imagePath);
+                console.log("Imagen adicional cargada desde BD:", imagePath);
+            }
+        };
+
+        img.onerror = function() {
+            console.warn('No se pudo cargar la imagen:', imageUrl);
+            if (type === 'principal') {
+                $("#imagenPrincipalPreview").html(`
+                <div class="preview-item error-loading">
+                    <div class="preview-info text-danger">
+                        <i class="fa fa-exclamation-triangle"></i><br>
+                        <strong>Error al cargar imagen</strong><br>
+                        <small>${imagePath}</small>
+                    </div>
+                </div>
+            `);
+            }
+        };
+
+        img.src = imageUrl;
+    }
+
+    function compressImage(image, quality) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader()
+
+            reader.onload = (event) => {
+                const img = new Image()
+                img.src = event.target.result
+
+                img.onload = () => {
+
+                    let width = img.width
+                    let height = img.height
+
+                    const maxDimension = 1600
+                    if (width > maxDimension || height > maxDimension) {
+                        if (width > height) {
+                            height = Math.round(height * (maxDimension / width))
+                            width = maxDimension
+                        } else {
+                            width = Math.round(width * (maxDimension / height))
+                            height = maxDimension
+                        }
+                    }
+
+                    const canvas = document.createElement("canvas")
+                    const ctx = canvas.getContext("2d")
+
+                    canvas.width = width
+                    canvas.height = height
+
+                    ctx.drawImage(img, 0, 0, width, height)
+
+                    canvas.toBlob(
+                        (blob) => {
+                            resolve(blob)
+                        },
+                        "image/jpeg",
+                        quality,
+                    )
+                }
+
+                img.onerror = (error) => {
+                    reject(error)
+                }
+            }
+
+            reader.onerror = (error) => {
+                reject(error)
+            }
+
+            reader.readAsDataURL(image)
+        })
+    }
+
+
     $(document).ready(function() {
 
         setupGeolocation();
@@ -4350,13 +4665,6 @@ if (!$_SESSION['swlogin']) {
             </style>
         `)
 
-        let compressedImages = {
-            main: null,
-            additional: [],
-        }
-
-        let compressionQuality = 0.7
-
         $("#imagenPrincipal").after(`
             <div class="mt-2">
                 <label for="compressionQuality" class="form-label">Calidad de compresión: <span id="qualityValue">70%</span></label>
@@ -4410,11 +4718,34 @@ if (!$_SESSION['swlogin']) {
                             </div>
                             `)
 
-                        $(".remove-image").on("click", () => {
+                        /* $(".remove-image").on("click", () => {
                             $("#imagenPrincipal").val("")
                             $("#imagenPrincipalPreview").empty()
                             compressedImages.main = null
-                        })
+                        }) */
+                        // Actualizar el event handler para manejar imágenes cargadas desde BD
+                        $(document).on("click", ".remove-image", function() {
+                            const $previewItem = $(this).closest(".preview-item");
+                            const $container = $previewItem.closest(".image-preview-container");
+
+                            if ($container.attr('id') === 'imagenPrincipalPreview') {
+                                $("#imagenPrincipal").val("");
+                                compressedImages.main = null;
+                            } else {
+                                const index = $(this).data("index");
+                                if (index !== undefined) {
+                                    compressedImages.additional[index] = null;
+                                } else {
+                                    // Para imágenes cargadas desde BD, remover del array
+                                    const imgSrc = $previewItem.find('img').attr('src');
+                                    compressedImages.additional = compressedImages.additional.filter(img =>
+                                        typeof img === 'object' || !imgSrc.includes(img)
+                                    );
+                                }
+                            }
+
+                            $previewItem.remove();
+                        });
                     })
                     .catch((err) => {
                         console.error("Error comprimiendo imagen:", err)
@@ -4549,7 +4880,7 @@ if (!$_SESSION['swlogin']) {
 
             const formData = new FormData(this)
 
-            if (compressedImages.main) {
+            /* if (compressedImages.main) {
                 formData.set("imagenPrincipal", compressedImages.main)
             }
 
@@ -4559,8 +4890,72 @@ if (!$_SESSION['swlogin']) {
                 if (file) {
                     formData.append("imagenesAdicionales[]", file)
                 }
-            })
+            }) */
 
+            // Limpiar campos de imagen para manejarlos manualmente
+            formData.delete("imagenPrincipal");
+            formData.delete("imagenesAdicionales");
+
+            // Manejar imagen principal
+            if (compressedImages.main) {
+                if (typeof compressedImages.main === 'string') {
+                    // Es una imagen cargada desde BD - mantener la existente
+                    formData.append("imagen_principal_existente", compressedImages.main);
+                    console.log("Enviando imagen principal existente:", compressedImages.main);
+                } else {
+                    // Es una imagen nueva comprimida - reemplazar
+                    formData.append("imagenPrincipal", compressedImages.main);
+                    console.log("Enviando imagen principal nueva");
+                }
+            } else {
+                // No hay imagen principal - enviar campo vacío para eliminar si existía
+                formData.append("imagen_principal_existente", "");
+                console.log("No hay imagen principal");
+            }
+
+            // Separar imágenes adicionales existentes de las nuevas
+            let imagenesExistentes = [];
+            let imagenesNuevas = [];
+
+            compressedImages.additional.forEach((file, index) => {
+                if (file) {
+                    if (typeof file === 'string') {
+                        // Es una imagen cargada desde BD
+                        imagenesExistentes.push(file);
+                    } else {
+                        // Es una imagen nueva comprimida
+                        imagenesNuevas.push(file);
+                    }
+                }
+            });
+
+            // Enviar imágenes adicionales existentes
+            if (imagenesExistentes.length > 0) {
+                imagenesExistentes.forEach(imagen => {
+                    formData.append("imagenes_adicionales_existentes[]", imagen);
+                });
+                console.log("Enviando imágenes adicionales existentes:", imagenesExistentes);
+            }
+
+            // Enviar imágenes adicionales nuevas
+            if (imagenesNuevas.length > 0) {
+                imagenesNuevas.forEach(imagen => {
+                    formData.append("imagenesAdicionales[]", imagen);
+                });
+                console.log("Enviando imágenes adicionales nuevas:", imagenesNuevas.length);
+            }
+
+            // Debug: mostrar todo lo que se está enviando
+            console.log("=== DATOS ENVIADOS ===");
+            for (let pair of formData.entries()) {
+                if (pair[0].includes('imagen')) {
+                    console.log(pair[0] + ': ' + (typeof pair[1] === 'string' ? pair[1] : 'File object'));
+                }
+            }
+            console.log("======================");
+
+
+            console.log("selectedPrePuntoId:" + selectedPrePuntoId);
 
             if (selectedPrePuntoId !== null) {
                 formData.append("idprepredial_seleccionado", selectedPrePuntoId);
@@ -4614,10 +5009,7 @@ if (!$_SESSION['swlogin']) {
 
                         $("#formularioInmueble")[0].reset();
                         $("#imagenPrincipalPreview, #imagenesAdicionalesPreview").empty();
-                        compressedImages = {
-                            main: null,
-                            additional: []
-                        };
+
                     } else {
                         if (typeof Swal !== "undefined") {
                             Swal.fire({
@@ -4663,163 +5055,11 @@ if (!$_SESSION['swlogin']) {
             return false
         })
 
-        function compressImage(image, quality) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader()
 
-                reader.onload = (event) => {
-                    const img = new Image()
-                    img.src = event.target.result
 
-                    img.onload = () => {
 
-                        let width = img.width
-                        let height = img.height
-
-                        const maxDimension = 1600
-                        if (width > maxDimension || height > maxDimension) {
-                            if (width > height) {
-                                height = Math.round(height * (maxDimension / width))
-                                width = maxDimension
-                            } else {
-                                width = Math.round(width * (maxDimension / height))
-                                height = maxDimension
-                            }
-                        }
-
-                        const canvas = document.createElement("canvas")
-                        const ctx = canvas.getContext("2d")
-
-                        canvas.width = width
-                        canvas.height = height
-
-                        ctx.drawImage(img, 0, 0, width, height)
-
-                        canvas.toBlob(
-                            (blob) => {
-                                resolve(blob)
-                            },
-                            "image/jpeg",
-                            quality,
-                        )
-                    }
-
-                    img.onerror = (error) => {
-                        reject(error)
-                    }
-                }
-
-                reader.onerror = (error) => {
-                    reject(error)
-                }
-
-                reader.readAsDataURL(image)
-            })
-        }
         $('.leaflet-control-attribution').hide();
     });
-
-    function cargarNivel(nivel) {
-        let dato = {
-            ubicacion1: $('#ubicacion1').val(),
-            ubicacion2: $('#ubicacion2').val(),
-            nivel: nivel
-        };
-
-        $.ajax({
-            async: true,
-            type: "POST",
-            dataType: "json",
-            contentType: "application/x-www-form-urlencoded",
-            url: "../php/ufUbicacionNivel.php",
-            data: dato,
-            beforeSend: function() {
-                loadGralOn();
-            },
-            success: function(dat) {
-                loadGralOff();
-                let $select = $('.select2_' + nivel);
-                if ($select.hasClass('select2-hidden-accessible')) {
-                    $select.select2('destroy');
-                }
-                $select.html(dat.html);
-                $select.attr('multiple', 'multiple');
-                $select.select2({
-                    placeholder: "Seleccione o escriba",
-                    tags: true,
-                });
-            },
-            error: function(xhr) {
-                loadGralOff();
-                console.error("Error al cargar opciones:", xhr.responseText);
-            }
-        });
-    }
-
-    function establecerBase(idprepredial, latitud, longitud) {
-
-        console.log("idprepredial:" + idprepredial);
-        console.log("Estableciendo coordenadas:", latitud, longitud);
-
-        // Guardar el ID del pre-punto seleccionado en la variable global
-        selectedPrePuntoId = idprepredial;
-
-        // Establecer coordenadas en el input de geolocalización
-        $('#geolocalizacion').val(latitud + ', ' + longitud);
-
-        // Actualizar enlace de Google Maps
-        $('#googlemap').attr("href", "https://www.google.com/maps?q=" + latitud + "," + longitud);
-
-        // Actualizar el mapa si existe
-        if (typeof map !== 'undefined' && map) {
-            map.setView([parseFloat(latitud), parseFloat(longitud)], 19);
-
-            // Crear o actualizar el marcador
-            if (typeof marker !== 'undefined' && marker) {
-                marker.setLatLng([parseFloat(latitud), parseFloat(longitud)]);
-            } else {
-                marker = L.marker([parseFloat(latitud), parseFloat(longitud)]).addTo(map);
-            }
-        }
-
-        // Mostrar mensaje de éxito con botón de eliminar
-        $('#geoStatus').html(`<span class="text-success">
-                <i class="fa fa-check-circle"></i> Ubicación establecida desde pre-punto seleccionado.
-                <button id="clearPrePuntoBtn" type="button" class="btn btn-sm ms-2" style="background: none; border: none; color: #dc3545; padding: 2px 6px; margin-left: 8px;" title="Limpiar selección de pre-punto">
-                    <i class="fa fa-trash" aria-hidden="true"></i>
-                </button>
-            </span>`).show();
-
-        // Agregar event listener al botón de eliminar
-        $('#clearPrePuntoBtn').on('click', function() {
-            clearPrePuntoSelection();
-        });
-
-        // Opcional: Cerrar el popup después de usar la ubicación
-        if (typeof map !== 'undefined' && map) {
-            map.closePopup();
-        }
-
-        console.log("Pre-punto seleccionado ID:", selectedPrePuntoId);
-    }
-
-    // Función para limpiar la selección del pre-punto
-    function clearPrePuntoSelection() {
-        // Limpiar la variable global
-        selectedPrePuntoId = null;
-
-        // Actualizar el mensaje de estado sin el botón
-        $('#geoStatus').html(`<span class="text-info">
-        <i class="fa fa-info-circle"></i> Selección de pre-punto eliminada. Las coordenadas se mantienen.
-    </span>`).show();
-
-        // Opcional: Ocultar el mensaje después de unos segundos
-        setTimeout(function() {
-            $('#geoStatus').fadeOut();
-        }, 3000);
-
-        console.log("Selección de pre-punto eliminada. selectedPrePuntoId:", selectedPrePuntoId);
-    }
 </script>
 
 </html>

@@ -8,7 +8,7 @@ foreach ($_POST as $clave => $valor) {
 
 $conn = new Conexion();
 $cons = $conn->conectar();
-
+/* 
 $query = "select fecha_apersonamiento,  b.usuario, a.nombre_razon, a.contacto_titular, 
 a.nombre_apoderado, a.contacto_apoderado, a.tipologia, a.via, a.no_plantas, 
 a.no_concluidos, a.no_brutos, a.hhrr, a.descripcion, a.no_formulario, 
@@ -21,24 +21,69 @@ TRIM(replace(replace(replace(replace(ubicacion_nivel1, 'DISTRITO:', ''), 'LOTE,'
         WHERE ps.idpredial = a.id ) servicios,   a.numero_inmueble 
         from uf_predial   a 
         left join datm_usuario b on a.idusuario = b.id  
-        where  a.estado_ and  a.numero_inmueble = '$numero_inmueble' order by a.id desc ";
+        where  a.estado_ and  a.numero_inmueble = '$numero_inmueble' order by a.id desc "; */
+
+$query = "select 
+        a.id,
+        x.detalle ,x.idprepredial, 
+        b.grupo, 
+        d.operativo, 
+        c.usuario,
+            a.nombre_razon, 
+            a.nombre_apoderado, 
+            a.contacto_titular, 
+            a.contacto_apoderado,
+            trim(a.ubicacion_nivel1||' '||a.ubicacion_nivel2 ||' '||a.ubicacion_nivel3 ||' '||a.descripcion||' #'||a.no_puerta) as direccion, 
+            a.codigo_catastral,  
+            a.no_formulario, 
+            a.via as dato_tecnico_via, 
+            CASE 
+            WHEN ( 
+            SELECT string_agg(s.servicio, ', ')  
+            FROM uf_predrial_servicio ps 
+            JOIN uf_servicios s ON ps.idservicio = s.idservicio 
+            WHERE ps.idpredial = a.id 
+            ) IN ( 
+            'LUZ, AGUA, ALCANTARILLADO, GAS, TELEFONO', 
+            'TODOS, LUZ, AGUA, ALCANTARILLADO, GAS, TELEFONO' 
+            )
+            THEN 'TODOS'
+            ELSE (
+            SELECT string_agg(s.servicio, ', ') 
+            FROM uf_predrial_servicio ps
+            JOIN uf_servicios s ON ps.idservicio = s.idservicio
+            WHERE ps.idpredial = a.id
+            )
+        END AS dato_tecnico_servicio,
+            a.tipologia as dato_tecnico_tipologia,
+            a.no_plantas as construccion_plantas,
+            a.no_concluidos as construccion_concluidas,
+            a.no_brutos as construccion_construccion,
+            'https://datm.elalto.gob.bo/pages/ufPredialList.php?i='||a.numero_inmueble as enlace,
+            a.numero_inmueble,
+            a.descripcion,
+            a.cant_act,
+            a.descripcion_act,
+            a.hhrr,
+            to_char( a.fecha_apersonamiento, 'DD/MM/YYYY') AS fecha_apersonamiento ,
+            a.imagen_principal,
+            a.imagen_adicional,
+            a.latitud, a.longitud
+
+        from uf_predial a 
+        LEFT JOIN uf_prepredial x ON x.idpredial_asociado = a.id 
+        left join uf_operativo d on d.idoperativo = x.idoperativo
+        left join uf_grupo_operativo b on a.idusuario = b.idusuario and d.idoperativo = b.idoperativo  
+        left join datm_usuario c on c.id = a.idusuario
+        
+        where  a.estado_    
+        
+        and a.numero_inmueble like '$numero_inmueble'
+        
+        order by id desc; ";
 
 $stmt = $cons->query($query);
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $data = array();
-/* $cnt = 1;
-foreach ($result as $key => $item) { 
-
-    $fila = array(
-        "id" => $cnt,
-        "numero_inmueble" =>  $item['numero_inmueble'],
-        "codigo_catastral" => $item['codigo_catastral'],
-        "nombre_razon" => $item['nombre_razon'],
-        "fecha_apersonamiento" =>  $item['fecha_apersonamiento'], 
-    );
-    $cnt++;
-    $data[] = $fila;
-} */
 print_r(json_encode($result));
-

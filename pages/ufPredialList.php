@@ -15,7 +15,7 @@ if (!$_SESSION['swlogin']) {
 <html lang="es">
 
 <head>
-    <title>PANEL PREDIAL</title>
+    <title>PANEL GEOESPACIAL</title>
     <?php
     echo $twig->render('linkStyle.twig');
     ?>
@@ -141,7 +141,7 @@ if (!$_SESSION['swlogin']) {
             --border-color: #e0e0e0;
             --text-color: #333;
             --accent-color: #5c8db8;
-        }  
+        }
 
         .property-card {
             max-width: 100%;
@@ -409,10 +409,190 @@ if (!$_SESSION['swlogin']) {
             font-weight: bold;
             text-shadow: 0 0 5px black;
         }
+
+
+        /** estilos para botones de reporte  excel*/
+
+
+        .icon {
+            font-size: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #34495e;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .date-range {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .date-separator {
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .swal2-confirm {
+            background: linear-gradient(45deg, #27ae60, #2ecc71) !important;
+            border: none !important;
+            border-radius: 5% !important;
+            padding: 0.75rem 2rem !important;
+            font-weight: 500 !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .swal2-confirm:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 10px 20px rgba(46, 204, 113, 0.2) !important;
+        }
+
+        .swal2-cancel {
+            background: linear-gradient(45deg, #e74c3c, #c0392b) !important;
+            border: none !important;
+            border-radius: 5% !important;
+            padding: 0.75rem 2rem !important;
+            font-weight: 500 !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .swal2-cancel:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 10px 20px rgba(231, 76, 60, 0.3) !important;
+        }
+
+        /* Loading spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .icon-buttons {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 0 0 15px 0;
+        }
+
+        .icon-buttons i {
+            font-size: 0.9rem;
+            padding: 10px;
+            border: 2px solid;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .icon-buttons i:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 8px;
+        }
+
+        .icon-check {
+            color: rgb(255, 255, 255);
+            border-color: rgb(53, 170, 30);
+            background-color: #27ae60;
+        }
+
+        .icon-refresh {
+            color: rgb(255, 255, 255);
+            border-color: #00bfff;
+            background-color: rgb(0, 138, 184);
+        }
+
+        .icon-warning {
+            color: rgb(255, 255, 255);
+            border-color: #ff0033;
+            background-color: #c60a04;
+        }
+
+
+        .puntoActualizado {
+            background-color: #0ecc08;
+            width: 0.9rem;
+            height: 0.9rem;
+            border-radius: 50%;
+            /* box-shadow:
+                0 0 6px #fff,
+                0 0 0.9rem #fff,
+                0 0 18px #0ecc08,
+                0 0 24px #0ecc08,
+                0 0 30px #0ecc08,
+                0 0 36px #0ecc08; */
+            border: 2px solid #fff;
+            /* animation: pulseAnimation 1.5s infinite ease-in-out; */
+        }
+
+        .puntoRevelde {
+            background-color: #ff0040;
+            width: 0.9rem;
+            height: 0.9rem;
+            border-radius: 50%;
+            box-shadow:
+                0 0 6px #fff,
+                0 0 0.9rem #fff,
+                0 0 18px #ff0040,
+                0 0 24px #ff0040,
+                0 0 30px #ff0040,
+                0 0 36px #ff0040;
+            border: 2px solid #fff;
+            animation: pulseAnimation 1.5s infinite ease-in-out;
+        }
+
+        /** estilos para botones de reporte */
     </style>
 </head>
 
 <body>
+    <input type="hidden" id="inm_inicial" value="<?php echo $_GET['i']; ?>" />
     <?php
     echo $twig->render('load.twig');
     ?>
@@ -435,7 +615,7 @@ if (!$_SESSION['swlogin']) {
     echo $twig->render('prebodyltIni.twig');
     ?>
     <li class="breadcrumb-item"><a class="text-white" href="index.php">Home</a></li>
-    <li class="breadcrumb-item text-white active" aria-current="page"> <a class="text-white">UF PREDIAL</a></li>
+    <li class="breadcrumb-item text-white active" aria-current="page"> <a class="text-white">UF - PANEL</a></li>
     <?php
     echo $twig->render('prebodyltFin.twig');
     ?>
@@ -445,8 +625,9 @@ if (!$_SESSION['swlogin']) {
         <div class="form-group d-flex flex-column flex-md-row">
             <div class="row">
                 <div class="col-md-2 mb-3">
-                    <a class="btn btn-success" href="ufPredial.php" role="button"><i class="fa fa-plus"></i></a> | 
-                    <a class="btn btn-success" href="ufdatmap.php" role="button"><i class="fa fa-map-o" aria-hidden="true"></i></a>
+                    <a class="btn btn-success" href="ufPredial.php" role="button"><i class="fa fa-plus"></i></a> |
+                    <a class="btn btn-success" href="ufdatmap.php" role="button"><i class="fa fa-map-o" aria-hidden="true"></i></a><!-- |
+                    <a class="btn btn-success" onclick="generarReporteOperativo()" role="button"><i class="fa fa-file-excel-o" aria-hidden="true"></i></a> -->
                 </div>
                 <div class="col-md-3 mb-3">
                     <input type="text" class="form-control" value="" id="filtroInmueble" placeholder="Numero inmueble">
@@ -487,10 +668,14 @@ if (!$_SESSION['swlogin']) {
                 data-query-params="filtrosDataTable">
                 <thead>
                     <th data-field="id" data-sortable="true">Id</th>
+                    <th data-field="fecha_apersonamiento" data-sortable="true">Fecha operativo</th>
+                    <th data-field="grupo" data-sortable="true">Operativo</th>
+                    <th data-field="usuario" data-sortable="true">usuario</th>
                     <th data-field="numero_inmueble" data-sortable="true">No Inmueble</th>
                     <th data-field="codigo_catastral" data-sortable="true">Cod. catastral</th>
+                    <th data-field="no_formulario" data-sortable="true">Form.</th>
                     <th data-field="nombre_razon" data-sortable="true">Nombre</th>
-                    <th data-field="fecha_apersonamiento" data-sortable="true">Ultima visita</th>
+                    <th data-field="estado_fiscalizacion" data-sortable="true">Estado</th>
                     <th data-field="acciones">Acciones</th>
                 </thead>
                 <tbody id="tbodyItems">
@@ -515,6 +700,11 @@ if (!$_SESSION['swlogin']) {
 <script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.10.21/libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
+    $(document).ready(function($) {
+        if (typeof $('#inm_inicial').val() != "undefined" && $('#inm_inicial').val() != '') {
+            verHistorialPredial($('#inm_inicial').val());
+        }
+    });
     $(".datepicker").flatpickr();
 
     function filtrosDataTable(p) {
@@ -539,13 +729,186 @@ if (!$_SESSION['swlogin']) {
         }
     });
 
+    /** generar reporte excel */
+
+    function generarReporteOperativo() {
+        Swal.fire({
+            title: "Generar Reporte Operativo",
+            html: `
+            <div style="padding:3rem;">
+            <div class="form-group" >
+                <label class="form-label">📅 Rango de fechas</label>
+                <div class="date-range">
+                    <input type="text" id="fechaInicial" placeholder="Fecha inicial" class="form-input datepicker2">
+                    <span class="date-separator">a</span>
+                    <input type="text" id="fechaFinal" placeholder="Fecha final" class="form-input datepicker2">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">👥 Grupo</label>
+                <select id="grupoSelect" class="form-select">
+                    <option value="Todos">Todos los grupos</option>
+                    <option value="G-1">Grupo 1 (G-1)</option>
+                    <option value="G-2">Grupo 2 (G-2)</option>  
+                    <option value="G-3">Grupo 3 (G-3)</option>
+                    <option value="G-4">Grupo 4 (G-4)</option>
+                </select>
+            </div>
+            </div>
+        `,
+            showCloseButton: true,
+            showCancelButton: true,
+            confirmButtonText: "📥 Generar y Descargar",
+            cancelButtonText: "❌ Cancelar",
+            width: "auto",
+            customClass: {
+                popup: "swal-wide",
+                htmlContainer: "swal-custom-html-container",
+            },
+            didOpen: () => {
+                // Configurar Flatpickr para las fechas
+                $(".datepicker2").flatpickr({
+                    locale: "es",
+                    dateFormat: "Y-m-d",
+                    defaultDate: new Date(),
+                    allowInput: true,
+                    clickOpens: true,
+                })
+
+                // Establecer fecha final como hoy por defecto
+                $("#fechaFinal").val(new Date().toISOString().split("T")[0])
+
+                // Establecer fecha inicial como hace 7 días por defecto
+                const fechaInicial = new Date()
+                fechaInicial.setDate(fechaInicial.getDate() - 7)
+                $("#fechaInicial").val(fechaInicial.toISOString().split("T")[0])
+            },
+            preConfirm: () => {
+                const fechaInicial = document.getElementById("fechaInicial").value
+                const fechaFinal = document.getElementById("fechaFinal").value
+                const grupo = document.getElementById("grupoSelect").value
+
+                // Validaciones
+                if (!fechaInicial || !fechaFinal) {
+                    Swal.showValidationMessage("Por favor, selecciona ambas fechas")
+                    return false
+                }
+
+                if (new Date(fechaInicial) > new Date(fechaFinal)) {
+                    Swal.showValidationMessage("La fecha inicial no puede ser mayor que la fecha final")
+                    return false
+                }
+
+                return {
+                    fechaInicial: fechaInicial,
+                    fechaFinal: fechaFinal,
+                    grupo: grupo,
+                }
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                ejecutarGeneracionReporte(result.value)
+            }
+        })
+    }
+
+    function ejecutarGeneracionReporte(parametros) {
+        // Mostrar loading
+        Swal.fire({
+            title: "Generando reporte...",
+            html: '<div class="loading-spinner"></div>Por favor espera mientras se genera el archivo Excel',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            customClass: {
+                popup: "swal-wide",
+            },
+        })
+
+        // Realizar petición AJAX
+        $.ajax({
+            url: "../php/ufGetReporteOperativo.php",
+            type: "POST",
+            data: {
+                fechaInicial: parametros.fechaInicial,
+                fechaFinal: parametros.fechaFinal,
+                grupo: parametros.grupo,
+            },
+            xhrFields: {
+                responseType: "blob", // Importante para manejar archivos binarios
+            },
+            success: (data, status, xhr) => {
+                // Cerrar loading
+                Swal.close()
+
+                // Crear enlace de descarga
+                const blob = new Blob([data], {
+                    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                })
+
+                const url = window.URL.createObjectURL(blob)
+                const link = document.createElement("a")
+                link.href = url
+
+                // Generar nombre del archivo
+                const fechaActual = new Date().toISOString().split("T")[0]
+                const nombreArchivo = `Reporte_Operativo_${parametros.fechaInicial}_${parametros.fechaFinal}_${parametros.grupo}_${fechaActual}.xlsx`
+                link.download = nombreArchivo
+
+                // Descargar archivo
+                document.body.appendChild(link)
+                link.click()
+                document.body.removeChild(link)
+                window.URL.revokeObjectURL(url)
+
+                // Mostrar mensaje de éxito
+                Swal.fire({
+                    icon: "success",
+                    title: "¡Reporte generado!",
+                    text: "El archivo Excel se ha descargado correctamente",
+                    timer: 3000,
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: "swal-wide",
+                    },
+                })
+            },
+            error: (xhr, status, error) => {
+                Swal.close()
+
+                let errorMessage = "Error desconocido"
+
+                if (xhr.responseText) {
+                    try {
+                        const response = JSON.parse(xhr.responseText)
+                        errorMessage = response.message || response.error || errorMessage
+                    } catch (e) {
+                        errorMessage = xhr.responseText
+                    }
+                }
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Error al generar reporte",
+                    text: errorMessage,
+                    customClass: {
+                        popup: "swal-wide",
+                    },
+                })
+            },
+        })
+    }
+
+    /** generar reporte excel */
+
+
 
     function getUfPredial() {
         $.ajax({
             async: true,
             type: 'POST',
             data: {
-                filtroCodigoSolicitud: $('#filtroCodigoSolicitud').val(),
+                filtroInmueble: $('#filtroInmueble').val(),
                 filtroFechaIni: $('#filtroFechaIni').val(),
                 filtroFechaFin: $('#filtroFechaFin').val()
             },
@@ -561,10 +924,14 @@ if (!$_SESSION['swlogin']) {
                     var fila = `
                     <tr>
                         <td>${item.id}</td>
+                        <td>${item.fecha_apersonamiento}</td> 
+                        <td>${item.grupo}</td>
+                        <td>${item.usuario}</td>
                         <td>${item.numero_inmueble}</td>
                         <td>${item.codigo_catastral}</td>
                         <td>${item.nombre_razon}</td> 
-                        <td>${item.fecha_apersonamiento}</td> 
+                        <td>${item.no_formulario}</td> 
+                        <td>${item.estado_fiscalizacion}</td> 
                         <td>${item.acciones}</td> 
                     </tr>
                 `;
@@ -579,29 +946,66 @@ if (!$_SESSION['swlogin']) {
         });
     }
 
-
+    function imprimirReporte(idinmueble) {
+        datos = "j=" + idinmueble; 
+        var url_ = "../php/ufRptInmueble.php?" + datos;
+        $.ajax({
+            url: url_,
+            type: 'HEAD',
+            success: function() {
+                window.open(url_, "_blank");
+            },
+            error: function() {
+                $.confirm({
+                    title: "Documento no encontrado!",
+                    type: "red",
+                    content: "No se ha logrado encontrar el documento solicitado, estamos trabajando en la actualización del recurso.",
+                    buttons: {
+                        cancel: {
+                            text: "Cerrar",
+                            action: function() {},
+                        },
+                    },
+                });
+            }
+        });
+    }
 
     function createInfoBlockHtml(dat) {
 
         let html = `
-                    <div class="property-card">
-                        <div class="card-header">
-                            HISTORIAL DE INMUEBLE ${dat[0].numero_inmueble}
-                        </div> 
-                        <div class="card-body">
+            <div class="property-card">
+                <div class="card-header">
+                    ${dat[0].numero_inmueble}
+                </div> 
+                <div class="card-body"> 
+                    <div class="icon-buttons">
+                        <i class="fa fa-check icon-check" aria-hidden="true" title="Inmueble actualizado" onclick="actualizarEstado(${dat[0].id}, '${dat[0].numero_inmueble}',1)"></i>  
+                        <i class="fa fa-print  icon-refresh" aria-hidden="true" onclick="imprimirReporte(${dat[0].id})"></i>     
+                        <a target="_blank" href="https://www.google.com/maps?q=${dat[0].latitud},${dat[0].longitud}"><i class="fa fa-street-view icon-refresh" aria-hidden="true"></i></a>   
+                        <i class="fa fa-exclamation-triangle icon-warning" aria-hidden="true" title="Desacato a la fiscalización" onclick="actualizarEstado(${dat[0].id}, '${dat[0].numero_inmueble}', 0)"></i> 
+                    </div>
     `;
 
         dat.forEach(element => {
             let videoAux = ((element.video) ? '<a href="' + element.video + '" class="video-link">[VIDEO]</a>' : '');
             let imagenAux1 = ((element.video) ? '<a href="' + element.video + '" class="video-link">[VIDEO]</a>' : '');
-            let imagenPrincipal = (element.imagen_principal ? `<img src="../static/ufpredial/${element.imagen_principal}" alt="${element.imagen_principal}">` : '');
-            let imagenAdicional = (element.imagen_adicional ? `<img src="../static/ufpredial/${element.imagen_adicional}" alt="${element.imagen_adicional}">` : '');
+            let imagenPrincipal = (element.imagen_principal ? `<div class="photo-box"><img src="../static/ufpredial/${element.imagen_principal}" alt="${element.imagen_principal}"></div>` : '');
+            let imagenAdicional = (element.imagen_adicional ? `<div class="photo-box"><img src="../static/ufpredial/${element.imagen_adicional}" alt="${element.imagen_adicional}"></div>` : '');
 
-            html += `<div class="info-grid">                                                                                    
+            html += `
+            
+            <div class="info-grid">                                                                                    
+
+
             <div>
             <div class="info-item">
                 <div class="info-label">FECHA DE VISITA:</div>
                 <div class="info-value">${element.fecha_apersonamiento} ${videoAux}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">No. FORMULARIO:</div>
+                <div class="info-value">${element.no_formulario}</div>
             </div>
             <div class="info-item">
                 <div class="info-label">NOMBRE DE TITULAR:</div>
@@ -613,37 +1017,40 @@ if (!$_SESSION['swlogin']) {
             </div>
             <div class="info-item">
                 <div class="info-label">MATERIAL VÍA:</div>
-                <div class="info-value">${element.via}</div>
+                <div class="info-value">${element.dato_tecnico_via}</div>
             </div>
-
-            <div class="info-item">
-                <div class="info-label">NÚMERO DE PLANTAS:</div>
-                <div class="info-value">${element.no_plantas}</div>
-            </div>
-            
             <div class="info-item">
                 <div class="info-label">SERVICIOS:</div>
-                <div class="info-value">${element.servicios}</div>
+                <div class="info-value">${element.dato_tecnico_servicio}</div>
             </div>
+            <div class="info-item">
+                <div class="info-label">NÚMERO DE PLANTAS:</div>
+                <div class="info-value">${element.construccion_plantas}</div>
+            </div> 
 
             <div class="info-item">
                 <div class="info-label">DIRECCIÓN:</div>
-                <div class="info-value">${element.ubicacion_nivel1} ${element.ubicacion_nivel2} ${element.ubicacion_nivel3} ${element.no_puerta}</div>
+                <div class="info-value">${element.direccion}</div>
             </div>
             <div class="info-item">
                 <div class="info-label">DESCRIPCIÓN:</div>
                 <div class="info-value">${element.descripcion}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Nº FORM:</div>
-                <div class="info-value">${element.no_formulario}</div>
-            </div>
-            </div>
+            </div>`;
+            html += element.cant_act > 0 ? `<div class="info-item">
+                <div class="info-label">CANT. ACT. ECONOMICA:</div>
+                <div class="info-value">${element.cant_act}</div>
+            </div>` : '';
+
+            html += `</div>
             
             <div>
             <div class="info-item">
                 <div class="info-label">USUARIO:</div>
                 <div class="info-value">${element.usuario}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">OPERATIVO:</div>
+                <div class="info-value">${element.operativo}/${element.grupo}</div>
             </div>
             <div class="info-item">
                 <div class="info-label">CONTACTO TITULAR:</div>
@@ -655,32 +1062,38 @@ if (!$_SESSION['swlogin']) {
             </div>
             <div class="info-item">
                 <div class="info-label">TIPOLOGÍA:</div>
-                <div class="info-value">${element.tipologia}</div>
+                <div class="info-value">${element.dato_tecnico_tipologia}</div>
             </div>
             
             <div class="info-item">
                 <div class="info-label">CONCLUIDOS:</div>
-                <div class="info-value">${element.no_concluidos}</div>
+                <div class="info-value">${element.construccion_concluidas}</div>
             </div>
 
             <div class="info-item">
                 <div class="info-label">EN CONSTRUCCION:</div>
-                <div class="info-value">${element.no_brutos}</div>
+                <div class="info-value">${element.construccion_construccion}</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">CODIGO CATASTRAL:</div>
+                <div class="info-value">${element.codigo_catastral}</div>
             </div>
             <div class="info-item">
                 <div class="info-label">HHRR:</div>
                 <div class="info-value">${element.hhrr}</div>
-            </div>
-            </div>
+            </div>`;
+
+            html += element.cant_act > 0 ? `<div class="info-item">
+                <div class="info-label">ACTIVIDAD(ES):</div>
+                <div class="info-value">${element.descripcion_act}</div>
+            </div>` : '';
+            html += `</div>
         </div>
         
-        <div class="photos-container">
-            <div class="photo-box">
-                ${imagenPrincipal}
-            </div>
-            <div class="photo-box"> 
-                ${imagenAdicional}
-            </div>
+        <div class="photos-container"> 
+                ${imagenPrincipal} 
+                ${imagenAdicional} 
         </div>
         
         <div class="divider"></div> 
@@ -696,9 +1109,64 @@ if (!$_SESSION['swlogin']) {
         return html;
     }
 
-    // Función para mostrar el historial predial
-    function verHistorialPredial(numero_inmueble) {
+    function actualizarEstado(id, inmueble, estado) {
+        let estado_ = (estado ? 'ACTUALIZADO SIN OBSERVACIONES' : 'CONTRIBUYENTE DESACATÓ LA FISCALIZACIÓN');
+        let type = (estado ? 'green' : 'red');
+        let btnClass = (estado ? 'btn-green' : 'btn-red');
+        $.confirm({
+            title: "Confirme",
+            content: `Por favor confirme el cambio de estado a ${estado_} del inmueble  ${inmueble}<br><textarea id="observacionEstado" placeholder="Redacte la observción o anotacion técnica si corresponde" class="form-control"></textarea>`,
+            type: type,
+            typeAnimated: true,
+            columnClass: "col-md-6 col-md-offset-6 col-xs-8 col-xs-offset-8",
+            buttons: {
+                cancel: {
+                    text: "Cerrar",
+                    action: function() {},
+                },
+                guardar: {
+                    text: "Confirmar",
+                    btnClass: btnClass,
+                    action: function() {
+                        console.log("ajax para actualizar estado");
+                        datos = "&id=" + id + "&estado=" + (estado ? '2' : '3') + "&inmueble=" + inmueble + "&observacionEstado=" + $('#observacionEstado').val();
+                        $.ajax({
+                            async: true,
+                            type: "POST",
+                            dataType: "html",
+                            contentType: "application/x-www-form-urlencoded",
+                            url: "../php/ufSaveCambioEstado.php",
+                            data: datos,
+                            beforeSend: function() {
+                                loadGralOn();
+                            },
+                            success: function(e) {
+                                console.log(e);
+                                loadGralOff();
+                                dat = JSON.parse(e)
+                                if (dat.err == '0') {
+                                    window.location.href = './ufPredialList.php';
+                                } else {
+                                    $.confirm({
+                                        title: " Error",
+                                        type: "red",
+                                        content: dat.log,
+                                    });
+                                }
+                            },
+                            error: function() {},
+                        });
+                    }
+                },
+            },
+            onOpenBefore: function() {
+                $('.jconfirm-title-c').css('text-align', 'center');
+            }
+        });
+        console.log("en funcion, no se presento: " + inmueble);
+    }
 
+    function verHistorialPredial(numero_inmueble) {
         $.ajax({
             async: true,
             type: 'POST',
@@ -731,8 +1199,6 @@ if (!$_SESSION['swlogin']) {
                         });
                     },
                 });
-
-
             },
             timeout: 16000,
             error: function(xhr, status, error) {
@@ -741,34 +1207,19 @@ if (!$_SESSION['swlogin']) {
         });
     }
 
-    // Función para crear y mostrar el visor de imágenes
     function showImage(imageSrc) {
-        // Si ya existe un popup, lo eliminamos para evitar duplicados
         $('#image-viewer-popup').remove();
-
-        // Crear los elementos del popup
         const $popup = $('<div id="image-viewer-popup"></div>');
         const $closeButton = $('<span id="image-viewer-close">×</span>');
         const $image = $('<img>').attr('src', imageSrc).attr('alt', 'Imagen Ampliada');
-
-        // Ensamblar el popup
         $popup.append($closeButton).append($image);
-
-        // Añadir el popup al body
         $('body').append($popup);
-
-        // Mostrar el popup con una transición (requiere la clase .show y CSS)
-        // Usamos un pequeño timeout para asegurar que el navegador aplique la transición
         setTimeout(() => {
             $popup.addClass('show');
-        }, 10); // Un pequeño delay es suficiente
-
-        // Evento para cerrar el popup
+        }, 10);
         $closeButton.on('click', function() {
             closeImageViewer();
         });
-
-        // Opcional: Cerrar con la tecla Escape
         $(document).on('keydown.imageViewer', function(e) {
             if (e.key === "Escape") {
                 closeImageViewer();
@@ -780,11 +1231,10 @@ if (!$_SESSION['swlogin']) {
         const $popup = $('#image-viewer-popup');
         if ($popup.length) {
             $popup.removeClass('show');
-            // Esperar a que termine la transición antes de eliminar el elemento
             setTimeout(() => {
                 $popup.remove();
-            }, 300); // Debe coincidir con la duración de la transición en CSS
-            $(document).off('keydown.imageViewer'); // Remover el listener de la tecla Escape
+            }, 300);
+            $(document).off('keydown.imageViewer');
         }
     }
 </script>

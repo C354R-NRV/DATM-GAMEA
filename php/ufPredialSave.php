@@ -1,5 +1,7 @@
 <?php
+
 session_start();
+
 require_once './conexionpsql.php';
 
 // Initialize response array
@@ -10,7 +12,6 @@ $pjson = array(
 );
 
 try {
-
     if (!isset($_SESSION['idusuario'])) {
         throw new Exception("Usuario no autenticado");
     }
@@ -20,24 +21,25 @@ try {
 
     $geolocalizacion = isset($_POST['geolocalizacion']) ? limpiarDato($_POST['geolocalizacion']) : '';
 
-
     if (substr($_POST['numeroInmueble'], 0, 4) === 'INM-') {
-
-        $numero_inmueble =  ($_POST['numeroInmueble']);
+        $numero_inmueble = ($_POST['numeroInmueble']);
     } else {
-
-        $numero_inmueble =  intval($_POST['numeroInmueble']);
+        $numero_inmueble = intval($_POST['numeroInmueble']);
     }
-
 
     if (TRIM($_POST['numeroInmueble']) == '') {
-        $query = "SELECT COUNT(*) correlativo FROM uf_predial where numero_inmueble like 'INM%' and estado_ ";
+        $query = "SELECT 
+            CAST(substring(numero_inmueble FROM '\d+') AS INTEGER) + 1 AS correlativo
+            FROM uf_predial
+            WHERE numero_inmueble ~ '^INM-\d+$' and estado_
+            order by id desc limit 1; ";
+
         $stmt = $cons->query($query);
         $extension = $stmt->fetch(PDO::FETCH_ASSOC);
-        $numero_inmueble =  "INM-" . $extension['correlativo'];
+        $numero_inmueble = "INM-" . $extension['correlativo'];
     }
-    $codigo_catastral = isset($_POST['codigo_catastro']) ? limpiarDato($_POST['codigo_catastro']) : '';
 
+    $codigo_catastral = isset($_POST['codigo_catastro']) ? limpiarDato($_POST['codigo_catastro']) : '';
     $tipologia = isset($_POST['tipologia']) ? limpiarDato($_POST['tipologia']) : '';
 
     // FIX: Handle servicio properly - check if it's an array
@@ -55,38 +57,27 @@ try {
     }
 
     $via = isset($_POST['via']) ? limpiarDato($_POST['via']) : '';
-
     $no_plantas = isset($_POST['no_plantas']) ? intval($_POST['no_plantas']) : 0;
     $idprepredial_seleccionado = isset($_POST['idprepredial_seleccionado']) ? intval($_POST['idprepredial_seleccionado']) : 0;
     $no_plantas = ($no_plantas ? $no_plantas : '0');
-
     $no_concluidos = isset($_POST['no_concluidos']) ? intval($_POST['no_concluidos']) : 0;
     $no_concluidos = ($no_concluidos ? $no_concluidos : '0');
     $no_bruto = isset($_POST['no_bruto']) ? intval($_POST['no_bruto']) : 0;
     $no_bruto = ($no_bruto ? $no_bruto : '0');
-
     $ubicacion_nivel1 = isset($_POST['distrito']) ? limpiarDato($_POST['distrito']) : '';
     $ubicacion_nivel2 = isset($_POST['zona']) ? limpiarDato($_POST['zona']) : '';
     $ubicacion_nivel3 = isset($_POST['calle']) ? limpiarDato($_POST['calle']) : '';
     $no_puerta = isset($_POST['no_puerta']) ? limpiarDato($_POST['no_puerta']) : '';
-
     $descripcion = isset($_POST['descripcion']) ? limpiarDato($_POST['descripcion']) : '';
-
     $no_formulario = isset($_POST['no_formulario']) ? limpiarDato($_POST['no_formulario']) : '';
     $no_formulario = ($no_formulario ? $no_formulario : '0');
-
     $hhrr_ = isset($_POST['hhrr_']) ? limpiarDato($_POST['hhrr_']) : '';
     $fechaApersonamiento = isset($_POST['fechaApersonamiento']) ? limpiarDato($_POST['fechaApersonamiento']) : '';
-
-    $nombre_titular = isset($_POST['nombre_titular']) ? limpiarDato($_POST['nombre_titular']) : 'PROPIETARIO';
+    $nombre_titular = (isset($_POST['nombre_titular']) and $_POST['nombre_titular'] != '') ? limpiarDato($_POST['nombre_titular']) : 'PROPIETARIO';
     $nombre_apoderado = isset($_POST['nombre_apoderado']) ? limpiarDato($_POST['nombre_apoderado']) : '';
     $contactoTitular = isset($_POST['contactoTitular']) ? limpiarDato($_POST['contactoTitular']) : '';
-
     $contactoApoderado = isset($_POST['contactoApoderado']) ? limpiarDato($_POST['contactoApoderado']) : '';
-
     $videoInmueble = isset($_POST['videoInmueble']) ? limpiarDato($_POST['videoInmueble']) : '';
-
-
     $cant_act = isset($_POST['cant_act']) ? intval($_POST['cant_act']) : 0;
     $descripcion_act = isset($_POST['descripcion_act']) ? limpiarDato($_POST['descripcion_act']) : '';
 
@@ -95,9 +86,26 @@ try {
     if (count($coordenadas) !== 2) {
         throw new Exception('Formato de coordenadas inválido');
     }
-
     $latitud = trim($coordenadas[0]);
     $longitud = trim($coordenadas[1]);
+
+    // *** NUEVA SECCIÓN: Manejar imágenes existentes desde la base de datos ***
+    $imagen_principal_existente = isset($_POST['imagen_principal_existente']) ? limpiarDato($_POST['imagen_principal_existente']) : '';
+    $imagenes_adicionales_existentes = isset($_POST['imagenes_adicionales_existentes']) ? $_POST['imagenes_adicionales_existentes'] : [];
+
+    // Limpiar array de imágenes adicionales existentes
+    if (is_array($imagenes_adicionales_existentes)) {
+        $imagenes_adicionales_existentes = array_map('limpiarDato', $imagenes_adicionales_existentes);
+        $imagenes_adicionales_existentes = array_filter($imagenes_adicionales_existentes); // Remover valores vacíos
+    } else {
+        // Si viene como string separado por comas, convertir a array
+        if (!empty($imagenes_adicionales_existentes)) {
+            $imagenes_adicionales_existentes = array_map('trim', explode(',', $imagenes_adicionales_existentes));
+            $imagenes_adicionales_existentes = array_filter($imagenes_adicionales_existentes);
+        } else {
+            $imagenes_adicionales_existentes = [];
+        }
+    }
 
     // Handle image uploads
     $directorioImagenes = '../static/ufpredial/';
@@ -107,8 +115,10 @@ try {
         }
     }
 
-    // Process main image
+    // *** SECCIÓN MODIFICADA: Process main image ***
     $imagenPrincipalNombre = '';
+
+    // Verificar si hay una nueva imagen principal subida
     if (isset($_FILES['imagenPrincipal']) && $_FILES['imagenPrincipal']['error'] === UPLOAD_ERR_OK) {
         $nombreOriginal = $_FILES['imagenPrincipal']['name'];
         $extension = pathinfo($nombreOriginal, PATHINFO_EXTENSION);
@@ -125,7 +135,14 @@ try {
         } else {
             throw new Exception('Error al guardar la imagen principal');
         }
-    } else {
+    }
+    // Si no hay nueva imagen, verificar si hay una imagen existente de BD
+    elseif (!empty($imagen_principal_existente)) {
+        // Usar la imagen existente de la base de datos
+        $imagenPrincipalNombre = $imagen_principal_existente;
+    }
+    // Si no hay imagen nueva ni existente, validar según tipología
+    else {
         if ($tipologia == 'OBRA BRUTA') {
             throw new Exception('No se ha proporcionado una imagen principal');
         }
@@ -135,22 +152,20 @@ try {
     $imagenesAdicionales = [];
     if (isset($_FILES['imagenesAdicionales']) && $_FILES['imagenesAdicionales']['error'][0] !== UPLOAD_ERR_NO_FILE) {
         $esMultiple = is_array($_FILES['imagenesAdicionales']['name']);
-
         if ($esMultiple) {
             $totalArchivos = count($_FILES['imagenesAdicionales']['name']);
-
-
             for ($i = 0; $i < $totalArchivos; $i++) {
                 if ($_FILES['imagenesAdicionales']['error'][$i] === UPLOAD_ERR_OK) {
                     $nombreOriginal = $_FILES['imagenesAdicionales']['name'][$i];
                     $extension = pathinfo($nombreOriginal, PATHINFO_EXTENSION);
                     $nombreArchivo = 'inmueble_' . time() . '_adicional_' . $i . '.' . $extension;
                     $rutaCompleta = $directorioImagenes . $nombreArchivo;
-
                     $tipoArchivo = $_FILES['imagenesAdicionales']['type'][$i];
+
                     if (strpos($tipoArchivo, 'image/') !== 0) {
                         continue; // Skip non-image files
                     }
+
                     if (move_uploaded_file($_FILES['imagenesAdicionales']['tmp_name'][$i], $rutaCompleta)) {
                         $imagenesAdicionales[] = $nombreArchivo;
                     }
@@ -162,8 +177,8 @@ try {
                 $extension = pathinfo($nombreOriginal, PATHINFO_EXTENSION);
                 $nombreArchivo = 'inmueble_' . time() . '_adicional.' . $extension;
                 $rutaCompleta = $directorioImagenes . $nombreArchivo;
-
                 $tipoArchivo = $_FILES['imagenesAdicionales']['type'];
+
                 if (strpos($tipoArchivo, 'image/') === 0) {
                     if (move_uploaded_file($_FILES['imagenesAdicionales']['tmp_name'], $rutaCompleta)) {
                         $imagenesAdicionales[] = $nombreArchivo;
@@ -173,11 +188,30 @@ try {
         }
     }
 
-    // Prepare image_adicional value
-    $imagen_adicional = !empty($imagenesAdicionales) ? $imagenesAdicionales[0] : '';
+    // *** SECCIÓN MODIFICADA: Combinar imágenes adicionales nuevas con las existentes ***
+    $todasImagenesAdicionales = array_merge($imagenes_adicionales_existentes, $imagenesAdicionales);
+
+    // Prepare image_adicional value (tomar la primera imagen disponible)
+    $imagen_adicional = !empty($todasImagenesAdicionales) ? $todasImagenesAdicionales[0] : '';
+
+    // *** SECCIÓN DE DEBUG (opcional - puedes comentar después de probar) ***
+    $pjson['log'] .= "Imagen principal final: " . $imagenPrincipalNombre . "; ";
+    $pjson['log'] .= "Imagen principal existente recibida: " . $imagen_principal_existente . "; ";
+    $pjson['log'] .= "Imágenes adicionales nuevas: " . implode(',', $imagenesAdicionales) . "; ";
+    $pjson['log'] .= "Imágenes adicionales existentes: " . implode(',', $imagenes_adicionales_existentes) . "; ";
+    $pjson['log'] .= "Imagen adicional final: " . $imagen_adicional . "; ";
+
+
+    $clasificacion = 'H';
+    $query = "UPDATE uf_predial 
+                SET clasificacion = :clasificacion where numero_inmueble = :numero_inmueble and estado_ and clasificacion = 'A';";
+    $stmt = $cons->prepare($query);
+    $stmt->bindParam(':numero_inmueble', $numero_inmueble);
+    /*     $stmt->bindParam(':codigo_catastral', $codigo_catastral); */
+    $stmt->bindParam(':clasificacion', $clasificacion);
+    $err = $stmt->execute();
 
     // Insert into database
-
     $query = "INSERT INTO uf_predial 
                 (nombre_razon, nombre_apoderado, ubicacion_nivel1, ubicacion_nivel2, ubicacion_nivel3, no_puerta,
                 codigo_catastral, no_formulario, via, 
@@ -224,6 +258,7 @@ try {
     } else {
         $fechaApersonamiento .= ' 07:00:00';
     }
+
     $stmt->bindParam(':fecha_apersonamiento', $fechaApersonamiento);
     $stmt->bindParam(':latitud', $latitud);
     $stmt->bindParam(':longitud', $longitud);
@@ -253,11 +288,9 @@ try {
     // Handle services if they exist
     if (isset($_POST['servicio']) && is_array($_POST['servicio'])) {
         $serviciosSeleccionados = $_POST['servicio'];
-
         foreach ($serviciosSeleccionados as $idservicio) {
             // Clean the service ID
             $idservicio = limpiarDato($idservicio);
-
             $sql = "INSERT INTO uf_predrial_servicio (idpredial, idservicio) VALUES (:idpredial, :idservicio)";
             $stmt = $cons->prepare($sql);
             $stmt->bindParam(':idpredial', $idpredial);

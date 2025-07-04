@@ -395,7 +395,7 @@ if (!$_SESSION['swlogin']) {
 
         .marker-cluster-small div {
             background-color: rgba(255, 0, 0, 0.6) !important;
-            animation: pulseAnimation 2.8s infinite ease-in-out;
+            /* animation: pulseAnimation 2.8s infinite ease-in-out; */
             color: rgb(255, 255, 255);
             font-weight: bold;
         }
@@ -417,32 +417,32 @@ if (!$_SESSION['swlogin']) {
             width: 0.9rem;
             height: 0.9rem;
             border-radius: 50%;
-            box-shadow:
+            /* box-shadow:
                 0 0 6px #fff,
                 0 0 0.9rem #fff,
                 0 0 18px #17b9c1,
                 0 0 24px #17b9c1,
                 0 0 30px #4cf0f8,
-                0 0 36px #4cf0f8;
+                0 0 36px #4cf0f8; */
             border: 2px solid #fff;
-            animation: pulseAnimation 5s infinite ease-in-out;
+            /* animation: pulseAnimation 5s infinite ease-in-out; */
         }
 
         /* Nuevo estilo para marcadores de hoy */
         .puntoMarcaHoy {
-            background-color: #fbff00;
+            background-color: rgb(0, 47, 255);
             width: 0.9rem;
             height: 0.9rem;
             border-radius: 50%;
-            box-shadow:
+            /* box-shadow:
                 0 0 6px #fff,
                 0 0 0.9rem #fff,
-                0 0 18px #d5d809,
-                0 0 24px #d5d809,
-                0 0 30px #fbff00,
-                0 0 36px #fbff00;
+                0 0 18px rgb(9, 106, 216),
+                0 0 24px rgb(9, 81, 216),
+                0 0 30px rgb(0, 119, 255),
+                0 0 36px rgb(0, 132, 255); */
             border: 2px solid #fff;
-            animation: pulseAnimation 1.5s infinite ease-in-out;
+            /* animation: pulseAnimation 1.5s infinite ease-in-out; */
         }
 
         .puntoActualizado {
@@ -450,15 +450,15 @@ if (!$_SESSION['swlogin']) {
             width: 0.9rem;
             height: 0.9rem;
             border-radius: 50%;
-            box-shadow:
+            /* box-shadow:
                 0 0 6px #fff,
                 0 0 0.9rem #fff,
                 0 0 18px #0ecc08,
                 0 0 24px #0ecc08,
                 0 0 30px #0ecc08,
-                0 0 36px #0ecc08;
+                0 0 36px #0ecc08; */
             border: 2px solid #fff;
-            animation: pulseAnimation 1.5s infinite ease-in-out;
+            /* animation: pulseAnimation 1.5s infinite ease-in-out; */
         }
 
         .puntoRevelde {
@@ -478,7 +478,7 @@ if (!$_SESSION['swlogin']) {
         }
 
         .pulsing-marker div {
-            animation: pulseAnimation 2.8s infinite ease-in-out;
+            /* animation: pulseAnimation 2.8s infinite ease-in-out; */
         }
 
         .individual-pulsing-marker .leaflet-marker-icon {
@@ -537,7 +537,7 @@ if (!$_SESSION['swlogin']) {
             border-radius: 15px;
             font-size: 0.75rem;
             display: none;
-            animation: pulseAnimation 1s infinite ease-in-out;
+            /* animation: pulseAnimation 1s infinite ease-in-out; */
         }
 
         .card-inmueble {
@@ -3571,76 +3571,155 @@ if (!$_SESSION['swlogin']) {
             }
         }
 
-        // Función para filtrar marcadores
+        function normalizarCodigo(cadena) {
+            return String(cadena || '')
+                .split('-')
+                .map(parte => parte.replace(/^0+/, ''))
+                .join('-')
+                .toLowerCase();
+        }
+
         function filterMarkers(searchTerm) {
-            const term = searchTerm.toLowerCase().trim();
-            let visibleCount = 0;
+            const term = searchTerm.toLowerCase().trim()
+            let visibleCount = 0
 
-            if (!markerClusterGroup || !allLeafletMarkers) return;
+            if (!markerClusterGroup || !allLeafletMarkers) return
 
-            markerClusterGroup.clearLayers();
+            markerClusterGroup.clearLayers()
 
             if (term.length > 0 && term.length < 3) {
-                showStatusMessage('Ingrese al menos 3 caracteres para buscar', 'info');
-                return;
+                showStatusMessage("Ingrese al menos 3 caracteres para buscar", "info")
+                return
             }
 
-            showLoader();
+            showLoader()
 
             setTimeout(() => {
-                const filteredLeafletMarkers = [];
+                const filteredLeafletMarkers = []
 
                 function processFilterBatch(startIndex) {
-                    const endIndex = Math.min(startIndex + 300, allLeafletMarkers.length);
+                    const endIndex = Math.min(startIndex + 300, allLeafletMarkers.length)
 
                     for (let i = startIndex; i < endIndex; i++) {
-                        const marker = allLeafletMarkers[i];
-                        const data = marker.originalData || {};
-                        const title = String(data.title || '').toLowerCase();
-                        const nombre = String(data.nombre_razon || '').toLowerCase();
-                        const codigo = String(data.codigo_catastral || '').toLowerCase();
-                        const numero = String(data.numero_inmueble || '').toLowerCase();
-                        const usuario = String(data.usuario || '').toLowerCase();
-                        const no_formulario = String(data.no_formulario || '').toLowerCase();
-                        const fecha_apersonamiento = String(data.fecha_apersonamiento || '').toLowerCase();
+                        const marker = allLeafletMarkers[i]
+                        const data = marker.originalData || {}
 
-                        console.log("fecha_apersonamiento:" + fecha_apersonamiento);
-                        const matchesSearch = term === '' ||
-                            title.includes(term) ||
-                            nombre.includes(term) ||
-                            codigo.includes(term) ||
-                            fecha_apersonamiento.includes(term) ||
-                            usuario.includes(term) ||
-                            no_formulario.includes(term) ||
-                            numero.includes(term);
+                        // Normalizar y limpiar todos los campos
+                        const title = String(data.title || "")
+                            .toLowerCase()
+                            .trim()
+                        const nombre = String(data.nombre_razon || "")
+                            .toLowerCase()
+                            .trim()
+                        const codigo = normalizarCodigo(
+                            String(data.codigo_catastral || "")
+                            .toLowerCase()
+                            .trim(),
+                        )
+                        const termNormalizado = normalizarCodigo(term)
+                        const numero = String(data.numero_inmueble || "")
+                            .toLowerCase()
+                            .trim()
+                        const usuario = String(data.usuario || "")
+                            .toLowerCase()
+                            .trim()
+                        const no_formulario = String(data.no_formulario || "")
+                            .toLowerCase()
+                            .trim()
+                        const fecha_apersonamiento = String(data.fecha_apersonamiento || "")
+                            .toLowerCase()
+                            .trim()
+
+                        let matchesSearch = false
+
+                        if (term === "") {
+                            matchesSearch = true
+                        } else {
+                            // Primero verificar coincidencias exactas (tienen prioridad)
+                            if (no_formulario === term || numero === term) {
+                                matchesSearch = true
+                            }
+                            // Si no hay coincidencia exacta, verificar coincidencias parciales en otros campos
+                            else if (
+                                title.includes(term) ||
+                                nombre.includes(term) ||
+                                codigo.includes(termNormalizado) ||
+                                fecha_apersonamiento.includes(term) ||
+                                usuario.includes(term)
+                            ) {
+                                matchesSearch = true
+                            }
+                        }
 
                         if (matchesSearch) {
-                            filteredLeafletMarkers.push(marker);
-                            visibleCount++;
+
+                            console.log("term:" + term);
+                            console.log("numero:" + numero);
+                            if (/^inm-\d+$/i.test(term)) {
+                                if (term === numero) {
+                                    console.log("no_formulario:" + no_formulario);
+                                    filteredLeafletMarkers.push(marker)
+                                    visibleCount++
+                                }
+                            } else {
+                                filteredLeafletMarkers.push(marker)
+                            } 
+
                         }
                     }
 
                     if (endIndex < allLeafletMarkers.length) {
                         setTimeout(() => {
-                            processFilterBatch(endIndex);
-                        }, 5);
+                            processFilterBatch(endIndex)
+                        }, 5)
                     } else {
-                        markerClusterGroup.addLayers(filteredLeafletMarkers);
-                        updateResultsCount(visibleCount, totalMarkersCount || allLeafletMarkers.length);
-                        updateDebugInfo();
-                        hideLoader();
+                        markerClusterGroup.addLayers(filteredLeafletMarkers)
+                        updateResultsCount(visibleCount, totalMarkersCount || allLeafletMarkers.length)
+                        updateDebugInfo()
+                        hideLoader()
 
-                        if (filteredLeafletMarkers.length > 0 && term !== '') {
+                        if (filteredLeafletMarkers.length > 0 && term !== "") {
                             setTimeout(() => {
-                                fitMapToVisibleMarkers();
-                            }, 100);
+                                fitMapToVisibleMarkers()
+                            }, 100)
                         }
                     }
                 }
 
-                processFilterBatch(0);
-            }, 25);
+                processFilterBatch(0)
+            }, 25)
         }
+
+        // Declare functions before using them
+        function showStatusMessage(message, type) {
+            console.log(`Status Message: ${message} (Type: ${type})`)
+        }
+
+        function showLoader() {
+            console.log("Loader shown")
+        }
+
+        function normalizarCodigo(codigo) {
+            return codigo.replace(/[^a-z0-9]/gi, "")
+        }
+
+        function updateResultsCount(visibleCount, totalCount) {
+            console.log(`Visible Count: ${visibleCount}, Total Count: ${totalCount}`)
+        }
+
+        function updateDebugInfo() {
+            console.log("Debug info updated")
+        }
+
+        function hideLoader() {
+            console.log("Loader hidden")
+        }
+
+        function fitMapToVisibleMarkers() {
+            console.log("Map fitted to visible markers")
+        }
+
+
 
         // Función para mostrar todos los marcadores
         function showAllMarkers() {
@@ -4126,16 +4205,17 @@ if (!$_SESSION['swlogin']) {
                 return;
             }
 
-            // Función auxiliar para generar box-shadow con el mismo color
+            // Función auxiliar para generar box-shadow con el mismo color NEON
             function generarBoxShadow(colorHex) {
                 return `
-            0 0 6px #fff,
-            0 0 0.9rem #fff,
-            0 0 18px ${colorHex},
-            0 0 24px ${colorHex},
-            0 0 30px ${colorHex},
-            0 0 36px ${colorHex}
-        `;
+                    0 0 2px #fff,
+                    0 0 0.2rem #fff,
+                    0 0 3px ${colorHex},
+                    0 0 2px ${colorHex},
+                    0 0 2px ${colorHex},
+                    0 0 2px ${colorHex}
+                `;
+                /* return ''; */
             }
 
             prePuntosLayer = L.layerGroup();
@@ -4162,8 +4242,7 @@ if (!$_SESSION['swlogin']) {
                         height: 0.9rem;
                         border-radius: 50%;
                         box-shadow: ${boxShadow};
-                        border: 2px solid ${borde_};
-                        animation: pulseAnimation 5s infinite ease-in-out;
+                        border: 2px solid ${borde_}; 
                     "></div>
                 `,
                         iconSize: [20, 20],
@@ -4476,7 +4555,7 @@ if (!$_SESSION['swlogin']) {
             // Crear marcador en el punto clickeado
             const pointIcon = L.divIcon({
                 className: 'new-point-marker-container',
-                html: '<div style="background-color: ' + colorPrevio + '; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px rgba(206, 206, 206, 0.8); animation: pulseAnimation 1.5s infinite ease-in-out;"></div>',
+                html: '<div style="background-color: ' + colorPrevio + '; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px rgba(206, 206, 206, 0.8); "></div>',
                 iconSize: [16, 16],
                 iconAnchor: [8, 8]
             });
@@ -4601,9 +4680,11 @@ if (!$_SESSION['swlogin']) {
         // Función para actualizar el color del marcador
         function updateMarkerColor(marker, color) {
             console.log("en updateMarkerColor:" + color);
+
+            /* html: `<div style="background-color: ${color}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px ${color}80; animation: pulseAnimation 1.5s infinite ease-in-out;"></div>`, */
             const newIcon = L.divIcon({
                 className: 'new-point-marker-container',
-                html: `<div style="background-color: ${color}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px ${color}80; animation: pulseAnimation 1.5s infinite ease-in-out;"></div>`,
+                html: `<div style="background-color: ${color}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px ${color}80;"></div>`,
                 iconSize: [16, 16],
                 iconAnchor: [8, 8]
             });
@@ -4631,9 +4712,12 @@ if (!$_SESSION['swlogin']) {
             // Cambiar el estilo del marcador a "guardado" con el color seleccionado
             if (newPointMarker) {
                 // Crear nuevo icono para punto guardado con color personalizado
+
+                /* html: `<div style="background-color: ${selectedColor}; width: 0.9rem; height: 0.9rem; border-radius: 50%; box-shadow: 0 0 6px #fff, 0 0 0.9rem #fff, 0 0 18px ${selectedColor}, 0 0 24px ${selectedColor}, 0 0 30px ${selectedColor}, 0 0 36px ${selectedColor}; border: 2px solid #fff; animation: pulseAnimation 5s infinite ease-in-out;"></div>`, */
+
                 const savedPointIcon = L.divIcon({
                     className: 'saved-point-marker-container',
-                    html: `<div style="background-color: ${selectedColor}; width: 0.9rem; height: 0.9rem; border-radius: 50%; box-shadow: 0 0 6px #fff, 0 0 0.9rem #fff, 0 0 18px ${selectedColor}, 0 0 24px ${selectedColor}, 0 0 30px ${selectedColor}, 0 0 36px ${selectedColor}; border: 2px solid #fff; animation: pulseAnimation 5s infinite ease-in-out;"></div>`,
+                    html: `<div style="background-color: ${selectedColor}; width: 0.9rem; height: 0.9rem; border-radius: 50%; border: 2px solid #fff;"></div>`,
                     iconSize: [18, 18],
                     iconAnchor: [9, 9]
                 });
@@ -5025,7 +5109,7 @@ if (!$_SESSION['swlogin']) {
         function loadGralOff() {
             $(".loadGral").removeClass("loadGralOn");
             $(".loadGral").addClass("loadGralOff");
-        } 
+        }
 
         $(document).ready(function() {
             toggleDarkOverlay();

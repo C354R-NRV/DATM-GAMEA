@@ -114,7 +114,7 @@ try {
             'idprepredial' => $row['idprepredial'],
             'latitud' => $lat,
             'longitud' => $lng,
-            'detalle' => $row['detalle'],
+            'detalle' => $row['detalle'].' ['.$row['idprepredial'].']',
             'idusuario' => $row['usuario'],
             'fregistro_' => $fecha,
             'estado_' => $row['estado_'],

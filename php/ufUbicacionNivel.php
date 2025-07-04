@@ -9,6 +9,7 @@ error_reporting(E_ALL);
 $pjson = array(
     'err' => '0',
     'sql' => '',
+    'queryNivel2' => '',
     'html' => '',
     'msg' => '',
     'log' => ''
@@ -46,7 +47,11 @@ try {
         $condiciones = array();
 
         foreach ($valores as $valor) {
-            $valor =    strtoupper(trim($valor));
+            $valor = strtoupper(trim($valor));
+
+            if ($valor == 'TODOS') {
+                $valor = '';
+            }
 
             // Si el valor está en los predefinidos, usar comparación exacta
             if (in_array($valor, $valoresPredefinidos)) {
@@ -82,17 +87,19 @@ try {
         $query = "SELECT distinct TRIM(replace(replace(replace(ubicacion_nivel2, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) as ubicacion from inmueble_univ a where 1=1 $filtro order by TRIM(replace(replace(replace(ubicacion_nivel2, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', ''));";
     }
 
-    if ($nivel == '3') { 
+    if ($nivel == '3') {
         $queryNivel2 = "SELECT distinct TRIM(replace(replace(replace(ubicacion_nivel2, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) as ubicacion from inmueble_univ a where 1=1 $filtro order by TRIM(replace(replace(replace(ubicacion_nivel2, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', ''));";
         $stmtNivel2 = $cons->query($queryNivel2);
+        $pjson['queryNivel2'] = $queryNivel2;
         $resultadosNivel2 = $stmtNivel2->fetchAll(PDO::FETCH_ASSOC);
 
         $valoresPredefinidosNivel2 = array('TODOS');
         foreach ($resultadosNivel2 as $row) {
             $valoresPredefinidosNivel2[] = $row['ubicacion'];
-        } 
-        
-        $filtro .= generarFiltroUbicacion($ubicacion2, 'a.ubicacion_nivel2', $valoresPredefinidosNivel2);
+        }
+        if ($ubicacion2 != 'TODOS') {
+            $filtro .= generarFiltroUbicacion($ubicacion2, 'a.ubicacion_nivel2', $valoresPredefinidosNivel2);
+        }
 
         $query = "SELECT distinct TRIM(replace(replace(replace(a.ubicacion_nivel3, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) as ubicacion from inmueble_univ a where 1=1 $filtro order by TRIM(replace(replace(replace(a.ubicacion_nivel3, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', ''));";
     }

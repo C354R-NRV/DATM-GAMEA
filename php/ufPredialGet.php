@@ -81,7 +81,9 @@ try {
 
         foreach ($valores as $valor) {
             $valor = strtoupper(trim($valor));
-
+            if ($valor == 'TODOS') {
+                $valor = '';
+            }
             // Si el valor está en los predefinidos, usar comparación exacta
             if (in_array($valor, $valoresPredefinidos)) {
                 if ($valor == '5') {
@@ -124,7 +126,7 @@ try {
     }
 
     $valoresPredefinidosNivel2 = array('TODOS');
-    if (!empty($ubicacion2)) { 
+    if (!empty($ubicacion2)) {
         $filtroTemporal = '';
         if ($ubicacion1 != 'TODOS' && !empty($ubicacion1)) {
             $filtroTemporal .= generarFiltroUbicacion($ubicacion1, 'ubicacion_nivel1', $valoresPredefinidosNivel1);
@@ -132,7 +134,7 @@ try {
 
         $queryNivel2 = "SELECT distinct TRIM(replace(replace(replace(ubicacion_nivel2, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) as ubicacion from inmueble_univ where 1=1 $filtroTemporal order by TRIM(replace(replace(replace(ubicacion_nivel2, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', ''));";
         $stmtNivel2 = $cons->query($queryNivel2);
-        
+
         $resultadosNivel2 = $stmtNivel2->fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($resultadosNivel2 as $row) {
@@ -156,7 +158,7 @@ try {
 
         $queryNivel3 = "SELECT distinct TRIM(replace(replace(replace(ubicacion_nivel3, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', '')) as ubicacion from inmueble_univ where 1=1 $filtroTemporal order by TRIM(replace(replace(replace(ubicacion_nivel3, 'LOTE,', ''), 'COMUNIDAD:', ''), 'URBANIZACION,', ''));";
         $stmtNivel3 = $cons->query($queryNivel3);
-        
+
         $resultadosNivel3 = $stmtNivel3->fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($resultadosNivel3 as $row) {
@@ -257,7 +259,7 @@ try {
             b.contacto_apoderado,   
             b.latitud, 
             b.longitud,
-            b.cant_act, b.descripcion_act  ";
+            b.cant_act, b.descripcion_act , imagen_principal, imagen_adicional ";
 
     if (str_contains($numInmueble, "INM-")) {
         $query .= " 
@@ -320,6 +322,8 @@ try {
                 <input type='hidden' value='" . $value['longitud'] . "' id='longitud$cnt'>
                 <input type='hidden' value='" . $value['cant_act'] . "' id='cant_act$cnt'>
                 <input type='hidden' value='" . $value['descripcion_act'] . "' id='descripcion_act$cnt'>
+                <input type='hidden' value='" . $value['imagen_principal'] . "' id='imagen_principal$cnt'>
+                <input type='hidden' value='" . $value['imagen_adicional'] . "' id='imagen_adicional$cnt'>
 
                 <button type='button' class='seleccionar-btn' onclick='seleccionarInmueble($cnt, event); return false;'><i class='fa fa-hand-pointer-o' aria-hidden='true'></i></button>
             </td>
