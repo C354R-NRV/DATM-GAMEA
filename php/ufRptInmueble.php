@@ -181,7 +181,7 @@ function generatePDFHTML($inmueble, $fotos)
             page-break-inside: avoid;
         }
         .photo-single {
-            max-width: 800px;
+            max-width: 650px;
             max-height: 550px;
             width: auto;
             height: auto;

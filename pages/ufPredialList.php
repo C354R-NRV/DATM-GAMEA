@@ -947,7 +947,7 @@ if (!$_SESSION['swlogin']) {
     }
 
     function imprimirReporte(idinmueble) {
-        datos = "j=" + idinmueble; 
+        datos = "j=" + idinmueble;
         var url_ = "../php/ufRptInmueble.php?" + datos;
         $.ajax({
             url: url_,
@@ -981,6 +981,7 @@ if (!$_SESSION['swlogin']) {
                 <div class="card-body"> 
                     <div class="icon-buttons">
                         <i class="fa fa-check icon-check" aria-hidden="true" title="Inmueble actualizado" onclick="actualizarEstado(${dat[0].id}, '${dat[0].numero_inmueble}',1)"></i>  
+                        <i class="fa fa-pencil-square-o icon-refresh" aria-hidden="true" title="Modificar inmueble" onclick="modificaInmueble(${dat[0].id}, '${dat[0].numero_inmueble}')"></i>  
                         <i class="fa fa-print  icon-refresh" aria-hidden="true" onclick="imprimirReporte(${dat[0].id})"></i>     
                         <a target="_blank" href="https://www.google.com/maps?q=${dat[0].latitud},${dat[0].longitud}"><i class="fa fa-street-view icon-refresh" aria-hidden="true"></i></a>   
                         <i class="fa fa-exclamation-triangle icon-warning" aria-hidden="true" title="Desacato a la fiscalización" onclick="actualizarEstado(${dat[0].id}, '${dat[0].numero_inmueble}', 0)"></i> 
@@ -1107,6 +1108,62 @@ if (!$_SESSION['swlogin']) {
 
 
         return html;
+    }
+
+    function modificaInmueble(id, inmueble) {
+
+        $.confirm({
+            title: "Modificación de inmueble",
+            content: `Numero de inmueble actual: <b>${inmueble}</b><p>Nuevo numero:<input type="text" id="new_inmueble" placeholder="Numero inmueble" class="form-control"></p>`,
+            type: "green",
+            typeAnimated: true,
+            columnClass: "col-md-6 col-md-offset-6 col-xs-8 col-xs-offset-8",
+            buttons: {
+                cancel: {
+                    text: "Cerrar",
+                    action: function() {},
+                },
+                guardar: {
+                    text: "Confirmar",
+                    btnClass: "btn-green",
+                    action: function() {
+
+                        datos = "&id=" + id + "&inmueble=" + inmueble + "&new_inmueble=" + $('#new_inmueble').val();
+
+
+                        $.ajax({
+                            async: true,
+                            type: "POST",
+                            dataType: "html",
+                            contentType: "application/x-www-form-urlencoded",
+                            url: "../php/ufUpdateNumeroInmueble.php",
+                            data: datos,
+                            beforeSend: function() {
+                                loadGralOn();
+                            },
+                            success: function(e) { 
+                                loadGralOff();
+                                dat = JSON.parse(e)
+                                if (dat.success) {
+                                    window.location.href = './ufPredialList.php';
+                                } else {
+                                    $.confirm({
+                                        title: " Error",
+                                        type: "red",
+                                        content: dat.message,
+                                    });
+                                }
+                            },
+                            error: function() {},
+                        });
+                    }
+                },
+            },
+            onOpenBefore: function() {
+                $('.jconfirm-title-c').css('text-align', 'center');
+            }
+        });
+
     }
 
     function actualizarEstado(id, inmueble, estado) {

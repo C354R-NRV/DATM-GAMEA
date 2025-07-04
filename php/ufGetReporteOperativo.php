@@ -89,6 +89,7 @@ try {
         LEFT JOIN uf_prepredial x ON x.idpredial_asociado = a.id 
         where  a.estado_  
         and d.operativo = '13' 
+        and a.clasificacion = 'A'
         AND d.fecha_operativo::DATE = a.fecha_apersonamiento::DATE  
         -- and b.grupo = 'G-8' 
         order by grupo, a.no_formulario; 

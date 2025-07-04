@@ -71,7 +71,8 @@ try {
         left join datm_usuario b on  a.idusuario = b.id  
         left join uf_predial c on c.id = a.idpredial_asociado  
         WHERE  
-            a.estado_ = true  
+            a.estado_ = true
+            and a.idoperativo in ( 3, 4) -- [pendiente] esto debe cambiar por algo dinamico  
             AND a.geom IS NOT NULL
             AND ST_Within(
                 a.geom, 

@@ -204,9 +204,10 @@ try {
     }
 
     $query = "SELECT  distinct
-            COALESCE(a.numero_inmueble, b.numero_inmueble) numero_inmueble, 
-            a.codigo_catastral,  
-            
+            COALESCE(b.numero_inmueble, a.numero_inmueble) numero_inmueble, 
+            COALESCE(b.codigo_catastral, a.codigo_catastral) codigo_catastral,  
+            b.no_formulario, 
+            b.hhrr, 
             TRIM(REPLACE(REPLACE(REPLACE(REPLACE(
                 COALESCE(b.ubicacion_nivel1, a.ubicacion_nivel1), 
                 'DISTRITO:', ''), 
@@ -231,7 +232,7 @@ try {
 
             COALESCE(b.contacto_titular, a.telefono_celular) AS telefono_celular,  
 
-            COALESCE(b.descripcion, a.direccion_descriptiva) AS direccion_descriptiva, 
+            COALESCE(b.descripcion, '') AS descripcion, 
 
             TRIM(UPPER(
                 COALESCE(b.nombre_razon, CONCAT(a.nombre_rsocial, ' ', a.primer_apellido_sigla, ' ', a.segundo_apellido, ' ', a.apellido_esposo))
@@ -300,6 +301,8 @@ try {
             <td aling='center' style='text-align:center;'>
                 <input type='hidden' value='" . $value['numero_inmueble'] . "' id='numero_inmueble$cnt'>
                 <input type='hidden' value='" . $value['codigo_catastral'] . "' id='codigo_catastral$cnt'>
+                <input type='hidden' value='" . $value['no_formulario'] . "' id='no_formulario$cnt'>
+                <input type='hidden' value='" . $value['hhrr'] . "' id='hhrr$cnt'>
                 <input type='hidden' value='" . $value['documento_identidad'] . "' id='documento_identidad$cnt'>
                 <input type='hidden' value='" . $value['nombre_tit'] . "' id='nombre_tit$cnt'>
                 <input type='hidden' value='" . $value['ubicacion_nivel1'] . "' id='ubicacion_nivel1$cnt'>
@@ -307,7 +310,7 @@ try {
                 <input type='hidden' value='" . $value['ubicacion_nivel3'] . "' id='ubicacion_nivel3$cnt'>
                 <input type='hidden' value='" . $value['numero_puerta'] . "' id='numero_puerta$cnt'>
                 <input type='hidden' value='" . $value['nombre_apo'] . "' id='nombre_apo$cnt'>
-                <input type='hidden' value='" . $value['direccion_descriptiva'] . "' id='direccion_descriptiva$cnt'>    
+                <input type='hidden' value='" . $value['descripcion'] . "' id='descripcion$cnt'>    
                 <input type='hidden' value='" . $value['material_via'] . "' id='material_via$cnt'>
                 <input type='hidden' value='" . $value['servicio'] . "' id='servicio$cnt'>
                 <input type='hidden' value='" . $value['servicio_uf'] . "' id='servicio_uf$cnt'>

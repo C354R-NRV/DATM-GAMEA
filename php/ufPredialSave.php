@@ -28,7 +28,9 @@ try {
     }
 
     if (TRIM($_POST['numeroInmueble']) == '') {
-        $query = "SELECT 
+        $numero_inmueble = generarNumeroInmuebleUnico($cons, $_SESSION['idusuario']);
+
+        /* $query = "SELECT 
             CAST(substring(numero_inmueble FROM '\d+') AS INTEGER) + 1 AS correlativo
             FROM uf_predial
             WHERE numero_inmueble ~ '^INM-\d+$' and estado_
@@ -36,7 +38,7 @@ try {
 
         $stmt = $cons->query($query);
         $extension = $stmt->fetch(PDO::FETCH_ASSOC);
-        $numero_inmueble = "INM-" . $extension['correlativo'];
+        $numero_inmueble = "INM-" . $extension['correlativo']; */
     }
 
     $codigo_catastral = isset($_POST['codigo_catastro']) ? limpiarDato($_POST['codigo_catastro']) : '';
@@ -228,7 +230,7 @@ try {
                 :imagen_adicional, 
                 :numero_inmueble, :descripcion, :hhrr, 
                 :fecha_apersonamiento, :latitud, :longitud, :idusuario, :fregistro_ , :contacto_apoderado,  :contacto_titular, :video, :idestado_fiscalizacion,
-                :descripcion_act, :cant_act
+                :descripcion_act, :cant_act 
                 )";
 
     $idestado_fiscalizacion = 1;
@@ -313,6 +315,7 @@ try {
         $err = $stmt->execute();
     }
 
+
     $pjson['msg'] = 'Registro guardado exitosamente';
     $pjson['id'] = $idpredial;
 } catch (Exception $e) {
@@ -350,4 +353,62 @@ function limpiarDato($dato)
     $dato = stripslashes($dato);
     $dato = htmlspecialchars($dato);
     return $dato;
+}
+
+
+function generarNumeroInmuebleUnico($conexion, $idusuario = 0)
+{
+    $intentos = 0;
+    $max_intentos = 5;
+
+    do {
+        try {
+            // Generar código único basado en:
+            // - Timestamp con microsegundos (últimos 2 dígitos)
+            // - ID de usuario (2 dígitos)
+            // - Número aleatorio (4 dígitos)
+            $timestamp = microtime(true);
+            $microsegundos = str_replace('.', '', $timestamp);
+            $usuario_pad = str_pad($idusuario, 2, '0', STR_PAD_LEFT);
+
+            $codigo_unico = substr($microsegundos, -3) . $usuario_pad;
+
+            // Obtener el siguiente correlativo
+            $query = "SELECT 
+                    COALESCE(MAX(CAST(substring(numero_inmueble FROM 'INM-(\d+)') AS INTEGER)), 0) + 1 AS correlativo
+                FROM uf_predial 
+                WHERE numero_inmueble ~ '^INM-\d+' 
+                AND estado_";
+
+            $stmt = $conexion->query($query);
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            $correlativo = $resultado['correlativo'] ?? 1;
+
+            $numero_inmueble = "INM-" . $correlativo . "-" . $codigo_unico;
+
+            // Verificar que no exista (doble verificación)
+            $queryVerificar = "SELECT COUNT(*) as existe FROM uf_predial WHERE numero_inmueble = :numero_inmueble";
+            $stmtVerificar = $conexion->prepare($queryVerificar);
+            $stmtVerificar->bindParam(':numero_inmueble', $numero_inmueble);
+            $stmtVerificar->execute();
+            $existe = $stmtVerificar->fetch(PDO::FETCH_ASSOC);
+
+            if ($existe['existe'] == 0) {
+                return $numero_inmueble; // Número único encontrado
+            }
+
+            $intentos++;
+            // Esperar un tiempo aleatorio antes del siguiente intento
+            usleep(mt_rand(10000, 50000)); // 10-50 milisegundos
+
+        } catch (Exception $e) {
+            $intentos++;
+            if ($intentos >= $max_intentos) {
+                throw new Exception("Error al generar número de inmueble: " . $e->getMessage());
+            }
+            usleep(mt_rand(10000, 50000));
+        }
+    } while ($intentos < $max_intentos);
+
+    throw new Exception("No se pudo generar un número de inmueble único después de $max_intentos intentos");
 }

@@ -45,11 +45,11 @@ try {
     $useGeojsonFile = isset($_GET['useGeojson']) ? intval($_GET['useGeojson']) : 0;
 
     // Determinar límite de puntos basado en zoom
-    $zoomBasedLimit = 500;
+    $zoomBasedLimit = 800;
     if ($zoom > 13) {
-        $zoomBasedLimit = 500 + (($zoom - 13) * 250);
+        $zoomBasedLimit = 800 + (($zoom - 13) * 250);
     } elseif ($zoom < 13) {
-        $zoomBasedLimit = max(100, 500 - ((13 - $zoom) * 100));
+        $zoomBasedLimit = max(100, 800 - ((13 - $zoom) * 100));
     }
 
     $limit = min($limit, $zoomBasedLimit);
@@ -296,6 +296,7 @@ try {
                     'is_visit_today' => $isVisitToday,
                     'usuario' => $row['usuario'],
                     'no_formulario' => $row['no_formulario'],
+                    'imagen_principal' => $row['imagen_principal'],
                     'estado_fiscalizacion' => $row['estado_fiscalizacion'],
                     'tipologia' => $row['tipologia'],
                     'html' => $popupHtml

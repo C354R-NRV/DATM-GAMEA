@@ -736,6 +736,61 @@ if (!$_SESSION['swlogin']) {
         .preview-item.error-loading .preview-info {
             color: #721c24;
         }
+
+
+        /* Estilos para el botón de puntos visibles */
+        .control-button.puntos-visibles {
+            background-color: rgba(29, 25, 22, 0.9);
+        }
+
+        .control-button.puntos-visibles.active {
+            background-color: rgba(255, 165, 0, 0.8);
+        }
+
+        .control-button.puntos-visibles:hover {
+            background-color: rgba(36, 37, 38, 0.9);
+        }
+
+        /* Estilos para los marcadores de puntos visibles */
+        .punto-visible-marker {
+            background-color: #00ff00;
+            color: black;
+            border: 2px solid black;
+            border-radius: 50%;
+            width: 0.7rem;
+            height: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.7rem;
+            box-shadow: 0 2px 6px rgb(0 0 0 / 53%)
+        }
+
+        .puntos-visibles-updating {
+            position: absolute;
+            top: 75px;
+            right: 10px;
+            z-index: 1000;
+            background-color: rgba(0, 255, 0, 0.9);
+            color: black;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            display: none;
+        }
+
+
+        /* Estilo para botón deshabilitado por zoom */
+        .control-button.puntos-visibles.zoom-insufficient {
+            background-color: rgba(100, 100, 100, 0.6);
+            cursor: not-allowed;
+        }
+
+        .control-button.puntos-visibles.zoom-insufficient:hover {
+            background-color: rgba(100, 100, 100, 0.6);
+            transform: none;
+        }
     </style>
 </head>
 
@@ -811,10 +866,17 @@ if (!$_SESSION['swlogin']) {
                             <button id="prePuntosBtn" class="control-button pre-puntos" title="Buscar Pre-Puntos" aria-label="Buscar Pre-Puntos">
                                 <i class="fa fa-search" aria-hidden="true"></i>
                             </button>
+                            <button id="puntosVisiblesBtn" class="control-button puntos-visibles" title="Mostrar Puntos Visibles" aria-label="Mostrar Puntos Visibles">
+                                <i class="fa fa-eye" aria-hidden="true"></i>
+                            </button>
+
 
                         </div>
                         <div id="statusMessage" class="status-message" role="alert"></div>
                         <div id="dynamicLoadingIndicator" class="dynamic-loading-indicator">Cargando datos...</div>
+
+                        <div class="puntos-visibles-updating">Cargando puntos visibles...</div>
+
                     </div>
                     <div id="geoStatus" class="mt-2 small" style="display:none;"></div>
                 </div>
@@ -1267,6 +1329,7 @@ if (!$_SESSION['swlogin']) {
                 $('#buscarBtn').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Buscando...');
             },
             success: function(dat) {
+                console.log(dat);
                 dat = JSON.parse(dat);
                 console.log(dat.sql);
                 loadGralOff();
@@ -1293,6 +1356,8 @@ if (!$_SESSION['swlogin']) {
         // Llenar todos los campos del formulario como ya lo tienes
         $('#numeroInmueble').val($('#numero_inmueble' + cnt).val());
         $('#codigo_catastro').val($('#codigo_catastral' + cnt).val());
+        $('#no_formulario').val($('#no_formulario' + cnt).val());
+        $('#hhrr_').val($('#hhrr' + cnt).val());
         $('#nombre_titular').val($('#nombre_tit' + cnt).val());
         $('#nombre_apoderado').val($('#nombre_apo' + cnt).val());
         $('#contactoTitular').val($('#telefono_celular' + cnt).val());
@@ -1300,7 +1365,7 @@ if (!$_SESSION['swlogin']) {
         $('#zona').val($('#ubicacion_nivel2' + cnt).val());
         $('#calle').val($('#ubicacion_nivel3' + cnt).val());
         $('#no_puerta').val($('#numero_puerta' + cnt).val());
-        $('#descripcion').val($('#direccion_descriptiva' + cnt).val());
+        $('#descripcion').val($('#descripcion' + cnt).val());
         $('#via').val($('#material_via' + cnt).val());
         $('#tipologia').val($('#tipo_construccion' + cnt).val());
 
@@ -1345,13 +1410,22 @@ if (!$_SESSION['swlogin']) {
 
             let auxBotones = `<span class="text-success">
                                     <i class="fa fa-check-circle"></i> Ubicación establecida desde inmueble seleccionado. `
-            if (selectedPrePuntoId !== null)
+            if (selectedPrePuntoId !== null) {
                 auxBotones += `<button id="clearPrePuntoBtn" type="button" class="btn btn-sm ms-2" style="background: none; border: none; color: #dc3545; padding: 2px 6px; margin-left: 8px;" title="Limpiar selección de pre-punto">
                 <i class="fa fa-trash" aria-hidden="true"></i>
             </button>`
+            }
+
             auxBotones += `</span>`
 
             $('#geoStatus').html(auxBotones).show();
+            if (selectedPrePuntoId !== null) {
+                // Agregar event listener al botón de eliminar
+                $('#clearPrePuntoBtn').on('click', function() {
+                    clearPrePuntoSelection();
+                });
+            }
+
         } else {
             let auxBotones = `<span class="text-success">
                                     <i class="fa fa-exclamation-triangle"></i> El inmueble seleccionado no tiene coordenadas registradas.`
@@ -1362,6 +1436,13 @@ if (!$_SESSION['swlogin']) {
             auxBotones += `</span>`
 
             $('#geoStatus').html(auxBotones).show();
+
+            if (selectedPrePuntoId !== null) {
+                // Agregar event listener al botón de eliminar
+                $('#clearPrePuntoBtn').on('click', function() {
+                    clearPrePuntoSelection();
+                });
+            }
         }
 
         // *** NUEVA SECCIÓN: Cargar imágenes desde inputs hidden ***
@@ -1399,6 +1480,11 @@ if (!$_SESSION['swlogin']) {
         let distritosLayerGroup = null;
         let distritosActive = false;
         let currentTooltip = null; // Para el tooltip
+
+        // Variables para la capa de puntos visibles
+        let puntosVisiblesLayer = null;
+        let puntosVisiblesActive = false;
+        let puntosVisiblesData = [];
 
 
         // Event listener para el botón de distritos (mostrar todos a la vez)
@@ -1503,6 +1589,163 @@ if (!$_SESSION['swlogin']) {
 
             this.blur();
         });
+
+
+        // Función debounced para buscar puntos visibles
+        const debouncedBuscarPuntosVisibles = debounce(buscarPuntosVisibles, 500);
+
+        // Función para buscar puntos visibles
+        function buscarPuntosVisibles(showMessage = true) {
+            if (!map) {
+                console.warn('Mapa no inicializado');
+                return;
+            }
+
+            const currentZoom = map.getZoom();
+
+            // Validar zoom mínimo
+            if (currentZoom <= 18) {
+                if (showMessage) {
+                    showStatusMessage(`Zoom insuficiente para mostrar puntos. Mínimo: 19, Actual: ${currentZoom}`, 'error');
+                }
+                return;
+            }
+
+            const bounds = map.getBounds();
+            const sw = bounds.getSouthWest();
+            const ne = bounds.getNorthEast();
+
+            const params = new URLSearchParams({
+                minLat: sw.lat,
+                maxLat: ne.lat,
+                minLng: sw.lng,
+                maxLng: ne.lng,
+                zoom: currentZoom,
+                limit: 1000
+            });
+
+            $.ajax({
+                url: '../php/ufPuntosGet.php?' + params.toString(),
+                type: 'GET',
+                dataType: 'json',
+                beforeSend: function() {
+                    $('#puntosVisiblesBtn').addClass('loading');
+                    if (showMessage) {
+                        $('.puntos-visibles-updating').show();
+                    }
+                },
+                success: function(response) {
+                    if (response.data && Array.isArray(response.data)) {
+                        puntosVisiblesData = response.data;
+                        renderPuntosVisibles();
+
+                        if (showMessage) {
+                            showStatusMessage(`Se encontraron ${puntosVisiblesData.length} puntos visibles`, 'success');
+                        }
+                    } else {
+                        if (showMessage) {
+                            showStatusMessage('Error: Formato de respuesta inválido', 'error');
+                        }
+                        console.error('Error en búsqueda de puntos visibles: formato inválido');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error en la búsqueda de puntos visibles:', error);
+                    if (showMessage) {
+                        showStatusMessage('Error al buscar puntos visibles', 'error');
+                    }
+                },
+                complete: function() {
+                    $('#puntosVisiblesBtn').removeClass('loading');
+                    $('.puntos-visibles-updating').hide();
+                }
+            });
+        }
+
+        // Función para renderizar puntos visibles
+        function renderPuntosVisibles() {
+            // Remover capa anterior si existe
+            if (puntosVisiblesLayer && map.hasLayer(puntosVisiblesLayer)) {
+                map.removeLayer(puntosVisiblesLayer);
+            }
+
+            if (puntosVisiblesData.length === 0) {
+                return;
+            }
+
+            puntosVisiblesLayer = L.layerGroup();
+
+            puntosVisiblesData.forEach(function(punto, index) {
+                if (punto.position && Array.isArray(punto.position) && punto.position.length >= 2) {
+                    const lat = parseFloat(punto.position[0]);
+                    const lng = parseFloat(punto.position[1]);
+
+                    if (!isNaN(lat) && !isNaN(lng)) {
+                        const puntoIcon = L.divIcon({
+                            className: 'punto-visible-marker-container',
+                            html: `<div class="punto-visible-marker"></div>`,
+                            iconSize: [20, 20],
+                            iconAnchor: [10, 10]
+                        });
+
+                        const marker = L.marker([lat, lng], {
+                            icon: puntoIcon
+                        });
+
+                        const popupContent = `
+                    <div class="popup-content"> 
+                    <div style="text-align:center;"><img style="max-height:6rem;" src="../static/ufpredial/${punto.imagen_principal || 'no_img.jpg'}"></div>
+                        <div class="popup-description">
+                            <strong>Formulario:</strong> ${punto.no_formulario || 'N/A'}<br> 
+                            <strong>Número:</strong> <span style="cursor:pointer; font-weight: bold; color:#15939d; " 
+                                            onclick="navigator.clipboard.writeText('${punto.numero_inmueble}')">
+                                            ${punto.numero_inmueble}
+                                        </span><br>
+                            <strong>Contribuyente:</strong> ${punto.nombre_razon || 'N/A'}<br>
+                            <strong>Código catastro:</strong> ${punto.codigo_catastral || 'N/A'}<br>
+                            <strong>Fecha visita:</strong> ${punto.fecha_apersonamiento || 'N/A'}<br>
+                            <strong>Usuario:</strong> ${punto.usuario || 'N/A'}
+                        </div>
+                    </div>
+                `;
+
+                        marker.bindPopup(popupContent);
+                        puntosVisiblesLayer.addLayer(marker);
+                    }
+                }
+            });
+
+            map.addLayer(puntosVisiblesLayer);
+            puntosVisiblesActive = true;
+            $('#puntosVisiblesBtn').addClass('active');
+        }
+
+        // Función para alternar la capa de puntos visibles
+        function togglePuntosVisibles() {
+            const currentZoom = map.getZoom();
+
+            if (puntosVisiblesActive) {
+                // Desactivar capa
+                if (puntosVisiblesLayer && map.hasLayer(puntosVisiblesLayer)) {
+                    map.removeLayer(puntosVisiblesLayer);
+                }
+                puntosVisiblesActive = false;
+                puntosVisiblesData = [];
+                $('#puntosVisiblesBtn').removeClass('active');
+                showStatusMessage('Capa de puntos visibles desactivada', 'info');
+            } else {
+                // Verificar zoom mínimo antes de activar
+                if (currentZoom <= 18) {
+                    showStatusMessage(`Zoom mínimo requerido: 19. Zoom actual: ${currentZoom}`, 'error');
+                    return;
+                }
+
+                // Activar capa
+                puntosVisiblesActive = true;
+                $('#puntosVisiblesBtn').addClass('active');
+                buscarPuntosVisibles(true);
+            }
+        }
 
         function debounce(func, wait) {
             let timeout;
@@ -2009,6 +2252,13 @@ if (!$_SESSION['swlogin']) {
                 this.blur();
             });
 
+            document.getElementById('puntosVisiblesBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                togglePuntosVisibles();
+                this.blur();
+            });
+
             document.getElementById('zoomInBtn').addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -2071,6 +2321,19 @@ if (!$_SESSION['swlogin']) {
                 if (prePuntosActive) {
                     debouncedBuscarPrePuntos();
                 }
+
+                if (puntosVisiblesActive) {
+                    const currentZoom = map.getZoom();
+                    if (currentZoom > 18) {
+                        debouncedBuscarPuntosVisibles(false);
+                    } else {
+                        // Si el zoom es insuficiente, desactivar la capa
+                        if (puntosVisiblesLayer && map.hasLayer(puntosVisiblesLayer)) {
+                            map.removeLayer(puntosVisiblesLayer);
+                        }
+                        showStatusMessage('Zoom insuficiente para mostrar puntos visibles', 'info');
+                    }
+                }
             });
 
             map.on('zoomend', function() {
@@ -2086,6 +2349,21 @@ if (!$_SESSION['swlogin']) {
                 // Usar la versión debounced para pre-puntos
                 if (prePuntosActive) {
                     debouncedBuscarPrePuntos();
+                }
+
+                if (puntosVisiblesActive) {
+                    const currentZoom = map.getZoom();
+                    if (currentZoom > 18) {
+                        debouncedBuscarPuntosVisibles(false);
+                    } else {
+                        // Si el zoom es insuficiente, desactivar la capa automáticamente
+                        if (puntosVisiblesLayer && map.hasLayer(puntosVisiblesLayer)) {
+                            map.removeLayer(puntosVisiblesLayer);
+                        }
+                        puntosVisiblesActive = false;
+                        $('#puntosVisiblesBtn').removeClass('active');
+                        showStatusMessage(`Zoom insuficiente. Capa desactivada. Mínimo: 19, Actual: ${currentZoom}`, 'info');
+                    }
                 }
             });
 
@@ -2125,11 +2403,25 @@ if (!$_SESSION['swlogin']) {
                 }
 
                 geolocalizacionInput.value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-                geoStatus.innerHTML = `<span class="text-success">
-                <i class="fa fa-check-circle"></i> Ubicación seleccionada manualmente.
-            </span>`;
 
+
+                let auxBotones = `<span class="text-success">
+                                    <i class="fa fa-check-circle"></i> Ubicación seleccionada manualmente. `
+                if (selectedPrePuntoId !== null)
+                    auxBotones += `<button id="clearPrePuntoBtn" type="button" class="btn btn-sm ms-2" style="background: none; border: none; color: #dc3545; padding: 2px 6px; margin-left: 8px;" title="Limpiar selección de pre-punto">
+                <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>`
+                auxBotones += `</span>`
+
+                geoStatus.innerHTML = auxBotones;
+
+                if (selectedPrePuntoId !== null) {
+                    $('#clearPrePuntoBtn').on('click', function() {
+                        clearPrePuntoSelection();
+                    });
+                }
                 $('#googlemap').attr("href", "https://www.google.com/maps?q=" + lat + "," + lng);
+
 
             });
         }
