@@ -190,7 +190,7 @@ function generatePDFHTML($inmueble, $fotos)
             
         }
         .photo-multiple {
-            max-width: 500px;
+            max-width: 350px;
             max-height: 450px;
             width: auto;
             height: auto;

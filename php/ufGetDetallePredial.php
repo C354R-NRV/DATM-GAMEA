@@ -1,5 +1,7 @@
 <?php
 session_start();
+
+
 require_once './conexionpsql.php';
 
 foreach ($_POST as $clave => $valor) {
@@ -10,7 +12,7 @@ $conn = new Conexion();
 $cons = $conn->conectar();
 
 if (isset($filtroFechaIni) and trim($filtroFechaIni) != '' and isset($filtroFechaFin) and trim($filtroFechaFin) != '') {
-    $filtro .= " and (a.fecha_registro::DATE  BETWEEN TO_DATE( '$filtroFechaIni', 'YYYY-MM-DD') AND TO_DATE( '$filtroFechaFin', 'YYYY-MM-DD') or 
+    $filtro .= " and (a.fecha_apersonamiento::DATE  BETWEEN TO_DATE( '$filtroFechaIni', 'YYYY-MM-DD') AND TO_DATE( '$filtroFechaFin', 'YYYY-MM-DD') or 
                 d.fecha_operativo::DATE  BETWEEN TO_DATE( '$filtroFechaIni', 'YYYY-MM-DD') AND TO_DATE( '$filtroFechaFin', 'YYYY-MM-DD')  )";
 }
 
@@ -19,7 +21,7 @@ if (isset($filtroInmueble) and trim($filtroInmueble) != '') {
 }
 
 $query = "
-select 
+    select 
         a.id,
         x.detalle ,x.idprepredial,
         d.operativo||'/'||b.grupo as grupo,
@@ -69,12 +71,11 @@ select
         left join uf_estado_fiscalizacion f on f.idestado_fiscalizacion = a.idestado_fiscalizacion
         where  a.estado_  
         and a.clasificacion = 'A' 
-        AND d.fecha_operativo::DATE = a.fecha_apersonamiento::DATE
-        -- and a.numero_inmueble = '1510140339' 
+        AND d.fecha_operativo::DATE = a.fecha_apersonamiento::DATE 
         
         $filtro 
         
-        order by grupo, a.no_formulario; 
+        order by grupo, a.no_formulario ; 
 ";
 
 $stmt = $cons->query($query);
@@ -89,12 +90,16 @@ foreach ($result as $key => $item) {
     $html .= '<a class="btn btn-secondary" title="Ver historial" onclick="verHistorialPredial(\'' . $item['numero_inmueble'] . '\')" role="button"><i class="fa fa-history" style="color:#fff;" aria-hidden="true"></i></a> ';
     $iconoEstado = '<a class="btn btn-warning" ><i class="fa fa-user-secret"  aria-hidden="true"></i></a>';
     if ($item['estado_fiscalizacion'] == 'PROCESADO')
-        $iconoEstado = '<a class="btn btn-success"  title="'. $item['observacion_estado'].'" ><i class="fa fa-user-plus"   aria-hidden="true"></i></a>';
+        $iconoEstado = '<a class="btn btn-success"  title="' . $item['observacion_estado'] . '" ><i class="fa fa-user-plus" onclick="verHistorialEstado(\'' . $item['numero_inmueble'] . '\')"   aria-hidden="true"></i></a>';
     if ($item['estado_fiscalizacion'] == 'DESACATO')
-        $iconoEstado = '<a class="btn btn-danger"  title="'. $item['observacion_estado'].'" ><i class="fa fa-user-times"  aria-hidden="true"></i></a>';
+        $iconoEstado = '<a class="btn btn-danger"  title="' . $item['observacion_estado'] . '" ><i class="fa fa-user-times" onclick="verHistorialEstado(\'' . $item['numero_inmueble'] . '\')"  aria-hidden="true"></i></a>';
 
 
     $html .= '</div>';
+
+    $auxActividad = '-';
+    if ($item['cant_act'] > 0 and $item['cant_act'] != '')
+        $auxActividad = 'Con actividad economica (' . $item['cant_act'] . ') ';
 
     $fila = array(
         "id" => $cnt,
@@ -105,7 +110,8 @@ foreach ($result as $key => $item) {
         "nombre_razon" => $item['nombre_razon'],
         "no_formulario" => $item['no_formulario'],
         "fecha_apersonamiento" =>  $item['fecha_apersonamiento'],
-        "estado_fiscalizacion" =>  $item['estado_fiscalizacion']." ".$iconoEstado, 
+        "actividad" =>  $auxActividad,
+        "estado_fiscalizacion" =>  $item['estado_fiscalizacion'] . " " . $iconoEstado,
         "acciones" => $html
     );
     $cnt++;
@@ -118,7 +124,7 @@ function normalizarCodigo($cadena)
     $cadena = (string) ($cadena ?? '');
     $partes = explode('-', $cadena);
     $partesNormalizadas = array_map(function ($parte) {
-        return ltrim($parte, '0'); // Elimina ceros a la izquierda
+        return ltrim($parte, '0');  
     }, $partes);
     return strtolower(implode('-', $partesNormalizadas));
 }
@@ -126,19 +132,13 @@ function normalizarCodigo($cadena)
 function comparaFechaLimite($fecha, $dias)
 {
     $currentDate = new DateTime();
-    $inputDate = DateTime::createFromFormat('d/m/Y H:i:s', $fecha);
-
-    // Verificar si la fecha ingresada es válida
+    $inputDate = DateTime::createFromFormat('d/m/Y H:i:s', $fecha); 
     if (!$inputDate) {
         echo "Formato de fecha inválido.";
         exit;
-    }
-
-    // Sumar 3 días a la fecha ingresada
+    } 
     $inputDatePlus3Days = clone $inputDate;
-    $inputDatePlus3Days->modify("+$dias days");
-
-    // Comparar las fechas
+    $inputDatePlus3Days->modify("+$dias days"); 
     if ($currentDate < $inputDatePlus3Days) {
         return true;
     } else {

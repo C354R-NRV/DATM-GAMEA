@@ -675,6 +675,7 @@ if (!$_SESSION['swlogin']) {
                     <th data-field="codigo_catastral" data-sortable="true">Cod. catastral</th>
                     <th data-field="no_formulario" data-sortable="true">Form.</th>
                     <th data-field="nombre_razon" data-sortable="true">Nombre</th>
+                    <th data-field="actividad" data-sortable="true">Actividad</th>
                     <th data-field="estado_fiscalizacion" data-sortable="true">Estado</th>
                     <th data-field="acciones">Acciones</th>
                 </thead>
@@ -904,45 +905,60 @@ if (!$_SESSION['swlogin']) {
 
 
     function getUfPredial() {
+        let datos = {
+            filtroInmueble: $('#filtroInmueble').val(),
+            filtroFechaIni: $('#filtroFechaIni').val(),
+            filtroFechaFin: $('#filtroFechaFin').val()
+        };
         $.ajax({
             async: true,
             type: 'POST',
-            data: {
-                filtroInmueble: $('#filtroInmueble').val(),
-                filtroFechaIni: $('#filtroFechaIni').val(),
-                filtroFechaFin: $('#filtroFechaFin').val()
-            },
+            data: datos,
             url: '../php/ufGetDetallePredial.php',
             beforeSend: function() {
                 loadGralOn();
             },
-            success: function(dat) {
+            success: function(e) {
+                console.log(e);
                 loadGralOff();
                 $('#tbodyItems').empty();
-                dat = $.parseJSON(dat);
-                $.each(dat, function(index, item) {
+                dat = $.parseJSON(e);
+                /* 
+
+                // Destruir la tabla existente
+                $("#tableCompendio").bootstrapTable("destroy")
+
+                // Limpiar y llenar el tbody
+                $("#tbodyItems").empty()
+                $.each(dat, (index, item) => {
                     var fila = `
-                    <tr>
-                        <td>${item.id}</td>
-                        <td>${item.fecha_apersonamiento}</td> 
-                        <td>${item.grupo}</td>
-                        <td>${item.usuario}</td>
-                        <td>${item.numero_inmueble}</td>
-                        <td>${item.codigo_catastral}</td>
-                        <td>${item.nombre_razon}</td> 
-                        <td>${item.no_formulario}</td> 
-                        <td>${item.estado_fiscalizacion}</td> 
-                        <td>${item.acciones}</td> 
-                    </tr>
-                `;
-                    $('#tbodyItems').append(fila);
-                });
-                $('#tableCompendio').bootstrapTable('refresh');
+                <tr>
+                    <td>${item.id}</td>
+                    <td>${item.fecha_apersonamiento}</td>
+                    <td>${item.grupo}</td>
+                    <td>${item.usuario}</td>
+                    <td>${item.numero_inmueble}</td>
+                    <td>${item.codigo_catastral}</td>
+                    <td>${item.no_formulario}</td>
+                    <td>${item.nombre_razon}</td>
+                    <td>${item.actividad}</td>
+                    <td>${item.estado_fiscalizacion}</td>
+                    <td>${item.acciones}</td>
+                </tr>
+                `
+                    $("#tbodyItems").append(fila)
+                }) 
+
+                $("#tableCompendio").bootstrapTable() */
+
+                // Cargar los datos directamente en Bootstrap Table
+                $("#tableCompendio").bootstrapTable("load", dat)
+
             },
             timeout: 16000,
-            error: function(xhr, status, error) {
-                alert('Error: ' + error);
-            }
+            error: (xhr, status, error) => {
+                alert("Error: " + error)
+            },
         });
     }
 
@@ -969,6 +985,57 @@ if (!$_SESSION['swlogin']) {
                 });
             }
         });
+    }
+
+    function createInfoBlockHtmlEstado(dat) {
+
+        let html = `
+            <div class="property-card">
+                <div class="card-header">
+                    ${dat[0].numero_inmueble}
+                </div> 
+                <div class="card-body"> 
+    `;
+
+        dat.forEach(element => {
+
+            let color_ = 'red';
+            if (element.estado_fiscalizacion == 'PROCESADO')
+                color_ = 'green'
+            if (element.observacion == 'null' || element.observacion == null)
+                element.observacion = '';
+            html += `
+            <div class="info-grid">         
+            <div class="info-item">
+                <div class="info-label">ESTADO:</div>
+                <div class="info-value" style="color:${color_};"><b>${element.estado_fiscalizacion}</b></div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">FECHA DE ESTADO:</div>
+                <div class="info-value">${element.fecha_estado}</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">USUARIO RESP.:</div>
+                <div class="info-value">${element.usuario}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">OBSERVACION:</div>
+                <div class="info-value">${element.observacion}</div>
+            </div> `;
+            html += ` 
+        </div>  
+        <div class="divider"></div> 
+    `;
+        });
+        html += ` 
+                </div>
+                </div>
+                `;
+
+
+        return html;
+
     }
 
     function createInfoBlockHtml(dat) {
@@ -1141,7 +1208,7 @@ if (!$_SESSION['swlogin']) {
                             beforeSend: function() {
                                 loadGralOn();
                             },
-                            success: function(e) { 
+                            success: function(e) {
                                 loadGralOff();
                                 dat = JSON.parse(e)
                                 if (dat.success) {
@@ -1221,6 +1288,39 @@ if (!$_SESSION['swlogin']) {
             }
         });
         console.log("en funcion, no se presento: " + inmueble);
+    }
+
+    function verHistorialEstado(numero_inmueble) {
+        $.ajax({
+            async: true,
+            type: 'POST',
+            data: {
+                numero_inmueble: numero_inmueble,
+            },
+            url: '../php/ufGetDetallePredialItemEstado.php',
+            beforeSend: function() {
+                loadGralOn();
+            },
+            success: function(dat) {
+                loadGralOff();
+                dat = JSON.parse(dat);
+                const historialHtmlContent = createInfoBlockHtmlEstado(dat);
+                Swal.fire({
+                    html: historialHtmlContent,
+                    showCloseButton: true,
+                    showConfirmButton: false,
+                    width: "auto",
+                    customClass: {
+                        popup: "swal-wide",
+                        htmlContainer: "swal-custom-html-container",
+                    },
+                });
+            },
+            timeout: 16000,
+            error: function(xhr, status, error) {
+                alert('Error: ' + error);
+            }
+        });
     }
 
     function verHistorialPredial(numero_inmueble) {

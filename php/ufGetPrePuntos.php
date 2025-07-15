@@ -72,7 +72,7 @@ try {
         left join uf_predial c on c.id = a.idpredial_asociado  
         WHERE  
             a.estado_ = true
-            and a.idoperativo in ( 3, 4) -- [pendiente] esto debe cambiar por algo dinamico  
+            and a.idoperativo in ( 4, 5, 6) -- [pendiente] esto debe cambiar por algo dinamico  
             AND a.geom IS NOT NULL
             AND ST_Within(
                 a.geom, 

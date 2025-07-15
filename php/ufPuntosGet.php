@@ -45,11 +45,11 @@ try {
     $useGeojsonFile = isset($_GET['useGeojson']) ? intval($_GET['useGeojson']) : 0;
 
     // Determinar límite de puntos basado en zoom
-    $zoomBasedLimit = 800;
+    $zoomBasedLimit = 1600;
     if ($zoom > 13) {
-        $zoomBasedLimit = 800 + (($zoom - 13) * 250);
+        $zoomBasedLimit = 1600 + (($zoom - 13) * 250);
     } elseif ($zoom < 13) {
-        $zoomBasedLimit = max(100, 800 - ((13 - $zoom) * 100));
+        $zoomBasedLimit = max(100, 1600 - ((13 - $zoom) * 100));
     }
 
     $limit = min($limit, $zoomBasedLimit);

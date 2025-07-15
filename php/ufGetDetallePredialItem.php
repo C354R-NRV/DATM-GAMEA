@@ -26,7 +26,7 @@ TRIM(replace(replace(replace(replace(ubicacion_nivel1, 'DISTRITO:', ''), 'LOTE,'
 $query = "select 
         a.id,
         x.detalle ,x.idprepredial, 
-        b.grupo, 
+        b.grupo,   
         d.operativo, 
         c.usuario,
             a.nombre_razon, 
@@ -68,17 +68,20 @@ $query = "select
             to_char( a.fecha_apersonamiento, 'DD/MM/YYYY') AS fecha_apersonamiento ,
             a.imagen_principal,
             a.imagen_adicional,
-            a.latitud, a.longitud
+            a.latitud, a.longitud,
+            d.idoperativo, a.clasificacion
 
         from uf_predial a 
-        LEFT JOIN uf_prepredial x ON x.idpredial_asociado = a.id 
-        left join uf_operativo d on d.idoperativo = x.idoperativo
+        left join uf_operativo d on d.fecha_operativo::DATE = a.fecha_apersonamiento::DATE
         left join uf_grupo_operativo b on a.idusuario = b.idusuario and d.idoperativo = b.idoperativo  
-        left join datm_usuario c on c.id = a.idusuario
+        left join datm_usuario c on c.id = b.idusuario
+        
+        LEFT JOIN uf_prepredial x ON x.idpredial_asociado = a.id   
+        
         
         where  a.estado_    
         
-        and a.numero_inmueble like '$numero_inmueble'
+        and a.numero_inmueble like '$numero_inmueble' 
         
         order by id desc; ";
 
