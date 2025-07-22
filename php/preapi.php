@@ -143,13 +143,18 @@ try {
                 $hash_datos = generarSha1DesdeCabecera($cabecera);
 
                 $query = "UPDATE srf_cabecera_solicitud  
-                SET hash_datos = '" . $hash_datos . "',  
-                hash_datos_txt = '" . $hash_datos_txt . "',
-                fecha_envio = '" . $fecha_envio . "' ,
-                fecha_envio_ansi = '" . $fecha_envio_ansi . "'
-                WHERE id_cabecera_solicitud = " . $id;
+                            SET hash_datos = :hash_datos,  
+                                hash_datos_txt = :hash_datos_txt,
+                                fecha_envio = :fecha_envio,
+                                fecha_envio_ansi = :fecha_envio_ansi
+                            WHERE id_cabecera_solicitud = :id_cabecera";
 
                 $stmt = $cons->prepare($query);
+                $stmt->bindParam(':hash_datos', $hash_datos);
+                $stmt->bindParam(':hash_datos_txt', $hash_datos_txt);
+                $stmt->bindParam(':fecha_envio', $fecha_envio);
+                $stmt->bindParam(':fecha_envio_ansi', $fecha_envio_ansi);
+                $stmt->bindParam(':id_cabecera', $id);
                 $err = $stmt->execute();
 
                 [$response, $httpCode, $error] = makeApiRequest(['endpoint' => $endpoint, 'ambiente' => $_SESSION['sirefo_ambiente'],   'id' => $id, 'us' => $_SESSION['idusuario']]);
@@ -184,13 +189,13 @@ try {
                     $id = $value['id_cabecera_solicitud'];
                     [$response, $httpCode, $error] = makeApiRequest(['endpoint' => 'consultarEstadoEnvio', 'ambiente' => $_SESSION['sirefo_ambiente'],   'id' => $id, 'us' => $idusuario]);
                     $respuesta = processApiResponse($response, $httpCode, $error, 'consultarEstadoEnvio');
-                    if($respuesta['success']){
-                        $result['message'] .=  "Procesado para ".$value['codigo_solicitud']." con Circular:".$respuesta['message']['Circular']." -".$respuesta['success']. "<br>\n";    
-                    }                    
+                    if ($respuesta['success']) {
+                        $result['message'] .=  "Procesado para " . $value['codigo_solicitud'] . " con Circular:" . $respuesta['message']['Circular'] . " -" . $respuesta['success'] . "<br>\n";
+                    }
                     $result['success'] = ($statusAnt and $respuesta['success']);
                     $statusAnt  =  $result['success'];
                 }
-                $result['type'] = ($result['success']?'green':'red');
+                $result['type'] = ($result['success'] ? 'green' : 'red');
                 break;
             }
         case 'consultarListadoEstadoEnvio': {

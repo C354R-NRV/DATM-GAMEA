@@ -337,11 +337,17 @@ try {
                         $item->id_item_solicitud = $cons->lastInsertId();
 
                         $itemAux =  generarSha1Item($item, $cons, $pjson);
+
+
                         $query = "UPDATE srf_item_solicitud 
-                                SET hash_detalle = '" . $itemAux['hash_detalle'] . "', 
-                                hash_detalle_text = '" . $itemAux['hash_detalle_text'] . "' 
-                                WHERE id_item_solicitud = " . $item->id_item_solicitud;
+                            SET hash_detalle = :hash_detalle, 
+                                hash_detalle_text = :hash_detalle_text 
+                            WHERE id_item_solicitud = :id_item";
+
                         $stmt = $cons->prepare($query);
+                        $stmt->bindParam(':hash_detalle', $itemAux['hash_detalle']);
+                        $stmt->bindParam(':hash_detalle_text', $itemAux['hash_detalle_text']);
+                        $stmt->bindParam(':id_item', $item->id_item_solicitud);
                         $err = $stmt->execute();
                     } else {
 
@@ -381,23 +387,23 @@ try {
 
                         if (!empty($camposModificados)) {
                             foreach ($camposModificados as $campoModificado) {
+                                // INSERT con bindParam (ya estaba bien)
                                 $query = "INSERT INTO srf_item_solicitud_hst (
-                                id_item_solicitud,
-                                campo,
-                                valor_anterior,
-                                valor_nuevo,
-                                fecha_modificacion,
-                                idusuario
-                            ) VALUES (
-                                :id_item_solicitud,
-                                :Campo,
-                                :valor_anterior,
-                                :valor_nuevo,
-                                :FechaModificacion,
-                                :idusuario
-                            )";
+                                        id_item_solicitud,
+                                        campo,
+                                        valor_anterior,
+                                        valor_nuevo,
+                                        fecha_modificacion,
+                                        idusuario
+                                    ) VALUES (
+                                        :id_item_solicitud,
+                                        :Campo,
+                                        :valor_anterior,
+                                        :valor_nuevo,
+                                        :FechaModificacion,
+                                        :idusuario
+                                    )";
                                 $stmt = $cons->prepare($query);
-
                                 $stmt->bindParam(':id_item_solicitud', $campoModificado['id_item_solicitud']);
                                 $stmt->bindParam(':Campo', $campoModificado['campo']);
                                 $stmt->bindParam(':valor_anterior', $campoModificado['valor_anterior']);
@@ -406,24 +412,59 @@ try {
                                 $stmt->bindParam(':idusuario', $cabecera->idusuario);
                                 $stmt->execute();
 
+                                // UPDATE dinámico con campo variable — usamos prepared statement dinámico con bind
+                                $campo = $campoModificado['campo'];
+                                $valorNuevo = $campoModificado['valor_nuevo'];
+                                $idItem = $campoModificado['id_item_solicitud'];
+
+                                // Importante: solo permitimos campos válidos para evitar inyecciones
+                                $camposPermitidos = [
+                                    'nombre',
+                                    'apellido_paterno',
+                                    'apellido_materno',
+                                    'razon_social',
+                                    'documento_tributario',
+                                    'tipo_documento_tributario',
+                                    'resolucion_determinativa',
+                                    'gestion_fiscal',
+                                    'cite_anotacion_preventiva',
+                                    'documento_identidad_numero',
+                                    'documento_identidad_complemento',
+                                    'auto_conclusion',
+                                    'id_tipo_respaldo',
+                                    'documento_respaldo',
+                                    'tipo_apoderado',
+                                    'documento_identidad_apo',
+                                    'nombre_apo'
+                                ];
+
+                                if (in_array($campo, $camposPermitidos)) {
+                                    $query = "UPDATE srf_item_solicitud 
+                        SET {$campo} = :valor_nuevo 
+                        WHERE id_item_solicitud = :id_item";
+                                    $stmt = $cons->prepare($query);
+                                    $stmt->bindParam(':valor_nuevo', $valorNuevo);
+                                    $stmt->bindParam(':id_item', $idItem);
+                                    $stmt->execute();
+                                }
+
+                                // UPDATE hash_detalle con parámetros también
+                                $item->id_item_solicitud = $idItem;
+                                $itemAux = generarSha1Item($item, $cons, $pjson);
+
                                 $query = "UPDATE srf_item_solicitud 
-                                        SET " . $campoModificado['campo'] . " = '" . $campoModificado['valor_nuevo'] . "'
-                                        WHERE id_item_solicitud = " . $campoModificado['id_item_solicitud'];
+                                                SET hash_detalle = :hash_detalle, 
+                                                    hash_detalle_text = :hash_detalle_text 
+                                            WHERE id_item_solicitud = :id_item";
                                 $stmt = $cons->prepare($query);
-                                $err = $stmt->execute();
+                                $stmt->bindParam(':hash_detalle', $itemAux['hash_detalle']);
+                                $stmt->bindParam(':hash_detalle_text', $itemAux['hash_detalle_text']);
+                                $stmt->bindParam(':id_item', $idItem);
+                                $stmt->execute();
 
-
-
-                                $item->id_item_solicitud = $campoModificado['id_item_solicitud'];
-                                $itemAux =  generarSha1Item($item, $cons, $pjson);
-                                $query = "UPDATE srf_item_solicitud 
-                                        SET hash_detalle = '" . $itemAux['hash_detalle'] . "', 
-                                        hash_detalle_text = '" . $itemAux['hash_detalle_text'] . "' 
-                                    WHERE id_item_solicitud = " . $campoModificado['id_item_solicitud'];
-                                $stmt = $cons->prepare($query);
-                                $err = $stmt->execute();
-
-                                $pjson['log'] .= "<br>- " . $campoModificado['campo'] . " de " . $campoModificado['valor_anterior'] . " a " . $campoModificado['valor_nuevo'];
+                                $pjson['log'] .= "<br>- " . htmlspecialchars($campoModificado['campo']) . " de " .
+                                    htmlspecialchars($campoModificado['valor_anterior']) . " a " .
+                                    htmlspecialchars($campoModificado['valor_nuevo']);
                             }
                         }
                     }

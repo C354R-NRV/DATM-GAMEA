@@ -64,8 +64,7 @@ if (!$_SESSION['swlogin']) {
         }
 
         .chat-message2 {
-            margin-bottom: 10px;
-            /* color: rgb(23, 83, 129); */
+            margin-bottom: 10px; 
             color: rgb(0, 5, 8);
         }
 
@@ -79,15 +78,11 @@ if (!$_SESSION['swlogin']) {
             color: rgb(17, 71, 47);
         }
 
-        #chat-box h1 {
-            /* color: rgb(56, 94, 143); */
+        #chat-box h1 { 
             color: rgb(0, 5, 8);
             font-weight: bold;
-            font-size: 1.2rem;
-
-        }
-
-
+            font-size: 1.2rem; 
+        }  
 
         .thinking {
             display: flex;

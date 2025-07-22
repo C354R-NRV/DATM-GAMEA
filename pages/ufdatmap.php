@@ -3663,7 +3663,7 @@ if (!$_SESSION['swlogin']) {
                                 }
                             } else {
                                 filteredLeafletMarkers.push(marker)
-                            } 
+                            }
 
                         }
                     }
@@ -4236,15 +4236,14 @@ if (!$_SESSION['swlogin']) {
                     const prePuntoIcon = L.divIcon({
                         className: 'pre-punto-marker-container',
                         html: `
-                    <div style="
-                        background-color: ${color};
-                        width: 0.9rem;
-                        height: 0.9rem;
-                        border-radius: 50%;
-                        box-shadow: ${boxShadow};
-                        border: 2px solid ${borde_}; 
-                    "></div>
-                `,
+                        <div style="
+                            background-color: ${color};
+                            width: 0.9rem;
+                            height: 0.9rem;
+                            border-radius: 50%;
+                            box-shadow: ${boxShadow};
+                            border: 2px solid ${borde_};"></div>
+                    `,
                         iconSize: [20, 20],
                         iconAnchor: [10, 10]
                     });
@@ -4253,19 +4252,28 @@ if (!$_SESSION['swlogin']) {
                         icon: prePuntoIcon
                     });
 
+                    let inmueble_ = '';
+                    if (punto.numero_inmueble && punto.numero_inmueble != '' && punto.numero_inmueble != 'null') {
+                        inmueble_ = `<strong>Inmueble: </strong> 
+                                        <span style="cursor:pointer; font-weight: bold; color:#22cfdd; " 
+                                            >
+                                            ${punto.numero_inmueble} [${punto.id}]
+                                        </span><br>`;
+                    }
                     const popupContent = `
-                <div class="popup-content">
-                    <div class="popup-description">
-                        <strong>Detalle:</strong> ${punto.detalle || 'Sin detalle'}<br>
-                        <strong>Creado por:</strong> ${punto.idusuario || 'No especificado'}<br>
-                        <strong>Fecha:</strong> ${punto.fregistro_ || 'No especificada'}<br>
-                        <strong>Ver en google:</strong> 
-                        <a target="_blank" href="https://www.google.com/maps?q=${lat},${lng}">
-                            <i class="fa fa-street-view" style="font-size:1.2rem; color: yellow" aria-hidden="true"></i>
-                        </a>
-                    </div> 
-                </div>
-            `;
+                            <div class="popup-content">
+                                <div class="popup-description">
+                                    ${inmueble_}
+                                    <strong>Detalle:</strong> ${punto.detalle || 'Sin detalle'}<br>
+                                    <strong>Creado por:</strong> ${punto.idusuario || 'No especificado'}<br>
+                                    <strong>Fecha:</strong> ${punto.fregistro_ || 'No especificada'}<br>
+                                    <strong>Ver en google:</strong> 
+                                    <a target="_blank" href="https://www.google.com/maps?q=${lat},${lng}">
+                                        <i class="fa fa-street-view" style="font-size:1.2rem; color: yellow" aria-hidden="true"></i>
+                                    </a>
+                                </div> 
+                            </div>
+                        `;
 
                     marker.bindPopup(popupContent);
                     prePuntosLayer.addLayer(marker);

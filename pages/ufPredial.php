@@ -1897,7 +1897,7 @@ if (!$_SESSION['swlogin']) {
                         inmueble_ = `<strong>Inmueble: </strong> 
                                         <span style="cursor:pointer; font-weight: bold; color:#15939d; " 
                                             >
-                                            ${punto.numero_inmueble}
+                                            ${punto.numero_inmueble} [${punto.id}]
                                         </span><br>`;
 
                         botonUsar = `</br>
