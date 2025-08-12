@@ -12,8 +12,12 @@ $pjson = array(
 );
 
 try {
-    if (!isset($_SESSION['idusuario'])) {
-        throw new Exception("Usuario no autenticado");
+    if (!isset($_SESSION['idusuario'])) { 
+        echo json_encode([
+            'status' => 'unauthenticated',
+            'message' => 'Usuario no autenticado'
+        ]);
+        exit;
     }
 
     $conn = new Conexion();

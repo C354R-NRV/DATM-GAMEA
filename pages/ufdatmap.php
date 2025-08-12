@@ -4150,7 +4150,8 @@ if (!$_SESSION['swlogin']) {
                 minLat: sw.lat,
                 maxLat: ne.lat,
                 minLng: sw.lng,
-                maxLng: ne.lng
+                maxLng: ne.lng,
+                modulo: 'gerencial',
             };
 
             // Solo mostrar mensaje si se solicita explícitamente
@@ -4784,18 +4785,28 @@ if (!$_SESSION['swlogin']) {
                 },
                 success: function(dat) {
                     console.log(dat);
+                     dat = JSON.parse(dat);
+                    console.log(dat.status);
+
                     loadGralOff();
+                    if (dat.status === 'unauthenticated') {
+                        window.location.href = 'index.php';
+                    } else if (dat.status === 'success') {
+                        showStatusMessage(`Punto guardado correctamente con color ${selectedColor.toUpperCase()}. Total puntos: ${savedPoints.length}`, 'success');
+                        closeCustomPopup(true);
+                        newPointMarker = null;
+                        currentPointData = null;
+                    } else {
+                        showStatusMessage("Error: " + dat.message);
+                    }
                 },
+                error: function(xhr, status, error) {
+                    loadGralOff();
+                    console.error("Error en la solicitud AJAX:", error);
+                }
             });
 
-            // Cerrar popup (con guardado = true)
-            closeCustomPopup(true);
 
-            showStatusMessage(`Punto guardado correctamente con color ${selectedColor.toUpperCase()}. Total puntos: ${savedPoints.length}`, 'success');
-
-            // Resetear variables para permitir crear nuevo punto
-            newPointMarker = null;
-            currentPointData = null;
         }
 
 

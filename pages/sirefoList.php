@@ -459,8 +459,7 @@ if (!$_SESSION['swlogin']) {
                                     beforeSend: function() {
                                         loadGralOn();
                                     },
-                                    success: function(e) {
-                                        console.log(e);
+                                    success: function(e) { 
                                         loadGralOff();
                                         data = JSON.parse(e);
                                         auxData = data.message;

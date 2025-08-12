@@ -36,6 +36,15 @@
                             </div> 
                         </div>
                     {% endif %}
+                    {% if (datSesion.rol == 'JEFATURA' or datSesion.rol == 'DIRECCION' or datSesion.rol == 'JEFE AREA' or datSesion.codigo_unidad == 'SIS' ) %}
+                        <div class="nav-item dropdown">
+                            <a href="index.php#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Dashboard</a>
+                            <div class="dropdown-menu bg-light mt-2"> 
+                                <a href="charts.php" class="dropdown-item">- Geoespacial</a>    
+                                <a href="frmChart.php" class="dropdown-item">- Tickets</a>    
+                            </div> 
+                        </div>
+                    {% endif %}
                     {% if datSesion.rol != 'CONTRIBUYENTE' %}
                         <div class="nav-item dropdown">
                             <a href="index.php#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">GA</a>

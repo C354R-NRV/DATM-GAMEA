@@ -116,14 +116,14 @@ try {
 
 function generatePDFHTML($inmueble, $fotos)
 {
-    $numero_inmueble = htmlspecialchars($inmueble['numero_inmueble']);
-    $direccion = htmlspecialchars($inmueble['direccion']);
-    $propietario = htmlspecialchars($inmueble['nombre_razon']);
-    $codigo_catastral = htmlspecialchars($inmueble['codigo_catastral']);
-    $tipologia = htmlspecialchars($inmueble['dato_tecnico_tipologia']);
-    $servicio = htmlspecialchars($inmueble['dato_tecnico_servicio']);
-    $fecha_apersonamiento = htmlspecialchars($inmueble['fecha_apersonamiento']);
-    $usuario = htmlspecialchars($inmueble['usuario']);
+    $numero_inmueble = htmlspecialchars($inmueble['numero_inmueble'] ?: '-' );
+    $direccion = htmlspecialchars($inmueble['direccion']?: '-'  );
+    $propietario = htmlspecialchars($inmueble['nombre_razon']?: '-' );
+    $codigo_catastral = htmlspecialchars($inmueble['codigo_catastral']?: '-'  );
+    $tipologia = htmlspecialchars( $inmueble['dato_tecnico_tipologia']?: '-'  );
+    $servicio = htmlspecialchars( $inmueble['dato_tecnico_servicio']?: '-' );
+    $fecha_apersonamiento = htmlspecialchars( $inmueble['fecha_apersonamiento']?: '-'  );
+    $usuario = htmlspecialchars( $inmueble['usuario']?: '-'  );
 
     $html = '
     <style>

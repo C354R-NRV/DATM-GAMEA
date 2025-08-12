@@ -621,7 +621,9 @@ if (!$_SESSION['swlogin']) {
             <div class="row">
                 <div class="col-md-2 mb-3">
                     <a class="btn btn-success" href="ufPredial.php" role="button"><i class="fa fa-plus"></i></a> |
-                    <a class="btn btn-success" href="ufdatmap.php" role="button"><i class="fa fa-map-o" aria-hidden="true"></i></a><!-- |
+                    <a class="btn btn-success" href="ufdatmap.php" role="button"><i class="fa fa-map-o" aria-hidden="true"></i></a>|
+                    <a class="btn btn-success" href="charts.php" role="button"><i class="fa fa-area-chart" aria-hidden="true"></i></a>
+                    <!-- |
                     <a class="btn btn-success" onclick="generarReporteOperativo()" role="button"><i class="fa fa-file-excel-o" aria-hidden="true"></i></a> -->
                 </div>
                 <div class="col-md-3 mb-3">

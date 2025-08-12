@@ -7,7 +7,6 @@ header('Access-Control-Allow-Headers: Content-Type');
 // Iniciar sesión si es necesario
 session_start();
 
-// Verificar si el usuario está logueado (opcional, según tu sistema)
 if (!isset($_SESSION['swlogin']) || $_SESSION['swlogin'] != '1') {
     echo json_encode([
         'success' => false,
@@ -46,6 +45,11 @@ try {
     if ($minLat >= $maxLat || $minLng >= $maxLng) {
         throw new Exception('Coordenadas inválidas: los valores mínimos deben ser menores que los máximos');
     }
+    $auxFiltro = '';
+    if ($_POST['modulo'] == 'operativo') {
+        //  -- [pendiente] esto debe cambiar por algo dinamico 
+        $auxFiltro = ' and a.idoperativo in (  10  )   ';
+    }
     $sql = "
         SELECT 
         c.id,
@@ -73,7 +77,7 @@ try {
         left join uf_predial c on c.id = a.idpredial_asociado  
         WHERE  
             a.estado_ = true
-            and a.idoperativo in ( 1, 2, 3, 4, 5, 6, 7 ) -- [pendiente] esto debe cambiar por algo dinamico  
+                $auxFiltro 
             AND a.geom IS NOT NULL
             AND ST_Within(
                 a.geom, 
@@ -117,7 +121,7 @@ try {
             'id' => $row['id'],
             'latitud' => $lat,
             'longitud' => $lng,
-            'detalle' => $row['detalle'].' ['.$row['idprepredial'].']',
+            'detalle' => $row['detalle'] . ' [' . $row['idprepredial'] . ']',
             'idusuario' => $row['usuario'],
             'fregistro_' => $fecha,
             'estado_' => $row['estado_'],

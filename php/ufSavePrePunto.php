@@ -16,14 +16,21 @@ foreach ($_POST as $clave => $valor) {
 // Initialize response array
 $pjson = array(
     'err' => '0',
-    'msg' => '',
+    'message' => '',
     'log' => ''
 );
 
 try {
     if (!isset($_SESSION['idusuario'])) {
-        throw new Exception("Usuario no autenticado");
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'unauthenticated',
+            'message' => 'Usuario no autenticado'
+        ]);
+        exit;
     }
+
+
 
     $conn = new Conexion();
     $cons = $conn->conectar();
@@ -58,19 +65,21 @@ try {
         $idpredial = $cons->lastInsertId();
     }
 
-    $pjson['msg'] = 'Registro guardado exitosamente';
+    $pjson['message'] = 'Registro guardado exitosamente';
     $pjson['id'] = $idpredial;
+    $pjson['status'] = "success";
 } catch (Exception $e) {
     $pjson['err'] = '1';
-    $pjson['msg'] = $e->getMessage();
+    $pjson['message'] = $e->getMessage();
     $pjson['log'] = $e->getTraceAsString();
+    $pjson['status'] = "success";
 } catch (PDOException $e) {
     $pjson['err'] = '1';
-    $pjson['msg'] = 'Error de base de datos';
+    $pjson['message'] = 'Error de base de datos';
     $pjson['log'] = $e->getMessage();
 } catch (Error $e) {
     $pjson['err'] = '1';
-    $pjson['msg'] = 'Error interno del servidor';
+    $pjson['message'] = 'Error interno del servidor';
     $pjson['log'] = $e->getMessage();
 } finally {
     // Always return a JSON response

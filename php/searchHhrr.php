@@ -9,10 +9,10 @@ foreach ($_POST as $clave => $valor) {
 
 // la idea a futuro es poder dividir en un array los tipos de operaciones, nombre de funcioario y area que esta atendiendo
 $operaciones_ = [
-    'PROCESANDO SOLICITUD ',
-    'ASIGNADO A ',
-    'DESARCHIVADO Y PROCESANDO ',
-    'ARCHIVADO POR '
+    'PROCESANDO SOLICITUD ',            
+    'ASIGNADO A ',                      
+    'DESARCHIVADO Y PROCESANDO ',       
+    'ARCHIVADO POR '                    
 ];
 
 $rs = array();
@@ -23,7 +23,7 @@ try {
     if ($result->num_rows > 0) {
         // Salida de datos de cada fila
         while ($row = $result->fetch_assoc()) {
-            $documento = ($_SESSION['idusuario']>0?"<br>Documento: ".$row["documento"]."":"");
+            $documento = ($_SESSION['idusuario'] > 0 ? "<br>Documento: " . $row["documento"] . "" : "");
             $aux_ = '';
             $auxProceso =  $row["estado"];
             $auxFuncionario = '';
@@ -32,7 +32,7 @@ try {
                 $aux_ = '<tr>
                         <td><img src="../img/consulta_tramite/user.svg" style="max-width:2.5rem;" ></td>
                         <td> <b>REGISTRO TRIBUTARIO:</b></td>
-                        <td class="text-muted" id="destinatario">' . $row["rubro"] . ': ' . $row["registro_tributario"] .$documento. '</td>
+                        <td class="text-muted" id="destinatario">' . $row["rubro"] . ': ' . $row["registro_tributario"] . $documento . '</td>
                     </tr>';
             }
             /* if (strpos($row["estado"], 'HOJA DE RUTA ANEXADO A LA HOJA DE RUTA PRINCIPAL') !== false) {
@@ -91,7 +91,7 @@ try {
     }
 } catch (Exception $th) {
     $rs['titulo_'] = 'Ups...';
-    $rs['color_'] = 'red'; 
+    $rs['color_'] = 'red';
     $rs['contenido'] = "Hay mucho trafico en este momento, intentalo más tarde por favor";
 }
 $dat = json_encode($rs);

@@ -1778,12 +1778,13 @@ if (!$_SESSION['swlogin']) {
                 minLat: sw.lat,
                 maxLat: ne.lat,
                 minLng: sw.lng,
-                maxLng: ne.lng
+                maxLng: ne.lng,
+                modulo: 'operativo',
             };
 
             /*  // Solo mostrar mensaje de carga en la primera búsqueda o cuando se solicite explícitamente
-             if (showMessage) {
-                 showStatusMessage('Buscando pre-puntos...', 'info');
+            if (showMessage) {
+                showStatusMessage('Buscando pre-puntos...', 'info');
              } */
 
             $.ajax({
@@ -5283,7 +5284,21 @@ if (!$_SESSION['swlogin']) {
                             console.error("Error parsing JSON response:", e);
                         }
                     }
-
+                    if (response.status === 'unauthenticated') {
+                        if (typeof Swal !== "undefined") {
+                            Swal.fire({
+                                icon: "warning",
+                                title: "Sesión finalizada",
+                                text: "Por favor, inicie sesión nuevamente.",
+                            }).then(() => {
+                                window.location.href = "pages/login.php";
+                            });
+                        } else {
+                            alert("Sesión finalizada. Será redirigido al login.");
+                            window.location.href = "pages/login.php";
+                        }
+                        return;
+                    }
                     if (response.err === '0') {
                         if (typeof Swal !== "undefined") {
                             Swal.fire({
@@ -5318,7 +5333,6 @@ if (!$_SESSION['swlogin']) {
                 error: (xhr, status, error) => {
                     console.error("Error en la solicitud Ajax:", error);
 
-
                     let errorMessage = "No se pudo conectar con el servidor. Por favor, inténtelo de nuevo.";
                     try {
                         if (xhr.responseText) {
@@ -5346,10 +5360,6 @@ if (!$_SESSION['swlogin']) {
             $.data(this, "submitted", true)
             return false
         })
-
-
-
-
         $('.leaflet-control-attribution').hide();
     });
 </script>
