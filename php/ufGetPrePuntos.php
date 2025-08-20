@@ -47,8 +47,7 @@ try {
     }
     $auxFiltro = '';
     if ($_POST['modulo'] == 'operativo') {
-        //  -- [pendiente] esto debe cambiar por algo dinamico 
-        $auxFiltro = ' and a.idoperativo in (  10  )   ';
+        $auxFiltro = ' and a.idoperativo = (SELECT MAX(idoperativo) FROM public.uf_prepredial) ';
     }
     $sql = "
         SELECT 

@@ -4840,7 +4840,7 @@ if (!$_SESSION['swlogin']) {
                     let width = img.width
                     let height = img.height
 
-                    const maxDimension = 1600
+                    const maxDimension = 2600
                     if (width > maxDimension || height > maxDimension) {
                         if (width > height) {
                             height = Math.round(height * (maxDimension / width))

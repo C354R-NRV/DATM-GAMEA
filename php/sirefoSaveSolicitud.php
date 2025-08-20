@@ -356,12 +356,13 @@ try {
                         foreach ($datosActuales as $campoBase => $datosActualesTupla) {
                             $id_item_solicitud = $datosActualesTupla['id_item_solicitud'];
                             foreach ($datosActualesTupla as $campo => $valorActual) {
+                                /* or
+                                    $campo == 'id_documento_identidad_extension' */
                                 if (
                                     $campo == 'id_documento_identidad_tipo' or
                                     $campo == 'monto_retencion_bs' or
                                     $campo == 'monto_retencion_ufv' or
-                                    $campo == 'id_cabecera_solicitud' or
-                                    $campo == 'id_documento_identidad_extension'
+                                    $campo == 'id_cabecera_solicitud'
                                 ) {
                                     $valorNuevo = intval($item->$campo);
                                 } else {
@@ -425,6 +426,8 @@ try {
                                     'razon_social',
                                     'documento_tributario',
                                     'tipo_documento_tributario',
+                                    'monto_retencion_bs',
+                                    'monto_retencion_ufv',
                                     'resolucion_determinativa',
                                     'gestion_fiscal',
                                     'cite_anotacion_preventiva',
@@ -440,8 +443,8 @@ try {
 
                                 if (in_array($campo, $camposPermitidos)) {
                                     $query = "UPDATE srf_item_solicitud 
-                        SET {$campo} = :valor_nuevo 
-                        WHERE id_item_solicitud = :id_item";
+                                            SET {$campo} = :valor_nuevo 
+                                            WHERE id_item_solicitud = :id_item";
                                     $stmt = $cons->prepare($query);
                                     $stmt->bindParam(':valor_nuevo', $valorNuevo);
                                     $stmt->bindParam(':id_item', $idItem);

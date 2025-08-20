@@ -64,7 +64,7 @@ if (!$_SESSION['swlogin']) {
         }
 
         .chat-message2 {
-            margin-bottom: 10px; 
+            margin-bottom: 10px;
             color: rgb(0, 5, 8);
         }
 
@@ -78,11 +78,11 @@ if (!$_SESSION['swlogin']) {
             color: rgb(17, 71, 47);
         }
 
-        #chat-box h1 { 
+        #chat-box h1 {
             color: rgb(0, 5, 8);
             font-weight: bold;
-            font-size: 1.2rem; 
-        }  
+            font-size: 1.2rem;
+        }
 
         .thinking {
             display: flex;
@@ -1048,6 +1048,7 @@ if (!$_SESSION['swlogin']) {
                         <i class="fa fa-pencil-square-o icon-refresh" aria-hidden="true" title="Modificar inmueble" onclick="modificaInmueble(${dat[0].id}, '${dat[0].numero_inmueble}')"></i>  
                         <i class="fa fa-print  icon-refresh" aria-hidden="true" onclick="imprimirReporte(${dat[0].id})"></i>     
                         <a target="_blank" href="https://www.google.com/maps?q=${dat[0].latitud},${dat[0].longitud}"><i class="fa fa-street-view icon-refresh" aria-hidden="true"></i></a>   
+                        <i class="fa fa-folder-open-o icon-refresh" aria-hidden="true" onclick="listarArchivosDigitales('${dat[0].numero_inmueble}')"></i>     
                         <i class="fa fa-exclamation-triangle icon-warning" aria-hidden="true" title="Desacato a la fiscalización" onclick="actualizarEstado(${dat[0].id}, '${dat[0].numero_inmueble}', 0)"></i> 
                     </div>
     `;
@@ -1172,6 +1173,45 @@ if (!$_SESSION['swlogin']) {
 
 
         return html;
+    }
+
+    function listarArchivosDigitales(inmueble) {
+        console.log("listarArchivosDigitales :" + inmueble);
+        datos = "&inmueble=" + inmueble;
+        $.ajax({
+            async: true,
+            type: "POST",
+            dataType: "html",
+            contentType: "application/x-www-form-urlencoded",
+            url: "../php/getArchivosDigitales.php",
+            data: datos,
+            beforeSend: function() {
+                loadGralOn();
+            },
+            success: function(e) { 
+                loadGralOff(); 
+
+                $.confirm({
+                    title: `Archivos digitales de <b>${inmueble}</b>`,
+                    content: e,
+                    type: "green",
+                    typeAnimated: true,
+                    columnClass: "col-md-6 col-md-offset-6 col-xs-8 col-xs-offset-8",
+                    buttons: {
+                        cancel: {
+                            text: "Cerrar",
+                            action: function() {},
+                        },
+                    },
+                    onOpenBefore: function() {
+                        $('.jconfirm-title-c').css('text-align', 'center');
+                    }
+                });
+
+            },
+            error: function() {},
+        });
+
     }
 
     function modificaInmueble(id, inmueble) {

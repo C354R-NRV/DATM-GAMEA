@@ -53,7 +53,7 @@ foreach ($_GET as $clave => $valor) {
     ?>
     <li class="breadcrumb-item"><a class="text-white" href="index.php">Home</a></li>
     <li class="breadcrumb-item"><a class="text-white" >Digitaliza</a></li>
-    <li class="breadcrumb-item"><a class="text-white" href="compendio.php">Compendio</a></li>
+    <li class="breadcrumb-item"><a class="text-white" href="archPanel.php">Compendio</a></li>
     <li class="breadcrumb-item text-white active" aria-current="page">Detalle</li>
     <?php
     echo $twig->render('prebodyltFin.twig');

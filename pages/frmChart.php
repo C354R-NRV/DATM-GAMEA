@@ -604,7 +604,7 @@ session_start();
 
     // Función para obtener y actualizar los datos del dashboard
     function updateDashboard() {
-
+      console.log("en updateDashboard");
       const selectedDate = $('#dashboardDate').val();
       const formattedDate = moment(selectedDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
       $.ajax({
@@ -838,6 +838,7 @@ session_start();
     }
 
     function updateDashboardUf() {
+      console.log("en updateDashboardUf");
       const selectedDate = $('#dashboardDateUf').val();
       const formattedDate = moment(selectedDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
       $.ajax({
@@ -1075,15 +1076,15 @@ session_start();
 
 
     $(document).ready(function() {
-      // Inicializar Flatpickr
+      console.log("inicializando funciones")
       const fp = $(".datepicker").flatpickr({
         dateFormat: "d/m/Y",
         onChange: function(selectedDates, dateStr, instance) {
-          if ($('#codigo_unidad').val() == 'UICT' || $('#codigo_unidad').val() == 'DIR') {
+          if ($('#codigo_unidad').val() == 'UICT' || $('#codigo_unidad').val() == 'DIR' || $('#codigo_unidad').val() == 'SIS') {
             updateDashboard();
             manageAutoUpdate();
           }
-          if ($('#codigo_unidad').val() == 'UFyR' || $('#codigo_unidad').val() == 'DIR') {
+          if ($('#codigo_unidad').val() == 'UFyR' || $('#codigo_unidad').val() == 'DIR' || $('#codigo_unidad').val() == 'SIS') {
             updateDashboardUf();
             manageAutoUpdateUf();
           }
@@ -1091,11 +1092,11 @@ session_start();
       });
 
       // Cargar datos iniciales
-      if ($('#codigo_unidad').val() == 'UICT' || $('#codigo_unidad').val() == 'DIR') {
+      if ($('#codigo_unidad').val() == 'UICT' || $('#codigo_unidad').val() == 'DIR'  || $('#codigo_unidad').val() == 'SIS') {
         updateDashboard();
         manageAutoUpdate();
       }
-      if ($('#codigo_unidad').val() == 'UFyR' || $('#codigo_unidad').val() == 'DIR') {
+      if ($('#codigo_unidad').val() == 'UFyR' || $('#codigo_unidad').val() == 'DIR' || $('#codigo_unidad').val() == 'SIS') {
         updateDashboardUf();
         manageAutoUpdateUf();
       }

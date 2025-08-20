@@ -316,6 +316,7 @@
     ]).then(() => {
       loadOperativos().then(() => {
         initCharts();
+        startAutoUpdate();
       });
 
       document.getElementById("comboOperativo").addEventListener("change", () => {
@@ -367,12 +368,33 @@
     // Variables para almacenar datos previos y evitar reconstrucción innecesaria
     let previousChartsData = null
     let previousMeterData = null
-    const updateInterval = null
+    let updateInterval = null
 
     // Función para comparar datos y detectar cambios
     function hasDataChanged(newData, oldData) {
       if (!oldData) return true
       return JSON.stringify(newData) !== JSON.stringify(oldData)
+    }
+
+    // Función para iniciar la actualización automática
+    function startAutoUpdate() {
+      // Limpiar intervalo anterior si existe
+      if (updateInterval) {
+        clearInterval(updateInterval);
+      }
+
+      // Configurar nuevo intervalo de 3 segundos
+      updateInterval = setInterval(() => {
+        initCharts();
+      }, 3000);
+    }
+
+    // Función para detener la actualización automática
+    function stopAutoUpdate() {
+      if (updateInterval) {
+        clearInterval(updateInterval);
+        updateInterval = null;
+      }
     }
 
     async function initCharts() {
@@ -588,64 +610,6 @@
     }
 
 
-    /* function renderMeterChart(data) {
-      const totalPuntosProgramados = data.total;
-      const parcialSum = data.parcial;
-
-      var dataTable = google.visualization.arrayToDataTable([
-        ["Label", "Value"],
-        ["", 0],
-      ]);
-
-      var options = {
-        width: 600,
-        height: 400,
-        redFrom: 0,
-        redTo: 0,
-        yellowFrom: 0,
-        yellowTo: 0,
-        greenFrom: 0,
-        greenTo: totalPuntosProgramados,
-        minorTicks: 5,
-        max: totalPuntosProgramados,
-        greenColor: "#FFEB3B",
-        yellowColor: "#36A2EB",
-        animation: {
-          duration: 500,
-          easing: "out",
-          startup: true,
-        },
-      };
-
-      var chart = new google.visualization.Gauge(
-        document.getElementById("gauge_div")
-      );
-      chart.draw(dataTable, options);
-
-      // Animate the gauge
-      let currentValue = 0;
-      const step = Math.max(1, Math.floor(parcialSum / 50));
-
-      function animate() {
-        if (currentValue > parcialSum) {
-          currentValue = parcialSum;
-        }
-
-        dataTable.setValue(0, 1, currentValue);
-        options.yellowTo = currentValue;
-        options.greenFrom = currentValue;
-
-        chart.draw(dataTable, options);
-
-        if (currentValue < parcialSum) {
-          currentValue += step;
-          setTimeout(animate, 30);
-        }
-      }
-
-      animate();
-    } */
-
     function renderMeterChart(data) {
       const totalPuntosProgramados = data.total
       const newValue = data.parcial
@@ -724,6 +688,15 @@
         gaugeChartInstance.draw(gaugeDataTable, gaugeOptions)
       }
     }
+
+    // Opcional: Detener actualización cuando la página se oculta para ahorrar recursos
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        stopAutoUpdate();
+      } else {
+        startAutoUpdate();
+      }
+    });
   </script>
 </body>
 

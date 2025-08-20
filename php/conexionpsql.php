@@ -12,7 +12,7 @@ class conexion
      */
 
     // private $host = '172.16.100.28'; 
-    
+
     private $host = '172.16.21.90';
     private $dbname = 'datm250325';
     private $user = 'postgres';
@@ -72,4 +72,17 @@ function generarSha1DesdeCabecera($cabecera)
     $cabecera->hash_datos_txt = $texto;
     $cabecera->hash_datos = strtoupper(sha1($texto));
     return $cabecera->hash_datos;
+}
+
+
+function getClientIP()
+{
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        return $_SERVER['HTTP_CLIENT_IP'];
+    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        // Si hay múltiples IP separadas por coma, tomar la primera
+        return explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0];
+    } else {
+        return $_SERVER['REMOTE_ADDR'];
+    }
 }
