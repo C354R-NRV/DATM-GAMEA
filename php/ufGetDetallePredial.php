@@ -17,7 +17,26 @@ if (isset($filtroFechaIni) and trim($filtroFechaIni) != '' and isset($filtroFech
 }
 
 if (isset($filtroInmueble) and trim($filtroInmueble) != '') {
-    $filtro .= " and a.numero_inmueble like '$filtroInmueble' ";
+    $condicion = '';
+    if (filter_var($filtroInmueble, FILTER_VALIDATE_INT) !== false) {
+        $condicion = " or a.no_formulario = $filtroInmueble";
+    }
+
+    $filtro .= 
+
+    "and (
+    
+        a.numero_inmueble like '$filtroInmueble'  
+        $condicion
+        or
+        
+            (
+            (
+        SELECT string_agg ( ltrim( x, '0' ), '-' ) FROM UNNEST ( string_to_array( A.codigo_catastral, '-' ) ) x ) = ( SELECT string_agg ( ltrim( x, '0' ), '-' ) FROM UNNEST ( string_to_array( '$filtroInmueble', '-' ) ) x )
+        )
+    
+    )";
+
 }
 
 $query = "
@@ -75,13 +94,17 @@ $query = "
         
         $filtro 
         
-        order by grupo, a.no_formulario ; 
+        order by a.id desc
+        limit 300 ; 
 ";
+
+
 
 $stmt = $cons->query($query);
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $data = array();
+
 $cnt = 1;
 foreach ($result as $key => $item) {
 
@@ -102,7 +125,7 @@ foreach ($result as $key => $item) {
         $auxActividad = 'Con actividad economica (' . $item['cant_act'] . ') ';
 
     $fila = array(
-        "id" => $cnt,
+        "id" => $item['id'],
         "grupo" =>  $item['grupo'],
         "usuario" =>  $item['usuario'],
         "numero_inmueble" =>  $item['numero_inmueble'],
@@ -124,7 +147,7 @@ function normalizarCodigo($cadena)
     $cadena = (string) ($cadena ?? '');
     $partes = explode('-', $cadena);
     $partesNormalizadas = array_map(function ($parte) {
-        return ltrim($parte, '0');  
+        return ltrim($parte, '0');
     }, $partes);
     return strtolower(implode('-', $partesNormalizadas));
 }
@@ -132,13 +155,13 @@ function normalizarCodigo($cadena)
 function comparaFechaLimite($fecha, $dias)
 {
     $currentDate = new DateTime();
-    $inputDate = DateTime::createFromFormat('d/m/Y H:i:s', $fecha); 
+    $inputDate = DateTime::createFromFormat('d/m/Y H:i:s', $fecha);
     if (!$inputDate) {
         echo "Formato de fecha inválido.";
         exit;
-    } 
+    }
     $inputDatePlus3Days = clone $inputDate;
-    $inputDatePlus3Days->modify("+$dias days"); 
+    $inputDatePlus3Days->modify("+$dias days");
     if ($currentDate < $inputDatePlus3Days) {
         return true;
     } else {

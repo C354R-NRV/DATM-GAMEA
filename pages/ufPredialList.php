@@ -627,7 +627,7 @@ if (!$_SESSION['swlogin']) {
                     <a class="btn btn-success" onclick="generarReporteOperativo()" role="button"><i class="fa fa-file-excel-o" aria-hidden="true"></i></a> -->
                 </div>
                 <div class="col-md-3 mb-3">
-                    <input type="text" class="form-control" value="" id="filtroInmueble" placeholder="Numero inmueble">
+                    <input type="text" class="form-control" value="" id="filtroInmueble" placeholder="N°.Inm. ó N°.Form.">
                 </div>
                 <div class="col-md-3 mb-3">
                     <input type="text" class="form-control datepicker" value="" id="filtroFechaIni" placeholder="Fecha ini">
@@ -646,6 +646,7 @@ if (!$_SESSION['swlogin']) {
         <div>
             <table id="tableCompendio"
                 data-toggle="table"
+                data-unique-id="id"
                 data-search="true"
                 data-show-toggle="true"
                 data-show-fullscreen="true"
@@ -833,13 +834,10 @@ if (!$_SESSION['swlogin']) {
                 grupo: parametros.grupo,
             },
             xhrFields: {
-                responseType: "blob", // Importante para manejar archivos binarios
+                responseType: "blob",  
             },
-            success: (data, status, xhr) => {
-                // Cerrar loading
-                Swal.close()
-
-                // Crear enlace de descarga
+            success: (data, status, xhr) => { 
+                Swal.close() 
                 const blob = new Blob([data], {
                     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 })
@@ -915,8 +913,7 @@ if (!$_SESSION['swlogin']) {
             beforeSend: function() {
                 loadGralOn();
             },
-            success: function(e) {
-                console.log(e);
+            success: function(e) { 
                 loadGralOff();
                 $('#tbodyItems').empty();
                 dat = $.parseJSON(e);
@@ -987,12 +984,12 @@ if (!$_SESSION['swlogin']) {
     function createInfoBlockHtmlEstado(dat) {
 
         let html = `
-            <div class="property-card">
+            <div class="property-card" id="property-card-${dat[0].id}">
                 <div class="card-header">
                     ${dat[0].numero_inmueble}
                 </div> 
                 <div class="card-body"> 
-    `;
+            `;
 
         dat.forEach(element => {
 
@@ -1038,20 +1035,20 @@ if (!$_SESSION['swlogin']) {
     function createInfoBlockHtml(dat) {
 
         let html = `
-            <div class="property-card">
+            <div class="property-card" id="property-card-${dat[0].id}">
                 <div class="card-header">
                     ${dat[0].numero_inmueble}
                 </div> 
                 <div class="card-body"> 
                     <div class="icon-buttons">
                         <i class="fa fa-check icon-check" aria-hidden="true" title="Inmueble actualizado" onclick="actualizarEstado(${dat[0].id}, '${dat[0].numero_inmueble}',1)"></i>  
-                        <i class="fa fa-pencil-square-o icon-refresh" aria-hidden="true" title="Modificar inmueble" onclick="modificaInmueble(${dat[0].id}, '${dat[0].numero_inmueble}')"></i>  
+                        <i class="fa fa-pencil-square-o icon-refresh" aria-hidden="true" title="Modificar inmueble" onclick="modificaInmueble(${dat[0].id}, '${dat[0].numero_inmueble}', '${dat[0].nombre_razon}' , '${dat[0].codigo_catastral}' )"></i>  
                         <i class="fa fa-print  icon-refresh" aria-hidden="true" onclick="imprimirReporte(${dat[0].id})"></i>     
                         <a target="_blank" href="https://www.google.com/maps?q=${dat[0].latitud},${dat[0].longitud}"><i class="fa fa-street-view icon-refresh" aria-hidden="true"></i></a>   
                         <i class="fa fa-folder-open-o icon-refresh" aria-hidden="true" onclick="listarArchivosDigitales('${dat[0].numero_inmueble}')"></i>     
                         <i class="fa fa-exclamation-triangle icon-warning" aria-hidden="true" title="Desacato a la fiscalización" onclick="actualizarEstado(${dat[0].id}, '${dat[0].numero_inmueble}', 0)"></i> 
                     </div>
-    `;
+        `;
 
         dat.forEach(element => {
             let videoAux = ((element.video) ? '<a href="' + element.video + '" class="video-link">[VIDEO]</a>' : '');
@@ -1163,7 +1160,7 @@ if (!$_SESSION['swlogin']) {
         </div>
         
         <div class="divider"></div> 
-    `;
+        `;
         });
         html += `
 
@@ -1188,8 +1185,8 @@ if (!$_SESSION['swlogin']) {
             beforeSend: function() {
                 loadGralOn();
             },
-            success: function(e) { 
-                loadGralOff(); 
+            success: function(e) {
+                loadGralOff();
 
                 $.confirm({
                     title: `Archivos digitales de <b>${inmueble}</b>`,
@@ -1214,11 +1211,14 @@ if (!$_SESSION['swlogin']) {
 
     }
 
-    function modificaInmueble(id, inmueble) {
-
+    function modificaInmueble(id, inmueble, nombre_razon, catastral) {
         $.confirm({
             title: "Modificación de inmueble",
-            content: `Numero de inmueble actual: <b>${inmueble}</b><p>Nuevo numero:<input type="text" id="new_inmueble" placeholder="Numero inmueble" class="form-control"></p>`,
+            content: `Numero de inmueble actual: <b>${inmueble}</b>
+                <p>Nuevo numero:<input type="text" id="new_inmueble" placeholder="Numero inmueble" class="form-control"></p>
+                <p>Nobre :<input type="text" id="new_nombre" placeholder="Nombres" class="form-control" value="${nombre_razon}"></p>
+                <p>Codigo Catastral :<input type="text" id="new_catastro" placeholder="Codigo catastral" value="${catastral}" class="form-control"></p>
+                `,
             type: "green",
             typeAnimated: true,
             columnClass: "col-md-6 col-md-offset-6 col-xs-8 col-xs-offset-8",
@@ -1232,7 +1232,12 @@ if (!$_SESSION['swlogin']) {
                     btnClass: "btn-green",
                     action: function() {
 
-                        datos = "&id=" + id + "&inmueble=" + inmueble + "&new_inmueble=" + $('#new_inmueble').val();
+                        datos = "&id=" + id + "&inmueble=" + inmueble +
+                            "&new_inmueble=" + $('#new_inmueble').val() +
+                            "&nombre_razon_ant=" + nombre_razon +
+                            "&new_nombre=" + $('#new_nombre').val() +
+                            "&catastral_ant=" + catastral +
+                            "&new_catastro=" + $('#new_catastro').val();
 
 
                         $.ajax({
@@ -1249,7 +1254,23 @@ if (!$_SESSION['swlogin']) {
                                 loadGralOff();
                                 dat = JSON.parse(e)
                                 if (dat.success) {
-                                    window.location.href = './ufPredialList.php';
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "../php/ufGetDetallePredialItem.php",
+                                        data: {
+                                            numero_inmueble: $('#new_inmueble').val()
+                                        },
+                                        success: function(resp) {
+                                            let updatedData = JSON.parse(resp);
+                                            let newHtml = createInfoBlockHtml(updatedData);
+                                            $("#property-card-" + id).replaceWith(newHtml);
+                                            $('#tableCompendio').bootstrapTable('updateByUniqueId', {
+                                                id: id,
+                                                row: updatedData[0]
+                                            });
+                                        }
+                                    });
+
                                 } else {
                                     $.confirm({
                                         title: " Error",

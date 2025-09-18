@@ -835,7 +835,6 @@ if (!$_SESSION['swlogin']) {
             pointer-events: none;
         }
 
-        /* Agregar al final de los estilos CSS */
         #addPointBtn.geojson-active {
             background-color: rgba(255, 107, 53, 0.9) !important;
             color: white !important;
@@ -845,7 +844,6 @@ if (!$_SESSION['swlogin']) {
             background-color: rgba(255, 87, 33, 0.9) !important;
         }
 
-        /* Mejorar el cursor del mapa cuando está en modo agregar punto */
         .leaflet-container.adding-point-mode {
             cursor: crosshair !important;
         }
@@ -854,7 +852,6 @@ if (!$_SESSION['swlogin']) {
             cursor: crosshair !important;
         }
 
-        /* Agregar al final de los estilos CSS */
         .saved-point-marker-container {
             pointer-events: auto;
         }
@@ -1077,7 +1074,7 @@ if (!$_SESSION['swlogin']) {
                     <i class="fa fa-arrow-left" aria-hidden="true"></i>
                 </button>
                 <!-- <button id="locationBtn" class="control-button" title="Mostrar mi ubicación" aria-label="Mostrar mi ubicación"><i class="fa fa-map-marker" aria-hidden="true"></i></button> -->
-                <button id="addPointBtn" class="control-button" title="Agregar punto" aria-label="Agregar punto">
+                <button id="addPointBtn" class="control-button" title="Agregar punto [Ctrl+q]" aria-label="Agregar punto">
                     <i class="fa fa-map-marker" aria-hidden="true"></i>
                 </button>
                 <button id="zoomInBtn" class="control-button" title="Acercar" aria-label="Acercar mapa">+</button>
@@ -1184,7 +1181,7 @@ if (!$_SESSION['swlogin']) {
             MIN_ZOOM_FOR_LOADING: 10,
             DEBOUNCE_DELAY: 300,
             BOUNDS_PADDING: 0.2,
-            MAX_POINTS_PER_REQUEST: 2000
+            MAX_POINTS_PER_REQUEST: 6000
         };
 
         // Variables para distritos
@@ -3317,7 +3314,6 @@ if (!$_SESSION['swlogin']) {
                 `;
         }
 
-        // NUEVA FUNCIÓN: Verificar si una fecha es hoy
         function isToday(dateString) {
             if (!dateString) return false;
 
@@ -3503,12 +3499,14 @@ if (!$_SESSION['swlogin']) {
 
                     loadedMarkerIds.add(item.id);
 
-                    // MEJORA: Verificar si es visita de hoy y usar marcador apropiado
-                    const isVisitToday = item.is_visit_today;
-                    console.log("===> numero_inmueble:" + item.numero_inmueble);
-                    console.log("===> isVisitToday:" + isVisitToday);
 
+                    const isVisitToday = item.is_visit_today;
+                    /* console.log("===> numero_inmueble:" + item.numero_inmueble);
+                    console.log("===> isVisitToday:" + isVisitToday);
                     console.log("item.estado_fiscalizacion:" + item.estado_fiscalizacion);
+                     */
+
+
 
                     let markerClass = isVisitToday ? 'puntoMarcaHoy' : 'puntoMarca';
                     if (item.estado_fiscalizacion == 'PROCESADO')
@@ -3571,7 +3569,7 @@ if (!$_SESSION['swlogin']) {
             }
         }
 
-        function normalizarCodigo(cadena) {
+        function normalizarCodigoCatastro(cadena) {
             return String(cadena || '')
                 .split('-')
                 .map(parte => parte.replace(/^0+/, ''))
@@ -3611,12 +3609,12 @@ if (!$_SESSION['swlogin']) {
                         const nombre = String(data.nombre_razon || "")
                             .toLowerCase()
                             .trim()
-                        const codigo = normalizarCodigo(
+                        const codigo = normalizarCodigoCatastro(
                             String(data.codigo_catastral || "")
                             .toLowerCase()
                             .trim(),
                         )
-                        const termNormalizado = normalizarCodigo(term)
+                        const termNormalizado = normalizarCodigoCatastro(term)
                         const numero = String(data.numero_inmueble || "")
                             .toLowerCase()
                             .trim()
@@ -3636,6 +3634,7 @@ if (!$_SESSION['swlogin']) {
                             matchesSearch = true
                         } else {
                             // Primero verificar coincidencias exactas (tienen prioridad)
+
                             if (no_formulario === term || numero === term) {
                                 matchesSearch = true
                             }
@@ -3648,6 +3647,7 @@ if (!$_SESSION['swlogin']) {
                                 usuario.includes(term)
                             ) {
                                 matchesSearch = true
+                                console.log('revisando codigo:' + codigo + ', termNormalizado:' + termNormalizado);
                             }
                         }
 
@@ -4031,8 +4031,6 @@ if (!$_SESSION['swlogin']) {
             updateDebugInfo();
         }
 
-        // Función para manejar movimiento del mapa con carga dinámica (MEJORADA)
-        // Función para manejar movimiento del mapa con carga dinámica (MEJORADA)
         function handleMapMovement() {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
@@ -4515,43 +4513,35 @@ if (!$_SESSION['swlogin']) {
             const button = document.getElementById('addPointBtn');
 
             if (isAddingPoint) {
-                // Desactivar modo
                 isAddingPoint = false;
                 button.classList.remove('geojson-active');
                 showStatusMessage('Modo agregar punto desactivado', 'info');
 
-                // Remover event listener temporal
                 map.off('click', handleAddPointClick);
 
-                // Restaurar cursor normal
                 map.getContainer().style.cursor = '';
             } else {
-                // Activar modo
                 isAddingPoint = true;
                 button.classList.add('geojson-active');
                 showStatusMessage('Haga clic en el mapa para agregar un punto', 'success');
 
-                // Cambiar cursor para indicar modo activo
                 map.getContainer().style.cursor = 'crosshair';
 
-                // Agregar event listener para agregar punto CON DELAY
                 setTimeout(() => {
                     map.on('click', handleAddPointClick);
-                }, 100); // Pequeño delay para evitar captura inmediata
+                }, 100);
             }
             debugAddPoint();
         }
-        // Función para manejar click al agregar punto
+
         function handleAddPointClick(e) {
             console.log('handleAddPointClick ejecutado', e);
 
-            // Verificar que realmente estamos en modo agregar punto
             if (!isAddingPoint) {
                 console.log('No está en modo agregar punto, ignorando click');
                 return;
             }
 
-            // Prevenir propagación
             if (e.originalEvent) {
                 e.originalEvent.stopPropagation();
             }
@@ -4560,8 +4550,6 @@ if (!$_SESSION['swlogin']) {
             const lat = e.latlng.lat;
             const lng = e.latlng.lng;
 
-
-            // Crear marcador en el punto clickeado
             const pointIcon = L.divIcon({
                 className: 'new-point-marker-container',
                 html: '<div style="background-color: ' + colorPrevio + '; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px rgba(206, 206, 206, 0.8); "></div>',
@@ -4573,10 +4561,8 @@ if (!$_SESSION['swlogin']) {
                 icon: pointIcon
             }).addTo(map);
 
-            // Mostrar popup personalizado inmediatamente
             showCustomPopup(lat, lng);
 
-            // Desactivar modo agregar punto INMEDIATAMENTE
             isAddingPoint = false;
             const button = document.getElementById('addPointBtn');
             button.classList.remove('geojson-active');
@@ -4590,6 +4576,7 @@ if (!$_SESSION['swlogin']) {
 
         // Función para mostrar popup personalizado
         let colorPrevio = '#ff6b35';
+        let detallePrevio = 'G1';
 
         function showCustomPopup(lat, lng) {
             // Guardar datos del punto actual
@@ -4598,7 +4585,8 @@ if (!$_SESSION['swlogin']) {
                 lng: lng,
                 marker: newPointMarker,
                 saved: false,
-                color: colorPrevio
+                color: colorPrevio,
+                detalle: detallePrevio
             };
 
             // Crear overlay
@@ -4616,8 +4604,8 @@ if (!$_SESSION['swlogin']) {
                 <input type="color" id="pointColorPicker" class="color-picker-input" value="${colorPrevio}" /> 
             </label> 
         </div>
-
-        <input type="text" id="pointInput" placeholder="Ingrese descripción del punto..." />
+        <!-- DETALLE ANTERIOR -->
+        <input type="text" id="pointInput" placeholder="Ingrese descripción del punto..." value="${detallePrevio}"/>
         
         <div class="custom-popup-buttons">
             <button class="btn-save" onclick="saveNewPoint()">Guardar</button>
@@ -4690,7 +4678,6 @@ if (!$_SESSION['swlogin']) {
         function updateMarkerColor(marker, color) {
             console.log("en updateMarkerColor:" + color);
 
-            /* html: `<div style="background-color: ${color}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px ${color}80; animation: pulseAnimation 1.5s infinite ease-in-out;"></div>`, */
             const newIcon = L.divIcon({
                 className: 'new-point-marker-container',
                 html: `<div style="background-color: ${color}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px ${color}80;"></div>`,
@@ -4703,27 +4690,19 @@ if (!$_SESSION['swlogin']) {
         // Función para guardar nuevo punto
         function saveNewPoint() {
             const input = document.getElementById('pointInput');
-            const description = input.value.trim();
+            const description = input.value.trim() ? input.value.trim() : detallePrevio;
             const selectedColor = currentPointData ? currentPointData.color : colorPrevio;
 
             if (description === '') {
                 showStatusMessage('Por favor ingrese una descripción', 'error');
                 return;
             }
-
-            // Marcar como guardado
             if (currentPointData) {
                 currentPointData.saved = true;
                 currentPointData.description = description;
                 currentPointData.timestamp = new Date().toISOString();
             }
-
-            // Cambiar el estilo del marcador a "guardado" con el color seleccionado
             if (newPointMarker) {
-                // Crear nuevo icono para punto guardado con color personalizado
-
-                /* html: `<div style="background-color: ${selectedColor}; width: 0.9rem; height: 0.9rem; border-radius: 50%; box-shadow: 0 0 6px #fff, 0 0 0.9rem #fff, 0 0 18px ${selectedColor}, 0 0 24px ${selectedColor}, 0 0 30px ${selectedColor}, 0 0 36px ${selectedColor}; border: 2px solid #fff; animation: pulseAnimation 5s infinite ease-in-out;"></div>`, */
-
                 const savedPointIcon = L.divIcon({
                     className: 'saved-point-marker-container',
                     html: `<div style="background-color: ${selectedColor}; width: 0.9rem; height: 0.9rem; border-radius: 50%; border: 2px solid #fff;"></div>`,
@@ -4731,10 +4710,8 @@ if (!$_SESSION['swlogin']) {
                     iconAnchor: [9, 9]
                 });
 
-                // Actualizar el icono del marcador
                 newPointMarker.setIcon(savedPointIcon);
 
-                // Crear popup para el punto guardado
                 const savedPopupContent = `
             <div class="popup-content">
                 <div class="popup-title">Punto Guardado</div>
@@ -4746,10 +4723,8 @@ if (!$_SESSION['swlogin']) {
                 </div>
             </div>`;
 
-                // Actualizar el popup del marcador
                 newPointMarker.bindPopup(savedPopupContent);
 
-                // Agregar a la lista de puntos guardados
                 savedPoints.push({
                     id: Date.now(),
                     marker: newPointMarker,
@@ -4763,7 +4738,6 @@ if (!$_SESSION['swlogin']) {
                 console.log('Punto guardado con color:', savedPoints[savedPoints.length - 1]);
             }
 
-            // Datos para enviar al backend (incluyendo color)
             const data = {
                 latitud: currentPointData.lat,
                 longitud: currentPointData.lng,
@@ -4785,8 +4759,13 @@ if (!$_SESSION['swlogin']) {
                 },
                 success: function(dat) {
                     console.log(dat);
-                     dat = JSON.parse(dat);
+                    dat = JSON.parse(dat);
                     console.log(dat.status);
+
+                    console.log("detallePrevio:" + detallePrevio + ", pointInput:" + $('#pointInput').val())
+                    if (detallePrevio != $('#pointInput').val()) {
+                        detallePrevio = $('#pointInput').val();
+                    }
 
                     loadGralOff();
                     if (dat.status === 'unauthenticated') {

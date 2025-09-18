@@ -165,7 +165,7 @@ try {
     } else {
         $documento .= "
             <p>
-            En previsión a lo dispuesto por el Articulo 110 del Código Tributario Boliviano, Ley No 2492, solicitamos a su autoridad se ordene la RETENCIÓN DE FONDOS de las cuentas que tuviese en el sistema financiero del contribuyente: <b>" .
+            En previsión a lo dispuesto por el Código Tributario Boliviano, Ley No 2492, solicitamos a su autoridad se ordene la RETENCIÓN DE FONDOS de las cuentas que tuviese en el sistema financiero del contribuyente: <b>" .
             strtoupper($solicitud[0]['nombre_completo'])  . "</b> con <b>" . $solicitud[0]['cod_documento_identidad_tipo'] . "  " . $solicitud[0]['documento'] . "</b> ";
         if ($solicitud[0]['tipo_apoderado'] != 'x' and $solicitud[0]['tipo_apoderado'] != '') {
             $documento .= "con " . $solicitud[0]['tipo_apoderado'] . ": Sr(a). " . $solicitud[0]['nombre_apo'] . " con " . $solicitud[0]['documento_identidad_apo'] . " ";
@@ -264,7 +264,7 @@ try {
             </span>
             <div style='text-align: justify;'>
                     <p>
-                    En previsión a lo dispuesto por el Articulo 110 del Código Tributario Boliviano Ley 2492, 
+                    En previsión a lo dispuesto por el Código Tributario Boliviano Ley 2492, 
                     solicitamos la inscripción de la <b>ANOTACIÓN PREVENTIVA</b> del VEHÍCULO con placa de control <b>" . strtoupper($solicitud[0]['documento_tributario']) . "</b>, 
                     registrado a nombre del (la) contribuyente <b>" . strtoupper($solicitud[0]['nombre_completo'])  . "</b> con <b>" . $solicitud[0]['cod_documento_identidad_tipo'] . "  " . trim($solicitud[0]['documento']) .
             ".</b>";

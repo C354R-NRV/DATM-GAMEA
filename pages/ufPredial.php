@@ -1023,12 +1023,6 @@ if (!$_SESSION['swlogin']) {
                         <div class="row">
                             <div class="col-6 col-lg-4 mb-2">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="1" id="servicioTodos" name="servicio[]">
-                                    <label class="form-check-label" for="servicioTodos">Todos</label>
-                                </div>
-                            </div>
-                            <div class="col-6 col-lg-4 mb-2">
-                                <div class="form-check">
                                     <input class="form-check-input" type="checkbox" value="2" id="servicioLuz" name="servicio[]">
                                     <label class="form-check-label" for="servicioLuz">LUZ</label>
                                 </div>
@@ -1069,6 +1063,12 @@ if (!$_SESSION['swlogin']) {
                                     <label class="form-check-label" for="servicioNC">NO CORRESPONDE</label>
                                 </div>
                             </div>
+                            <div class="col-6 col-lg-4 mb-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="1" id="servicioTodos" name="servicio[]">
+                                    <label class="form-check-label" for="servicioTodos">Todos</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1080,7 +1080,7 @@ if (!$_SESSION['swlogin']) {
 
                 <div class="col-md-6 mb-3">
                     <label for="no_concluidos" class="form-label">Construcciones concluidas <span class="text-danger">*</span></label>
-                    <input type="number" class="form-control" id="no_concluidos" min="1" name="no_concluidos">
+                    <input type="number" class="form-control" id="no_concluidos" min="0" name="no_concluidos">
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -1157,7 +1157,7 @@ if (!$_SESSION['swlogin']) {
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label for="contactoTitular" class="form-label">Concato del titular</label>
+                    <label for="contactoTitular" class="form-label">Contacto del titular</label>
                     <input type="tel" class="form-control" id="contactoTitular" name="contactoTitular">
                 </div>
 
@@ -1604,9 +1604,9 @@ if (!$_SESSION['swlogin']) {
             const currentZoom = map.getZoom();
 
             // Validar zoom mínimo
-            if (currentZoom <= 18) {
+            if (currentZoom <= 15) {
                 if (showMessage) {
-                    showStatusMessage(`Zoom insuficiente para mostrar puntos. Mínimo: 19, Actual: ${currentZoom}`, 'error');
+                    showStatusMessage(`Zoom insuficiente para mostrar puntos. Mínimo: 16, Actual: ${currentZoom}`, 'error');
                 }
                 return;
             }
@@ -1694,14 +1694,13 @@ if (!$_SESSION['swlogin']) {
 
                         const popupContent = `
                     <div class="popup-content"> 
-                    <div style="text-align:center;"><img style="max-height:6rem;" src="../static/ufpredial/${punto.imagen_principal || 'no_img.jpg'}"></div>
-                        <div class="popup-description">
+                    <div style="text-align:center;"><img style="max-height:12rem;" src="../static/ufpredial/${punto.imagen_principal || 'no_img.jpg'}"></div>
+                        <div class="popup-description" style="font-size:9px;">
                             <strong>Formulario:</strong> ${punto.no_formulario || 'N/A'}<br> 
                             <strong>Número:</strong> <span style="cursor:pointer; font-weight: bold; color:#15939d; " 
                                             onclick="navigator.clipboard.writeText('${punto.numero_inmueble}')">
                                             ${punto.numero_inmueble}
-                                        </span><br>
-                            <strong>Contribuyente:</strong> ${punto.nombre_razon || 'N/A'}<br>
+                                        </span><br> 
                             <strong>Código catastro:</strong> ${punto.codigo_catastral || 'N/A'}<br>
                             <strong>Fecha visita:</strong> ${punto.fecha_apersonamiento || 'N/A'}<br>
                             <strong>Usuario:</strong> ${punto.usuario || 'N/A'}
@@ -1735,8 +1734,8 @@ if (!$_SESSION['swlogin']) {
                 showStatusMessage('Capa de puntos visibles desactivada', 'info');
             } else {
                 // Verificar zoom mínimo antes de activar
-                if (currentZoom <= 18) {
-                    showStatusMessage(`Zoom mínimo requerido: 19. Zoom actual: ${currentZoom}`, 'error');
+                if (currentZoom <= 15) {
+                    showStatusMessage(`Zoom mínimo requerido: 16. Zoom actual: ${currentZoom}`, 'error');
                     return;
                 }
 
@@ -1851,8 +1850,8 @@ if (!$_SESSION['swlogin']) {
                 const lat = parseFloat(punto.latitud);
                 const lng = parseFloat(punto.longitud);
                 const color = (punto.color || '#fff');
-                let borde_ = '#000';
-                if (punto.idpredial_asociado > 0) {
+                let borde_ = '#000'; 
+                if (punto.idpredial_asociado > 0 && punto.sin_imagenes == 0) {
                     borde_ = '#fff';
                 }
                 console.log("borde_:" + borde_);
@@ -2325,7 +2324,7 @@ if (!$_SESSION['swlogin']) {
 
                 if (puntosVisiblesActive) {
                     const currentZoom = map.getZoom();
-                    if (currentZoom > 18) {
+                    if (currentZoom > 15) {
                         debouncedBuscarPuntosVisibles(false);
                     } else {
                         // Si el zoom es insuficiente, desactivar la capa
@@ -2354,7 +2353,7 @@ if (!$_SESSION['swlogin']) {
 
                 if (puntosVisiblesActive) {
                     const currentZoom = map.getZoom();
-                    if (currentZoom > 18) {
+                    if (currentZoom > 16) {
                         debouncedBuscarPuntosVisibles(false);
                     } else {
                         // Si el zoom es insuficiente, desactivar la capa automáticamente
@@ -2363,7 +2362,7 @@ if (!$_SESSION['swlogin']) {
                         }
                         puntosVisiblesActive = false;
                         $('#puntosVisiblesBtn').removeClass('active');
-                        showStatusMessage(`Zoom insuficiente. Capa desactivada. Mínimo: 19, Actual: ${currentZoom}`, 'info');
+                        showStatusMessage(`Zoom insuficiente. Capa desactivada. Mínimo: 17, Actual: ${currentZoom}`, 'info');
                     }
                 }
             });
@@ -5111,12 +5110,35 @@ if (!$_SESSION['swlogin']) {
 
             var errores = [];
 
-            if ($('#geolocalizacion').val() === '') {
-                errores.push('Debe obtener la geolocalización del inmueble');
-                $('#geolocalizacion').addClass('is-invalid');
+            // Validar que tipologia no esté vacía
+            if ($('#tipologia').val() === '') {
+                errores.push('Debe seleccionar una tipología');
+                $('#tipologia').addClass('is-invalid');
+            } else {
+                $('#tipologia').removeClass('is-invalid');
             }
 
-            if ($('#tipologia').val() == 'OBRA BRUTA') {
+            // Validación general de geolocalización (solo si tipologia != OBRA BRUTA)
+            if ($('#tipologia').val() !== 'OBRA BRUTA' && $('#geolocalizacion').val() === '') {
+                errores.push('Debe obtener la geolocalización del inmueble');
+                $('#geolocalizacion').addClass('is-invalid');
+            } else {
+                $('#geolocalizacion').removeClass('is-invalid');
+            }
+
+            if ($('#tipologia').val() === 'OBRA BRUTA') {
+                // 🔴 SOLO validar imagen principal (nueva o existente en BD)
+                if (
+                    (!compressedImages.main || compressedImages.main === "") &&
+                    $('#imagenPrincipal')[0].files.length === 0
+                ) {
+                    errores.push('Debe seleccionar una imagen principal (nueva o existente)');
+                    $('#imagenPrincipal').addClass('is-invalid');
+                } else {
+                    $('#imagenPrincipal').removeClass('is-invalid');
+                }
+            } else {
+                // 🔵 Validaciones normales (cuando tipologia != OBRA BRUTA)
                 $('input[required], select[required], textarea[required]').each(function() {
                     if ($(this).val() === '') {
                         var labelText = $(this).prev('label').text().replace(' *', '');
@@ -5128,7 +5150,6 @@ if (!$_SESSION['swlogin']) {
                 });
 
                 var telefonoRegex = /^\d{8}$/;
-                var numeroInmuebleRegex = /^\d{5}$/;
                 if ($('#contactoTitular').val() !== '' && !telefonoRegex.test($('#contactoTitular').val())) {
                     errores.push('El teléfono del titular debe tener 8 dígitos');
                     $('#contactoTitular').addClass('is-invalid');
@@ -5140,18 +5161,18 @@ if (!$_SESSION['swlogin']) {
                 }
 
                 if ($('#numeroInmueble').val() !== '' && ($('#numeroInmueble').val()).length < 5) {
-                    errores.push('El numero de inmueble tiene que tener al menos 5  dígitos');
+                    errores.push('El número de inmueble tiene que tener al menos 5 dígitos');
                     $('#numeroInmueble').addClass('is-invalid');
                 }
 
-            }
-            if ($('#imagenPrincipal')[0].files.length === 0 && $('#tipologia').val() == 'OBRA BRUTA') {
-                errores.push('Debe seleccionar una imagen principal');
-                $('#imagenPrincipal').addClass('is-invalid');
+                /* if ($('#imagenPrincipal')[0].files.length === 0 && !compressedImages.main) {
+                    errores.push('Debe seleccionar una imagen principal');
+                    $('#imagenPrincipal').addClass('is-invalid');
+                } */
             }
 
+            // Mostrar errores si existen
             if (errores.length > 0) {
-
                 var mensajeError = '<ul>';
                 $.each(errores, function(index, error) {
                     mensajeError += '<li>' + error + '</li>';
@@ -5167,43 +5188,22 @@ if (!$_SESSION['swlogin']) {
                 } else {
                     alert('Por favor corrija los siguientes errores:\n' + errores.join('\n'));
                 }
-
                 return false;
             }
 
+            // --- lo demás de tu código sigue igual ---
             const formData = new FormData(this)
-
-            /* if (compressedImages.main) {
-                formData.set("imagenPrincipal", compressedImages.main)
-            }
-
-            formData.delete("imagenesAdicionales")
-
-            compressedImages.additional.forEach((file, index) => {
-                if (file) {
-                    formData.append("imagenesAdicionales[]", file)
-                }
-            }) */
-
-            // Limpiar campos de imagen para manejarlos manualmente
             formData.delete("imagenPrincipal");
             formData.delete("imagenesAdicionales");
 
-            // Manejar imagen principal
             if (compressedImages.main) {
                 if (typeof compressedImages.main === 'string') {
-                    // Es una imagen cargada desde BD - mantener la existente
                     formData.append("imagen_principal_existente", compressedImages.main);
-                    console.log("Enviando imagen principal existente:", compressedImages.main);
                 } else {
-                    // Es una imagen nueva comprimida - reemplazar
                     formData.append("imagenPrincipal", compressedImages.main);
-                    console.log("Enviando imagen principal nueva");
                 }
             } else {
-                // No hay imagen principal - enviar campo vacío para eliminar si existía
                 formData.append("imagen_principal_existente", "");
-                console.log("No hay imagen principal");
             }
 
             // Separar imágenes adicionales existentes de las nuevas

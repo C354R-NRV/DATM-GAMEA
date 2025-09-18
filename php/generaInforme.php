@@ -193,7 +193,7 @@ $table = $section->addTable();
 $table->addRow();
 $table->addCell(2000)->addText("A", 'textoNegrita', 'sinEspacioIdentado');
 $table->addCell(1000)->addText(":", 'textoNegrita', 'sinEspacio');
-$table->addCell(8000)->addText("Lic. Jhon Villalba Camacho", 'textoNormal', 'sinEspacio');
+$table->addCell(8000)->addText("Abg. Ivan Puña Aguilar", 'textoNormal', 'sinEspacio');
 
 $table->addRow();
 $table->addCell(2000)->addText("", 'textoNegrita', 'sinEspacioIdentado');
@@ -666,7 +666,7 @@ switch ($tipo_informe) {
             $section->addText("De la revisión de los antecedentes administrativos proporcionados por el Área de Archivo, dependiente del Área de Gestión Administrativa del inmueble con Registro Tributario N°$registro (BAJA), se determina la existencia de ANTECEDENTES DE EMPADRONAMIENTO, (cursante en fojas XX al XX). ", 'textoNormal', 'parrafo');
 
             $section->addText('5.	NOTIFICACIÓN DE ACTOS ADMINISTRATIVOS POR LA DATM.', 'textoNegrita', 'subtitulo');
-            $section->addText("La Administración Tributaria Municipal emite PROVEIDO $proveido de fecha XX de octubre de 202X, notificado de manera Personal en fecha XX de octubre de 202X, dando respuesta a notas presentadas en fecha de XX de septiembre de 202X, nota complementaria presentada en fecha XX de octubre de 202X; solicitando a  " . $result['nombre_tit'] . " la presentación de: 1) Declaración Jurada ante un Notario de Fe Pública. 2) Nota de solicitud expresa dirigida al Director de la Administración Tributaria Municipal (Lic. Jhon Villalba Camacho), referencia Baja por NO POSESIÓN, en respuesta mediante nota de fecha XX de octubre de 202X, el contribuyente presenta su Declaración Jurada ante un notario de fe pública referente al inmueble con Registro Tributario N°$registro.", 'textoNormal', 'parrafo');
+            $section->addText("La Administración Tributaria Municipal emite PROVEIDO $proveido de fecha XX de octubre de 202X, notificado de manera Personal en fecha XX de octubre de 202X, dando respuesta a notas presentadas en fecha de XX de septiembre de 202X, nota complementaria presentada en fecha XX de octubre de 202X; solicitando a  " . $result['nombre_tit'] . " la presentación de: 1) Declaración Jurada ante un Notario de Fe Pública. 2) Nota de solicitud expresa dirigida al Director de la Administración Tributaria Municipal (Abg. Ivan Puña Aguilar), referencia Baja por NO POSESIÓN, en respuesta mediante nota de fecha XX de octubre de 202X, el contribuyente presenta su Declaración Jurada ante un notario de fe pública referente al inmueble con Registro Tributario N°$registro.", 'textoNormal', 'parrafo');
 
             $section->addText('6.	CONCLUSIONES.', 'textoNegrita', 'subtitulo');
             $section->addText("Por todo lo expuesto en el análisis técnico referente a la solicitud de BAJA POR NO POSESION del Registro Tributario N°$registro (BAJA), corresponde señalar lo siguiente:", 'textoNormal', 'parrafo');

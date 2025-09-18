@@ -20,7 +20,9 @@ if (isset($sort) and trim($sort) != '')
 $order_ =  ' DESC ';
 if (isset($order) and trim($order) != '')
     $order_ = $order;
-$limit_ = 500;
+
+$limit_ = 300;
+
 $offset_ = 0;
 if (isset($limit) and trim($limit) != '' and isset($offset) and trim($offset) != '') {
     $limit_ = $limit;

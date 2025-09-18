@@ -47,7 +47,12 @@ try {
     }
     $auxFiltro = '';
     if ($_POST['modulo'] == 'operativo') {
-        $auxFiltro = ' and a.idoperativo = (SELECT MAX(idoperativo) FROM public.uf_prepredial) ';
+        $auxFiltro = ' and a.idoperativo in (
+            SELECT idoperativo
+            FROM uf_operativo
+            ORDER BY idoperativo DESC
+            LIMIT 2
+            ) ';
     }
     $sql = "
         SELECT 
@@ -69,7 +74,13 @@ try {
                 ST_Centroid(ST_MakeEnvelope(:minLng, :minLat, :maxLng, :maxLat, 4326))
             ) as distancia_centro,
             b.usuario ,
-            c.numero_inmueble
+            c.numero_inmueble,
+            CASE 
+                WHEN (c.imagen_adicional IS NULL OR c.imagen_adicional = '') 
+                    AND (c.imagen_principal IS NULL OR c.imagen_principal = '') 
+                THEN 1 
+                ELSE 0 
+            END AS sin_imagenes 
             
         FROM public.uf_prepredial a
         left join datm_usuario b on  a.idusuario = b.id  
@@ -126,6 +137,7 @@ try {
             'estado_' => $row['estado_'],
             'color' => $row['color'],
             'idpredial_asociado' => $row['idpredial_asociado'],
+            'sin_imagenes' => $row['sin_imagenes'],
             'geom_text' => $row['geom_text'],
             'numero_inmueble' => $row['numero_inmueble'],
             'distancia_centro' => round($row['distancia_centro'], 2)

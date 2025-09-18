@@ -46,8 +46,7 @@ try {
             $pjson['log'] .= '<p>- Archivo subido correctamente.</p>';
         }
         $pdfFile = file_get_contents($uploadDir . $fileName);
-
-
+        
         $base64Pdf = base64_encode($pdfFile);
     } else {
         $fileName = $srfCabecera['adjunto_nombre'];
@@ -356,10 +355,10 @@ try {
                         foreach ($datosActuales as $campoBase => $datosActualesTupla) {
                             $id_item_solicitud = $datosActualesTupla['id_item_solicitud'];
                             foreach ($datosActualesTupla as $campo => $valorActual) {
-                                /* or
-                                    $campo == 'id_documento_identidad_extension' */
+                                /* */
                                 if (
                                     $campo == 'id_documento_identidad_tipo' or
+                                    $campo == 'id_documento_identidad_extension' or
                                     $campo == 'monto_retencion_bs' or
                                     $campo == 'monto_retencion_ufv' or
                                     $campo == 'id_cabecera_solicitud'
@@ -437,6 +436,7 @@ try {
                                     'id_tipo_respaldo',
                                     'documento_respaldo',
                                     'tipo_apoderado',
+                                    'id_documento_identidad_extension',
                                     'documento_identidad_apo',
                                     'nombre_apo'
                                 ];
@@ -600,10 +600,7 @@ function generarSha1Item($item, $cons, $pjson)
 
     if (! ($item->id_documento_identidad_tipo == '1' or $item->id_documento_identidad_tipo == '3' or $item->id_documento_identidad_tipo == '4'))
         $hashDetalle .= !empty($resp1['documento_identidad_extension']) ? $resp1['documento_identidad_extension'] : '';
-
-    //$hashDetalle .= !empty($item->id_documento_identidad_extension) ? $item->id_documento_identidad_extension : '';
     $hashDetalle .= !empty($item->documento_identidad_numero) ? $item->documento_identidad_numero : '';
-    /* $hashDetalle .= !empty($resp2['cod_documento_identidad_tipo']) ? $resp2['cod_documento_identidad_tipo'] : ''; */
     $hashDetalle .= !empty($item->id_documento_identidad_tipo) ? $item->id_documento_identidad_tipo : '';
     $hashDetalle .= !empty($item->documento_respaldo) ? $item->documento_respaldo : '';
     $hashDetalle .=  $item->id_item_solicitud;

@@ -98,9 +98,9 @@ if (!$_SESSION['swlogin']) {
                             <br>La alcadeza municipal de la ciudad de el alto es Mónica Eva Copa Murga, quien es la maxima autoridad de la ciudad de el alto, nació en la ciudad de El Alto, departamento de La Paz, proveniente de una familia aymara, sus padres, Ignacio Copa (Q.E.P.D) y Clementina Murga, inculcaron en la joven alteña los valores de la perseverancia, compromiso y lealtad con la gente más humilde. Copa es la sexta hija de siete hermanos, mostrando desde niña capacidad de liderazgo, lo que la llevó a encabezar diferentes espacios de lucha desde su colegio, la universidad, hasta ocupar la Presidencia del Senado y de la Asamblea Legislativa Plurinacional. La Unidad Educativa Fiscal Luis Espinal Camps, la cobijo, lugar de donde salió bachiller, años en los cuales reemplazó a su padre en las reuniones de su zona forjando su liderazgo. Concluido sus estudios de bachillerato ingresó a la carrera de Trabajo Social en la Universidad Pública de El Alto (UPEA).
                             <br>El secretario del SMAF - secretaria municipal de administracion y finanzas, es el Lic. Carlos Marca Marca.
                             <br>El Director de la DATM - direccion administrativa tributaria municipal tambien conocido como Recaudaciones o tributacion municipal, es el Lic. Jhon Jaime Villalba Camacho.
-                            <br>El jefe de la unidad de fiscalizacion es el Abg. Ivan Remberto Tiñini Villa.
+                            <br>El jefe de la unidad de fiscalizacion es el Lic. Ana Isabel Tusco Calle.
                             <br>El jefe de la unidad de ingresos es el Abg. Juan Carlos Callisaya Quispe.
-                            <br>El jefe de la unidad de la unidad juridica es la Abg. Nadia D. Avendaño Miranda.
+                            <br>El jefe de la unidad de la unidad juridica es la Abg. Alejandra J. Lurquin Santalla.
 
                             <br>La jerarquia en la ciudad de el alto en relacion a los cargos es el siguiente: 1. alcaldeza, 2. secretario del SMAF, 3. Director de la DATM, 4. jefe de unidad de fiscalizacion, 5. jefe de la unidad de ingresos y 6. jefa de la unidad de asuntos juridicos.
 

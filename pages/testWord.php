@@ -124,7 +124,7 @@ $table = $section->addTable();
 $table->addRow();
 $table->addCell(2000)->addText("A", 'textoNegrita', 'sinEspacioIdentado');
 $table->addCell(1000)->addText(":", 'textoNegrita', 'sinEspacio');
-$table->addCell(8000)->addText("Lic. Jhon Villalba Camacho", 'textoNormal', 'sinEspacio');
+$table->addCell(8000)->addText("Abg. Ivan Puña Aguilar", 'textoNormal', 'sinEspacio');
 
 $table->addRow();
 $table->addCell(2000)->addText("", 'textoNegrita', 'sinEspacioIdentado');
@@ -394,7 +394,7 @@ $section->addText("La Administración Tributaria Municipal emite PROVEIDO DATM/U
 notificado de manera Personal en fecha 07 de octubre de 2024, dando respuesta a notas presentadas en fecha de 17 de septiembre de 2024, 
 nota complementaria presentada en fecha 03 de octubre de 2023; solicitando a ABEL GARCIA LAURA la presentación de: 1) 
 Declaración Jurada ante un Notario de Fe Pública. 2) Nota de solicitud expresa dirigida al Director de la Administración 
-Tributaria Municipal (Lic. Jhon Villalba Camacho), referencia Baja por NO POSESIÓN, en respuesta mediante nota de fecha 08 de 
+Tributaria Municipal (Abg. Ivan Puña Aguilar), referencia Baja por NO POSESIÓN, en respuesta mediante nota de fecha 08 de 
 octubre de 2024, el contribuyente presenta su Declaración Jurada ante un notario de fe pública referente al inmueble con Registro 
 Tributario N°1510299757.", 'textoNormal', 'parrafo');
 

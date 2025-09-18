@@ -58,7 +58,7 @@ try {
                 </div>
                 <div style='margin-bottom: 20px;'>
                     <p>Señor:</p>
-                    <p>Lic. Jhon Villalba Camacho<br>
+                    <p>Abg. Ivan Puña Aguilar<br>
                     Director de Administración Tributaria Municipal de El Alto<br>
                     GOBIERNO AUTONOMO MUNICIPAL DE EL ALTO</p>
                     <p>Presente:</p>

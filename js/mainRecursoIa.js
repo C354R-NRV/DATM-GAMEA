@@ -162,7 +162,7 @@ function sendMessage() {
     const userMessage = $('<div>').addClass('chat-message text-end').text(`${userInput}`);
 
     $chatBox.append(userMessage);
-    datos = '&modalidad=chat' +'&promptUser=' + userInput + "&recurso=" + $('#recurso_').val() + "&tituloPrincipal=" + $('#tituloPrincipal').html();
+    datos = '&modalidad=chat' + '&promptUser=' + userInput + "&recurso=" + $('#recurso_').val() + "&tituloPrincipal=" + $('#tituloPrincipal').html();
     console.log(datos);
 
     $.ajax({

@@ -35,19 +35,23 @@ try {
     $conn = new Conexion();
     $cons = $conn->conectar();
 
+    $countSql = "  select max(idoperativo) as idoperativo from uf_operativo where estado_ is true   ";
+    $stmt = $cons->query($countSql);  
+    $resultados = $stmt->fetch(PDO::FETCH_ASSOC); 
+    $idoperativo = $resultados['idoperativo'];
 
     $query = "INSERT INTO uf_prepredial 
-                (  latitud, longitud, detalle, idusuario, fregistro_, color  ) VALUES (
-                    :latitud, :longitud, :detalle, :idusuario, :fregistro_  , :color
-                )";
+                (  latitud, longitud, detalle, idusuario, fregistro_, color, idoperativo  ) VALUES (
+                    :latitud, :longitud, :detalle, :idusuario, :fregistro_  , :color, :idoperativo
+                )"; 
 
-    $idestado_fiscalizacion = 1;
 
     $stmt = $cons->prepare($query);
     $stmt->bindParam(':latitud', $latitud);
     $stmt->bindParam(':longitud', $longitud);
     $stmt->bindParam(':detalle', $detalle);
     $stmt->bindParam(':color', $color);
+    $stmt->bindParam(':idoperativo', $idoperativo);
 
     $idusuario = $_SESSION['idusuario'];
     $stmt->bindParam(':idusuario', $idusuario);
