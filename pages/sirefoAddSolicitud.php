@@ -879,7 +879,7 @@ if (!$_SESSION['swlogin']) {
     }
 
     function isValidAlphanumeric(value, minLength) {
-        return /^[a-zA-Z0-9\s&'ñÑáéíóúÁÉÍÓÚüÜ.\-]+$/.test(value) && value.length >= minLength;
+        return /^[a-zA-Z0-9\s&'ñÑáéíóúÁÉÍÓÚüÜ/.\-]+$/.test(value) && value.length >= minLength;
     }
 </script>
 

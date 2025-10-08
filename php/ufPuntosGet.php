@@ -546,7 +546,7 @@ function createPopupHtml($row, $imagenes)
                 </div>
                 <div class="info-row">
                     <div class="info-label">Tipologia:</div>
-                    <div class="info-value">' . $row['tipologia'] . '</div>
+                    <div class="info-value">' . $row['tipologia'] . ' [N°Form:'.$row['no_formulario'].']</div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Última visita:</div>

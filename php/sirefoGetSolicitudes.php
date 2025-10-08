@@ -82,9 +82,9 @@ foreach ($cabeceras as $key => $cabecera) {
         "fecha_circular" => isset($estadoEnvio['fecha_circular']) ? $estadoEnvio['fecha_circular'] : '-',
         "estado_solicitud" => isset($estadoSolicitud['estado']) ? $estadoSolicitud['estado'] : '-',
         "usuario" => $cabecera['usuario'],
-        "acciones" => '<div style="display:none">'.$itemNombres['concatenado'].'</div>
-            <a class="btn btn-primary" href="../static/sirefo/' . $cabecera['adjunto_nombre'] . '" title="Descargar nota de remision" target="_blank" role="button"><i class="fa fa-cloud-download"></i></a> |
-            
+        "acciones" => '<div style="display:none">'.$itemNombres['concatenado'].'</div>            
+            ' . ($cabecera['adjunto_nombre'] != '' ? '<a class="btn btn-primary" href="../static/sirefo/' . $cabecera['adjunto_nombre'] . '" title="Descargar nota de remision" target="_blank" role="button"><i class="fa fa-cloud-download"></i></a>':'') . '
+
             ' . ($estadoSolicitud['estado'] === 'ENVIADO' ? ($estadoEnvio['respuesta'] === 'Procesado' ? '<a class="btn btn-success" onclick="verDetallesEnvio(' . $cabecera['id_cabecera_solicitud'] . ', \'' . $cabecera['codigo_solicitud'] . '\')" title="Ver detalles del envio de solicitud" role="button"><i class="fa fa-search-plus" aria-hidden="true"></i></a> |' : ('<a class="btn btn-success" onclick="estadoEnvio(' . $cabecera['id_cabecera_solicitud'] . ', \'' . $cabecera['codigo_solicitud'] . '\')" title="Consultar estado del envio de solicitud" role="button"><i class="fa fa-question-circle" aria-hidden="true"></i></a> |')) : '<a class="btn btn-success" onclick="actualizaEstados(' . $cabecera['id_cabecera_solicitud'] . ', \'' . $cabecera['codigo_solicitud'] . '\')" title="Remitir solicitud" role="button"><i class="fa fa-cloud-upload" aria-hidden="true"></i></a> |') . '
             
             ' . ($estadoSolicitud['estado'] != 'ENVIADO' ?

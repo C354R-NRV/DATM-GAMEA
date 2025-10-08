@@ -194,7 +194,7 @@ try {
                 if (
                     isset($_POST['item_documentoIdentidadNumero' . $i]) and
                     trim($_POST['item_documentoIdentidadNumero' . $i]) != '' and
-                    preg_match('/^[a-zA-Z0-9\s\-]{2,}$/', $_POST['item_documentoIdentidadNumero' . $i])
+                    preg_match('/^[a-zA-Z0-9\s\-\.]{2,}$/', $_POST['item_documentoIdentidadNumero' . $i])
                 ) {
                     $cntValidos++;
                     $item = new stdClass();
