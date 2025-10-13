@@ -51,7 +51,7 @@ try {
             SELECT idoperativo
             FROM uf_operativo
             ORDER BY idoperativo DESC
-            LIMIT 2
+            LIMIT 4
             ) ';
     }
     $sql = "
@@ -80,11 +80,12 @@ try {
                     AND (c.imagen_principal IS NULL OR c.imagen_principal = '') 
                 THEN 1 
                 ELSE 0 
-            END AS sin_imagenes 
+            END AS sin_imagenes, d.operativo
             
         FROM public.uf_prepredial a
         left join datm_usuario b on  a.idusuario = b.id  
         left join uf_predial c on c.id = a.idpredial_asociado  
+        left join uf_operativo d on d.idoperativo = a.idoperativo
         WHERE  
             a.estado_ = true
                 $auxFiltro 
@@ -131,7 +132,7 @@ try {
             'id' => $row['id'],
             'latitud' => $lat,
             'longitud' => $lng,
-            'detalle' => $row['detalle'] . ' [' . $row['idprepredial'] . ']',
+            'detalle' => $row['detalle'] . ' [OP-'.$row['operativo'].'/' . $row['idprepredial'] . ']',
             'idusuario' => $row['usuario'],
             'fregistro_' => $fecha,
             'estado_' => $row['estado_'],

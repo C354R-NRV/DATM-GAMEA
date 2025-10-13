@@ -15,7 +15,7 @@ if (isset($filtroFechaIni) and trim($filtroFechaIni) != '' and isset($filtroFech
     $filtro .= " and a.fecha_registro::DATE  BETWEEN TO_DATE( '$filtroFechaIni', 'YYYY-MM-DD') AND TO_DATE( '$filtroFechaFin', 'YYYY-MM-DD') ";
 }
 
-if (isset($filtroCodigoSolicitud) and trim($filtroCodigoSolicitud) != ''  ) {
+if (isset($filtroCodigoSolicitud) and trim($filtroCodigoSolicitud) != '') {
     $filtro .= " and a.cite like '%$filtroCodigoSolicitud%' ";
 }
 
@@ -42,6 +42,8 @@ foreach ($result as $key => $cite) {
 
     $html = '<div style="text-align:center;">';
 
+    $html .= '<a class="btn btn-secondary" title="ver detalle de CITE" onclick="verAnulacionCite(' . $cite['idcite'] . ', \'' . $cite['cite'] . '\')" role="button"><i class="fa fa-search" aria-hidden="true"></i></a>';
+
     if (
         $cite['estado'] == 'Activo' &&
         (
@@ -49,11 +51,10 @@ foreach ($result as $key => $cite) {
             $_SESSION['rol'] == 'SECRETARIA' ||
             $_SESSION['rol'] == 'JEFATURA'
         )
+        && comparaFechaLimite($cite['fecha'], 5)
     ) {
         $html .= '<a class="btn btn-danger" title="Dar de baja el CITE" onclick="borrarCite(' . $cite['idcite'] . ', \'' . $cite['cite'] . '\')" role="button"><i class="fa fa-trash"></i></a>';
-    } else {
-        $html .= '<a class="btn btn-secondary" title="ver detalle de CITE" onclick="verAnulacionCite(' . $cite['idcite'] . ', \'' . $cite['cite'] . '\')" role="button"><i class="fa fa-search" aria-hidden="true"></i></a>';
-    }
+    } 
 
     if (
         (
