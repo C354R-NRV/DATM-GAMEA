@@ -15,7 +15,7 @@ if (!$_SESSION['swlogin']) {
 <html lang="es">
 
 <head>
-    <title>PANEL GEOESPACIAL</title>
+    <title>PISLEA FORM</title>
     <?php
     echo $twig->render('linkStyle.twig');
     ?>

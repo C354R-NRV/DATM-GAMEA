@@ -151,10 +151,7 @@ if (!$_SESSION['swlogin']) {
 <script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.10.21/libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-    $(".datepicker").flatpickr();
-    /*  $(document).ready(function($) {
-            getUsuarios();
-      }); */
+    $(".datepicker").flatpickr(); 
     function filtrosDataTable(p) {
         console.log(p);
         console.log("en filtrosDataTable");
@@ -213,75 +210,11 @@ if (!$_SESSION['swlogin']) {
     }
 
     function enviarSolicitud(idsolicitud, codigoSolicitud) {
-        console.log("Enviando solicitud" + idsolicitud + ", para:" + codigoSolicitud);
-        /*  $.ajax({
-            async: true,
-            type: "POST",
-            dataType: "html",
-            url: "../php/preapi.php",
-            data: {
-                endpoint: 'consultarEstadoEnvio',
-                id: idsolicitud
-            },
-            beforeSend: function() {
-                loadGralOn();
-            },
-            success: function(e) {
-                
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error("Error en la solicitud AJAX:", textStatus, errorThrown);
-                loadGralOff();
-                $.confirm({
-                    title: "Error",
-                    content: "Hubo un problema al conectar con el servidor. Por favor, intenta de nuevo más tarde.",
-                    type: "red",
-                    buttons: {
-                        ok: {
-                            text: "Aceptar",
-                            action: function() {}
-                        }
-                    }
-                });
-            },
-            timeout: 26000
-        }); */
+        console.log("Enviando solicitud" + idsolicitud + ", para:" + codigoSolicitud); 
     }
 
     function editarSolicitud(idsolicitud, codigoSolicitud) {
-        console.log("editarSolicitud:" + idsolicitud + ", para:" + codigoSolicitud);
-        /*  $.ajax({
-            async: true,
-            type: "POST",
-            dataType: "html",
-            url: "../php/preapi.php",
-            data: {
-                endpoint: 'consultarEstadoEnvio',
-                id: idsolicitud
-            },
-            beforeSend: function() {
-                loadGralOn();
-            },
-            success: function(e) {
-                
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error("Error en la solicitud AJAX:", textStatus, errorThrown);
-                loadGralOff();
-                $.confirm({
-                    title: "Error",
-                    content: "Hubo un problema al conectar con el servidor. Por favor, intenta de nuevo más tarde.",
-                    type: "red",
-                    buttons: {
-                        ok: {
-                            text: "Aceptar",
-                            action: function() {}
-                        }
-                    }
-                });
-            },
-            timeout: 26000
-        }); */
+        console.log("editarSolicitud:" + idsolicitud + ", para:" + codigoSolicitud); 
     }
 
     function borrarUsuario(idusuario, codigoSolicitud) {
@@ -322,7 +255,7 @@ if (!$_SESSION['swlogin']) {
                             error: function(xhr, status, error) {
                                 alert('Error: ' + error);
                             }
-                        }); 
+                        });     
                     }
                 },
                 cancel: {

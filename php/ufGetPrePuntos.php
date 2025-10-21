@@ -50,8 +50,9 @@ try {
         $auxFiltro = ' and a.idoperativo in (
             SELECT idoperativo
             FROM uf_operativo
+            where estado_ is true
             ORDER BY idoperativo DESC
-            LIMIT 4
+            LIMIT 5
             ) ';
     }
     $sql = "
