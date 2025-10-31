@@ -6,28 +6,53 @@ header('Access-Control-Allow-Headers: Content-Type');
 
 /**
  * Backend optimizado para manejar datos masivos por teselas (tiles)
- * Soporta tanto carga normal como carga masiva optimizada
- * Actualizado para funcionar con el frontend completo
+ * Versión mejorada con manejo robusto de errores
  */
 
 // Habilitar reporte de errores para debug
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0); // Desactivar display_errors para producción
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/php_errors.log');
 
-// Log de debug
-function logDebug($message)
+// Log de debug mejorado
+function logDebug($message, $context = [])
 {
-    error_log("[ufPuntosGet-Optimizado] " . $message);
+    $contextStr = !empty($context) ? ' | Context: ' . json_encode($context) : '';
+    error_log("[ufPuntosGet] " . date('Y-m-d H:i:s') . " - " . $message . $contextStr);
+}
+
+function sendErrorResponse($message, $code = 500, $details = [])
+{
+    http_response_code($code);
+    $response = [
+        'success' => false,
+        'error' => $message,
+        'timestamp' => date('Y-m-d H:i:s'),
+        'request_params' => $_GET
+    ];
+    
+    if (!empty($details)) {
+        $response['details'] = $details;
+    }
+    
+    logDebug("ERROR: $message", $details);
+    echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    exit;
 }
 
 try {
-    logDebug("Iniciando script ufPuntosGet.php");
+    logDebug("=== Iniciando script ufPuntosGet.php ===");
 
     // Verificar parámetros requeridos
     $required_params = ['minLat', 'maxLat', 'minLng', 'maxLng'];
     foreach ($required_params as $param) {
         if (!isset($_GET[$param]) || $_GET[$param] === '') {
-            throw new Exception("Parámetro requerido faltante: $param");
+            sendErrorResponse(
+                "Parámetro requerido faltante: $param",
+                400,
+                ['missing_param' => $param, 'received_params' => array_keys($_GET)]
+            );
         }
     }
 
@@ -54,16 +79,38 @@ try {
 
     $limit = min($limit, $zoomBasedLimit);
 
-    logDebug("Parámetros: minLat=$minLat, maxLat=$maxLat, minLng=$minLng, maxLng=$maxLng, zoom=$zoom, limit=$limit, masivo=$masivo, useGeojson=$useGeojsonFile");
-    logDebug("Límite ajustado por zoom ($zoom): $limit");
+    logDebug("Parámetros recibidos", [
+        'minLat' => $minLat,
+        'maxLat' => $maxLat,
+        'minLng' => $minLng,
+        'maxLng' => $maxLng,
+        'zoom' => $zoom,
+        'limit' => $limit,
+        'masivo' => $masivo,
+        'useGeojson' => $useGeojsonFile
+    ]);
 
     // Validar rangos de coordenadas
     if ($minLat >= $maxLat || $minLng >= $maxLng) {
-        throw new Exception("Rangos de coordenadas inválidos");
+        sendErrorResponse(
+            "Rangos de coordenadas inválidos",
+            400,
+            [
+                'minLat' => $minLat,
+                'maxLat' => $maxLat,
+                'minLng' => $minLng,
+                'maxLng' => $maxLng,
+                'issue' => 'minLat debe ser menor que maxLat y minLng menor que maxLng'
+            ]
+        );
     }
 
     if ($minLat < -90 || $maxLat > 90 || $minLng < -180 || $maxLng > 180) {
-        throw new Exception("Coordenadas fuera del rango válido");
+        sendErrorResponse(
+            "Coordenadas fuera del rango válido",
+            400,
+            ['valid_range' => 'lat: -90 a 90, lng: -180 a 180']
+        );
     }
 
     // Configuración de base de datos
@@ -82,17 +129,29 @@ try {
     } else {
         logDebug("Modo base de datos activado");
 
-        logDebug("Conectando a la base de datos...");
+        try {
+            $dsn = "pgsql:host=$host;port=$port;dbname=$dbname;";
+            $pdo = new PDO($dsn, $username, $password, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_TIMEOUT => 30
+            ]);
+            $pdo->exec("SET NAMES 'UTF8'");
 
-        $dsn = "pgsql:host=$host;port=$port;dbname=$dbname;";
-        $pdo = new PDO($dsn, $username, $password, [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_TIMEOUT => 30
-        ]);
-        $pdo->exec("SET NAMES 'UTF8'");
-
-        logDebug("Conexión a la base de datos exitosa");
+            logDebug("Conexión a la base de datos exitosa");
+        } catch (PDOException $e) {
+            sendErrorResponse(
+                "Error de conexión a la base de datos",
+                500,
+                [
+                    'db_error' => $e->getMessage(),
+                    'db_code' => $e->getCode(),
+                    'host' => $host,
+                    'port' => $port,
+                    'database' => $dbname
+                ]
+            );
+        }
 
         if ($masivo) {
             logDebug("Modo masivo desde BD activado");
@@ -106,7 +165,6 @@ try {
                         a.codigo_catastral, 
                         a.nombre_razon, 
                         a.numero_inmueble, 
-
                         trim( a.ubicacion_nivel1||' '||a.ubicacion_nivel2 ||' '||a.ubicacion_nivel3 ||' '||a.descripcion ) as direccion, 
                         ST_Y(a.geom) as lat, 
                         ST_X(a.geom) as lng, 
@@ -114,11 +172,11 @@ try {
                         a.imagen_adicional,  
                         to_char(a.fecha_apersonamiento, 'DD/MM/YYYY HH24:MI:SS') fecha_apersonamiento, 
                         a.fecha_apersonamiento as fecha_apersonamiento_raw, 
-                        estado_fiscalizacion, 
+                        d.estado_fiscalizacion, 
                         to_char(a.fecha_cambio_estado, 'DD/MM/YYYY HH24:MI:SS') fecha_cambio_estado, 
                         c1.usuario usuario_cambio_estado, 
-                        observacion_estado, 
-                        no_formulario,
+                        a.observacion_estado, 
+                        a.no_formulario,
                         c.usuario, 
                         CASE 
                             WHEN :zoom < 13 THEN 
@@ -141,13 +199,13 @@ try {
                     INNER JOIN ( 
                         SELECT numero_inmueble, MAX(id) AS max_id 
                         FROM uf_predial
-                        where  estado_ 
+                        WHERE estado_ 
                         GROUP BY numero_inmueble 
                     ) b ON a.numero_inmueble = b.numero_inmueble AND a.id = b.max_id   
                     LEFT JOIN datm_usuario c ON c.id = a.idusuario
-                    left join uf_estado_fiscalizacion d on d.idestado_fiscalizacion = a.idestado_fiscalizacion
+                    LEFT JOIN uf_estado_fiscalizacion d ON d.idestado_fiscalizacion = a.idestado_fiscalizacion
                     LEFT JOIN datm_usuario c1 ON c1.id = a.idusuario_cambio_estado
-                    WHERE a.estado_ and a.geom IS NOT NULL
+                    WHERE a.estado_ AND a.geom IS NOT NULL
                     AND ST_Intersects(
                         a.geom, 
                         ST_MakeEnvelope(:minLng, :minLat, :maxLng, :maxLat, 4326)
@@ -160,114 +218,163 @@ try {
             ";
         } else {
             logDebug("Modo normal activado");
+            
+            $gridSize = 0.002; // Default para zoom 13
+            if ($zoom <= 13) {
+                $gridSize = 0.002; // ~200m
+            } elseif ($zoom <= 15) {
+                $gridSize = 0.0005; // ~50m
+            } else {
+                $gridSize = 0.0001; // ~10m
+            }
+            
+            logDebug("Grid size calculado: $gridSize para zoom $zoom");
 
             $sql = "
-                SELECT 
-                    a.cant_act,
-                    a.descripcion_act,
-                    a.id,
-                    a.codigo_catastral,
-                    a.nombre_razon,
-                    a.numero_inmueble,
-                    trim( a.ubicacion_nivel1||' '||a.ubicacion_nivel2 ||' '||a.ubicacion_nivel3 ||' '||a.descripcion ) as direccion,
-                    ST_Y(a.geom) as lat,
-                    ST_X(a.geom) as lng,
-                    a.imagen_principal,
-                    a.imagen_adicional,
-                    to_char(a.fecha_apersonamiento, 'DD/MM/YYYY HH24:MI:SS') AS fecha_apersonamiento,
-                    a.fecha_apersonamiento as fecha_apersonamiento_raw,
-                    estado_fiscalizacion,
-                    a.tipologia,  
-                        to_char(a.fecha_cambio_estado, 'DD/MM/YYYY HH24:MI:SS') fecha_cambio_estado,
-                        c1.usuario usuario_cambio_estado,
-                        observacion_estado,
-                    c.usuario, no_formulario
-                FROM uf_predial a 
-                INNER JOIN ( 
-                    SELECT numero_inmueble, MAX(id) AS max_id 
-                    FROM uf_predial 
-                    where  estado_ 
-                    GROUP BY numero_inmueble 
-                ) b ON a.numero_inmueble = b.numero_inmueble AND a.id = b.max_id   
-                LEFT JOIN datm_usuario c ON c.id = a.idusuario
-                left join uf_estado_fiscalizacion d on d.idestado_fiscalizacion = a.idestado_fiscalizacion
-                LEFT JOIN datm_usuario c1 ON c1.id = a.idusuario_cambio_estado
-                WHERE  a.estado_ and a.geom IS NOT NULL
-                AND ST_Intersects(
-                    a.geom, 
-                    ST_MakeEnvelope(:minLng, :minLat, :maxLng, :maxLat, 4326)
-                )
-                ORDER BY 
-                    CASE 
-                        WHEN :zoom >= 15 THEN random()
-                        ELSE ST_Distance(a.geom, ST_Centroid(ST_MakeEnvelope(:minLng2, :minLat2, :maxLng2, :maxLat2, 4326)))
-                    END
+                WITH grid_sampled AS (
+                    SELECT 
+                        A.cant_act,
+                        A.descripcion_act,
+                        A.id,
+                        A.codigo_catastral,
+                        A.nombre_razon,
+                        A.numero_inmueble,
+                        TRIM(A.ubicacion_nivel1 || ' ' || A.ubicacion_nivel2 || ' ' || A.ubicacion_nivel3 || ' ' || A.descripcion) AS direccion,
+                        ST_Y(A.geom) AS lat,
+                        ST_X(A.geom) AS lng,
+                        A.imagen_principal,
+                        A.imagen_adicional,
+                        to_char(A.fecha_apersonamiento, 'DD/MM/YYYY HH24:MI:SS') AS fecha_apersonamiento,
+                        A.fecha_apersonamiento AS fecha_apersonamiento_raw,
+                        d.estado_fiscalizacion,
+                        A.tipologia,
+                        to_char(A.fecha_cambio_estado, 'DD/MM/YYYY HH24:MI:SS') AS fecha_cambio_estado,
+                        c1.usuario AS usuario_cambio_estado,
+                        A.observacion_estado,
+                        C.usuario,
+                        A.no_formulario, 
+                        FLOOR(ST_X(A.geom) / :gridSize) AS grid_x,
+                        FLOOR(ST_Y(A.geom) / :gridSize2) AS grid_y, 
+                        CASE
+                            WHEN DATE(A.fecha_apersonamiento) = CURRENT_DATE THEN 1 
+                            ELSE 2 
+                        END AS priority,
+                        random() AS rand_order 
+                    FROM uf_predial A 
+                    INNER JOIN (
+                        SELECT numero_inmueble, MAX(id) AS max_id 
+                        FROM uf_predial 
+                        WHERE estado_ 
+                        GROUP BY numero_inmueble
+                    ) b ON A.numero_inmueble = b.numero_inmueble AND A.id = b.max_id
+                    LEFT JOIN datm_usuario C ON C.id = A.idusuario
+                    LEFT JOIN uf_estado_fiscalizacion d ON d.idestado_fiscalizacion = A.idestado_fiscalizacion
+                    LEFT JOIN datm_usuario c1 ON c1.id = A.idusuario_cambio_estado 
+                    WHERE A.estado_ 
+                    AND A.geom IS NOT NULL 
+                    AND ST_Intersects(
+                        A.geom, 
+                        ST_MakeEnvelope(:minLng, :minLat, :maxLng, :maxLat, 4326)
+                    ) 
+                ),
+                sampled_points AS (
+                    SELECT DISTINCT ON (grid_x, grid_y) * 
+                    FROM grid_sampled 
+                    ORDER BY grid_x, grid_y, priority, rand_order
+                ) 
+                SELECT * 
+                FROM sampled_points 
+                ORDER BY priority, rand_order 
                 LIMIT :limit
             ";
         }
 
-        logDebug("Ejecutando query SQL...");
+        try {
+            logDebug("Preparando query SQL...");
+            $stmt = $pdo->prepare($sql);
+            
+            $stmt->bindValue(':minLat', $minLat, PDO::PARAM_STR);
+            $stmt->bindValue(':maxLat', $maxLat, PDO::PARAM_STR);
+            $stmt->bindValue(':minLng', $minLng, PDO::PARAM_STR);
+            $stmt->bindValue(':maxLng', $maxLng, PDO::PARAM_STR);
+            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
 
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(':minLat', $minLat, PDO::PARAM_STR);
-        $stmt->bindValue(':maxLat', $maxLat, PDO::PARAM_STR);
-        $stmt->bindValue(':minLng', $minLng, PDO::PARAM_STR);
-        $stmt->bindValue(':maxLng', $maxLng, PDO::PARAM_STR);
-        $stmt->bindValue(':zoom', $zoom, PDO::PARAM_INT);
-        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+            if ($masivo) {
+                $stmt->bindValue(':zoom', $zoom, PDO::PARAM_INT);
+                $stmt->bindValue(':zoom2', $zoom, PDO::PARAM_INT);
+            } else {
+                $stmt->bindValue(':gridSize', $gridSize, PDO::PARAM_STR);
+                $stmt->bindValue(':gridSize2', $gridSize, PDO::PARAM_STR);
+            }
 
-        if ($masivo) {
-            $stmt->bindValue(':zoom2', $zoom, PDO::PARAM_INT);
-        } else {
-            $stmt->bindValue(':minLat2', $minLat, PDO::PARAM_STR);
-            $stmt->bindValue(':maxLat2', $maxLat, PDO::PARAM_STR);
-            $stmt->bindValue(':minLng2', $minLng, PDO::PARAM_STR);
-            $stmt->bindValue(':maxLng2', $maxLng, PDO::PARAM_STR);
+            logDebug("Ejecutando query SQL...");
+            $stmt->execute();
+            $results = $stmt->fetchAll();
+
+            logDebug("Query ejecutada exitosamente. Resultados: " . count($results));
+        } catch (PDOException $e) {
+            sendErrorResponse(
+                "Error ejecutando consulta SQL",
+                500,
+                [
+                    'sql_error' => $e->getMessage(),
+                    'sql_code' => $e->getCode(),
+                    'sql_state' => $e->errorInfo[0] ?? 'N/A',
+                    'driver_code' => $e->errorInfo[1] ?? 'N/A',
+                    'driver_message' => $e->errorInfo[2] ?? 'N/A',
+                    'mode' => $masivo ? 'masivo' : 'normal',
+                    'zoom' => $zoom,
+                    'limit' => $limit
+                ]
+            );
         }
 
-        $stmt->execute();
-        $results = $stmt->fetchAll();
-
-        logDebug("Query ejecutada. Resultados encontrados: " . count($results));
-
+        // Obtener conteo total
         if ($masivo) {
             $totalCount = count($results) * 10;
             logDebug("Conteo estimado para modo masivo: $totalCount");
         } else {
-            $countSql = "
-                SELECT COUNT(*) as total 
-                FROM uf_predial a 
-                INNER JOIN ( 
-                    SELECT DISTINCT numero_inmueble, MAX(id) AS max_id 
-                    FROM uf_predial 
-                    where  estado_ 
-                    GROUP BY numero_inmueble    
-                ) b ON a.numero_inmueble = b.numero_inmueble AND a.id = b.max_id       
-                where  a.estado_ and  a.geom IS NOT NULL    
-                AND ST_Intersects(  
-                    a.geom,    
-                    ST_MakeEnvelope(:minLng, :minLat, :maxLng, :maxLat, 4326)   
-                )
-            ";
+            try {
+                $countSql = "
+                    SELECT COUNT(DISTINCT a.numero_inmueble) as total
+                    FROM uf_predial a
+                    INNER JOIN (
+                        SELECT numero_inmueble, MAX(id) AS max_id
+                        FROM uf_predial
+                        WHERE estado_
+                        GROUP BY numero_inmueble
+                    ) b ON a.numero_inmueble = b.numero_inmueble AND a.id = b.max_id
+                    WHERE a.estado_ 
+                    AND a.geom IS NOT NULL
+                    AND ST_Intersects(
+                        a.geom,
+                        ST_MakeEnvelope(:minLng, :minLat, :maxLng, :maxLat, 4326)
+                    )
+                ";
 
-            $countStmt = $pdo->prepare($countSql);
-            $countStmt->bindValue(':minLat', $minLat, PDO::PARAM_STR);
-            $countStmt->bindValue(':maxLat', $maxLat, PDO::PARAM_STR);
-            $countStmt->bindValue(':minLng', $minLng, PDO::PARAM_STR);
-            $countStmt->bindValue(':maxLng', $maxLng, PDO::PARAM_STR);
-            $countStmt->execute();
-            $totalCount = $countStmt->fetch()['total'];
+                $countStmt = $pdo->prepare($countSql);
+                $countStmt->bindValue(':minLat', $minLat, PDO::PARAM_STR);
+                $countStmt->bindValue(':maxLat', $maxLat, PDO::PARAM_STR);
+                $countStmt->bindValue(':minLng', $minLng, PDO::PARAM_STR);
+                $countStmt->bindValue(':maxLng', $maxLng, PDO::PARAM_STR);
+                $countStmt->execute();
+                $totalCount = $countStmt->fetch()['total'];
 
-            logDebug("Conteo exacto: $totalCount");
+                logDebug("Conteo exacto: $totalCount");
+            } catch (PDOException $e) {
+                logDebug("Error en conteo, usando estimación: " . $e->getMessage());
+                $totalCount = count($results);
+            }
         }
 
         // Procesar resultados de base de datos
         $data = [];
-        $currentDate = date('Y-m-d'); // Fecha actual para comparación
+        $currentDate = date('Y-m-d');
+        $errorsProcessing = [];
 
-        foreach ($results as $row) {
+        foreach ($results as $index => $row) {
             try {
-                $imagenes = processImages($row['imagen_principal'], $row['imagen_adicional']);
+                $imagenes = processImages($row['imagen_principal'] ?? '', $row['imagen_adicional'] ?? '');
 
                 if ($masivo && $zoom < 14) {
                     $popupHtml = createSimplifiedPopupHtml($row);
@@ -275,7 +382,7 @@ try {
                     $popupHtml = createPopupHtml($row, $imagenes);
                 }
 
-                // MEJORA: Verificar si la fecha de apersonamiento es hoy
+                // Verificar si la fecha de apersonamiento es hoy
                 $isVisitToday = false;
                 if (!empty($row['fecha_apersonamiento_raw'])) {
                     $visitDate = date('Y-m-d', strtotime($row['fecha_apersonamiento_raw']));
@@ -294,24 +401,31 @@ try {
                     'fecha_apersonamiento' => $row['fecha_apersonamiento'] ?: null,
                     'fecha_apersonamiento_raw' => $row['fecha_apersonamiento_raw'] ?: null,
                     'is_visit_today' => $isVisitToday,
-                    'usuario' => $row['usuario'],
-                    'no_formulario' => $row['no_formulario'],
-                    'imagen_principal' => $row['imagen_principal'],
-                    'estado_fiscalizacion' => $row['estado_fiscalizacion'],
-                    'tipologia' => $row['tipologia'],
+                    'usuario' => $row['usuario'] ?? null,
+                    'no_formulario' => $row['no_formulario'] ?? null,
+                    'imagen_principal' => $row['imagen_principal'] ?? null,
+                    'estado_fiscalizacion' => $row['estado_fiscalizacion'] ?? null,
+                    'tipologia' => $row['tipologia'] ?? null,
                     'html' => $popupHtml
                 ];
             } catch (Exception $e) {
-                logDebug("Error procesando fila ID {$row['id']}: " . $e->getMessage());
+                $error = "Error procesando fila índice $index, ID {$row['id']}: " . $e->getMessage();
+                logDebug($error);
+                $errorsProcessing[] = $error;
                 continue;
             }
+        }
+
+        if (!empty($errorsProcessing)) {
+            logDebug("Errores durante procesamiento", ['errors' => $errorsProcessing]);
         }
     }
 
     logDebug("Datos procesados: " . count($data) . " elementos");
 
-    // Respuesta con metadatos optimizada
+    // Respuesta exitosa
     $response = [
+        'success' => true,
         'data' => $data,
         'meta' => [
             'total' => intval($totalCount),
@@ -319,7 +433,7 @@ try {
             'zoom' => $zoom,
             'masivo' => $masivo,
             'source' => ($useGeojsonFile && file_exists($geojsonFile)) ? 'geojson' : 'database',
-            'current_date' => date('Y-m-d'), // Fecha actual para referencia
+            'current_date' => date('Y-m-d'),
             'tile_bounds' => [
                 'minLat' => $minLat,
                 'maxLat' => $maxLat,
@@ -331,24 +445,22 @@ try {
         ]
     ];
 
-    logDebug("Enviando respuesta exitosa");
+    logDebug("=== Respuesta exitosa enviada ===");
     echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
-} catch (PDOException $e) {
-    logDebug("Error de base de datos: " . $e->getMessage());
-    http_response_code(500);
-    echo json_encode([
-        'error' => 'Error de base de datos',
-        'message' => $e->getMessage(),
-        'code' => $e->getCode()
-    ], JSON_UNESCAPED_UNICODE);
+
 } catch (Exception $e) {
-    logDebug("Error general: " . $e->getMessage());
-    http_response_code(400);
-    echo json_encode([
-        'error' => 'Error en la solicitud',
-        'message' => $e->getMessage()
-    ], JSON_UNESCAPED_UNICODE);
+    sendErrorResponse(
+        "Error inesperado en el servidor",
+        500,
+        [
+            'exception' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => array_slice($e->getTrace(), 0, 5) // Primeras 5 líneas del stack trace
+        ]
+    );
 }
+
 
 function loadFromGeojsonFile($geojsonFile, $minLat, $maxLat, $minLng, $maxLng, $limit, $zoom)
 {
@@ -390,7 +502,6 @@ function loadFromGeojsonFile($geojsonFile, $minLat, $maxLat, $minLng, $maxLng, $
                     $lat >= $minLat && $lat <= $maxLat &&
                     $lng >= $minLng && $lng <= $maxLng
                 ) {
-
                     $filteredFeatures[] = $feature;
                 }
             }
@@ -442,7 +553,7 @@ function loadFromGeojsonFile($geojsonFile, $minLat, $maxLat, $minLng, $maxLng, $
         return $data;
     } catch (Exception $e) {
         logDebug("Error procesando archivo GeoJSON: " . $e->getMessage());
-        return [];
+        throw new Exception("Error en GeoJSON: " . $e->getMessage());
     }
 }
 
@@ -498,10 +609,11 @@ function createPopupHtml($row, $imagenes)
                 <a target="_blank" style="color:white;" href="https://www.google.com/maps?q=' . $row['lat'] . ',' . $row['lng'] . '"><i class="fa fa-street-view" aria-hidden="true"></i></a> 
                 <i class="fa fa-exclamation-triangle icon-warning" aria-hidden="true" title="Desacato a la fiscalización" onclick="actualizarEstado(' . $id . ',\'' . $numero_inmueble . '\', 0)"></i> 
                 </div>';
-    if ($row['estado_fiscalizacion'] != 'VISITADO') {
+    
+    if (isset($row['estado_fiscalizacion']) && $row['estado_fiscalizacion'] != 'VISITADO') {
         $estado = '<div class="info-row">
                     <div class="info-label">Estado:</div>
-                    <div class="info-value">' . $row['estado_fiscalizacion']  . '</div>
+                    <div class="info-value">' . ($row['estado_fiscalizacion'] ?? 'N/A')  . '</div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Fecha de cambio:</div>
@@ -514,12 +626,11 @@ function createPopupHtml($row, $imagenes)
                 <div class="info-row">
                     <div class="info-label">Obs/Anotación:</div>
                     <div class="info-value">' . ($row['observacion_estado'] ?? '-') . '</div>
-                </div>
-                ';
+                </div>';
     }
+    
     $act = '';
-    if ($row['cant_act'] > 0) {
-
+    if (isset($row['cant_act']) && $row['cant_act'] > 0) {
         $act = '<div class="info-row">
                     <div class="info-label">Cantidad Act.:</div>
                     <div class="info-value">' . $row['cant_act']  . '</div>
@@ -527,8 +638,7 @@ function createPopupHtml($row, $imagenes)
                 <div class="info-row">
                     <div class="info-label">Descripción Act.:</div>
                     <div class="info-value">' . ($row['descripcion_act'] ?? 'N/A') . '</div>
-                </div> 
-                ';
+                </div>';
     }
 
     $html .= '<div class="info-container">
@@ -542,11 +652,11 @@ function createPopupHtml($row, $imagenes)
                 </div>
                 <div class="info-row">
                     <div class="info-label">Código catastral:</div>
-                    <div class="info-value">' . $codigo . " " . ($row['estado_fiscalizacion'] == 'PROCESADO' ? ' <a target="_blank"  href="https://www.google.com/maps?q=' . $row['lat'] . ',' . $row['lng'] . '"><i class="fa fa-street-view" style="font-size:1.2rem; COLOR: yellow" aria-hidden="true"></i></a>' : '') . '</div>
+                    <div class="info-value">' . $codigo . " " . (isset($row['estado_fiscalizacion']) && $row['estado_fiscalizacion'] == 'PROCESADO' ? ' <a target="_blank"  href="https://www.google.com/maps?q=' . $row['lat'] . ',' . $row['lng'] . '"><i class="fa fa-street-view" style="font-size:1.2rem; COLOR: yellow" aria-hidden="true"></i></a>' : '') . '</div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Tipologia:</div>
-                    <div class="info-value">' . $row['tipologia'] . ' [N°Form:'.$row['no_formulario'].']</div>
+                    <div class="info-value">' . ($row['tipologia'] ?? 'N/A') . ' [N°Form:' . ($row['no_formulario'] ?? 'N/A') . ']</div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Última visita:</div>
