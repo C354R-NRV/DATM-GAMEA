@@ -1,7 +1,4 @@
 <?php
-session_start();
-require_once './conexionpsql.php';
-require_once '../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -9,25 +6,40 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('log_errors', 1);
+
+session_start();
+
 try {
-    if (!isset($_SESSION['idusuario'])) {
-        die('Usuario no autenticado');
+    $autoload_path = __DIR__ . '/vendor/autoload.php';
+
+    if (!file_exists($autoload_path)) {
+        throw new Exception('Composer autoload not found at: ' . $autoload_path . '. Run: cd /var/www/html/php && composer install');
     }
 
-    $conn = new Conexion();
-    $cons = $conn->conectar();
+    require_once __DIR__ . '/conexionpsql.php';
+    require_once $autoload_path;
+
+    if (!isset($_SESSION['idusuario'])) {
+        throw new Exception('Usuario no autenticado');
+    }
+
+    $conexion = new Conexion();
+    $conn = $conexion->conectar();
 
     // Consulta para el reporte F3
     $query = "SELECT 
-                nombre_software,
-                fabricante_proveedor,
-                hardware_asociado,
-                uso_especifico
-              FROM pislea_software
-              WHERE estado_ IS TRUE
-              ORDER BY nombre_software";
+                UPPER(nombre_software) nombre_software,
+                UPPER(fabricante_proveedor) fabricante_proveedor,
+                UPPER(hardware_asociado) hardware_asociado,
+                UPPER(uso_especifico) uso_especifico
+                FROM pislea_software
+                WHERE estado_ IS TRUE
+                ORDER BY nombre_software";
 
-    $stmt = $cons->query($query);
+    $stmt = $conn->query($query);
     $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Crear el archivo Excel
@@ -58,7 +70,7 @@ try {
         $sheet->setCellValue('C' . $row, $dato['fabricante_proveedor'] ?: '-');
         $sheet->setCellValue('D' . $row, $dato['hardware_asociado'] ?: '-');
         $sheet->setCellValue('E' . $row, $dato['uso_especifico'] ?: '-');
-        
+
         $row++;
         $correlativo++;
     }
@@ -87,7 +99,15 @@ try {
     $writer = new Xlsx($spreadsheet);
     $writer->save('php://output');
     exit;
-
 } catch (Exception $e) {
-    die('Error: ' . $e->getMessage());
+    header('Content-Type: application/json');
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine(),
+        'trace' => $e->getTraceAsString()
+    ]);
+    exit;
 }

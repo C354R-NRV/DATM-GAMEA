@@ -914,7 +914,7 @@ function showPromos() {
         <div class="carousel-inner">
             <div class="carousel-item active">  
                 <div class="bd-placeholder-img text-center">
-                    <img src="../img/anuncios/rebajita2025.jpg">
+                    <img src="../img/anuncios/halloween.jpg">
                     <div class="container text-center">
                         <div class="carousel-caption text-start"> 
                             <p><a class="btn btn-lg btn-warning" href="#"><i class="fa fa-facebook-f"></i> <span style="font-size:0.7rem;">Más info aquí</a></p>

@@ -1,7 +1,9 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('log_errors', 1);
+
 session_start();
-require_once './conexionpsql.php';
-require_once '../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -10,16 +12,25 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 try {
+    $autoload_path = __DIR__ . '/vendor/autoload.php';
+    
+    if (!file_exists($autoload_path)) {
+        throw new Exception('Composer autoload not found at: ' . $autoload_path . '. Run: cd /var/www/html/php && composer install');
+    }
+    
+    require_once __DIR__ . '/conexionpsql.php';
+    require_once $autoload_path;
+
     if (!isset($_SESSION['idusuario'])) {
-        die('Usuario no autenticado');
+        throw new Exception('Usuario no autenticado');
     }
 
-    $conn = new Conexion();
-    $cons = $conn->conectar();
+    $conexion = new Conexion();
+    $conn = $conexion->conectar();
 
     // Consulta para el reporte F2
     $query = "SELECT 
-                sistema_operativo,
+                UPPER(sistema_operativo) sistema_operativo,
                 ofimatica,
                 COUNT(*) as cantidad_equipos
               FROM pislea_equipo
@@ -27,7 +38,7 @@ try {
               GROUP BY sistema_operativo, ofimatica
               ORDER BY sistema_operativo, ofimatica";
 
-    $stmt = $cons->query($query);
+    $stmt = $conn->query($query);
     $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Crear el archivo Excel
@@ -88,5 +99,15 @@ try {
     exit;
 
 } catch (Exception $e) {
-    die('Error: ' . $e->getMessage());
+    header('Content-Type: application/json');
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine(),
+        'trace' => $e->getTraceAsString()
+    ]);
+    exit;
 }
+?>

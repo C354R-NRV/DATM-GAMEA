@@ -39,7 +39,7 @@ try {
     $filtroUnidad = isset($filtroUnidad) ? $filtroUnidad : '';
     $search = isset($search) ? $search : '';
     $offset = isset($offset) ? intval($offset) : 0;
-    $limit = isset($limit) ? intval($limit) : 10;
+    $limit = isset($limit) ? intval($limit) : 100;
     $sort = isset($sort) ? $sort : 'idfuncionario';
     $order = isset($order) ? $order : 'DESC';
 

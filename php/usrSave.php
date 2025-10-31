@@ -66,7 +66,7 @@ try {
 
                 :fecha_registro, :cedula_identidad, :nombres, 
                 :primer_apellido, :segundo_apellido, :usuario, 
-                :password, :codigo_unidad, :rol, 
+                :passwords, :codigo_unidad, :rol, 
                 :estado, :contacto, :cargo, 
                 :area, 
                 :correo, :tipo_persona, :path_documento_solicitud, 
@@ -79,7 +79,7 @@ try {
     $stmt->bindParam(':primer_apellido', $usr->primer_apellido);
     $stmt->bindParam(':segundo_apellido', $usr->segundo_apellido);
     $stmt->bindParam(':usuario', strtoupper($usuario));
-    $stmt->bindParam(':password', MD5($pass));
+    $stmt->bindParam(':passwords', MD5($pass));
     $stmt->bindParam(':codigo_unidad', $usr->unidad);
     $stmt->bindParam(':rol', $usr->rol);
     $stmt->bindParam(':estado', $estado_);

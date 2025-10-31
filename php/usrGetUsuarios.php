@@ -34,7 +34,7 @@ $query = "
 select a.id, a.rol, a.usuario, to_char(a.fecha_registro, 'YYYY-MM-DD HH24:MI:SS') AS fecha_registro, 
 a.correo, a.contacto, a.estado, upper(concat(nombres, ' ', primer_apellido, ' ', segundo_apellido)) nombres, cedula_identidad
 from datm_usuario a 
-where   true   $filtro  order by  $sort_  $order_  LIMIT $limit_ OFFSET $offset_;";
+where   a.estado = 'DESBLOQUEADO'    $filtro  order by  $sort_  $order_  LIMIT $limit_ OFFSET $offset_;";
 
 $stmt = $cons->query($query);
 $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
