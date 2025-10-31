@@ -167,7 +167,6 @@ if (!$_SESSION['swlogin']) {
             background-color: rgba(50, 50, 50, 0.8);
         }
 
-        /* Nuevos estilos para botones de inmuebles y códigos */
         .control-button.geojson-codigos {
             background-color: rgba(34, 39, 41, 0.9);
         }
@@ -307,6 +306,13 @@ if (!$_SESSION['swlogin']) {
             color: #00A3D9;
         }
 
+        .search-db-indicator {
+            font-size: 0.7rem;
+            color: #28a745;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
         .status-message {
             position: absolute;
             top: 10px;
@@ -395,7 +401,6 @@ if (!$_SESSION['swlogin']) {
 
         .marker-cluster-small div {
             background-color: rgba(255, 0, 0, 0.6) !important;
-            /* animation: pulseAnimation 2.8s infinite ease-in-out; */
             color: rgb(255, 255, 255);
             font-weight: bold;
         }
@@ -417,32 +422,15 @@ if (!$_SESSION['swlogin']) {
             width: 0.9rem;
             height: 0.9rem;
             border-radius: 50%;
-            /* box-shadow:
-                0 0 6px #fff,
-                0 0 0.9rem #fff,
-                0 0 18px #17b9c1,
-                0 0 24px #17b9c1,
-                0 0 30px #4cf0f8,
-                0 0 36px #4cf0f8; */
             border: 2px solid #fff;
-            /* animation: pulseAnimation 5s infinite ease-in-out; */
         }
 
-        /* Nuevo estilo para marcadores de hoy */
         .puntoMarcaHoy {
             background-color: rgb(0, 47, 255);
             width: 0.9rem;
             height: 0.9rem;
             border-radius: 50%;
-            /* box-shadow:
-                0 0 6px #fff,
-                0 0 0.9rem #fff,
-                0 0 18px rgb(9, 106, 216),
-                0 0 24px rgb(9, 81, 216),
-                0 0 30px rgb(0, 119, 255),
-                0 0 36px rgb(0, 132, 255); */
             border: 2px solid #fff;
-            /* animation: pulseAnimation 1.5s infinite ease-in-out; */
         }
 
         .puntoActualizado {
@@ -450,15 +438,7 @@ if (!$_SESSION['swlogin']) {
             width: 0.9rem;
             height: 0.9rem;
             border-radius: 50%;
-            /* box-shadow:
-                0 0 6px #fff,
-                0 0 0.9rem #fff,
-                0 0 18px #0ecc08,
-                0 0 24px #0ecc08,
-                0 0 30px #0ecc08,
-                0 0 36px #0ecc08; */
             border: 2px solid #fff;
-            /* animation: pulseAnimation 1.5s infinite ease-in-out; */
         }
 
         .puntoRevelde {
@@ -475,10 +455,6 @@ if (!$_SESSION['swlogin']) {
                 0 0 36px #ff0040;
             border: 2px solid #fff;
             animation: pulseAnimation 1.5s infinite ease-in-out;
-        }
-
-        .pulsing-marker div {
-            /* animation: pulseAnimation 2.8s infinite ease-in-out; */
         }
 
         .individual-pulsing-marker .leaflet-marker-icon {
@@ -524,7 +500,6 @@ if (!$_SESSION['swlogin']) {
             animation: pulseAnimation 6s infinite ease-in-out;
         }
 
-        /* Indicador de carga dinámica */
         .dynamic-loading-indicator {
             position: absolute;
             top: 60px;
@@ -537,7 +512,6 @@ if (!$_SESSION['swlogin']) {
             border-radius: 15px;
             font-size: 0.75rem;
             display: none;
-            /* animation: pulseAnimation 1s infinite ease-in-out; */
         }
 
         .card-inmueble {
@@ -953,9 +927,6 @@ if (!$_SESSION['swlogin']) {
             font-family: monospace;
         }
 
-
-
-        /* Estilos para el botón de distritos */
         .control-button.distritos {
             background-color: rgba(34, 39, 41, 0.9);
         }
@@ -969,13 +940,11 @@ if (!$_SESSION['swlogin']) {
             background-color: rgba(33, 36, 37, 0.9);
         }
 
-        /* Estilos para los polígonos de distritos */
         .distrito-polygon {
             transition: all 0.3s ease;
             cursor: pointer;
         }
 
-        /* Estilos para el tooltip */
         .distrito-tooltip {
             background-color: rgba(0, 0, 0, 0.8) !important;
             color: white !important;
@@ -991,7 +960,6 @@ if (!$_SESSION['swlogin']) {
             border-top-color: rgba(0, 0, 0, 0.8) !important;
         }
 
-        /* Estilos específicos para cada distrito */
         .distrito-1 {
             border-color: #FF6B6B !important;
         }
@@ -1060,7 +1028,7 @@ if (!$_SESSION['swlogin']) {
                         type="text"
                         id="searchInput"
                         class="search-input"
-                        placeholder="Buscar inmuebles, contribuyentes o números... (Click en el mapa para obtener coordenadas)"
+                        placeholder="Buscar inmuebles, contribuyentes o números..."
                         aria-label="Buscar inmuebles, contribuyentes o números">
                     <button id="clearSearch" class="clear-search" title="Limpiar búsqueda" aria-label="Limpiar búsqueda">×</button>
                 </div>
@@ -1068,12 +1036,13 @@ if (!$_SESSION['swlogin']) {
                     <span id="resultsCount" class="results-count" aria-live="polite"></span>
                     <button id="showAllBtn" class="show-all-btn">Mostrar todos</button>
                 </div>
+                <!-- Agregando indicador de búsqueda en BD -->
+                <div id="searchDbIndicator" class="search-db-indicator" style="display: none;"></div>
             </div>
             <div class="map-controls">
                 <button id="homeBtn" class="control-button" title="Inicio" aria-label="Volver" style="outline-style: none;">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i>
                 </button>
-                <!-- <button id="locationBtn" class="control-button" title="Mostrar mi ubicación" aria-label="Mostrar mi ubicación"><i class="fa fa-map-marker" aria-hidden="true"></i></button> -->
                 <button id="addPointBtn" class="control-button" title="Agregar punto [Ctrl+q]" aria-label="Agregar punto">
                     <i class="fa fa-map-marker" aria-hidden="true"></i>
                 </button>
@@ -1122,7 +1091,7 @@ if (!$_SESSION['swlogin']) {
         const map = L.map('map', {
             zoomControl: false,
             maxZoom: 19
-        }).setView([-16.5, -68.175], 13);
+        }).setView([-16.53, -68.18], 13);
 
         // Capas base
         const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -1133,7 +1102,6 @@ if (!$_SESSION['swlogin']) {
         const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             maxZoom: 19
         }).addTo(map);
-
 
         let prePuntosLayer = null;
         let prePuntosActive = false;
@@ -1160,34 +1128,37 @@ if (!$_SESSION['swlogin']) {
         let debounceTimer;
         let totalMarkersCount = 0;
         let dynamicLoadingTimer;
-
+        let lastZoom = 13;
 
         let isAddingPoint = false;
         let newPointMarker = null;
         let customPopupElement = null;
 
-        // Variables para puntos guardados
-        let savedPoints = []; // Array para almacenar puntos guardados
-        let savedPointsLayer = null; // Capa para puntos guardados
-        let currentPointData = null; // Datos del punto actual
+        let savedPoints = [];
+        let savedPointsLayer = null;
+        let currentPointData = null;
 
-        // NUEVA VARIABLE: Control para puntos agrupados
-        let ALLOW_GROUPED_POINTS = false; // Cambiar a false para desactivar agrupación
+        let ALLOW_GROUPED_POINTS = false;
 
-        // Configuración para carga dinámica
         const DYNAMIC_LOADING_CONFIG = {
             BATCH_SIZE: 500,
             BATCH_DELAY: 30,
             MIN_ZOOM_FOR_LOADING: 10,
             DEBOUNCE_DELAY: 300,
             BOUNDS_PADDING: 0.2,
-            MAX_POINTS_PER_REQUEST: 6000
+            MAX_POINTS_PER_REQUEST: 6000,
+            // Límites dinámicos según zoom
+            ZOOM_LIMITS: {
+                10: 1000,
+                12: 2000,
+                14: 4000,
+                16: 6000
+            }
         };
 
-        // Variables para distritos
         let distritosLayerGroup = null;
         let distritosActive = false;
-        let currentTooltip = null; // Para el tooltip
+        let currentTooltip = null;
 
         const distritosData = {
             distrito1: [
@@ -3253,7 +3224,6 @@ if (!$_SESSION['swlogin']) {
             dashArray: '5, 5'
         });
 
-        // Funciones de utilidad
         function logDebug(message) {
             console.log(`[DynamicMap] ${message}`);
         }
@@ -3262,7 +3232,6 @@ if (!$_SESSION['swlogin']) {
             const indicator = document.getElementById('dynamicLoadingIndicator');
             indicator.style.display = 'block';
 
-            // Auto-hide después de 3 segundos
             clearTimeout(dynamicLoadingTimer);
             dynamicLoadingTimer = setTimeout(() => {
                 indicator.style.display = 'none';
@@ -3301,17 +3270,17 @@ if (!$_SESSION['swlogin']) {
             const markersCount = allLeafletMarkers.length;
 
             debugDiv.innerHTML = `
-                    Zoom: ${zoom} | 
-                    Marcadores: ${markersCount} | 
-                    Códigos: ${codigosActive ? 'ON' : 'OFF'} | 
-                    Inmuebles: ${inmueblesActive ? 'ON' : 'OFF'} | 
-                    Satelital: ${satelitalActive ? 'ON' : 'OFF'} |
-                    Oscurecer: ${oscurecerActive ? 'ON' : 'OFF'} |
-                    Distritos: ${distritosActive ? 'ON' : 'OFF'} |
-                    Agrupados: ${ALLOW_GROUPED_POINTS ? 'ON' : 'OFF'} |
-                    Lat: ${center.lat.toFixed(4)} | 
-                    Lng: ${center.lng.toFixed(4)}
-                `;
+                Zoom: ${zoom} | 
+                Marcadores: ${markersCount} | 
+                Códigos: ${codigosActive ? 'ON' : 'OFF'} | 
+                Inmuebles: ${inmueblesActive ? 'ON' : 'OFF'} | 
+                Satelital: ${satelitalActive ? 'ON' : 'OFF'} |
+                Oscurecer: ${oscurecerActive ? 'ON' : 'OFF'} |
+                Distritos: ${distritosActive ? 'ON' : 'OFF'} |
+                Agrupados: ${ALLOW_GROUPED_POINTS ? 'ON' : 'OFF'} |
+                Lat: ${center.lat.toFixed(4)} | 
+                Lng: ${center.lng.toFixed(4)}
+            `;
         }
 
         function isToday(dateString) {
@@ -3325,28 +3294,33 @@ if (!$_SESSION['swlogin']) {
                 today.getDate() === checkDate.getDate();
         }
 
-        // Función para cargar marcadores desde la base de datos (MEJORADA)
         function loadMarkersInViewport() {
             if (isDataLoading) return;
 
             const bounds = map.getBounds();
             const zoom = map.getZoom();
 
-            console.log(`Intentando cargar marcadores - Zoom: ${zoom}, Min requerido: ${DYNAMIC_LOADING_CONFIG.MIN_ZOOM_FOR_LOADING}`);
+            console.log(`[v0] Intentando cargar marcadores - Zoom: ${zoom}, Último zoom: ${lastZoom}`);
 
             if (zoom < DYNAMIC_LOADING_CONFIG.MIN_ZOOM_FOR_LOADING) {
-                console.log('Zoom insuficiente para cargar marcadores');
+                console.log('[v0] Zoom insuficiente para cargar marcadores');
                 return;
             }
 
-            // MEJORA: Solo cargar si no hay capas GeoJSON activas o si ambas están activas
             if (codigosActive && !inmueblesActive) {
-                console.log('Solo códigos activos, no cargar marcadores individuales');
+                console.log('[v0] Solo códigos activos, no cargar marcadores individuales');
                 return;
             }
 
-            if (currentBounds && currentBounds.contains(bounds)) {
-                console.log('Los datos ya están cargados para esta área');
+            const zoomIn = zoom > lastZoom;
+            if (zoomIn) {
+                console.log('[v0] Zoom in detectado, limpiando bounds para recargar con más datos');
+                currentBounds = null;
+            }
+            lastZoom = zoom;
+
+            if (currentBounds && currentBounds.contains(bounds) && !zoomIn) {
+                console.log('[v0] Los datos ya están cargados para esta área');
                 return;
             }
 
@@ -3359,31 +3333,39 @@ if (!$_SESSION['swlogin']) {
             const sw = expandedBounds.getSouthWest();
             const ne = expandedBounds.getNorthEast();
 
-            const url = `../php/ufPuntosGet.php?minLat=${sw.lat}&maxLat=${ne.lat}&minLng=${sw.lng}&maxLng=${ne.lng}&zoom=${zoom}&limit=${DYNAMIC_LOADING_CONFIG.MAX_POINTS_PER_REQUEST}`;
+            let limit = DYNAMIC_LOADING_CONFIG.MAX_POINTS_PER_REQUEST;
+            for (const [zoomLevel, zoomLimit] of Object.entries(DYNAMIC_LOADING_CONFIG.ZOOM_LIMITS)) {
+                if (zoom >= parseInt(zoomLevel)) {
+                    limit = zoomLimit;
+                }
+            }
 
-            console.log('Cargando datos desde:', url);
+            const url = `../php/ufPuntosGet.php?minLat=${sw.lat}&maxLat=${ne.lat}&minLng=${sw.lng}&maxLng=${ne.lng}&zoom=${zoom}&limit=${limit}`;
+
+            console.log(`[v0] Cargando datos desde: ${url}`);
+            console.log(`[v0] Límite de puntos para zoom ${zoom}: ${limit}`);
 
             fetch(url)
                 .then(response => {
-                    console.log('Respuesta del servidor:', response.status, response.statusText);
+                    console.log('[v0] Respuesta del servidor:', response.status, response.statusText);
                     if (!response.ok) {
                         throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
                     }
                     return response.text();
                 })
                 .then(text => {
-                    console.log('Respuesta cruda del servidor:', text.substring(0, 500) + '...');
+                    console.log('[v0] Respuesta cruda del servidor:', text.substring(0, 500) + '...');
                     try {
                         const response = JSON.parse(text);
                         return response;
                     } catch (parseError) {
-                        console.error('Error parseando JSON:', parseError);
-                        console.error('Texto recibido:', text);
+                        console.error('[v0] Error parseando JSON:', parseError);
+                        console.error('[v0] Texto recibido:', text);
                         throw new Error('Respuesta del servidor no es JSON válido');
                     }
                 })
                 .then(response => {
-                    console.log('Datos parseados:', response);
+                    console.log('[v0] Datos parseados:', response);
 
                     let data, meta;
 
@@ -3391,11 +3373,11 @@ if (!$_SESSION['swlogin']) {
                         data = response.data;
                         meta = response.meta;
                         totalMarkersCount = meta.total;
-                        console.log(`Datos con metadatos - Total: ${meta.total}, Cargados: ${data.length}`);
+                        console.log(`[v0] Datos con metadatos - Total: ${meta.total}, Cargados: ${data.length}`);
                     } else if (Array.isArray(response)) {
                         data = response;
                         meta = null;
-                        console.log(`Datos como array - Elementos: ${data.length}`);
+                        console.log(`[v0] Datos como array - Elementos: ${data.length}`);
                     } else if (response.error) {
                         throw new Error(`Error del servidor: ${response.error} - ${response.message}`);
                     } else {
@@ -3406,27 +3388,27 @@ if (!$_SESSION['swlogin']) {
                         const newData = data.filter(item => !loadedMarkerIds.has(item.id));
 
                         if (newData.length > 0) {
-                            console.log(`Procesando ${newData.length} nuevos marcadores`);
+                            console.log(`[v0] Procesando ${newData.length} nuevos marcadores`);
 
                             if (!markerClusterGroup) {
-                                console.log("Inicializando markerClusterGroup");
+                                console.log("[v0] Inicializando markerClusterGroup");
                                 initializeMarkers();
                             }
 
                             processMarkersInBatches(newData, 0);
-                            showStatusMessage(`Cargados ${newData.length} puntos adicionales`, 'success');
+                            showStatusMessage(`Cargados ${newData.length} puntos adicionales (Zoom ${zoom})`, 'success');
                         } else {
-                            console.log('No hay nuevos datos para cargar');
+                            console.log('[v0] No hay nuevos datos para cargar');
                             hideLoader();
                         }
                     } else {
-                        console.log('No se recibieron datos');
+                        console.log('[v0] No se recibieron datos');
                         showStatusMessage('No hay datos disponibles para esta área', 'info');
                         hideLoader();
                     }
                 })
                 .catch(error => {
-                    console.error("Error detallado al obtener datos del mapa:", error);
+                    console.error("[v0] Error detallado al obtener datos del mapa:", error);
                     showStatusMessage(`Error al cargar datos: ${error.message}`, 'error');
                     hideLoader();
                 })
@@ -3436,7 +3418,6 @@ if (!$_SESSION['swlogin']) {
                 });
         }
 
-        // Función para inicializar marcadores (MEJORADA)
         function initializeMarkers() {
             if (!window.map) {
                 console.error("Map not initialized");
@@ -3448,14 +3429,13 @@ if (!$_SESSION['swlogin']) {
                     map.removeLayer(markerClusterGroup);
                 }
 
-                // MEJORA: Configurar clustering basado en la variable de control
                 const clusterOptions = {
                     chunkedLoading: true,
                     chunkInterval: 50,
                     chunkDelay: 25,
                     maxClusterRadius: ALLOW_GROUPED_POINTS ? function(zoom) {
                         return zoom < 15 ? 80 : 40;
-                    } : 0, // 0 desactiva el clustering
+                    } : 0,
                     spiderfyOnMaxZoom: true,
                     showCoverageOnHover: false,
                     zoomToBoundsOnClick: true,
@@ -3479,7 +3459,6 @@ if (!$_SESSION['swlogin']) {
             }
         }
 
-        // Función para procesar marcadores en lotes (MEJORADA)
         function processMarkersInBatches(data, startIndex) {
             try {
                 if (!markerClusterGroup) {
@@ -3499,14 +3478,7 @@ if (!$_SESSION['swlogin']) {
 
                     loadedMarkerIds.add(item.id);
 
-
                     const isVisitToday = item.is_visit_today;
-                    /* console.log("===> numero_inmueble:" + item.numero_inmueble);
-                    console.log("===> isVisitToday:" + isVisitToday);
-                    console.log("item.estado_fiscalizacion:" + item.estado_fiscalizacion);
-                     */
-
-
 
                     let markerClass = isVisitToday ? 'puntoMarcaHoy' : 'puntoMarca';
                     if (item.estado_fiscalizacion == 'PROCESADO')
@@ -3577,151 +3549,183 @@ if (!$_SESSION['swlogin']) {
                 .toLowerCase();
         }
 
-        function filterMarkers(searchTerm) {
-            const term = searchTerm.toLowerCase().trim()
-            let visibleCount = 0
+        async function filterMarkers(searchTerm) {
+            const term = searchTerm.toLowerCase().trim();
+            let visibleCount = 0;
 
-            if (!markerClusterGroup || !allLeafletMarkers) return
+            if (!markerClusterGroup || !allLeafletMarkers) return;
 
-            markerClusterGroup.clearLayers()
+            markerClusterGroup.clearLayers();
 
             if (term.length > 0 && term.length < 3) {
-                showStatusMessage("Ingrese al menos 3 caracteres para buscar", "info")
-                return
+                showStatusMessage("Ingrese al menos 3 caracteres para buscar", "info");
+                return;
             }
 
-            showLoader()
+            showLoader();
 
-            setTimeout(() => {
-                const filteredLeafletMarkers = []
+            setTimeout(async () => {
+                const filteredLeafletMarkers = [];
 
+                // Primero buscar en marcadores locales
                 function processFilterBatch(startIndex) {
-                    const endIndex = Math.min(startIndex + 300, allLeafletMarkers.length)
+                    const endIndex = Math.min(startIndex + 300, allLeafletMarkers.length);
 
                     for (let i = startIndex; i < endIndex; i++) {
-                        const marker = allLeafletMarkers[i]
-                        const data = marker.originalData || {}
+                        const marker = allLeafletMarkers[i];
+                        const data = marker.originalData || {};
 
-                        // Normalizar y limpiar todos los campos
-                        const title = String(data.title || "")
-                            .toLowerCase()
-                            .trim()
-                        const nombre = String(data.nombre_razon || "")
-                            .toLowerCase()
-                            .trim()
-                        const codigo = normalizarCodigoCatastro(
-                            String(data.codigo_catastral || "")
-                            .toLowerCase()
-                            .trim(),
-                        )
-                        const termNormalizado = normalizarCodigoCatastro(term)
-                        const numero = String(data.numero_inmueble || "")
-                            .toLowerCase()
-                            .trim()
-                        const usuario = String(data.usuario || "")
-                            .toLowerCase()
-                            .trim()
-                        const no_formulario = String(data.no_formulario || "")
-                            .toLowerCase()
-                            .trim()
-                        const fecha_apersonamiento = String(data.fecha_apersonamiento || "")
-                            .toLowerCase()
-                            .trim()
+                        const title = String(data.title || "").toLowerCase().trim();
+                        const nombre = String(data.nombre_razon || "").toLowerCase().trim();
+                        const codigo = normalizarCodigoCatastro(String(data.codigo_catastral || "").toLowerCase().trim());
+                        const termNormalizado = normalizarCodigoCatastro(term);
+                        const numero = String(data.numero_inmueble || "").toLowerCase().trim();
+                        const usuario = String(data.usuario || "").toLowerCase().trim();
+                        const no_formulario = String(data.no_formulario || "").toLowerCase().trim();
+                        const fecha_apersonamiento = String(data.fecha_apersonamiento || "").toLowerCase().trim();
 
-                        let matchesSearch = false
+                        let matchesSearch = false;
 
                         if (term === "") {
-                            matchesSearch = true
+                            matchesSearch = true;
                         } else {
-                            // Primero verificar coincidencias exactas (tienen prioridad)
-
                             if (no_formulario === term || numero === term) {
-                                matchesSearch = true
-                            }
-                            // Si no hay coincidencia exacta, verificar coincidencias parciales en otros campos
-                            else if (
+                                matchesSearch = true;
+                            } else if (
                                 title.includes(term) ||
                                 nombre.includes(term) ||
                                 codigo.includes(termNormalizado) ||
                                 fecha_apersonamiento.includes(term) ||
                                 usuario.includes(term)
                             ) {
-                                matchesSearch = true
-                                console.log('revisando codigo:' + codigo + ', termNormalizado:' + termNormalizado);
+                                matchesSearch = true;
                             }
                         }
 
                         if (matchesSearch) {
-
-                            console.log("term:" + term);
-                            console.log("numero:" + numero);
                             if (/^inm-\d+$/i.test(term)) {
                                 if (term === numero) {
-                                    console.log("no_formulario:" + no_formulario);
-                                    filteredLeafletMarkers.push(marker)
-                                    visibleCount++
+                                    filteredLeafletMarkers.push(marker);
+                                    visibleCount++;
                                 }
                             } else {
-                                filteredLeafletMarkers.push(marker)
+                                filteredLeafletMarkers.push(marker);
+                                visibleCount++;
                             }
-
                         }
                     }
 
                     if (endIndex < allLeafletMarkers.length) {
                         setTimeout(() => {
-                            processFilterBatch(endIndex)
-                        }, 5)
+                            processFilterBatch(endIndex);
+                        }, 5);
                     } else {
-                        markerClusterGroup.addLayers(filteredLeafletMarkers)
-                        updateResultsCount(visibleCount, totalMarkersCount || allLeafletMarkers.length)
-                        updateDebugInfo()
-                        hideLoader()
-
-                        if (filteredLeafletMarkers.length > 0 && term !== "") {
-                            setTimeout(() => {
-                                fitMapToVisibleMarkers()
-                            }, 100)
-                        }
+                        finalizarBusqueda();
                     }
                 }
 
-                processFilterBatch(0)
-            }, 25)
+                async function buscarEnBaseDatos() {
+                    if (term === "" || visibleCount >= 10) {
+                        return;
+                    }
+
+                    console.log('[v0] Buscando en base de datos...');
+                    const searchDbIndicator = document.getElementById('searchDbIndicator');
+                    searchDbIndicator.textContent = 'Buscando en base de datos...';
+                    searchDbIndicator.style.display = 'block';
+
+                    try {
+                        const response = await fetch(`../php/ufPuntosSearch.php?search=${encodeURIComponent(term)}`);
+                        const data = await response.json();
+
+                        if (data.success && data.data && data.data.length > 0) {
+                            console.log(`[v0] Encontrados ${data.data.length} resultados en BD`);
+
+                            // Agregar marcadores de BD que no estén ya cargados
+                            let newFromDb = 0;
+                            data.data.forEach(item => {
+                                if (!loadedMarkerIds.has(item.id)) {
+                                    const isVisitToday = item.is_visit_today;
+                                    let markerClass = isVisitToday ? 'puntoMarcaHoy' : 'puntoMarca';
+                                    if (item.estado_fiscalizacion == 'PROCESADO') markerClass = 'puntoActualizado';
+                                    if (item.estado_fiscalizacion == 'DESACATO') markerClass = 'puntoRevelde';
+
+                                    const pulsingIcon = L.divIcon({
+                                        className: 'pulsing-marker',
+                                        html: `<div class="${markerClass}"></div>`,
+                                        iconSize: [16, 16],
+                                        iconAnchor: [8, 8]
+                                    });
+
+                                    const marker = L.marker(item.position, {
+                                        icon: pulsingIcon,
+                                        className: 'individual-pulsing-marker'
+                                    }).bindPopup(item.html);
+
+                                    marker.originalData = {
+                                        id: item.id,
+                                        title: item.title || '',
+                                        nombre_razon: item.nombre_razon || '',
+                                        codigo_catastral: item.codigo_catastral || '',
+                                        numero_inmueble: item.numero_inmueble || '',
+                                        description: item.description || '',
+                                        type: item.numero_inmueble || '',
+                                        position: item.position,
+                                        html: item.html,
+                                        fecha_apersonamiento: item.fecha_apersonamiento || null,
+                                        usuario: item.usuario || null,
+                                        no_formulario: item.no_formulario || null,
+                                        isVisitToday: isVisitToday
+                                    };
+
+                                    filteredLeafletMarkers.push(marker);
+                                    allLeafletMarkers.push(marker);
+                                    loadedMarkerIds.add(item.id);
+                                    newFromDb++;
+                                }
+                            });
+
+                            visibleCount += newFromDb;
+                            searchDbIndicator.textContent = `${visibleCount} resultados (${newFromDb} de base de datos)`;
+
+                            setTimeout(() => {
+                                searchDbIndicator.style.display = 'none';
+                            }, 3000);
+                        } else {
+                            searchDbIndicator.textContent = 'No se encontraron más resultados en BD';
+                            setTimeout(() => {
+                                searchDbIndicator.style.display = 'none';
+                            }, 2000);
+                        }
+                    } catch (error) {
+                        console.error('[v0] Error buscando en BD:', error);
+                        searchDbIndicator.textContent = 'Error al buscar en BD';
+                        setTimeout(() => {
+                            searchDbIndicator.style.display = 'none';
+                        }, 2000);
+                    }
+                }
+
+                async function finalizarBusqueda() {
+                    // Buscar en BD si hay pocos resultados
+                    await buscarEnBaseDatos();
+
+                    markerClusterGroup.addLayers(filteredLeafletMarkers);
+                    updateResultsCount(visibleCount, totalMarkersCount || allLeafletMarkers.length);
+                    updateDebugInfo();
+                    hideLoader();
+
+                    if (filteredLeafletMarkers.length > 0 && term !== "") {
+                        setTimeout(() => {
+                            fitMapToVisibleMarkers();
+                        }, 100);
+                    }
+                }
+
+                processFilterBatch(0);
+            }, 25);
         }
 
-        // Declare functions before using them
-        function showStatusMessage(message, type) {
-            console.log(`Status Message: ${message} (Type: ${type})`)
-        }
-
-        function showLoader() {
-            console.log("Loader shown")
-        }
-
-        function normalizarCodigo(codigo) {
-            return codigo.replace(/[^a-z0-9]/gi, "")
-        }
-
-        function updateResultsCount(visibleCount, totalCount) {
-            console.log(`Visible Count: ${visibleCount}, Total Count: ${totalCount}`)
-        }
-
-        function updateDebugInfo() {
-            console.log("Debug info updated")
-        }
-
-        function hideLoader() {
-            console.log("Loader hidden")
-        }
-
-        function fitMapToVisibleMarkers() {
-            console.log("Map fitted to visible markers")
-        }
-
-
-
-        // Función para mostrar todos los marcadores
         function showAllMarkers() {
             if (!markerClusterGroup) return;
 
@@ -3753,7 +3757,6 @@ if (!$_SESSION['swlogin']) {
             }, 25);
         }
 
-        // Función para actualizar contador de resultados
         function updateResultsCount(count, total) {
             const resultsElement = document.getElementById('resultsCount');
             if (total === undefined) total = totalMarkersCount || allLeafletMarkers.length;
@@ -3765,7 +3768,6 @@ if (!$_SESSION['swlogin']) {
             }
         }
 
-        // Función para limpiar búsqueda
         function clearSearch() {
             const searchInput = document.getElementById('searchInput');
             searchInput.value = '';
@@ -3775,11 +3777,13 @@ if (!$_SESSION['swlogin']) {
                 clickedCoordinatesMarker = null;
             }
 
+            const searchDbIndicator = document.getElementById('searchDbIndicator');
+            searchDbIndicator.style.display = 'none';
+
             filterMarkers('');
             searchInput.focus();
         }
 
-        // Función para ajustar el mapa a los marcadores visibles
         function fitMapToVisibleMarkers() {
             if (markerClusterGroup && markerClusterGroup.getLayers().length > 0) {
                 const bounds = markerClusterGroup.getBounds();
@@ -3810,7 +3814,7 @@ if (!$_SESSION['swlogin']) {
             }
         }
 
-        // Función mejorada para carga dinámica de datos GeoJSON (CORREGIDA)
+
         function loadGeoJSONDataDynamically(modulo, forceReload = false) {
             if (isGeoJsonLoading && !forceReload) {
                 logDebug('Ya hay una carga de GeoJSON en progreso, saltando...');
@@ -4036,12 +4040,10 @@ if (!$_SESSION['swlogin']) {
             debounceTimer = setTimeout(() => {
                 logDebug('Mapa movido, verificando si necesita cargar datos...');
 
-                // MEJORA: Cargar marcadores solo si no hay capas GeoJSON activas o ambas están activas
                 if (!codigosActive || inmueblesActive) {
                     loadMarkersInViewport();
                 }
 
-                // Cargar datos para capas GeoJSON activas
                 const promises = [];
 
                 if (codigosActive) {
@@ -4059,13 +4061,11 @@ if (!$_SESSION['swlogin']) {
                     }
                 }
 
-                // NUEVO: Actualizar pre-puntos si están activos
                 if (prePuntosActive) {
                     logDebug(' ============ Mapa movido prePuntosActive ==================');
                     debouncedBuscarPrePuntos();
                 }
 
-                // Actualizar debug info después de todas las cargas
                 Promise.all(promises).then(() => {
                     updateDebugInfo();
                 });
@@ -4073,7 +4073,6 @@ if (!$_SESSION['swlogin']) {
             }, DYNAMIC_LOADING_CONFIG.DEBOUNCE_DELAY);
         }
 
-        // Funciones de control del mapa
         function toggleSatelliteLayer() {
             const button = document.getElementById('satelitalBtn');
 
@@ -4118,14 +4117,12 @@ if (!$_SESSION['swlogin']) {
             updateDebugInfo();
         }
 
-        // Función de debounce para evitar llamadas excesivas a pre-puntos
         const debouncedBuscarPrePuntos = debounce(function() {
             if (prePuntosActive) {
-                buscarPrePuntos(false); // false para no mostrar mensajes en actualizaciones automáticas
+                buscarPrePuntos(false);
             }
-        }, 500); // 500ms de delay
+        }, 500);
 
-        // Función debounce genérica si no existe
         function debounce(func, wait) {
             let timeout;
             return function executedFunction(...args) {
@@ -4137,7 +4134,6 @@ if (!$_SESSION['swlogin']) {
                 timeout = setTimeout(later, wait);
             };
         }
-
 
         function buscarPrePuntos(showMessage = true) {
             const bounds = map.getBounds();
@@ -4826,6 +4822,7 @@ if (!$_SESSION['swlogin']) {
                 map.getContainer().style.cursor = '';
             }
         }
+
         document.addEventListener('DOMContentLoaded', function() {
             initializeMarkers();
             document.getElementById('addPointBtn').addEventListener('click', function(e) {
@@ -4835,8 +4832,8 @@ if (!$_SESSION['swlogin']) {
             });
             document.addEventListener('keydown', function(e) {
                 if (e.ctrlKey && (e.key === 'q' || e.key === 'Q')) {
-                    e.preventDefault(); // Prevenir comportamiento por defecto
-                    toggleAddPointMode(e); // Ejecutar la función
+                    e.preventDefault();
+                    toggleAddPointMode(e);
                 }
             });
 
@@ -4855,7 +4852,6 @@ if (!$_SESSION['swlogin']) {
                 this.blur();
             });
 
-            // Event listeners para búsqueda
             const searchInput = document.getElementById('searchInput');
             const clearSearchBtn = document.getElementById('clearSearch');
             const showAllBtn = document.getElementById('showAllBtn');
@@ -4867,10 +4863,8 @@ if (!$_SESSION['swlogin']) {
             clearSearchBtn.addEventListener('click', clearSearch);
             showAllBtn.addEventListener('click', showAllMarkers);
 
-            // Event listeners para el mapa
             map.on('moveend', handleMapMovement);
             map.on('zoomend', handleMapMovement);
-            /* map.on('click', handleMapClick);   -- para mostrar coordenadas segun se haga click en el mapa*/
 
             document.addEventListener('keydown', function(e) {
                 if (e.ctrlKey && (e.key === 'g' || e.key === 'G')) {
@@ -4878,18 +4872,15 @@ if (!$_SESSION['swlogin']) {
                 }
             });
 
-            // Cargar datos iniciales
             setTimeout(() => {
                 loadMarkersInViewport();
             }, 1000);
 
-            // Actualizar debug info inicial
             updateDebugInfo();
 
             console.log('Sistema de mapas dinámico inicializado correctamente');
         });
 
-        // Event listener para el botón de distritos
         document.getElementById('distritosBtn').addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -4993,14 +4984,10 @@ if (!$_SESSION['swlogin']) {
         });
 
 
-        // Actualizar debug info cuando cambie el zoom
         map.on('zoomend', updateDebugInfo);
         map.on('moveend', updateDebugInfo);
 
         console.log('Script de mapa cargado completamente');
-
-        /* document.addEventListener('DOMContentLoaded', initializeApp); */
-
         function nextImage(id) {
             const container = document.getElementById(`card-${id}`);
             const images = JSON.parse(container.dataset.images);

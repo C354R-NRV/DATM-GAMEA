@@ -1,182 +1,23 @@
 <?php
+// ufPuntosSearch.php - Endpoint para búsqueda de puntos en la base de datos PostgreSQL
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
 
-
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-function logDebug($message) {
-    error_log("[ufPuntosSearch] " . $message);
-}
-
-try {
-    logDebug("Iniciando búsqueda");
-
-    if (!isset($_GET['term']) || trim($_GET['term']) === '') {
-        throw new Exception("Término de búsqueda requerido");
-    }
-
-    $searchTerm = trim($_GET['term']);
-    
-    if (strlen($searchTerm) < 3) {
-        throw new Exception("El término debe tener al menos 3 caracteres");
-    }
-
-    logDebug("Buscando: $searchTerm");
-
-    // Configuración de base de datos
-    $host = 'localhost';
-    $dbname = 'datm';
-    $port = '5432';
-    $username = 'postgres';
-    $password = '1n0v4d05';
-
-    $dsn = "pgsql:host=$host;port=$port;dbname=$dbname;";
-    $pdo = new PDO($dsn, $username, $password, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_TIMEOUT => 30
-    ]);
-    $pdo->exec("SET NAMES 'UTF8'");
-
-    // Query de búsqueda en múltiples campos
-    $sql = "
-        SELECT 
-            a.id,
-            a.codigo_catastral,
-            a.nombre_razon,
-            a.numero_inmueble,
-            trim(a.ubicacion_nivel1||' '||a.ubicacion_nivel2||' '||a.ubicacion_nivel3||' '||a.descripcion) as direccion,
-            ST_Y(a.geom) as lat,
-            ST_X(a.geom) as lng,
-            a.imagen_principal,
-            a.imagen_adicional,
-            to_char(a.fecha_apersonamiento, 'DD/MM/YYYY HH24:MI:SS') as fecha_apersonamiento,
-            a.fecha_apersonamiento as fecha_apersonamiento_raw,
-            d.estado_fiscalizacion,
-            a.tipologia,
-            to_char(a.fecha_cambio_estado, 'DD/MM/YYYY HH24:MI:SS') as fecha_cambio_estado,
-            c1.usuario as usuario_cambio_estado,
-            a.observacion_estado,
-            c.usuario,
-            a.no_formulario,
-            a.cant_act,
-            a.descripcion_act
-        FROM uf_predial a
-        INNER JOIN (
-            SELECT numero_inmueble, MAX(id) AS max_id
-            FROM uf_predial
-            WHERE estado_
-            GROUP BY numero_inmueble
-        ) b ON a.numero_inmueble = b.numero_inmueble AND a.id = b.max_id
-        LEFT JOIN datm_usuario c ON c.id = a.idusuario
-        LEFT JOIN uf_estado_fiscalizacion d ON d.idestado_fiscalizacion = a.idestado_fiscalizacion
-        LEFT JOIN datm_usuario c1 ON c1.id = a.idusuario_cambio_estado
-        WHERE a.estado_ 
-        AND a.geom IS NOT NULL
-        AND (
-            LOWER(a.numero_inmueble) LIKE LOWER(:term1) OR
-            LOWER(a.codigo_catastral) LIKE LOWER(:term2) OR
-            LOWER(a.nombre_razon) LIKE LOWER(:term3) OR
-            LOWER(a.ubicacion_nivel1||' '||a.ubicacion_nivel2||' '||a.ubicacion_nivel3||' '||a.descripcion) LIKE LOWER(:term4) OR
-            LOWER(c.usuario) LIKE LOWER(:term5) OR
-            LOWER(a.no_formulario) LIKE LOWER(:term6)
-        )
-        ORDER BY 
-            CASE 
-                WHEN LOWER(a.numero_inmueble) = LOWER(:exactTerm) THEN 1
-                WHEN LOWER(a.no_formulario) = LOWER(:exactTerm2) THEN 2
-                ELSE 3
-            END,
-            a.fecha_apersonamiento DESC
-        LIMIT 500
-    ";
-
-    $stmt = $pdo->prepare($sql);
-    $searchPattern = "%{$searchTerm}%";
-    
-    $stmt->bindValue(':term1', $searchPattern, PDO::PARAM_STR);
-    $stmt->bindValue(':term2', $searchPattern, PDO::PARAM_STR);
-    $stmt->bindValue(':term3', $searchPattern, PDO::PARAM_STR);
-    $stmt->bindValue(':term4', $searchPattern, PDO::PARAM_STR);
-    $stmt->bindValue(':term5', $searchPattern, PDO::PARAM_STR);
-    $stmt->bindValue(':term6', $searchPattern, PDO::PARAM_STR);
-    $stmt->bindValue(':exactTerm', $searchTerm, PDO::PARAM_STR);
-    $stmt->bindValue(':exactTerm2', $searchTerm, PDO::PARAM_STR);
-
-    $stmt->execute();
-    $results = $stmt->fetchAll();
-
-    logDebug("Resultados encontrados: " . count($results));
-
-    // Procesar resultados
-    $data = [];
-    $currentDate = date('Y-m-d');
-
-    foreach ($results as $row) {
-        $imagenes = processImages($row['imagen_principal'], $row['imagen_adicional']);
-        $popupHtml = createPopupHtml($row, $imagenes);
-
-        $isVisitToday = false;
-        if (!empty($row['fecha_apersonamiento_raw'])) {
-            $visitDate = date('Y-m-d', strtotime($row['fecha_apersonamiento_raw']));
-            $isVisitToday = ($visitDate === $currentDate);
-        }
-
-        $data[] = [
-            'id' => $row['id'],
-            'position' => [floatval($row['lat']), floatval($row['lng'])],
-            'title' => $row['numero_inmueble'] ?: 'Sin código',
-            'nombre_razon' => $row['nombre_razon'] ?: 'Sin nombre',
-            'codigo_catastral' => $row['codigo_catastral'] ?: '',
-            'numero_inmueble' => $row['numero_inmueble'] ?: 'Sin número',
-            'description' => $row['direccion'] ?: 'Sin dirección',
-            'type' => $row['numero_inmueble'] ?: 'Sin número',
-            'fecha_apersonamiento' => $row['fecha_apersonamiento'] ?: null,
-            'fecha_apersonamiento_raw' => $row['fecha_apersonamiento_raw'] ?: null,
-            'is_visit_today' => $isVisitToday,
-            'usuario' => $row['usuario'],
-            'no_formulario' => $row['no_formulario'],
-            'imagen_principal' => $row['imagen_principal'],
-            'estado_fiscalizacion' => $row['estado_fiscalizacion'],
-            'tipologia' => $row['tipologia'],
-            'html' => $popupHtml
-        ];
-    }
-
+// Función centralizada para enviar respuestas de error
+function sendErrorResponse($message, $details = null, $code = 500) {
+    http_response_code($code);
     $response = [
-        'data' => $data,
-        'meta' => [
-            'total' => count($data),
-            'returned' => count($data),
-            'search_term' => $searchTerm,
-            'source' => 'database_search',
-            'timestamp' => date('Y-m-d H:i:s')
-        ]
+        'success' => false,
+        'error' => $message,
+        'details' => $details,
+        'timestamp' => date('Y-m-d H:i:s')
     ];
-
-    echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
-
-} catch (PDOException $e) {
-    logDebug("Error de BD: " . $e->getMessage());
-    http_response_code(500);
-    echo json_encode([
-        'error' => 'Error de base de datos',
-        'message' => $e->getMessage()
-    ], JSON_UNESCAPED_UNICODE);
-} catch (Exception $e) {
-    logDebug("Error: " . $e->getMessage());
-    http_response_code(400);
-    echo json_encode([
-        'error' => 'Error en la búsqueda',
-        'message' => $e->getMessage()
-    ], JSON_UNESCAPED_UNICODE);
+    echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    exit;
 }
 
-function processImages($imagen_principal, $imagen_adicional) {
+function processImages($imagen_principal, $imagen_adicional)
+{
     $imagenes = [];
 
     if (!empty($imagen_principal) && trim($imagen_principal) !== '') {
@@ -200,7 +41,8 @@ function processImages($imagen_principal, $imagen_adicional) {
     return $imagenes;
 }
 
-function createPopupHtml($row, $imagenes) {
+function createPopupHtml($row, $imagenes)
+{
     $id = $row['id'];
     $codigo = htmlspecialchars($row['codigo_catastral'] ?: 'Sin código');
     $nombre = htmlspecialchars($row['nombre_razon'] ?: 'Sin nombre');
@@ -227,10 +69,10 @@ function createPopupHtml($row, $imagenes) {
                 <i class="fa fa-exclamation-triangle icon-warning" aria-hidden="true" title="Desacato a la fiscalización" onclick="actualizarEstado(' . $id . ',\'' . $numero_inmueble . '\', 0)"></i> 
                 </div>';
     
-    if ($row['estado_fiscalizacion'] != 'VISITADO') {
+    if (isset($row['estado_fiscalizacion']) && $row['estado_fiscalizacion'] != 'VISITADO') {
         $estado = '<div class="info-row">
                     <div class="info-label">Estado:</div>
-                    <div class="info-value">' . $row['estado_fiscalizacion']  . '</div>
+                    <div class="info-value">' . ($row['estado_fiscalizacion'] ?? 'N/A')  . '</div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Fecha de cambio:</div>
@@ -247,7 +89,7 @@ function createPopupHtml($row, $imagenes) {
     }
     
     $act = '';
-    if ($row['cant_act'] > 0) {
+    if (isset($row['cant_act']) && $row['cant_act'] > 0) {
         $act = '<div class="info-row">
                     <div class="info-label">Cantidad Act.:</div>
                     <div class="info-value">' . $row['cant_act']  . '</div>
@@ -269,11 +111,11 @@ function createPopupHtml($row, $imagenes) {
                 </div>
                 <div class="info-row">
                     <div class="info-label">Código catastral:</div>
-                    <div class="info-value">' . $codigo . '</div>
+                    <div class="info-value">' . $codigo . " " . (isset($row['estado_fiscalizacion']) && $row['estado_fiscalizacion'] == 'PROCESADO' ? ' <a target="_blank"  href="https://www.google.com/maps?q=' . $row['lat'] . ',' . $row['lng'] . '"><i class="fa fa-street-view" style="font-size:1.2rem; COLOR: yellow" aria-hidden="true"></i></a>' : '') . '</div>
                 </div>
                 <div class="info-row">
-                    <div class="info-label">Tipología:</div>
-                    <div class="info-value">' . $row['tipologia'] . ' [N°Form:'.$row['no_formulario'].']</div>
+                    <div class="info-label">Tipologia:</div>
+                    <div class="info-value">' . ($row['tipologia'] ?? 'N/A') . ' [N°Form:' . ($row['no_formulario'] ?? 'N/A') . ']</div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Última visita:</div>
@@ -284,9 +126,196 @@ function createPopupHtml($row, $imagenes) {
                     <div class="info-value">' . ($row['usuario'] ?? 'N/A') . '</div>
                 </div>
                 ' . $estado . '
-                ' . $act . '
+                ' .  $act . ' 
             </div>';
 
     return $html;
+}
+
+try {
+    // Validar parámetro de búsqueda
+    if (!isset($_GET['search']) || trim($_GET['search']) === '') {
+        sendErrorResponse('Parámetro de búsqueda requerido', 'El parámetro "search" es obligatorio', 400);
+    }
+
+    $searchTerm = trim($_GET['search']);
+    $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 100;
+
+    // Validar límite
+    if ($limit < 1 || $limit > 1000) {
+        $limit = 100;
+    }
+
+    require_once 'conexionpsql.php';
+    $conexion = new conexion();
+    $conn = $conexion->conectar();
+
+    if (!$conn) {
+        sendErrorResponse('Error de conexión a la base de datos', 'No se pudo establecer conexión con PostgreSQL');
+    }
+
+    // Normalizar término de búsqueda para código catastral (remover guiones y ceros iniciales)
+    $searchTermNormalized = preg_replace('/^0+/', '', str_replace('-', '', $searchTerm));
+
+    $sql = "SELECT
+                id,
+                numero_inmueble,
+                codigo_catastral,
+                nombre_razon,
+                direccion,
+                latitud,
+                longitud,
+                imagen_principal,
+                imagen_adicional,
+                tipologia,
+                estado_fiscalizacion,
+                fecha_apersonamiento,
+                fecha_cambio_estado,
+                usuario,
+                usuario_cambio_estado,
+                observacion_estado,
+                no_formulario,
+                cant_act,
+                descripcion_act,
+                is_visit_today,
+                sort_priority
+            FROM (
+                SELECT DISTINCT
+                    uf.id,
+                    uf.numero_inmueble,
+                    uf.codigo_catastral,
+                    uf.nombre_razon,
+                    TRIM(uf.ubicacion_nivel1 || ' ' || uf.ubicacion_nivel2 || ' ' || uf.ubicacion_nivel3 || ' ' || uf.descripcion) AS direccion,
+                    uf.latitud,
+                    uf.longitud,
+                    uf.imagen_principal,
+                    uf.imagen_adicional,
+                    uf.tipologia,
+                    b.estado_fiscalizacion,
+                    to_char(uf.fecha_apersonamiento, 'DD/MM/YYYY HH24:MI:SS') AS fecha_apersonamiento,
+                    to_char(uf.fecha_cambio_estado, 'DD/MM/YYYY HH24:MI:SS') AS fecha_cambio_estado,
+                    a.usuario,
+                    c.usuario AS usuario_cambio_estado,
+                    uf.observacion_estado,
+                    uf.no_formulario,
+                    uf.cant_act,
+                    uf.descripcion_act,
+                    CASE 
+                        WHEN DATE(uf.fecha_apersonamiento) = CURRENT_DATE THEN true 
+                        ELSE false 
+                    END AS is_visit_today,
+                    CASE 
+                        WHEN uf.numero_inmueble = :searchTerm THEN 1
+                        WHEN CAST(uf.no_formulario AS TEXT) = :searchTerm THEN 2
+                        ELSE 3
+                    END AS sort_priority
+                FROM uf_predial uf  
+                LEFT JOIN datm_usuario a ON uf.idusuario = a.id 
+                LEFT JOIN uf_estado_fiscalizacion b ON b.idestado_fiscalizacion = uf.idestado_fiscalizacion 
+                LEFT JOIN datm_usuario c ON c.id = uf.idusuario_cambio_estado
+                WHERE   
+                    uf.latitud IS NOT NULL  
+                    AND uf.longitud IS NOT NULL 
+                    AND ( 
+                        uf.numero_inmueble ILIKE :searchPartial 
+                        OR CAST(uf.no_formulario AS TEXT) ILIKE :searchPartial  
+                        OR LOWER(uf.nombre_razon) ILIKE :searchPartial 
+                        OR uf.codigo_catastral ILIKE :searchPartial 
+                        OR TRIM(LEADING '0' FROM REPLACE(uf.codigo_catastral, '-', '')) ILIKE :searchNormalized 
+                        OR LOWER(a.usuario) ILIKE :searchPartial   
+                        OR TO_CHAR(uf.fecha_apersonamiento, 'YYYY-MM-DD') ILIKE :searchPartial 
+                    )
+            ) t
+            ORDER BY 
+                sort_priority,
+                fecha_apersonamiento DESC
+            LIMIT :limit";
+
+    $stmt = $conn->prepare($sql);
+    
+    if (!$stmt) {
+        sendErrorResponse('Error al preparar consulta', $conn->errorInfo());
+    }
+
+    $searchPartial = '%' . $searchTerm . '%';
+    $searchNormalized = '%' . $searchTermNormalized . '%';
+
+    $stmt->bindParam(':searchTerm', $searchTerm, PDO::PARAM_STR);
+    $stmt->bindParam(':searchPartial', $searchPartial, PDO::PARAM_STR);
+    $stmt->bindParam(':searchNormalized', $searchNormalized, PDO::PARAM_STR);
+    $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+
+    // Ejecutar consulta
+    if (!$stmt->execute()) {
+        sendErrorResponse('Error al ejecutar consulta', $stmt->errorInfo());
+    }
+
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $formattedResults = array_map(function($row) {
+        $isVisitToday = ($row['is_visit_today'] === 't' || $row['is_visit_today'] === true || $row['is_visit_today'] == 1);
+        
+        // Procesar imágenes
+        $imagenes = processImages($row['imagen_principal'] ?? '', $row['imagen_adicional'] ?? '');
+        
+        // Agregar lat/lng al array para la función createPopupHtml
+        $row['lat'] = $row['latitud'];
+        $row['lng'] = $row['longitud'];
+        
+        // Generar HTML del popup usando la misma función que ufPuntosGet.php
+        $popupHtml = createPopupHtml($row, $imagenes);
+
+        return [
+            'id' => $row['id'],
+            'numero_inmueble' => $row['numero_inmueble'],
+            'codigo_catastral' => $row['codigo_catastral'],
+            'nombre_razon' => $row['nombre_razon'],
+            'position' => [
+                floatval($row['latitud']),
+                floatval($row['longitud'])
+            ],
+            'estado_fiscalizacion' => $row['estado_fiscalizacion'],
+            'fecha_apersonamiento' => $row['fecha_apersonamiento'],
+            'usuario' => $row['usuario'],
+            'no_formulario' => $row['no_formulario'],
+            'tipologia' => $row['tipologia'],
+            'imagen_principal' => $row['imagen_principal'],
+            'is_visit_today' => $isVisitToday,
+            'html' => $popupHtml,
+            'title' => $row['numero_inmueble'] ?? 'N/A',
+            'description' => $row['direccion'] ?? 'N/A'
+        ];
+    }, $results);
+
+    // Respuesta exitosa
+    http_response_code(200);
+    echo json_encode([
+        'success' => true,
+        'data' => $formattedResults,
+        'count' => count($formattedResults),
+        'searchTerm' => $searchTerm,
+        'timestamp' => date('Y-m-d H:i:s')
+    ], JSON_UNESCAPED_UNICODE);
+
+} catch (PDOException $e) {
+    sendErrorResponse(
+        'Error de base de datos PostgreSQL',
+        [
+            'message' => $e->getMessage(),
+            'code' => $e->getCode(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine()
+        ]
+    );
+} catch (Exception $e) {
+    sendErrorResponse(
+        'Error interno del servidor',
+        [
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString()
+        ]
+    );
 }
 ?>
