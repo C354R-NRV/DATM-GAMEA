@@ -12,7 +12,7 @@ $query = "select * from datm_parametro";
 $stmt = $cons->query($query);
 $parametros = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$query = " select * from datm_usuario where estado like 'DESBLOQUEADO' and rol like 'DIRECCION' ";
+$query = " select * from datm_usuario where estado like 1 and rol like 'DIRECCION' ";
 $stmt = $cons->query($query);
 $mae = $stmt->fetch(PDO::FETCH_ASSOC);
 

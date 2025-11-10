@@ -214,7 +214,9 @@ try {
                 LEFT JOIN uf_estado_fiscalizacion b ON b.idestado_fiscalizacion = uf.idestado_fiscalizacion 
                 LEFT JOIN datm_usuario c ON c.id = uf.idusuario_cambio_estado
                 WHERE   
-                    uf.latitud IS NOT NULL  
+                    uf.estado_ IS TRUE 
+                    AND uf.clasificacion = 'A'
+                    AND uf.latitud IS NOT NULL  
                     AND uf.longitud IS NOT NULL 
                     AND ( 
                         uf.numero_inmueble ILIKE :searchPartial 

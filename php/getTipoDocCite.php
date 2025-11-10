@@ -15,7 +15,7 @@ if ($_SESSION['rol'] == 'SECRETARIA') {
     if ($_SESSION['codigo_unidad'] != 'DIR')
         $auxFiltro = " codigo_unidad = '" . $_SESSION['codigo_unidad'] . "'";
 
-    $query = "select id, upper(concat(nombres, ' ', primer_apellido, ' ', segundo_apellido)) nombres from datm_usuario where  estado = 'DESBLOQUEADO' and $auxFiltro 
+    $query = "select id, upper(concat(nombres, ' ', primer_apellido, ' ', segundo_apellido)) nombres from datm_usuario where  estado = 1 and $auxFiltro 
                 order by nombres;";
     $stmt = $cons->query($query);
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -78,4 +78,3 @@ $html_ .= "
             </div>";
 
 echo $html_;
-

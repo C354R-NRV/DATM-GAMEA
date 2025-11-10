@@ -48,7 +48,7 @@ try {
 
     $conn = new Conexion();
     $cons = $conn->conectar();
-    $estado_ = 'DESBLOQUEADO';
+    $estado_ = '1';
 
     if ($usr->rol != 'CONTRIBUYENTE') {
         $usuario = generarUsuario($nom_, $usr->primer_apellido, $usr->segundo_apellido);
