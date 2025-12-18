@@ -124,15 +124,76 @@ if (!$_SESSION['swlogin']) {
                     <th data-field="rol" data-sortable="true">Rol</th>
                     <th data-field="cedula_identidad" data-sortable="true">Ci/Nit</th>
                     <th data-field="nombres" data-sortable="true">Nombres</th>
+                    <th data-field="primer_apellido" data-sortable="true">Paterno</th>
+                    <th data-field="segundo_apellido" data-sortable="true">Materno</th>
                     <th data-field="usuario" data-sortable="true">Usuario</th>
                     <th data-field="contacto" data-sortable="true">Contacto</th>
-                    
+
                     <th data-field="fecha_registro" data-sortable="true">Fecha registro</th>
                     <th data-field="acciones">Acciones</th>
                 </thead>
                 <tbody id="tbodyItems">
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- Modal para editar usuario -->
+    <div class="modal fade" id="modalEditarUsuario" tabindex="-1" role="dialog" aria-labelledby="modalEditarUsuarioLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalEditarUsuarioLabel">Editar Usuario</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditarUsuario">
+                        <input type="hidden" id="editId" name="id">
+                        <div class="form-group">
+                            <label for="editUsuario">Usuario</label>
+                            <input type="text" class="form-control" id="editUsuario" name="usuario" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editNombre">Nombres</label>
+                            <input type="text" class="form-control" id="editNombre" name="nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editPaterno">Paterno</label>
+                            <input type="text" class="form-control" id="editPaterno" name="paterno" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editMaterno">Materno</label>
+                            <input type="text" class="form-control" id="editMaterno" name="materno" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editCorreo">Correo</label>
+                            <input type="email" class="form-control" id="editCorreo" name="correo" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editContacto">Contacto</label>
+                            <input type="text" class="form-control" id="editContacto" name="contacto" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editRol">Rol</label>
+                            <select class="form-control" id="editRol" name="rol" required>
+                                <option value="">Seleccionar rol...</option>
+                                <option value="DIRECCION">DIRECCION</option>
+                                <option value="DESARROLLO">DESARROLLO</option>
+                                <option value="OPERADOR">OPERADOR</option>
+                                <option value="OPERADORL2">OPERADORL2</option>
+                                <option value="SECRETARIA">SECRETARIA</option>
+                                <option value="JEFATURA">JEFATURA</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarCambiosUsuario()">Guardar cambios</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -151,7 +212,8 @@ if (!$_SESSION['swlogin']) {
 <script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.10.21/libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-    $(".datepicker").flatpickr(); 
+    $(".datepicker").flatpickr();
+
     function filtrosDataTable(p) {
         console.log(p);
         console.log("en filtrosDataTable");
@@ -167,7 +229,7 @@ if (!$_SESSION['swlogin']) {
         }
     }
 
-    function getUsuarios() { 
+    function getUsuarios() {
         $.ajax({
             async: true,
             type: 'POST',
@@ -180,7 +242,7 @@ if (!$_SESSION['swlogin']) {
             beforeSend: function() {
                 loadGralOn();
             },
-            success: function(e) { 
+            success: function(e) {
                 loadGralOff();
                 $('#tbodyItems').empty();
                 dat = $.parseJSON(e);
@@ -192,6 +254,8 @@ if (!$_SESSION['swlogin']) {
                         <td>${item.rol}</td>
                         <td>${item.cedula_identidad}</td>
                         <td>${item.nombres}</td>
+                        <td>${item.primer_apellido}</td>
+                        <td>${item.segundo_apellido}</td>
                         <td>${item.usuario}</td>
                         <td>${item.contacto}</td> 
                         <td>${item.fecha_registro}</td> 
@@ -200,7 +264,7 @@ if (!$_SESSION['swlogin']) {
                 `;
                     $('#tbodyItems').append(fila);
                 });
-                $('#tableCompendio').bootstrapTable('refresh'); 
+                $('#tableCompendio').bootstrapTable('refresh');
             },
             timeout: 16000,
             error: function(xhr, status, error) {
@@ -209,22 +273,105 @@ if (!$_SESSION['swlogin']) {
         });
     }
 
-    function enviarSolicitud(idsolicitud, codigoSolicitud) {
-        console.log("Enviando solicitud" + idsolicitud + ", para:" + codigoSolicitud); 
+    function editarUsuario(idusuario, codigoSolicitud) {
+        console.log("editarUsuario:" + idusuario + ", para:" + codigoSolicitud);
+
+        // Obtener los datos del usuario de la tabla
+        var fila = $('button[onclick*="' + idusuario + '"]').closest('tr');
+        var id = fila.find('td:eq(0)').text();
+        var rol = fila.find('td:eq(1)').text();
+        var usuario = fila.find('td:eq(4)').text();
+        var contacto = fila.find('td:eq(5)').text();
+
+        // Buscar el correo desde el servidor (opcional, o puedes agregarlo como data-attr)
+        $.ajax({
+            async: true,
+            type: 'GET',
+            url: '../php/usrGetUsuarios.php',
+            data: {
+                idusuario: idusuario
+            },
+            success: function(e) {
+                var dat = $.parseJSON(e);
+                if (dat.length > 0) {
+                    var usuarioData = dat[0];
+
+                    // Llenar el formulario modal
+                    $('#editId').val(usuarioData.id);
+                    $('#editUsuario').val(usuarioData.usuario);
+                    $('#editNombre').val(usuarioData.nombres);
+                    $('#editPaterno').val(usuarioData.primer_apellido);
+                    $('#editMaterno').val(usuarioData.segundo_apellido);
+                    $('#editCorreo').val(usuarioData.correo);
+                    $('#editContacto').val(usuarioData.contacto);
+                    $('#editRol').val(usuarioData.rol);
+
+                    // Mostrar el modal
+                    $('#modalEditarUsuario').modal('show');
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('Error al cargar datos del usuario: ' + error);
+            }
+        });
     }
 
-    function editarSolicitud(idsolicitud, codigoSolicitud) {
-        console.log("editarSolicitud:" + idsolicitud + ", para:" + codigoSolicitud); 
+    function guardarCambiosUsuario() {
+        var datos = {
+            id: $('#editId').val(),
+            usuario: $('#editUsuario').val(),
+            nombre: $('#editNombre').val(),
+            paterno: $('#editPaterno').val(),
+            materno: $('#editMaterno').val(),
+            correo: $('#editCorreo').val(),
+            contacto: $('#editContacto').val(),
+            rol: $('#editRol').val()
+        };
+
+        console.log(datos);
+
+        // Validar que los campos no estén vacíos
+        if (!datos.id || !datos.usuario   || !datos.rol) {
+            alert('Por favor complete todos los campos');
+            return;
+        }
+
+        $.ajax({
+            async: true,
+            type: 'POST',
+            data: datos,
+            url: '../php/usrEditarUsuario.php',
+            beforeSend: function() {
+                loadGralOn();
+            },
+            success: function(dat) {
+                loadGralOff();
+                dat = $.parseJSON(dat);
+                if (dat.success) {
+                    alert('Usuario actualizado correctamente');
+                    $('#modalEditarUsuario').modal('hide');
+                    getUsuarios(); // Recargar la tabla
+                } else {
+                    alert('Error: ' + dat.message);
+                }
+            },
+            timeout: 16000,
+            error: function(xhr, status, error) {
+                loadGralOff();
+                alert('Error: ' + error);
+            }
+        });
     }
 
     function borrarUsuario(idusuario, codigoSolicitud) {
         $.confirm({
-            title: "Eliminación de solicitud",
+            title: "Baja de Usuario",
             type: "red",
-            content: "Confirme la eliminacion del usuario: <b>" + idusuario + "</b>, con codigo de solicitud: <b>" + codigoSolicitud + "</b> y detalle brevemente la(s) razon(es):<br> <textarea id='observacion' rows='6' cols='40' class= 'form-control' placeholder='Escribe aquí el detalle...'></textarea><br><br>",
+            content: "Confirme la baja del usuario: <b>" + idusuario + "</b>, con usuario: <b>" + codigoSolicitud +
+                "</b>. Detalle brevemente la(s) razon(es):<br> <textarea id='observacion' rows='6' cols='40' class= 'form-control' placeholder='Escribe aquí el detalle...'></textarea><br><br>",
             buttons: {
                 confirmar: {
-                    text: "Confirmar",
+                    text: "Confirmar Baja",
                     btnClass: "btn-red",
                     action: function() {
 
@@ -245,17 +392,21 @@ if (!$_SESSION['swlogin']) {
                             success: function(dat) {
                                 loadGralOff();
                                 console.log(dat);
-                                //AGREAGAR NOTIFICACION DE GUARDADO CORRECTO 
                                 dat = $.parseJSON(dat);
-                                console.log(dat.log);
-                                window.location.href = './usrList.php';
+                                if (dat.success) {
+                                    alert('Usuario dado de baja correctamente');
+                                    getUsuarios(); // Recargar tabla en lugar de redirigir
+                                } else {
+                                    alert('Error: ' + dat.message);
+                                }
 
                             },
                             timeout: 16000,
                             error: function(xhr, status, error) {
+                                loadGralOff();
                                 alert('Error: ' + error);
                             }
-                        });     
+                        });
                     }
                 },
                 cancel: {

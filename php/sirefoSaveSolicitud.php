@@ -69,7 +69,7 @@ try {
     $cabecera->adjunto = $base64Pdf;
     $cabecera->adjunto_nombre = $fileName;
 
-    $query = " select * from datm_usuario where estado like 1 and rol like 'DIRECCION' ";
+    $query = " select * from datm_usuario where estado = 1 and rol like 'DIRECCION' ";
     $stmt = $cons->query($query);
     $mae = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

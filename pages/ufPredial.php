@@ -1602,7 +1602,7 @@ if (!$_SESSION['swlogin']) {
             }
 
             const currentZoom = map.getZoom();
-
+            console.log('currentZoom:'+currentZoom);
             // Validar zoom mínimo
             if (currentZoom <= 15) {
                 if (showMessage) {
@@ -1621,7 +1621,9 @@ if (!$_SESSION['swlogin']) {
                 minLng: sw.lng,
                 maxLng: ne.lng,
                 zoom: currentZoom,
-                limit: 1000
+                limit: 2000,
+                modulo:'predial'
+                
             });
 
             $.ajax({

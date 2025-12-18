@@ -29,7 +29,7 @@ $_SESSION['rol'] = '';
 $_SESSION['swlogin'] = '0';
 foreach ($resultados as $row) {
     $_SESSION['swlogin'] = $sw = '1';
-    if ($row['estado'] == '0') {
+    if ($row['estado'] == '1') {
 
         $query = "select * from datm_parametro";
         $stmt = $cons->query($query);

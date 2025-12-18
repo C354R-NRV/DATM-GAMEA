@@ -4497,10 +4497,8 @@ if (!$_SESSION['swlogin']) {
                 }
                 document.body.removeChild(textArea);
             }
-        }
-        // Función para activar modo agregar punto
-        function toggleAddPointMode(event) {
-            // IMPORTANTE: Prevenir propagación del evento del botón
+        } 
+        function toggleAddPointMode(event) { 
             if (event) {
                 event.stopPropagation();
                 event.preventDefault();

@@ -31,11 +31,11 @@ function sendErrorResponse($message, $code = 500, $details = [])
         'timestamp' => date('Y-m-d H:i:s'),
         'request_params' => $_GET
     ];
-    
+
     if (!empty($details)) {
         $response['details'] = $details;
     }
-    
+
     logDebug("ERROR: $message", $details);
     echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
     exit;
@@ -62,19 +62,23 @@ try {
     $minLng = floatval($_GET['minLng']);
     $maxLng = floatval($_GET['maxLng']);
     $zoom = isset($_GET['zoom']) ? intval($_GET['zoom']) : 13;
-    $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 2000;
+    $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 2500;
     $masivo = isset($_GET['masivo']) ? intval($_GET['masivo']) : 0;
+    $modulo = isset($_GET['modulo']) ? intval($_GET['modulo']) : 'prepredial';
 
     // Configuración para archivo GeoJSON
     $geojsonFile = '../static/geojson/grupo_numeros_con_guion.geojson';
     $useGeojsonFile = isset($_GET['useGeojson']) ? intval($_GET['useGeojson']) : 0;
 
     // Determinar límite de puntos basado en zoom
-    $zoomBasedLimit = 6600;
-    if ($zoom > 13) {
-        $zoomBasedLimit = 6600 + (($zoom - 13) * 250);
-    } elseif ($zoom < 13) {
-        $zoomBasedLimit = max(100, 1000 - ((13 - $zoom) * 100));
+    $zoomBasedLimit = 3600;
+    if ($modulo != 'predial') {
+        $zoomBasedLimit = 6600;
+        if ($zoom > 13) {
+            $zoomBasedLimit = 6600 + (($zoom - 13) * 250);
+        } elseif ($zoom < 13) {
+            $zoomBasedLimit = max(100, 1000 - ((13 - $zoom) * 100));
+        }
     }
 
     $limit = min($limit, $zoomBasedLimit);
@@ -218,7 +222,7 @@ try {
             ";
         } else {
             logDebug("Modo normal activado");
-            
+
             $gridSize = 0.002; // Default para zoom 13
             if ($zoom <= 13) {
                 $gridSize = 0.002; // ~200m
@@ -227,7 +231,7 @@ try {
             } else {
                 $gridSize = 0.0001; // ~10m
             }
-            
+
             logDebug("Grid size calculado: $gridSize para zoom $zoom");
 
             $sql = "
@@ -292,7 +296,7 @@ try {
         try {
             logDebug("Preparando query SQL...");
             $stmt = $pdo->prepare($sql);
-            
+
             $stmt->bindValue(':minLat', $minLat, PDO::PARAM_STR);
             $stmt->bindValue(':maxLat', $maxLat, PDO::PARAM_STR);
             $stmt->bindValue(':minLng', $minLng, PDO::PARAM_STR);
@@ -447,7 +451,6 @@ try {
 
     logDebug("=== Respuesta exitosa enviada ===");
     echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
-
 } catch (Exception $e) {
     sendErrorResponse(
         "Error inesperado en el servidor",
@@ -609,7 +612,7 @@ function createPopupHtml($row, $imagenes)
                 <a target="_blank" style="color:white;" href="https://www.google.com/maps?q=' . $row['lat'] . ',' . $row['lng'] . '"><i class="fa fa-street-view" aria-hidden="true"></i></a> 
                 <i class="fa fa-exclamation-triangle icon-warning" aria-hidden="true" title="Desacato a la fiscalización" onclick="actualizarEstado(' . $id . ',\'' . $numero_inmueble . '\', 0)"></i> 
                 </div>';
-    
+
     if (isset($row['estado_fiscalizacion']) && $row['estado_fiscalizacion'] != 'VISITADO') {
         $estado = '<div class="info-row">
                     <div class="info-label">Estado:</div>
@@ -628,7 +631,7 @@ function createPopupHtml($row, $imagenes)
                     <div class="info-value">' . ($row['observacion_estado'] ?? '-') . '</div>
                 </div>';
     }
-    
+
     $act = '';
     if (isset($row['cant_act']) && $row['cant_act'] > 0) {
         $act = '<div class="info-row">

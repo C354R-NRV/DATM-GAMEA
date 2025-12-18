@@ -30,11 +30,15 @@ if (isset($limit) and trim($limit) != '' and isset($offset) and trim($offset) !=
 $conn = new Conexion();
 $cons = $conn->conectar();
 
+$idusuarioFiltro = '';
+if (isset($idusuario) and trim($idusuario) != '')
+    $idusuarioFiltro =  ' and  a.id =  ' . $idusuario;
+
 $query = "
 select a.id, a.rol, a.usuario, to_char(a.fecha_registro, 'YYYY-MM-DD HH24:MI:SS') AS fecha_registro, 
-a.correo, a.contacto, a.estado, upper(concat(nombres, ' ', primer_apellido, ' ', segundo_apellido)) nombres, cedula_identidad
+a.correo, a.contacto, a.estado,  nombres ,  primer_apellido, segundo_apellido , cedula_identidad
 from datm_usuario a 
-where   a.estado = 1    $filtro  order by  $sort_  $order_  LIMIT $limit_ OFFSET $offset_;";
+where   a.estado = 1  $idusuarioFiltro   $filtro  order by  $sort_  $order_  LIMIT $limit_ OFFSET $offset_;";
 
 $stmt = $cons->query($query);
 $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -43,18 +47,20 @@ $data = array();
 foreach ($usuarios as $key => $usuario) {
     $fila = array(
         "id" => $usuario['id'],
-        "rol" => $usuario['rol'], 
-        "usuario" => $usuario['usuario'], 
+        "rol" => $usuario['rol'],
+        "usuario" => $usuario['usuario'],
         "fecha_registro" => $usuario['fecha_registro'],
         "correo" => $usuario['correo'],
         "contacto" =>  $usuario['contacto'],
         "estado" =>  $usuario['estado'],
         "nombres" =>  $usuario['nombres'],
+        "primer_apellido" =>  $usuario['primer_apellido'],
+        "segundo_apellido" =>  $usuario['segundo_apellido'], 
         "cedula_identidad" =>  $usuario['cedula_identidad'],
-        "acciones" => 
-            '<a class="btn btn-warning" onclick="editarSolicitud(' . $usuario['id'] . ', \'' . $usuario['usuario'] . '\')" title="Editar usuario" role="button"><i class="fa fa-edit" aria-hidden="true"></i></a> | ' .
+        "acciones" =>
+        '<a class="btn btn-warning" onclick="editarUsuario(' . $usuario['id'] . ', \'' . $usuario['usuario'] . '\')" title="Editar usuario" role="button"><i class="fa fa-edit" aria-hidden="true"></i></a> | ' .
             '<a class="btn btn-danger" title="Dar de baja al usuario" onclick="borrarUsuario(' . $usuario['id'] . ', \'' . $usuario['usuario'] . '\')" role="button"><i class="fa fa-trash"></i></a>'
     );
     $data[] = $fila;
 }
-print_r(json_encode($data)); 
+print_r(json_encode($data));

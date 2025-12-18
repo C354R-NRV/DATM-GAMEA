@@ -86,7 +86,7 @@ if (!$_SESSION['swlogin']) {
             <div class="row">
                 <div class="col-md-1 mb-3">
                     <?php
-                    if ($_SESSION['rol'] == 'CONTRIBUYENTE')
+                    if ($_SESSION['rol'] == 'CONTRIBUYENTE' or $_SESSION['rol'] == 'DESARROLLO')
                         echo '<a class="btn btn-success" href="exencionPanel.php" role="button"><i class="fa fa-plus"></i></a>';
                     ?>
                 </div>

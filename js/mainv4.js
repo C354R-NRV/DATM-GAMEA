@@ -914,11 +914,8 @@ function showPromos() {
         <div class="carousel-inner">
             <div class="carousel-item active">  
                 <div class="bd-placeholder-img text-center">
-                    <img src="../img/anuncios/rebajita2025.jpg">
+                    <img src="../img/anuncios/vehiculo.jpg">
                     <div class="container text-center">
-                        <div class="carousel-caption text-start"> 
-                            <p><a class="btn btn-lg btn-warning" href="#"><i class="fa fa-facebook-f"></i> <span style="font-size:0.7rem;">Más info aquí</a></p>
-                        </div>
                     </div>
                 </div>
             </div>  
@@ -958,6 +955,16 @@ function showEdictos() {
     <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="4" aria-label="Slide 5"></button> 
   </div>
   <div class="carousel-inner">
+      <div class="carousel-item active">  
+          <div class="bd-placeholder-img text-center">
+              <img src="../img/anuncios/edicto21122025.jpg">
+              <div class="container text-center">
+                  <div class="carousel-caption text-start"> 
+                      <p><a class="btn btn-lg btn-warning" href="../img/anuncios/edicto21122025.pdf" target="_blank"><i class="fa fa-cloud-download"></i> <span style="font-size:0.7rem;">Descargar edicto | 21/12/25 [1Mb]</a></p>
+                  </div>
+              </div>
+          </div>
+      </div>     
       <div class="carousel-item active">  
           <div class="bd-placeholder-img text-center">
               <img src="../img/anuncios/edicto01122024.jpg">
