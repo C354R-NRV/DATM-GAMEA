@@ -12,16 +12,28 @@ header('Access-Control-Allow-Headers: Content-Type');
 // Habilitar reporte de errores para debug
 error_reporting(E_ALL);
 ini_set('display_errors', 0); // Desactivar display_errors para producción
-ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/php_errors.log');
+$logDir = __DIR__ . '/logs';
+
+if (!is_dir($logDir)) {
+    mkdir($logDir, 0755, true);
+}
+
+$logFile = $logDir . '/php_errors.log';
+
+/* ini_set('log_errors', '1');
+ini_set('error_log', $logFile); */
 
 // Log de debug mejorado
 function logDebug($message, $context = [])
 {
-    $contextStr = !empty($context) ? ' | Context: ' . json_encode($context) : '';
-    error_log("[ufPuntosGet] " . date('Y-m-d H:i:s') . " - " . $message . $contextStr);
-}
+    $entry = "[ufPuntosGet] " . date('Y-m-d H:i:s') . " - " . $message;
 
+    if (!empty($context)) {
+        $entry .= ' | Context: ' . json_encode($context, JSON_UNESCAPED_UNICODE);
+    }
+
+    error_log($entry);
+}
 function sendErrorResponse($message, $code = 500, $details = [])
 {
     http_response_code($code);
@@ -70,18 +82,22 @@ try {
     $geojsonFile = '../static/geojson/grupo_numeros_con_guion.geojson';
     $useGeojsonFile = isset($_GET['useGeojson']) ? intval($_GET['useGeojson']) : 0;
 
-    // Determinar límite de puntos basado en zoom
     $zoomBasedLimit = 3600;
-    if ($modulo != 'predial') {
+    if ($zoom >= 19) {
+        // Con zoom 19 o mayor, no aplicar límite de puntos
+        $zoomBasedLimit = PHP_INT_MAX; // Sin límite efectivo
+        $limit = PHP_INT_MAX; // Eliminar también el límite del frontend
+    } elseif ($modulo != 'predial') {
         $zoomBasedLimit = 6600;
         if ($zoom > 13) {
             $zoomBasedLimit = 6600 + (($zoom - 13) * 250);
         } elseif ($zoom < 13) {
             $zoomBasedLimit = max(100, 1000 - ((13 - $zoom) * 100));
         }
+        $limit = min($limit, $zoomBasedLimit);
+    } else {
+        $limit = min($limit, $zoomBasedLimit);
     }
-
-    $limit = min($limit, $zoomBasedLimit);
 
     logDebug("Parámetros recibidos", [
         'minLat' => $minLat,
@@ -235,7 +251,7 @@ try {
             logDebug("Grid size calculado: $gridSize para zoom $zoom");
 
             $sql = "
-                WITH grid_sampled AS (
+                WITH base_data AS (
                     SELECT 
                         A.cant_act,
                         A.descripcion_act,
@@ -243,7 +259,12 @@ try {
                         A.codigo_catastral,
                         A.nombre_razon,
                         A.numero_inmueble,
-                        TRIM(A.ubicacion_nivel1 || ' ' || A.ubicacion_nivel2 || ' ' || A.ubicacion_nivel3 || ' ' || A.descripcion) AS direccion,
+                        TRIM(
+                            A.ubicacion_nivel1 || ' ' ||
+                            A.ubicacion_nivel2 || ' ' ||
+                            A.ubicacion_nivel3 || ' ' ||
+                            A.descripcion
+                        ) AS direccion,
                         ST_Y(A.geom) AS lat,
                         ST_X(A.geom) AS lng,
                         A.imagen_principal,
@@ -256,40 +277,67 @@ try {
                         c1.usuario AS usuario_cambio_estado,
                         A.observacion_estado,
                         C.usuario,
-                        A.no_formulario, 
-                        FLOOR(ST_X(A.geom) / :gridSize) AS grid_x,
-                        FLOOR(ST_Y(A.geom) / :gridSize2) AS grid_y, 
+                        A.no_formulario,
+
+                        /* SOLO calcular grid si zoom < 19 */
+                        CASE 
+                            WHEN :zoom < 19 THEN FLOOR(ST_X(A.geom) / :gridSize)
+                            ELSE NULL
+                        END AS grid_x,
+
+                        CASE 
+                            WHEN :zoom < 19 THEN FLOOR(ST_Y(A.geom) / :gridSize2)
+                            ELSE NULL
+                        END AS grid_y,
+
                         CASE
-                            WHEN DATE(A.fecha_apersonamiento) = CURRENT_DATE THEN 1 
-                            ELSE 2 
+                            WHEN DATE(A.fecha_apersonamiento) = CURRENT_DATE THEN 1
+                            ELSE 2
                         END AS priority,
-                        random() AS rand_order 
-                    FROM uf_predial A 
+
+                        random() AS rand_order
+
+                    FROM uf_predial A
                     INNER JOIN (
-                        SELECT numero_inmueble, MAX(id) AS max_id 
-                        FROM uf_predial 
-                        WHERE estado_ 
+                        SELECT numero_inmueble, MAX(id) AS max_id
+                        FROM uf_predial
+                        WHERE estado_
                         GROUP BY numero_inmueble
                     ) b ON A.numero_inmueble = b.numero_inmueble AND A.id = b.max_id
                     LEFT JOIN datm_usuario C ON C.id = A.idusuario
                     LEFT JOIN uf_estado_fiscalizacion d ON d.idestado_fiscalizacion = A.idestado_fiscalizacion
-                    LEFT JOIN datm_usuario c1 ON c1.id = A.idusuario_cambio_estado 
-                    WHERE A.estado_ 
-                    AND A.geom IS NOT NULL 
+                    LEFT JOIN datm_usuario c1 ON c1.id = A.idusuario_cambio_estado
+                    WHERE A.estado_
+                    AND A.geom IS NOT NULL
                     AND ST_Intersects(
-                        A.geom, 
+                        A.geom,
                         ST_MakeEnvelope(:minLng, :minLat, :maxLng, :maxLat, 4326)
-                    ) 
+                    )
                 ),
-                sampled_points AS (
-                    SELECT DISTINCT ON (grid_x, grid_y) * 
-                    FROM grid_sampled 
-                    ORDER BY grid_x, grid_y, priority, rand_order
-                ) 
-                SELECT * 
-                FROM sampled_points 
-                ORDER BY priority, rand_order 
-                LIMIT :limit
+
+                final_data AS (
+                    SELECT *
+                    FROM base_data
+                    WHERE
+                        /* Zoom < 19 → aplicar deduplicación por grid */
+                        (:zoom < 19 AND
+                        (grid_x, grid_y, rand_order) IN (
+                            SELECT grid_x, grid_y, MIN(rand_order)
+                            FROM base_data
+                            WHERE grid_x IS NOT NULL
+                            GROUP BY grid_x, grid_y
+                        )
+                        )
+
+                        /* Zoom >= 19 → devolver TODO */
+                        OR (:zoom >= 19)
+                )
+
+                SELECT *
+                FROM final_data
+                ORDER BY priority, rand_order
+                LIMIT :limit;
+
             ";
         }
 
@@ -302,6 +350,7 @@ try {
             $stmt->bindValue(':minLng', $minLng, PDO::PARAM_STR);
             $stmt->bindValue(':maxLng', $maxLng, PDO::PARAM_STR);
             $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $stmt->bindValue(':zoom', $zoom, PDO::PARAM_INT);
 
             if ($masivo) {
                 $stmt->bindValue(':zoom', $zoom, PDO::PARAM_INT);

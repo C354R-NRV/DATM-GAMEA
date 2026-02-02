@@ -41,7 +41,7 @@ try {
                 </div>
                 <div style='margin-bottom: 20px;'>
                     <p>Señor:</p>
-                    <p>Abg. Ivan Puña Aguilar<br>
+                    <p>Ing. Veronica Judith Mancilla Nina<br>
                     Director de Administración Tributaria Municipal de El Alto</p>
                     <p>Presente:</p>
                 </div>

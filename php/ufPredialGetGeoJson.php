@@ -11,6 +11,13 @@ foreach ($_GET as $clave => $valor) {
     $$clave = addslashes(trim($valor));
 }
 
+if (isset($zoom) && intval($zoom) >= 19) {
+    $limit = PHP_INT_MAX;
+    logDebug("Zoom 19+ detectado - Límite establecido a PHP_INT_MAX para mostrar todos los puntos");
+} else {
+    $limit = isset($limit) ? intval($limit) : 2000;
+}
+
 // Configuración de archivos tileados actualizada
 $tileConfig = [
     'inmueble' => [
@@ -53,6 +60,7 @@ $response = [
         'total' => intval($totalCount),
         'returned' => count($data),
         'zoom' => $zoom,
+        'limit_applied' => $limit == PHP_INT_MAX ? 'unlimited' : $limit, // Agregar info de límite aplicado
         'modulo' => $modulo,
         'loadedTiles' => $loadedTiles,
         'tile_bounds' => [
@@ -77,7 +85,7 @@ function logDebug($message)
 
 function loadFromTiledFiles($config, $minLat, $maxLat, $minLng, $maxLng, $limit, $zoom)
 {
-    logDebug("Cargando desde archivos tileados con estructura real");
+    logDebug("Cargando desde archivos tileados con estructura real - Límite: " . ($limit == PHP_INT_MAX ? 'ILIMITADO' : $limit));
     
     $allFeatures = [];
     $totalCount = 0;
@@ -137,8 +145,9 @@ function loadFromTiledFiles($config, $minLat, $maxLat, $minLng, $maxLng, $limit,
                                 
                                 $filteredFeatures[] = $feature;
                                 
-                                // Verificar límite global
-                                if (count($allFeatures) + count($tileFeatures) + count($filteredFeatures) >= $limit) {
+                                if ($limit != PHP_INT_MAX && 
+                                    count($allFeatures) + count($tileFeatures) + count($filteredFeatures) >= $limit) {
+                                    logDebug("Límite alcanzado: " . $limit);
                                     break 3; // Salir de todos los loops
                                 }
                             }
@@ -181,6 +190,8 @@ function loadFromTiledFiles($config, $minLat, $maxLat, $minLng, $maxLng, $limit,
         
         logDebug("Tile {$tileInfo['tileKey']} completado - Features: " . count($tileFeatures));
     }
+    
+    logDebug("Carga completa - Total features cargados: " . count($allFeatures)); // Agregar log final
     
     return [
         'data' => $allFeatures,
@@ -347,7 +358,7 @@ function tileIntersectsWithBounds($filePath, $minLat, $maxLat, $minLng, $maxLng)
 
 function loadFromGeojsonFile($geojsonFile, $minLat, $maxLat, $minLng, $maxLng, $limit, $zoom)
 {
-    logDebug("Cargando desde archivo GeoJSON único: $geojsonFile");
+    logDebug("Cargando desde archivo GeoJSON único: $geojsonFile - Límite: " . ($limit == PHP_INT_MAX ? 'ILIMITADO' : $limit));
 
     try {
         $jsonContent = file_get_contents($geojsonFile);
@@ -384,12 +395,16 @@ function loadFromGeojsonFile($geojsonFile, $minLat, $maxLat, $minLng, $maxLng, $
                     
                     $filteredFeatures[] = $feature;
 
-                    if (count($filteredFeatures) >= $limit) {
+                    if ($limit != PHP_INT_MAX && count($filteredFeatures) >= $limit) {
+                        logDebug("Límite alcanzado: " . $limit);
                         break;
                     }
                 }
             }
         }
+        
+        logDebug("Features filtrados dentro del área: " . count($filteredFeatures)); // Agregar log
+        
         return $filteredFeatures;
     } catch (Exception $e) {
         logDebug("Error procesando archivo GeoJSON: " . $e->getMessage());

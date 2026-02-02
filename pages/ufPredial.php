@@ -1602,7 +1602,7 @@ if (!$_SESSION['swlogin']) {
             }
 
             const currentZoom = map.getZoom();
-            console.log('currentZoom:'+currentZoom);
+            console.log('currentZoom:' + currentZoom);
             // Validar zoom mínimo
             if (currentZoom <= 15) {
                 if (showMessage) {
@@ -1614,6 +1614,7 @@ if (!$_SESSION['swlogin']) {
             const bounds = map.getBounds();
             const sw = bounds.getSouthWest();
             const ne = bounds.getNorthEast();
+            const currentLimit = (currentZoom >= 19) ? 999999 : 2000;
 
             const params = new URLSearchParams({
                 minLat: sw.lat,
@@ -1621,11 +1622,11 @@ if (!$_SESSION['swlogin']) {
                 minLng: sw.lng,
                 maxLng: ne.lng,
                 zoom: currentZoom,
-                limit: 2000,
-                modulo:'predial'
-                
-            });
+                limit: currentLimit,
+                modulo: 'predial'
 
+            });
+            console.log("params:" + params)
             $.ajax({
                 url: '../php/ufPuntosGet.php?' + params.toString(),
                 type: 'GET',
@@ -1852,7 +1853,7 @@ if (!$_SESSION['swlogin']) {
                 const lat = parseFloat(punto.latitud);
                 const lng = parseFloat(punto.longitud);
                 const color = (punto.color || '#fff');
-                let borde_ = '#000'; 
+                let borde_ = '#000';
                 if (punto.idpredial_asociado > 0 && punto.sin_imagenes == 0) {
                     borde_ = '#fff';
                 }
@@ -2027,7 +2028,7 @@ if (!$_SESSION['swlogin']) {
                     pointLimit = 2000; // Límite para zoom 18
                 } else if (zoom >= 19) {
                     // Para zoom 19 (máximo en OSM), usar el límite máximo
-                    pointLimit = 4000; // Límite máximo para el zoom más detallado
+                    pointLimit = 99999; // Límite máximo para el zoom más detallado
                 }
 
                 url = `../php/ufPredialGetGeoJson.php?minLat=${sw.lat}&maxLat=${ne.lat}&minLng=${sw.lng}&maxLng=${ne.lng}&zoom=${zoom}&limit=${pointLimit}&modulo=${modulo}`;
