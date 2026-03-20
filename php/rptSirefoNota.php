@@ -95,7 +95,7 @@ try {
                 </tr>" : "") . "
                 <tr>
                     <td>
-                        " . $solicitud[0]['hash_datos'] . " - <b>“2025 BICENTENARIO DE BOLIVIA”</b>
+                        " . $solicitud[0]['hash_datos'] . " 
                     </td>
                 </tr>
                     <tr>
@@ -113,9 +113,9 @@ try {
                     <b>" . $solicitud[0]['codigo_solicitud'] . "</b>
                 </div>
                 <div style='margin-bottom: 20px;'>
-                    <p><b>Señora:<br>
-                    Lic. Ivette Espinoza Vasquez<br>
-                    Directora General Ejecutiva a.i.<br>
+                    <p><b>Señor:<br>
+                    Lic. Mario Walter Requena Pinto<br>
+                    Director General Ejecutivo<br>
                     AUTORIDAD DE SUPERVISION DEL SISTEMA FINANCIERO - ASFI<br></b>
                     </p>
                 </div>
@@ -190,7 +190,7 @@ try {
         if (preg_match('/Resolución Administrativa/i', $solicitud[0]['resolucion_determinativa']) or preg_match('/Resolucion Administrativa/i', $solicitud[0]['resolucion_determinativa']) or preg_match('/R.A./i', $solicitud[0]['resolucion_determinativa'])) {
             $leyendaRA = $solicitud[0]['resolucion_determinativa'];
         }
-        $documento .= strtoupper($solicitud[0]['documento_tributario']) . "), hasta el monto de <b>Bs." . $solicitud[0]['monto_retencion_bs'] . ".- (" . numeroALetras($solicitud[0]['monto_retencion_bs']) . " BOLIVIANOS)</b> siendo que mediante la " . $leyendaRA . ",  se transfiguro en título de ejecución de acuerdo a lo dispuesto en el numeral 1 del Artículo 108 del Código Tributario Boliviano Ley 2492.
+        $documento .= strtoupper($solicitud[0]['documento_tributario']) . "), hasta el monto de <b>Bs. " . $solicitud[0]['monto_retencion_bs'] . ".-</b> (<b>" . numeroALetras($solicitud[0]['monto_retencion_bs']) . " BOLIVIANOS</b>) siendo que mediante la " . $leyendaRA . ",  se transfiguro en título de ejecución de acuerdo a lo dispuesto en el numeral 1 del Artículo 108 del Código Tributario Boliviano Ley 2492.
             </p>
             <p>
             Señalar que aquella <b>RETENCIÓN DE FONDOS</b> es resultado del proceso de fiscalización de la gestión fiscal <b>" . trim($solicitud[0]['gestion_fiscal']) . "</b>, con número de <b>" . $solicitud[0]['tipo_respaldo'] . ": " . $solicitud[0]['documento_respaldo'] . "</b>, 
@@ -233,7 +233,7 @@ try {
                 </tr>
                 <tr>
                     <td>
-                        " . $solicitud[0]['hash_datos'] . " - <b>“2025 BICENTENARIO DE BOLIVIA”</b>
+                        " . $solicitud[0]['hash_datos'] . "
                     </td>
                 </tr>
                     <tr>
@@ -280,7 +280,7 @@ try {
                 <p>
                     Lo solicitado es conforme al amparo de lo establecido por el Articulo 3 del Decreto supremo No 27310, debiendo considerarse que la inscripción es 
                     resultado del proceso de fiscalización de oficio de las gestiones fiscales: <b>" . trim($solicitud[0]['gestion_fiscal']) . "</b>, por un monto de 
-                    <b>Bs. " . $solicitud[0]['monto_retencion_bs'] . ".- (" . numeroALetras($solicitud[0]['monto_retencion_bs']) . " BOLIVIANOS)</b>, en el cual se determina 
+                    <b>Bs. " . $solicitud[0]['monto_retencion_bs'] . ".-</b> (<b>" . numeroALetras($solicitud[0]['monto_retencion_bs']) . " BOLIVIANOS</b>), en el cual se determina 
                     que el citado aún mantiene deuda pendiente con esta Administración Tributaria Municipal, y ante la falta de pago se encuentra en etapa de ejecución tributaria.                
                 </p> 
             </span>

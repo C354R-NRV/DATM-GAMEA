@@ -10,7 +10,7 @@ $cons = $conn->conectar();
 
 $resp = array();
 try {
-    $query = "select idoperativo, fecha_operativo, operativo from uf_operativo order by operativo asc ;";
+    $query = "select idoperativo, fecha_operativo, operativo from uf_operativo order by idoperativo DESC ;";
     $stmt = $cons->query($query);
     $resp = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {

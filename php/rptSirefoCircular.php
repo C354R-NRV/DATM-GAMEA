@@ -97,8 +97,7 @@ try {
                     </tr>
 
                                         <tr>
-                    <td style='text-align:center'> 
-<b>“2025 BICENTENARIO DE BOLIVIA”</b>
+                    <td style='text-align:center'>  
                     </td>
                     </tr>
                     

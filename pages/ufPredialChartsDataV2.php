@@ -110,8 +110,7 @@ try {
             ON a.fecha = b.fecha_operativo
 
 		where b.operativo is not null 
-        ",
-        // Vertical bar: count grouped by idusuario with username join including all users
+        ", 
         'vertical_bar_usuario' => "  
             SELECT a.usuario, b.idusuario, COUNT(*) AS total
                 FROM datm_usuario a
@@ -121,16 +120,27 @@ try {
                     $auxFiltro  
                 GROUP BY a.id, a.usuario, b.idusuario
                 ORDER BY a.id
-        ",
-        // Horizontal bar: count grouped by tipologia and estado_ = true in uf_predial
+        ", 
         'horizontal_bar_tipologia' => "
-            SELECT tipologia, COUNT(*) AS total
-            FROM public.uf_predial
-            WHERE estado_ = true
-            GROUP BY tipologia
-            ORDER BY tipologia
-        "
-    ];
+            SELECT  
+            pr.tipologia, COUNT(*) AS total
+            FROM uf_predial pr
+            LEFT JOIN uf_prepredial g 
+                ON g.idpredial_asociado = pr.id
+            LEFT JOIN  uf_operativo o 
+                ON g.idoperativo = o.idoperativo 
+                AND o.fecha_operativo = CAST(pr.fecha_apersonamiento AS date)
+            WHERE 
+                pr.estado_ = true 
+                AND pr.clasificacion = 'A' 
+                and pr.estado_  is true
+                and g.estado_  is true   
+                
+                $auxFiltro  
+
+                    GROUP BY tipologia
+            ORDER BY tipologia     "
+                ];
 
     $result = [];
 

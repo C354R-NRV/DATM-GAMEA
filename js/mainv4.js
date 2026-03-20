@@ -914,14 +914,7 @@ function showPromos() {
         <div class="carousel-inner">
             <div class="carousel-item active">  
                 <div class="bd-placeholder-img text-center">
-                    <img src="../img/anuncios/vehiculo.jpg">
-                    <div class="container text-center">
-                    </div>
-                </div>
-            </div>  
-            <div class="carousel-item text-end">  
-                <div class="bd-placeholder-img text-center">
-                    <img src="../img/anuncios/rebajita2025.jpg">
+                    <img src="../img/anuncios/rebajita2026.jpeg">
                     <div class="container text-center">
                         <div class="carousel-caption text-start"> 
                             <p><a class="btn btn-lg btn-warning" href="#"><i class="fa fa-facebook-f"></i> <span style="font-size:0.7rem;">Más info aquí</a></p>
@@ -929,6 +922,14 @@ function showPromos() {
                     </div>
                 </div>
             </div>  
+            <div class="carousel-item text-end">  
+                <div class="bd-placeholder-img text-center">
+                    <img src="../img/anuncios/vehiculo.jpg">
+                    <div class="container text-center">
+                    </div>
+                </div>
+            </div>  
+             
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
