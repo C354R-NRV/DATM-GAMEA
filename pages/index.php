@@ -18,6 +18,10 @@ $twig = new Environment($loader);
     echo $twig->render('linkStyle.twig');
     ?>
     <style>
+        html, body {
+            overflow-x: hidden;
+        }
+        
         .rubrosInfo {
             text-align: center;
         }
@@ -33,6 +37,61 @@ $twig = new Environment($loader);
         .rubrosInfo span {
             text-align: center;
             font-size: 1.3rem !important;
+        }
+
+        .float-whatsapp {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 120px;
+            right: 40px;
+            background-color: #25d366;
+            color: #FFF;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 35px;
+            box-shadow: 2px 2px 3px #999;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .float-whatsapp::before {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #25d366;
+            border-radius: 50%;
+            animation: pulse-whatsapp 2s infinite;
+        }
+
+        .float-whatsapp:hover {
+            text-decoration: none;
+            color: #FFF;
+        }
+
+        @keyframes pulse-whatsapp {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .float-whatsapp {
+                bottom: 120px;
+                right: 20px;
+            }
         }
     </style>
     <link href="../vendor/bootstrap-table-master/dist/bootstrap-table.min.css" rel="stylesheet">
@@ -468,8 +527,14 @@ $twig = new Environment($loader);
     echo $twig->render('footer.twig');
     ?>
     <!-- Footer End -->
+    <!-- Floating WhatsApp Button -->
+    <a href="https://api.whatsapp.com/send?phone=59164229921" class="float-whatsapp" target="_blank">
+        <i class="fa fa-whatsapp"></i>
+    </a>
+
     <!-- Back to Top -->
     <a href="#inicial_" class="btn btn-lg btn-primary btn-lg-square back-to-top pt-2 bg-celesteLgt"><i class="fa fa-sort-asc"></i></a>
+
     <!-- JavaScript Libraries -->
     <?php
     echo $twig->render('linkJs.twig');

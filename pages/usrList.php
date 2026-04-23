@@ -2,6 +2,10 @@
 <?php
 session_start();
 require_once '../vendor/autoload.php';
+require_once '../php/conexionpsql.php';
+
+$conn = new Conexion();
+$cons = $conn->conectar();
 
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
@@ -122,13 +126,14 @@ if (!$_SESSION['swlogin']) {
                 <thead>
                     <th data-field="id" data-sortable="true">No</th>
                     <th data-field="rol" data-sortable="true">Rol</th>
+                    <th data-field="codigo_unidad" data-sortable="true">C. Unidad</th>
                     <th data-field="cedula_identidad" data-sortable="true">Ci/Nit</th>
                     <th data-field="nombres" data-sortable="true">Nombres</th>
                     <th data-field="primer_apellido" data-sortable="true">Paterno</th>
                     <th data-field="segundo_apellido" data-sortable="true">Materno</th>
                     <th data-field="usuario" data-sortable="true">Usuario</th>
                     <th data-field="contacto" data-sortable="true">Contacto</th>
-
+                    <th data-field="estado" data-sortable="true">Estado</th>
                     <th data-field="fecha_registro" data-sortable="true">Fecha registro</th>
                     <th data-field="acciones">Acciones</th>
                 </thead>
@@ -179,12 +184,76 @@ if (!$_SESSION['swlogin']) {
                             <label for="editRol">Rol</label>
                             <select class="form-control" id="editRol" name="rol" required>
                                 <option value="">Seleccionar rol...</option>
-                                <option value="DIRECCION">DIRECCION</option>
-                                <option value="DESARROLLO">DESARROLLO</option>
-                                <option value="OPERADOR">OPERADOR</option>
-                                <option value="OPERADORL2">OPERADORL2</option>
-                                <option value="SECRETARIA">SECRETARIA</option>
-                                <option value="JEFATURA">JEFATURA</option>
+                                <?php
+                                $query = "select distinct rol from datm_usuario";
+                                $stmt = $cons->query($query);
+                                $extension = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                foreach ($extension as $row) {
+                                    echo  "<option value=\"" . htmlspecialchars($row['rol']) . "\">" . htmlspecialchars($row['rol']) . "</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editUnidad">Unidad</label>
+                            <select class="form-control" id="editUnidad" name="unidad">
+                                <option value="GAMEA">GAMEA</option>
+                                <?php
+                                $query = "select distinct codigo_unidad from datm_usuario order by codigo_unidad";
+                                $stmt = $cons->query($query);
+                                $extension = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                foreach ($extension as $row) {
+                                    echo  "<option value=\"" . htmlspecialchars($row['codigo_unidad']) . "\">" . htmlspecialchars($row['codigo_unidad']) . "</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editArea">Área</label>
+                            <select class="form-control" id="editArea" name="area">
+                                <option value="">N/A</option>
+                                <?php
+                                $query = "select distinct concat(codigo_unidad,' - ',area) area_, area  
+                                    from datm_usuario 
+                                    where area is not null 
+                                    order by concat(codigo_unidad,' - ',area)   ";
+                                $stmt = $cons->query($query);
+                                $extension = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                foreach ($extension as $row) {
+                                    echo  "<option value=\"" . htmlspecialchars($row['area']) . "\">" . htmlspecialchars($row['area_']) . "</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editCargo">Cargo</label>
+                            <select class="form-control" id="editCargo" name="cargo">
+                                <option value="CONTRIBUYENTE">Contribuyente</option>
+                                <?php
+                                $query = "
+                                    select distinct cargo  
+                                    from datm_usuario 
+                                    where cargo is not null and cargo != 'ROOT'";
+                                $stmt = $cons->query($query);
+                                $extension = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                foreach ($extension as $row) {
+                                    echo  "<option value=\"" . htmlspecialchars($row['cargo']) . "\">" . htmlspecialchars($row['cargo']) . "</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editPassword">Nueva Contraseña (dejar en blanco para no modificar)</label>
+                            <input type="password" class="form-control" id="editPassword" name="password" placeholder="Nueva contraseña">
+                        </div>
+                        <div class="form-group">
+                            <label for="editEstado">Estado</label>
+                            <select class="form-control" id="editEstado" name="estado">
+                                <option value="1">Activo</option>
+                                <option value="0">Baja</option>
                             </select>
                         </div>
                     </form>
@@ -248,16 +317,19 @@ if (!$_SESSION['swlogin']) {
                 dat = $.parseJSON(e);
                 // Iterar sobre los datos recibidos y agregarlos al tbody
                 $.each(dat, function(index, item) {
+                    var estadoHtml = (item.estado == 1) ? '<span class="badge badge-success" style="background-color: #28a745; color: white; padding: 5px;">Activo</span>' : '<span class="badge badge-danger" style="background-color: #dc3545; color: white; padding: 5px;">Baja</span>';
                     var fila = `
                     <tr>
                         <td>${item.id}</td>
                         <td>${item.rol}</td>
+                        <td>${item.codigo_unidad}</td>
                         <td>${item.cedula_identidad}</td>
                         <td>${item.nombres}</td>
                         <td>${item.primer_apellido}</td>
                         <td>${item.segundo_apellido}</td>
                         <td>${item.usuario}</td>
                         <td>${item.contacto}</td> 
+                        <td>${estadoHtml}</td> 
                         <td>${item.fecha_registro}</td> 
                         <td>${item.acciones}</td>
                     </tr>
@@ -305,6 +377,11 @@ if (!$_SESSION['swlogin']) {
                     $('#editCorreo').val(usuarioData.correo);
                     $('#editContacto').val(usuarioData.contacto);
                     $('#editRol').val(usuarioData.rol);
+                    $('#editUnidad').val(usuarioData.codigo_unidad);
+                    $('#editArea').val(usuarioData.area);
+                    $('#editCargo').val(usuarioData.cargo);
+                    $('#editPassword').val(''); 
+                    $('#editEstado').val(usuarioData.estado);
 
                     // Mostrar el modal
                     $('#modalEditarUsuario').modal('show');
@@ -325,7 +402,12 @@ if (!$_SESSION['swlogin']) {
             materno: $('#editMaterno').val(),
             correo: $('#editCorreo').val(),
             contacto: $('#editContacto').val(),
-            rol: $('#editRol').val()
+            rol: $('#editRol').val(),
+            unidad: $('#editUnidad').val(),
+            area: $('#editArea').val(),
+            cargo: $('#editCargo').val(),
+            password: $('#editPassword').val(),
+            estado: $('#editEstado').val()
         };
 
         console.log(datos);

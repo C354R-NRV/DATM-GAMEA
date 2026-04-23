@@ -175,8 +175,9 @@ try {
                         left join datm_usuario b on b.id = a.idusuario 
                         left join srf_estado_envio c on c.id_cabecera_solicitud = a.id_cabecera_solicitud 
                         left join srf_estado_solicitud  d on d.id_cabecera_solicitud = a.id_cabecera_solicitud 
-                        where a.estado_  is true   and c.estado_  is true 
-                        and d.estado = 'ENVIADO' and (c.respuesta = 'No Procesado' or c.respuesta is null) order by c.respuesta 
+                        where a.estado_  is true  and (c.estado_  is true or c.estado_   is null) 
+                        and d.estado = 'ENVIADO' and (c.respuesta = 'No Procesado' or c.respuesta is null)  
+                        order by c.respuesta 
                         desc , a.id_cabecera_solicitud desc;";
 
                 //PARA CADA RESULTADO ITERAR LA SOLICITUD A LA API PARA ACRTUALIZAR SU ESTADO DE FORMA AUTOMATICA
@@ -185,15 +186,20 @@ try {
                 $idusuario = 214; // USUARIO -> SISTEMA
                 $respuesta = array();
                 $statusAnt = true;
-                foreach ($rsp as $key => $value) {
-                    $id = $value['id_cabecera_solicitud'];
-                    [$response, $httpCode, $error] = makeApiRequest(['endpoint' => 'consultarEstadoEnvio', 'ambiente' => $_SESSION['sirefo_ambiente'],   'id' => $id, 'us' => $idusuario]);
-                    $respuesta = processApiResponse($response, $httpCode, $error, 'consultarEstadoEnvio');
-                    if ($respuesta['success']) {
-                        $result['message'] .=  "Procesado para " . $value['codigo_solicitud'] . " con Circular:" . $respuesta['message']['Circular'] . " -" . $respuesta['success'] . "<br>\n";
+                if($rsp){
+                    foreach ($rsp as $key => $value) {
+                        $id = $value['id_cabecera_solicitud'];
+                        [$response, $httpCode, $error] = makeApiRequest(['endpoint' => 'consultarEstadoEnvio', 'ambiente' => $_SESSION['sirefo_ambiente'],   'id' => $id, 'us' => $idusuario]);
+                        $respuesta = processApiResponse($response, $httpCode, $error, 'consultarEstadoEnvio');
+                        if ($respuesta['success']) {
+                            $result['message'] .=  "Procesado para " . $value['codigo_solicitud'] . " con Circular:" . $respuesta['message']['Circular'] . " -" . $respuesta['success'] . "<br>\n";
+                        }
+                        $result['success'] = ($statusAnt and $respuesta['success']);
+                        $statusAnt  =  $result['success'];
                     }
-                    $result['success'] = ($statusAnt and $respuesta['success']);
-                    $statusAnt  =  $result['success'];
+                }else{
+                    $result['success'] = false;
+                    $result['message'] = "No se encontraron solicitudes para procesar";
                 }
                 $result['type'] = ($result['success'] ? 'green' : 'red');
                 break;

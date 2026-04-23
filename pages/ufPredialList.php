@@ -619,24 +619,25 @@ if (!$_SESSION['swlogin']) {
     <div class="contenedorDigitaliza">
         <div class="form-group d-flex flex-column flex-md-row">
             <div class="row">
-                <div class="col-md-2 mb-3">
-                    <a class="btn btn-success" href="ufPredial.php" role="button"><i class="fa fa-plus"></i></a> |
-                    <a class="btn btn-success" href="ufdatmap.php" role="button"><i class="fa fa-map-o" aria-hidden="true"></i></a>|
-                    <a class="btn btn-success" href="charts.php" role="button"><i class="fa fa-area-chart" aria-hidden="true"></i></a>
+                <div class="col-md-3 mb-3">
+                    <a class="btn btn-success" href="ufPredial.php" role="button" title="Nuevo Registro"><i class="fa fa-plus"></i></a> |
+                    <a class="btn btn-success" href="ufPredialRevision.php" role="button" title="Revisión"><i class="fa fa-check-square-o"></i></a> |
+                    <a class="btn btn-success" href="ufdatmap.php" role="button" title="Mapa"><i class="fa fa-map-o" aria-hidden="true"></i></a>|
+                    <a class="btn btn-success" href="charts.php" role="button" title="Estadísticas"><i class="fa fa-area-chart" aria-hidden="true"></i></a>
                     <!-- |
                     <a class="btn btn-success" onclick="generarReporteOperativo()" role="button"><i class="fa fa-file-excel-o" aria-hidden="true"></i></a> -->
                 </div>
                 <div class="col-md-3 mb-3">
                     <input type="text" class="form-control" value="" id="filtroInmueble" placeholder="N°.Inm. ó N°.Form.">
                 </div>
-                <div class="col-md-3 mb-3">
+                <div class="col-md-2 mb-2">
                     <input type="text" class="form-control datepicker" value="" id="filtroFechaIni" placeholder="Fecha ini">
                 </div>
-                <div class="col-md-3 mb-3">
+                <div class="col-md-2 mb-2">
                     <input type="text" class="form-control datepicker" value="" id="filtroFechaFin" placeholder="Fecha fin">
                 </div>
 
-                <div class="col-md-1 mb-3">
+                <div class="col-md-2 mb-2">
                     <button class="btn btn-primary" onclick="getUfPredial()">consultar</button>
                 </div>
             </div>

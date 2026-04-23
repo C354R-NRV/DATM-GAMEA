@@ -184,7 +184,7 @@ font-family: 'Roboto', sans-serif;
         <td style='text-align:right;'><span  >https://datm.elalto.gob.bo</span></td>
     </tr>
     <tr>
-        <td style='text-align:right;'><span  >Whatsapp: </span><b>+591 60103191</b></td>
+        <td style='text-align:right;'><span  >Whatsapp: </span><b>+591 64229921</b></td>
     </tr>
 </table> 
 ";  

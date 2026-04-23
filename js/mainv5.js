@@ -914,7 +914,7 @@ function showPromos() {
         <div class="carousel-inner">
             <div class="carousel-item active">  
                 <div class="bd-placeholder-img text-center">
-                    <img src="../img/anuncios/rebajita2026.jpeg">
+                    <img src="../img/anuncios/rebajita2026v2.jpeg">
                     <div class="container text-center">
                         <div class="carousel-caption text-start"> 
                             <p><a class="btn btn-lg btn-warning" href="#"><i class="fa fa-facebook-f"></i> <span style="font-size:0.7rem;">Más info aquí</a></p>
@@ -1656,10 +1656,10 @@ function detectarTecla(event) {
   if (event.key === "Enter" || event.which === 1) {
     var mensajeWtsp = $("#mensajeWtsp").val();
     var url =
-      "https://api.whatsapp.com/send?phone=59160103191&text=Hola%20DATM%20tengo la siguiente consulta";
+      "https://api.whatsapp.com/send?phone=59164229921&text=Hola%20DATM%20tengo la siguiente consulta";
     if (mensajeWtsp)
       url =
-        "https://api.whatsapp.com/send?phone=59160103191&text=" + mensajeWtsp;
+        "https://api.whatsapp.com/send?phone=59164229921&text=" + mensajeWtsp;
     window.open(url, "_blank");
   }
 }

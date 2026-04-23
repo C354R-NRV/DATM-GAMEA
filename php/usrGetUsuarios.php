@@ -36,9 +36,9 @@ if (isset($idusuario) and trim($idusuario) != '')
 
 $query = "
 select a.id, a.rol, a.usuario, to_char(a.fecha_registro, 'YYYY-MM-DD HH24:MI:SS') AS fecha_registro, 
-a.correo, a.contacto, a.estado,  nombres ,  primer_apellido, segundo_apellido , cedula_identidad
+a.correo, a.contacto, a.estado,  nombres ,  primer_apellido, segundo_apellido , cedula_identidad, a.codigo_unidad, a.area, a.cargo
 from datm_usuario a 
-where   a.estado = 1  $idusuarioFiltro   $filtro  order by  $sort_  $order_  LIMIT $limit_ OFFSET $offset_;";
+where   a.estado IN (1, 0)  $idusuarioFiltro   $filtro  order by  $sort_  $order_  LIMIT $limit_ OFFSET $offset_;";
 
 $stmt = $cons->query($query);
 $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -57,6 +57,9 @@ foreach ($usuarios as $key => $usuario) {
         "primer_apellido" =>  $usuario['primer_apellido'],
         "segundo_apellido" =>  $usuario['segundo_apellido'], 
         "cedula_identidad" =>  $usuario['cedula_identidad'],
+        "codigo_unidad" => $usuario['codigo_unidad'],
+        "area" => $usuario['area'],
+        "cargo" => $usuario['cargo'],
         "acciones" =>
         '<a class="btn btn-warning" onclick="editarUsuario(' . $usuario['id'] . ', \'' . $usuario['usuario'] . '\')" title="Editar usuario" role="button"><i class="fa fa-edit" aria-hidden="true"></i></a> | ' .
             '<a class="btn btn-danger" title="Dar de baja al usuario" onclick="borrarUsuario(' . $usuario['id'] . ', \'' . $usuario['usuario'] . '\')" role="button"><i class="fa fa-trash"></i></a>'

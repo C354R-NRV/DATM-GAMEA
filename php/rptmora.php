@@ -382,7 +382,7 @@ $html .= "<table style='width: 98%; margin:5mm 0 10mm 3mm; ' cellspacing='0mm' c
         <td style='text-align:right;  width:65%'><span  >https://datm.elalto.gob.bo</span></td>
     </tr>
     <tr>
-        <td style='text-align:right;  width:65%'><span  >Whatsapp: </span><b>60103191</b></td>
+        <td style='text-align:right;  width:65%'><span  >Whatsapp: </span><b>64229921</b></td>
     </tr>
 </table> ";
 

@@ -124,11 +124,17 @@ try {
     // *** SECCIÓN MODIFICADA: Process main image ***
     $imagenPrincipalNombre = '';
 
+    // Generar un identificador único base para todas las imágenes de esta petición
+    $timestamp_img = date('Ymd_His');
+    $userid_img = isset($_SESSION['idusuario']) ? $_SESSION['idusuario'] : '0';
+    $random_img = bin2hex(random_bytes(4));
+    $prefijoUnicoImg = $timestamp_img . '_' . $userid_img . '_' . $random_img;
+
     // Verificar si hay una nueva imagen principal subida
     if (isset($_FILES['imagenPrincipal']) && $_FILES['imagenPrincipal']['error'] === UPLOAD_ERR_OK) {
         $nombreOriginal = $_FILES['imagenPrincipal']['name'];
         $extension = pathinfo($nombreOriginal, PATHINFO_EXTENSION);
-        $nombreArchivo = 'inmueble_' . time() . '_principal.' . $extension;
+        $nombreArchivo = 'inmueble_' . $prefijoUnicoImg . '_principal.' . $extension;
         $rutaCompleta = $directorioImagenes . $nombreArchivo;
         $tipoArchivo = $_FILES['imagenPrincipal']['type'];
 
@@ -164,7 +170,7 @@ try {
                 if ($_FILES['imagenesAdicionales']['error'][$i] === UPLOAD_ERR_OK) {
                     $nombreOriginal = $_FILES['imagenesAdicionales']['name'][$i];
                     $extension = pathinfo($nombreOriginal, PATHINFO_EXTENSION);
-                    $nombreArchivo = 'inmueble_' . time() . '_adicional_' . $i . '.' . $extension;
+                    $nombreArchivo = 'inmueble_' . $prefijoUnicoImg . '_adicional_' . $i . '.' . $extension;
                     $rutaCompleta = $directorioImagenes . $nombreArchivo;
                     $tipoArchivo = $_FILES['imagenesAdicionales']['type'][$i];
 
@@ -181,7 +187,7 @@ try {
             if ($_FILES['imagenesAdicionales']['error'] === UPLOAD_ERR_OK) {
                 $nombreOriginal = $_FILES['imagenesAdicionales']['name'];
                 $extension = pathinfo($nombreOriginal, PATHINFO_EXTENSION);
-                $nombreArchivo = 'inmueble_' . time() . '_adicional.' . $extension;
+                $nombreArchivo = 'inmueble_' . $prefijoUnicoImg . '_adicional.' . $extension;
                 $rutaCompleta = $directorioImagenes . $nombreArchivo;
                 $tipoArchivo = $_FILES['imagenesAdicionales']['type'];
 

@@ -29,20 +29,27 @@ try {
     $conn = new Conexion();
     $cons = $conn->conectar();
 
-    // Verificar que el usuario existe
-    $queryVerify = "SELECT id FROM datm_usuario WHERE id = $id AND estado = 1";
+    // Verificar que el usuario existe (sin filtro de estado para poder reactivar)
+    $queryVerify = "SELECT id FROM datm_usuario WHERE id = $id";
     $stmtVerify = $cons->query($queryVerify);
     $usuarioExiste = $stmtVerify->fetch(PDO::FETCH_ASSOC);
 
     if (!$usuarioExiste) {
         $response = array(
             'success' => false,
-            'message' => 'El usuario no existe o está bloqueado',
+            'message' => 'El usuario no existe',
             'log' => 'Usuario no encontrado'
         );
         echo json_encode($response);
         exit;
     }
+
+    $passwordUpdate = "";
+    if (!empty($password)) {
+        $passwordUpdate = ", password = MD5('$password')";
+    }
+
+    $estado_ = isset($estado) ? intval($estado) : 1;
 
     // Actualizar datos del usuario
     $queryUpdate = "UPDATE datm_usuario 
@@ -52,8 +59,13 @@ try {
                         primer_apellido = '$paterno', 
                         segundo_apellido = '$materno', 
                         contacto = '$contacto',
-                        rol = '$rol'
-                    WHERE id = $id AND estado = 1";
+                        rol = '$rol',
+                        codigo_unidad = '$unidad',
+                        area = '$area',
+                        cargo = '$cargo',
+                        estado = $estado_
+                        $passwordUpdate
+                    WHERE id = $id";
 
     $cons->exec($queryUpdate);
 
