@@ -14,21 +14,20 @@ if (!$_SESSION['swlogin']) {
 ?>
 <html lang="es">
 
-<head>
-    <title>REVISION</title>
-    <?php
-    echo $twig->render('linkStyle.twig');
-    ?>
-    <link href="../css/styleRecursoIa.css" rel="stylesheet">
-    <link href="../vendor/bootstrap-table-master/dist/bootstrap-table.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-</head>
+    <head>
+            <title>REVISION</title>
+            <?php
+            echo $twig->render('linkStyle.twig');
+            ?>
+            <link href="../css/styleRecursoIa.css" rel="stylesheet">
+            <link href="../vendor/bootstrap-table-master/dist/bootstrap-table.min.css" rel="stylesheet">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    </head>
 
 <body>
     <?php
     echo $twig->render('load.twig');
-    ?>
-    <!-- Navbar Start -->
+    ?> 
     <?php
     echo $twig->render('menuIni.twig');
 
@@ -39,10 +38,7 @@ if (!$_SESSION['swlogin']) {
     }
 
     echo $twig->render('menuFin.twig');
-    ?>
-    <!-- Navbar End -->
-
-    <!-- Hero Start -->
+    ?> 
     <?php
     echo $twig->render('prebodyltIni.twig');
     ?>
@@ -52,10 +48,7 @@ if (!$_SESSION['swlogin']) {
     <li class="breadcrumb-item text-white active" aria-current="page"> <a class="text-white">REVISION</a></li>
     <?php
     echo $twig->render('prebodyltFin.twig');
-    ?>
-    <!-- Hero End -->
-
-    <!-- About Start -->
+    ?> 
     <div class="contenedorDigitaliza">
         <h1>Revision de solicitud GAMEA001_2025</h1>
         <div class="form-group">
@@ -72,14 +65,10 @@ if (!$_SESSION['swlogin']) {
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- About End -->
-    <!-- JavaScript Libraries -->
+    </div> 
     <?php
     echo $twig->render('linkJs.twig');
     ?>
-    <!-- Template Javascript -->
 </body>
 <script src="../js/mainRecursoIa.js"></script>
 <script>

@@ -51,14 +51,7 @@ if (!$_SESSION['swlogin']) {
             padding: 10px;
             font-size: 18px;
             cursor: pointer;
-        }
-
-        /* .form-trash {
-            border-radius: 20%;
-            padding: 10px;
-            font-size: 18px;
-            cursor: pointer;
-        } */
+        } 
 
         .input-group {
             display: flex;
@@ -99,10 +92,7 @@ if (!$_SESSION['swlogin']) {
     }
 
     echo $twig->render('menuFin.twig');
-    ?>
-    <!-- Navbar End -->
-
-    <!-- Hero Start -->
+    ?> 
     <?php
     echo $twig->render('prebodyltIni.twig');
     ?>
@@ -112,10 +102,7 @@ if (!$_SESSION['swlogin']) {
     <li class="breadcrumb-item text-white active" aria-current="page"><?php echo ($j == 2 ? 'Inmueble' : 'Vehiculo') ?></li>
     <?php
     echo $twig->render('prebodyltFin.twig');
-    ?>
-    <!-- Hero End -->
-
-    <!-- About Start -->
+    ?> 
     <div class="btn-flotante">
         <button id="btn-guardar" class="btn btn-primary" onclick="guardar()">
             <i class="fa fa-floppy-o"></i>
@@ -201,14 +188,13 @@ if (!$_SESSION['swlogin']) {
                     ?>
                 </select>
             </div>
-            <div class="col-md-3 mb-3" style="text-align: right; font-weight: bold; font-style: italic; font-size: 0.8rem;"> 
+            <div class="col-md-3 mb-3" style="text-align: right; font-weight: bold; font-style: italic; font-size: 0.8rem;">
             </div>
         </div>
 
         <?php
         $html = '';
-        $cnt = 1;
-        //ahora incorporamos los requisitos  
+        $cnt = 1; 
         $query = "SELECT  idrequisito, detalle,  anotacion, obligatorio  from exc_requisito where     idrubro = $j and estado_ is true  order by orden ";
 
         $stmt = $cons->query($query);
@@ -249,14 +235,10 @@ if (!$_SESSION['swlogin']) {
         echo $html;
         echo "<input type='hidden' id='items' value='$cnt'>";
         ?>
-    </div>
-
-    <!-- About End -->
-    <!-- JavaScript Libraries -->
+    </div> 
     <?php
     echo $twig->render('linkJs.twig');
-    ?>
-    <!-- Template Javascript -->
+    ?> 
 </body>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
@@ -269,7 +251,7 @@ if (!$_SESSION['swlogin']) {
         });
 
         $('.select2Veh').select2({
-            width: '100%', // Expande al ancho completo del contenedor
+            width: '100%',  
             placeholder: "Selecciona",
             allowClear: true
         });
@@ -323,13 +305,12 @@ if (!$_SESSION['swlogin']) {
             };
 
             $(".listaReq" + index).on("click", ".eliminarDoc", function(e) {
-                e.preventDefault(); // Evita que el enlace navegue
-                $(this).closest("li").remove(); // Elimina el elemento li más cercano
+                e.preventDefault(); 
+                $(this).closest("li").remove();  
             });
             $(".listaReq" + index).on("click", ".verDoc", function(e) {
                 e.preventDefault();
-                let rutaArchivo = $(this).closest("li").find(".pathDoc").val().trim();
-                // Muestra el resultado en la consola o úsalo como necesites
+                let rutaArchivo = $(this).closest("li").find(".pathDoc").val().trim(); 
                 console.log("Archivo seleccionado:", rutaArchivo);
                 verDocPopup(rutaArchivo);
             });
@@ -341,9 +322,7 @@ if (!$_SESSION['swlogin']) {
         if (type == "application/pdf") {
             return true;
         }
-    }
-
-    // upload file function
+    } 
     var contadorArchivos = 0;
     var contadorArchivosAux = 0;
 
@@ -500,10 +479,6 @@ if (!$_SESSION['swlogin']) {
         datos.cntItem = cntItem;
         datos.items = cntItem;
 
-        console.log('========================================');
-        console.log(datos);
-        console.log('========================================');
-
         if (errores.length > 0) {
             $.confirm({
                 title: "Se encontraron errores",
@@ -579,12 +554,9 @@ if (!$_SESSION['swlogin']) {
         }
     }
 
-    function generarSolicitud() {
-
-
+    function generarSolicitud() { 
         datos =
-            "&nro_pta=" + $('#registro_tributario').val() + "&gestionIni_=" + $('#gestionIni').val() + "&gestionFin_=" + $('#gestionFin').val();
-
+            "&nro_pta=" + $('#registro_tributario').val() + "&gestionIni_=" + $('#gestionIni').val() + "&gestionFin_=" + $('#gestionFin').val(); 
         var url_ = "../php/rptveh_11_v2.php?" + datos;
         $.ajax({
             url: url_,
@@ -606,8 +578,7 @@ if (!$_SESSION['swlogin']) {
                 });
             }
         });
-    }
-
+    } 
     function iconSelector(type) {
         var splitType =
             type.split("/")[0] == "application" ?

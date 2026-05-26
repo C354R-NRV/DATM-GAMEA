@@ -43,15 +43,15 @@ foreach ($result as $key => $cite) {
     $html = '<div style="text-align:center;">';
 
     $html .= '<a class="btn btn-secondary" title="ver detalle de CITE" onclick="verAnulacionCite(' . $cite['idcite'] . ', \'' . $cite['cite'] . '\')" role="button"><i class="fa fa-search" aria-hidden="true"></i></a>';
-
+ 
     if (
         $cite['estado'] == 'Activo' &&
         (
             $cite['usuario_'] == $_SESSION['idusuario'] ||
             $_SESSION['rol'] == 'SECRETARIA' ||
             $_SESSION['rol'] == 'JEFATURA'
-        )
-        && comparaFechaLimite($cite['fecha'], 5)
+        ) &&
+        comparaFechaLimite($cite['fecha'], 1)
     ) {
         $html .= '<a class="btn btn-danger" title="Dar de baja el CITE" onclick="borrarCite(' . $cite['idcite'] . ', \'' . $cite['cite'] . '\')" role="button"><i class="fa fa-trash"></i></a>';
     } 
@@ -98,17 +98,14 @@ function comparaFechaLimite($fecha, $dias)
     $currentDate = new DateTime();
     $inputDate = DateTime::createFromFormat('d/m/Y H:i:s', $fecha);
 
-    // Verificar si la fecha ingresada es válida
     if (!$inputDate) {
         echo "Formato de fecha inválido.";
         exit;
     }
 
-    // Sumar 3 días a la fecha ingresada
     $inputDatePlus3Days = clone $inputDate;
     $inputDatePlus3Days->modify("+$dias days");
 
-    // Comparar las fechas
     if ($currentDate < $inputDatePlus3Days) {
         return true;
     } else {

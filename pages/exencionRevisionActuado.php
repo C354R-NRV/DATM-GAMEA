@@ -36,7 +36,6 @@ if (!$_SESSION['swlogin']) {
     <?php
     echo $twig->render('load.twig');
     ?>
-    <!-- Navbar Start -->
     <?php
     echo $twig->render('menuIni.twig');
 
@@ -48,9 +47,6 @@ if (!$_SESSION['swlogin']) {
 
     echo $twig->render('menuFin.twig');
     ?>
-    <!-- Navbar End -->
-
-    <!-- Hero Start -->
     <?php
     echo $twig->render('prebodyltIni.twig');
     $query = "select  a.documento_path, a.observacion,  to_char(a.fecha_registro, 'DD/MM/YYYY') AS  fecha_registro , 
@@ -78,9 +74,6 @@ if (!$_SESSION['swlogin']) {
     <?php
     echo $twig->render('prebodyltFin.twig');
     ?>
-    <!-- Hero End --> 
- 
-    <!-- About Start -->
     <div class="contenedorDigitaliza">
         <div class="row position-relative">
             <div class="col-8" id="main-content">
@@ -123,14 +116,9 @@ if (!$_SESSION['swlogin']) {
             </div>
         </div>
     </div>
-
-    <!-- About End -->
-
-    <!-- JavaScript Libraries -->
     <?php
     echo $twig->render('linkJs.twig');
     ?>
-    <!-- Template Javascript -->
 </body>
 <script defer src="../js/mainRecursoIa.js"></script>
 <script>
@@ -198,7 +186,6 @@ if (!$_SESSION['swlogin']) {
                             }, 
                             success: function(dat) {
                                 loadGralOff();
-                                //AGREAGAR NOTIFICACION DE GUARDADO CORRECTO 
                                 console.log(dat);
                                 dat = $.parseJSON(dat);
                                 if (dat.err == '0') {
@@ -206,7 +193,6 @@ if (!$_SESSION['swlogin']) {
                                     localStorage.setItem('toastrMessage', dat.log);
                                     localStorage.setItem('toastrTitle', "Registro guardado correctamente");
                                     url_ = "exencionRevisionSolicitud.php?j=" + $('#idcabecera').val() + "&i=" + $('#codigo').val() + "&x=" + $('#idactuado').val();
-                                    //console.log(url_);
                                     window.location.href = url_;
 
                                 } else {

@@ -25,8 +25,7 @@ if (!$_SESSION['swlogin']) {
     <style>
         .containerDetalleSolicitud {
             width: 98%;
-            margin: auto;
-            /* border: 1px solid #000; */
+            margin: auto; 
             border-radius: 10px;
             padding: 1rem;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -35,9 +34,7 @@ if (!$_SESSION['swlogin']) {
         .headerDetalleSolicitud {
             display: flex;
             justify-content: space-between;
-            border: 1px solid #fff;
-            /* padding: 10px; */
-            /* margin-bottom: 20px; */
+            border: 1px solid #fff; 
             border-radius: 5px;
         }
 
@@ -50,8 +47,7 @@ if (!$_SESSION['swlogin']) {
 <body>
     <?php
     echo $twig->render('load.twig');
-    ?>
-    <!-- Navbar Start -->
+    ?> 
     <?php
     echo $twig->render('menuIni.twig');
 
@@ -62,10 +58,7 @@ if (!$_SESSION['swlogin']) {
     }
 
     echo $twig->render('menuFin.twig');
-    ?>
-    <!-- Navbar End -->
-
-    <!-- Hero Start -->
+    ?> 
     <?php
     echo $twig->render('prebodyltIni.twig');
     ?>
@@ -77,10 +70,7 @@ if (!$_SESSION['swlogin']) {
     <?php
     echo $twig->render('prebodyltFin.twig');
     echo '<input type="hidden" id="rolUser" value="' . $_SESSION['rol'] . '">';
-    ?>
-    <!-- Hero End -->
-
-    <!-- About Start -->
+    ?> 
     <div class="contenedorDigitaliza">
         <div class="form-group d-flex flex-column flex-md-row">
             <div class="row">
@@ -147,14 +137,10 @@ if (!$_SESSION['swlogin']) {
                 </tbody>
             </table>
         </div>
-    </div>
-
-    <!-- About End -->
-    <!-- JavaScript Libraries -->
+    </div> 
     <?php
     echo $twig->render('linkJs.twig');
-    ?>
-    <!-- Template Javascript -->
+    ?> 
 </body>
 <script src="../js/mainRecursoIa.js"></script>
 <script src="../vendor/bootstrap-table-master/dist/bootstrap-table.min.js"></script>
@@ -164,10 +150,7 @@ if (!$_SESSION['swlogin']) {
 <script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.10.21/libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-    $(".datepicker").flatpickr();
-    /*  $(document).ready(function($) {
-            getSolicitudes();
-      }); */
+    $(".datepicker").flatpickr(); 
     function filtrosDataTable(p) {
         console.log(p);
         console.log("en filtrosDataTable");
@@ -200,8 +183,7 @@ if (!$_SESSION['swlogin']) {
                 console.log(dat);
                 loadGralOff();
                 $('#tbodyItems').empty();
-                dat = $.parseJSON(dat);
-                // Iterar sobre los datos recibidos y agregarlos al tbody
+                dat = $.parseJSON(dat); 
                 $.each(dat.info, function(index, item) {
 
                     var fila = `
@@ -231,9 +213,7 @@ if (!$_SESSION['swlogin']) {
 
 
                     $('#tbodyItems').append(fila);
-                });
-
-                // Recargar la tabla para que Bootstrap Table detecte los nuevos datos
+                }); 
                 console.log("previo resfrescar")
                 $('#tableCompendio').bootstrapTable('refresh');
                 console.log("resfrescamos")
@@ -274,8 +254,7 @@ if (!$_SESSION['swlogin']) {
                             },
                             success: function(dat) {
                                 console.log(dat);
-                                loadGralOff();
-                                //AGREAGAR NOTIFICACION DE GUARDADO CORRECTO 
+                                loadGralOff(); 
                                 dat = $.parseJSON(dat);
                                 window.location.href = './exencionList.php';
                             },
@@ -322,8 +301,7 @@ if (!$_SESSION['swlogin']) {
                             },
                             success: function(dat) {
                                 console.log(dat);
-                                loadGralOff();
-                                //AGREAGAR NOTIFICACION DE GUARDADO CORRECTO  
+                                loadGralOff(); 
                                 dat = $.parseJSON(dat);
                                 window.location.href = './exencionList.php';
                             },
@@ -373,8 +351,7 @@ if (!$_SESSION['swlogin']) {
                             },
                             success: function(dat) {
                                 console.log(dat);
-                                loadGralOff();
-                                //AGREAGAR NOTIFICACION DE GUARDADO CORRECTO  
+                                loadGralOff();  
                                 dat = $.parseJSON(dat);
                                 window.location.href = './exencionList.php';
                             },
@@ -418,8 +395,7 @@ if (!$_SESSION['swlogin']) {
                             },
                             success: function(dat) {
                                 console.log(dat);
-                                loadGralOff();
-                                //AGREAGAR NOTIFICACION DE GUARDADO CORRECTO  
+                                loadGralOff();  
                                 dat = $.parseJSON(dat);
                                 window.location.href = './exencionList.php';
                             },
@@ -474,8 +450,7 @@ if (!$_SESSION['swlogin']) {
                                 loadGralOn();
                             },
                             success: function(dat) {
-                                loadGralOff();
-                                //AGREAGAR NOTIFICACION DE GUARDADO CORRECTO 
+                                loadGralOff(); 
                                 dat = $.parseJSON(dat);
                                 window.location.href = './exencionList.php';
 

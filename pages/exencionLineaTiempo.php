@@ -211,10 +211,7 @@ if (!$_SESSION['swlogin']) {
 
     <?php
     echo $twig->render('prebodyltFin.twig');
-    ?>
-    <!-- Hero End -->
-
-    <!-- About Start -->
+    ?> 
     <div class="contenedorDigitaliza">
         <?php
 
@@ -306,14 +303,10 @@ if (!$_SESSION['swlogin']) {
             ?>
 
         </div>
-    </div>
-
-    <!-- About End -->
-    <!-- JavaScript Libraries -->
+    </div> 
     <?php
     echo $twig->render('linkJs.twig');
-    ?>
-    <!-- Template Javascript -->
+    ?> 
 </body>
 <script src="../js/mainRecursoIa.js"></script>
 <script src="../vendor/bootstrap-table-master/dist/bootstrap-table.min.js"></script>
@@ -324,8 +317,7 @@ if (!$_SESSION['swlogin']) {
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     var verDocPopupSw = false;
-    $(document).ready(function() {
-        // Function to check if element is in viewporte
+    $(document).ready(function() { 
         function isElementInViewport(el) {
             const rect = el.getBoundingClientRect();
             return (
@@ -334,9 +326,7 @@ if (!$_SESSION['swlogin']) {
                 rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
                 rect.right <= (window.innerWidth || document.documentElement.clientWidth)
             );
-        }
-
-        // Function to handle scroll animation
+        } 
         function handleScroll() {
             $('.crisis-item').each(function() {
 
@@ -345,20 +335,12 @@ if (!$_SESSION['swlogin']) {
                 }
 
             });
-        }
-
-        // Initial check for visible elements
-        handleScroll();
-
-        // Add scroll event listener
-        $(window).on('scroll resize', handleScroll);
-
-        // Add click handler for crisis items
+        } 
+        handleScroll(); 
+        $(window).on('scroll resize', handleScroll); 
         $('.crisis-item').click(function() {
             $(this).find('.description').slideToggle(300);
         });
-
-        // Sort crisis items by year
         const timeline = $('.timeline');
         const items = timeline.children('.crisis-item').get();
         items.sort(function(a, b) {

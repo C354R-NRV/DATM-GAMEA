@@ -18,7 +18,6 @@ if (isset($zoom) && intval($zoom) >= 19) {
     $limit = isset($limit) ? intval($limit) : 2000;
 }
 
-// Configuración de archivos tileados actualizada
 $tileConfig = [
     'inmueble' => [
         'basePath' => '../static/geojson/tiles/',

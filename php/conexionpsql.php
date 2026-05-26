@@ -1,20 +1,16 @@
 <?php
 class conexion
 {
-
     /**
-     * dev
+     *  dev
      *  cd C:\Program Files\PostgreSQL\16\bin
      *  pg_dump -U postgres -h localhost -p 5432 -d ruatdb -f ruatdb20240522.sql
      *  server
      *  createdb -h localhost -p 5432 -O postgres -U postgres -e ruatdb20240522
      *  psql -h localhost -p 5432 -U postgres -f /var/www/html/db/ruatdb20240522.sql ruatdb20240522
      */
-
-    // private $host = '172.16.100.28'; 
-
-    private $host = '172.16.21.90';
-    private $dbname = 'datm250325';
+    private $host = 'localhost';
+    private $dbname = 'datm';
     private $user = 'postgres';
     private $password = '1n0v4d05';
 

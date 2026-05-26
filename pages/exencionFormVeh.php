@@ -2,23 +2,7 @@
 <?php
 session_start();
 require_once '../vendor/autoload.php';
-require_once '../php/conexionpsql.php';
-
-/**
-agreegar como tool tips
-
-Para la habilitación de proforma de liquidación, en caso de que no se genere o visualice en RUAT, será necesario que el contribuyente se apersone a oficinas de la DATM, unidad de ingresos.
-
-Con que documento, decreto o ley fue credo la institución publica. 
-
-
-NIT  --> corresponde en todos los casos.
-
-FOTOCOIPIOA DE L ci DE Maxima Autoridad Ejecutiva.
-
- */
-
-
+require_once '../php/conexionpsql.php';  
 $conn = new Conexion();
 $cons = $conn->conectar();
 
@@ -61,14 +45,7 @@ if (!$_SESSION['swlogin']) {
             padding: 10px;
             font-size: 18px;
             cursor: pointer;
-        }
-
-        /* .form-trash {
-            border-radius: 20%;
-            padding: 10px;
-            font-size: 18px;
-            cursor: pointer;
-        } */
+        } 
 
         .input-group {
             display: flex;
@@ -97,8 +74,7 @@ if (!$_SESSION['swlogin']) {
 <body>
     <?php
     echo $twig->render('load.twig');
-    ?>
-    <!-- Navbar Start -->
+    ?> 
     <?php
     echo $twig->render('menuIni.twig');
 
@@ -109,10 +85,7 @@ if (!$_SESSION['swlogin']) {
     }
 
     echo $twig->render('menuFin.twig');
-    ?>
-    <!-- Navbar End -->
-
-    <!-- Hero Start -->
+    ?> 
     <?php
     echo $twig->render('prebodyltIni.twig');
     ?>
@@ -123,10 +96,7 @@ if (!$_SESSION['swlogin']) {
 
     <?php
     echo $twig->render('prebodyltFin.twig');
-    ?>
-    <!-- Hero End -->
-
-    <!-- About Start -->
+    ?> 
     <div class="btn-flotante">
         <button id="btn-guardar" class="btn btn-primary" onclick="guardar()">
             <i class="fa fa-floppy-o"></i>
@@ -145,9 +115,8 @@ if (!$_SESSION['swlogin']) {
                     <option value="TODOS">TODOS</option>
                     <?php
                     $query = "SELECT nro_pta 
-                                FROM vehiculo_univ          
-                                WHERE documento_identidad = '" . $_SESSION['cedula_identidad'] . "' order by nro_pta desc;";
-                    /* echo $query; */
+                            FROM vehiculo_univ          
+                            WHERE documento_identidad = '" . $_SESSION['cedula_identidad'] . "' order by nro_pta desc;";
                     $stmt = $cons->query($query);
                     $extension = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     foreach ($extension as $row) {
@@ -205,13 +174,9 @@ if (!$_SESSION['swlogin']) {
         echo $html;
         ?>
     </div>
-
-    <!-- About End -->
-    <!-- JavaScript Libraries -->
     <?php
     echo $twig->render('linkJs.twig');
     ?>
-    <!-- Template Javascript -->
 </body>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>

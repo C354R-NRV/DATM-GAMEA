@@ -138,9 +138,6 @@ if (!$_SESSION['swlogin']) {
 
     echo $twig->render('menuFin.twig');
     ?>
-    <!-- Navbar End -->
-
-    <!-- Hero Start -->
     <?php
     echo $twig->render('prebodyltIni.twig');
     ?>
@@ -152,15 +149,11 @@ if (!$_SESSION['swlogin']) {
     <?php
     echo $twig->render('prebodyltFin.twig');
     ?>
-    <!-- Hero End -->
-
-    <!-- About Start -->
     <div class="contenedorDigitaliza">
 
         <div class="timeline">
 
             <?php
-            //obtenemos el ultimo enviado para la revision
             $query = "
             
             select codigo_solicitud, to_char(c.fecha_envio, 'DD/MM/YYYY') AS fecha_envio ,  
@@ -279,15 +272,10 @@ if (!$_SESSION['swlogin']) {
                 </button>
             </div>
         </div>
-    </div>
-
-
-    <!-- About End -->
-    <!-- JavaScript Libraries -->
+    </div> 
     <?php
     echo $twig->render('linkJs.twig');
-    ?>
-    <!-- Template Javascript -->
+    ?> 
 </body>
 <script src="../js/mainRecursoIa.js"></script>
 <script src="../vendor/bootstrap-table-master/dist/bootstrap-table.min.js"></script>
@@ -301,12 +289,7 @@ if (!$_SESSION['swlogin']) {
         window.location.href = './exencionRevisionActuado.php?j=' + idactuado + '&i=' + codigo;
     }
 
-    function guardarRevision(obsEnRecepcionFisica = "0") {
-        /* var formData = new FormData();
-        formData.append('obs_gral', $('#obs_gral').val());
-        formData.append('idactuado', $('#idactuado').val());
-        formData.append('idcabecera', $('#idcabecera').val());
-        formData.append('obsEnRecepcionFisica', obsEnRecepcionFisica); */
+    function guardarRevision(obsEnRecepcionFisica = "0") { 
 
         datos =
             "&obs_gral=" + ($("#obs_gral").val()).trim()+
@@ -332,8 +315,7 @@ if (!$_SESSION['swlogin']) {
                     console.log("cargando en localStorage:" + dat.log);
                     localStorage.setItem('toastrMessage', dat.log);
                     localStorage.setItem('toastrTitle', "Registro guardado correctamente");
-                    url_ = "exencionList.php";
-                    //console.log(url_);
+                    url_ = "exencionList.php"; 
                     window.location.href = url_;
 
                 } else {

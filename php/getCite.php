@@ -6,8 +6,8 @@ foreach ($_POST as $clave => $valor) {
     $$clave = addslashes(trim($valor));
 }
 
-function get_next_correlative($usuario_, $unidad, $codigo, $referencia, $usuario_solicitante, $destino_, $hhrr_)
-{ 
+function get_correlativo($usuario_, $unidad, $codigo, $referencia, $usuario_solicitante, $destino_, $hhrr_)
+{
     $conn = new Conexion();
     $cons = $conn->conectar();
     $valid_units = ['UAJ-CC', 'UFyR', 'UICT', 'SIS', 'DIR', 'GA'];
@@ -22,18 +22,18 @@ function get_next_correlative($usuario_, $unidad, $codigo, $referencia, $usuario
 
     try {
 
-        $query = "SELECT id, codigo_unidad, rol, COALESCE(area, '') AS area
+        $query = "SELECT id, codigo_unidad, rol, COALESCE(area, '') AS area, codigo_usuario 
         FROM datm_usuario 
-        WHERE id = $usuario_solicitante ";
+        WHERE id = $usuario_solicitante";
         $stmt = $cons->query($query);
         $resultUsuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
         $auxArea = '';
         $area  = $resultUsuario['area'];
-        if ($area != '')
+        if ($area != '') {
             $auxArea = "/" . $area;
+        }
 
-        // Query to get the maximum correlative for the given unit and code
         $query = "SELECT COALESCE(MAX(correlativo), 0) as max_correlativo 
                     FROM datm_cites  
                     WHERE unidad = '$unidad'  
@@ -48,44 +48,34 @@ function get_next_correlative($usuario_, $unidad, $codigo, $referencia, $usuario
         if (!$result) {
             throw new Exception('La consulta fallo');
         }
-        $next_correlative = $result['max_correlativo'] + 1;
+        $correlativo = $result['max_correlativo'] + 1;
+        $correlativo = completarConCeros($correlativo); 
 
-        $baseCite = $unidad . '/' . $codigo . $auxArea . '/' . $next_correlative . '/' . date('Y');
+        $baseCite = $unidad  . $auxArea . '/' . $codigo  . '/' . $_SESSION['codigo_usuario'] . '/N° '  . $correlativo . '/' . date('Y');
 
         if ($_SESSION['codigo_unidad'] == 'DIR' and $_SESSION['rol'] == 'SECRETARIA') {
-
-            if ($_SESSION['idusuario'] != $usuario_solicitante) {
-
-                $baseCite =  $codigo . '/' . $resultUsuario['codigo_unidad'] . '/' . $next_correlative . '/' . date('Y');
-                if ($resultUsuario['rol'] == 'DIRECCION' or ($_SESSION['rol'] == 'SECRETARIA' and $_SESSION['idusuario'] == $usuario_solicitante)) {
-                    $baseCite =  $codigo . '/' . $next_correlative . '/' . date('Y');
-                }
-            }
+            $baseCite = $unidad .  '/' . $_SESSION['codigo_usuario'] . '/' . $codigo . '/N° '  . $correlativo . '/' . date('Y');
         }
-
-        if ($unidad == 'GA' and $_SESSION['codigo_usuario'] != '') {
-            $baseCite = $unidad . '/' . $codigo . $auxArea . '/' . $_SESSION['codigo_usuario'] . '/' . $next_correlative . '/' . date('Y');
-        }
-
         if ($_SESSION['codigo_unidad'] == 'DIR' and $_SESSION['rol'] == 'SECRETARIA' and $codigo == 'RA') {
-            $baseCite = 'N°' . completarConCeros($next_correlative) . '/' . date('Y');
+            $baseCite = 'N°' . $correlativo . '/' . date('Y');
         }
 
-        if ($unidad == 'UFyR' and $auxArea == '/INM_VEH') {
-            $baseCite =  $unidad . '/' . $codigo  . '/' . $next_correlative . '/' . date('Y');
+        if ($_SESSION['rol'] == 'SECRETARIA' and $_SESSION['idusuario'] != $usuario_solicitante) {
+            $baseCite = $unidad . $auxArea . '/' . $codigo . '/' . $resultUsuario['codigo_usuario'] . '/N°'  . $correlativo . '/' . date('Y');
         }
 
-        if ($area == 'CCI' or $area == 'CCII' or $area == 'OI') {
-            $baseCite =  $unidad . '/' . $codigo . '/' . $area . ($_SESSION['codigo_usuario'] != '' ? '/' . $_SESSION['codigo_usuario'] : '') . '/' . $next_correlative . '/' . date('Y');
-        } 
-        
-        $baseCite = 'DATM/' . $baseCite;
+        if ($_SESSION['codigo_unidad'] == 'GA') {
+            $baseCite = $unidad . '/' . $codigo . '/' . $resultUsuario['codigo_usuario'] . '/N°'  . $correlativo . '/' . date('Y');
+        }
+
+        //$baseCite = 'DATM/' . $baseCite; // gestion previa a elieser
+        $baseCite = 'GAMEA/SMAF/DATM/' . $baseCite;
 
 
         date_default_timezone_set('America/La_Paz');
         $fecha_registro = date('Y-m-d H:i:s');
         $insert_query = "INSERT INTO datm_cites (correlativo, unidad, codigo, referencia, usuario_, fecha_registro, estado_, gestion, cite, usuario_solicitante, destino, hhrr_ , area) 
-                        VALUES ($next_correlative, '$unidad', '$codigo', '$referencia', " . $usuario_ . ", '$fecha_registro', true, " . date('Y') . ", '$baseCite', $usuario_solicitante, '$destino_', '$hhrr_', '" . $resultUsuario['area'] . "')";
+                        VALUES ($correlativo, '$unidad', '$codigo', '$referencia', " . $usuario_ . ", '$fecha_registro', true, " . date('Y') . ", '$baseCite', $usuario_solicitante, '$destino_', '$hhrr_', '" . $resultUsuario['area'] . "')";
         $stmt = $cons->prepare($insert_query);
         $nErr = $stmt->execute();
 
@@ -96,11 +86,11 @@ function get_next_correlative($usuario_, $unidad, $codigo, $referencia, $usuario
     } catch (Exception $e) {
         throw $e;
     }
-} 
+}
 
 $resp = array();
 try {
-    $next_number = get_next_correlative(
+    $next_number = get_correlativo(
         $_SESSION['idusuario'],
         $_SESSION['codigo_unidad'],
         $tipoDocumento_,
@@ -123,7 +113,7 @@ echo $dat;
 
 
 function completarConCeros($numero)
-{ 
-    $numero = intval($numero); 
-    return str_pad($numero, 2, '0', STR_PAD_LEFT);
+{
+    $numero = intval($numero);
+    return str_pad($numero, 4, '0', STR_PAD_LEFT);
 }

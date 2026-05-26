@@ -63,7 +63,7 @@ try {
                 </div>
                 <div style='margin-bottom: 20px;'>
                     <p>Señor:</p>
-                    <p>Ing. Veronica Judith Mancilla Nina<br>
+                    <p>Lic. Rosse Mary Rivera Ocampo<br>
                     Director de Administración Tributaria Municipal de El Alto<br>
                     GOBIERNO AUTONOMO MUNICIPAL DE EL ALTO</p>
                     <p>Presente:</p>

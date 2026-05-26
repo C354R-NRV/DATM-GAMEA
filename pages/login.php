@@ -33,7 +33,7 @@ $_SESSION['swlogin'] = '0';
         <div class="containerLogin__form containerLogin--signin">
             <div class="form" id="form2">
                 <!-- <h2 class="form__title">Ingresar</h2> -->
-                <p><img src="../img/logogamea.png" style="max-height: 2rem;"></p>
+                <p><img src="../img/logogamea.png" style="max-height: 6rem;"></p>
                 <input type="text" placeholder="Usuario" id="usuario" class="input" />
                 <input type="password" placeholder="Password" id="password" class="input" />
                 <a href="#" class="link">Olvido su contraseña?</a>

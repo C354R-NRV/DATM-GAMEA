@@ -78,8 +78,14 @@ try {
             <page_header>
                 <table style='width: 100%; font-size:11px; color:#515151;'>
                     <tr>
-                        <td style='text-align: center; padding:5px 10px 5px 20px; border-bottom:3px double black; width: 100%; font-size:10px;'> 
-                            <img src='./escudo.jpg' style='width:60px;height:70px;'/><br><b>GOBIERNO AUTÓNOMO MUNICIPAL DE EL ALTO</b>
+                        <td style='text-align: center; padding:5px 10px 5px 20px; border-bottom:3px double black; width: 33%; font-size:10px;'> 
+                            <img src='./escudo.jpg' style='width:60px;height:70px;'/> 
+                        </td>
+                        <td style='text-align: center; padding:5px 10px 5px 20px; border-bottom:3px double black; width: 33%;'> 
+                            <img src='./central.png' style='width:100px;height:50px;'/><br><b><span style='font-size:10px;'>GOBIERNO AUTÓNOMO MUNICIPAL</span> <br><span style='font-size:21px;'>EL ALTO</span></b>
+                        </td>
+                        <td style='text-align: center; padding:5px 10px 5px 20px; border-bottom:3px double black; width: 33%; font-size:10px;'> 
+                            <img src='./bandera.png' style='width:50px;height:70px;'/> 
                         </td>
                     </tr>
                 </table>

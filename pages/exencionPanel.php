@@ -131,7 +131,6 @@ if (!$_SESSION['swlogin']) {
     <?php
     echo $twig->render('load.twig');
     ?>
-    <!-- Navbar Start -->
     <?php
     echo $twig->render('menuIni.twig');
 
@@ -143,8 +142,6 @@ if (!$_SESSION['swlogin']) {
 
     echo $twig->render('menuFin.twig');
     ?>
-    <!-- Navbar End -->
-    <!-- Hero Start -->
     <?php
     echo $twig->render('prebodyltIni.twig');
     ?>
@@ -154,7 +151,6 @@ if (!$_SESSION['swlogin']) {
     <?php
     echo $twig->render('prebodyltFin.twig');
     ?>
-    <!-- About Start -->
     <div>
 
         <div class="overlay">
@@ -174,22 +170,11 @@ if (!$_SESSION['swlogin']) {
                     <p>Inmuebles</p> 
                 </div>
             </div>
-            <!-- <div class="box card-2">
-                <div class="description">
-                    <i class="fa fa-shopping-basket" aria-hidden="true"></i>
-                    <hr>
-                    <p>Act. Económica</p> 
-                </div>
-            </div> -->
         </div>
     </div>
-
-    <!-- About End -->
-    <!-- JavaScript Libraries -->
     <?php
     echo $twig->render('linkJs.twig');
     ?>
-    <!-- Template Javascript -->
 </body>
 <script src="../js/mainRecursoIa.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
@@ -207,9 +192,6 @@ if (!$_SESSION['swlogin']) {
     $('.card-1').click(function() {
         window.location.href = 'exencionFormInmVeh.php?j=2';
     });
-    /* $('.card-2').click(function() {
-        window.location.href = 'exencionRevision.php';
-    }); */
 </script>
 
 </html>

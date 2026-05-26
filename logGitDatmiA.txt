@@ -1,0 +1,263 @@
+commit b610d3345c4883e9f151f21eb4d07fecad9293f5
+Author: datm <crv@example.com>
+Date:   Thu Apr 23 16:18:05 2026 -0400
+
+    se aplico parche en regsitro de imagenes en geoespacial para evitar duplicidad de imagenes o sobreescrituras, evaluacion de sesion activa en edicion de usuarios
+
+commit a2cb2190b2710488c7955a79bdbab28e4b806dde
+Author: datm <crv@example.com>
+Date:   Fri Mar 20 08:45:43 2026 -0400
+
+    se agrego funcionalidad de gestion para operativos y grupos
+
+commit 99296a93d2e45720c3664dd9240eecb1c8fa229c
+Author: datm <crv@example.com>
+Date:   Mon Feb 2 09:37:34 2026 -0400
+
+    Se actualizo el nombre de nuevo director, se mejoro visualizacion de los puntos en geoespacial
+
+commit ab9e981705c5fcc3fead8afa0dcc1d6c57b8f2af
+Author: datm <crv@example.com>
+Date:   Thu Dec 18 09:44:49 2025 -0400
+
+    previo a mejorar visivilidad de puntos en ufpredial , se cambio estado de usuario de ACTIVO a TRUE
+
+commit 2b9146f95c9136e1304e951d448bb4408dc3908d
+Author: datm <crv@example.com>
+Date:   Mon Nov 10 15:21:53 2025 -0400
+
+    PREVIO A AGREGAR FUNCIONALIDAD DE EDICION Y BAJA EN USUARIOS, TRAS ACTUALIZAR ESTADO A 1-0 PARA USUARIO
+
+commit f0545d545f7c603423342dc17a69b1f7c468cbf5
+Author: datm <crv@example.com>
+Date:   Fri Oct 31 14:57:36 2025 -0400
+
+    funcionando correctamente geoespacial con busqueda de puntos NO renderizados, visualizacion de puntos segun zoom, evita saturar todo
+
+commit e77f38b45ed508690a022b734392662ccc3647d8
+Author: datm <crv@example.com>
+Date:   Fri Oct 31 13:05:22 2025 -0400
+
+    se mejoro consulta para obtener puntos georeferenciados por muestras para evitar cargar todos a la vez, previo a mejorar filtro dinamico contra base de datos
+
+commit 72546f918df8e7c63ab4b03b6790c6cdc48f92cd
+Author: datm <crv@example.com>
+Date:   Fri Oct 31 09:47:13 2025 -0400
+
+    se corrigieron bugs de modulo pislea, previo a modificar geoespacial
+
+commit 1ee63ad1d5fb0a06d161a98231dcb59d65e90427
+Author: datm <crv@example.com>
+Date:   Tue Oct 21 15:44:23 2025 -0400
+
+    previo a mejorar el formuario pislea
+
+commit 7c59015d7d71b594d3bfbadc2decf94c91a393e2
+Author: datm <crv@example.com>
+Date:   Mon Oct 13 10:27:35 2025 -0400
+
+    se agrego dos operativos mas para ser visibles en formulario de operativo
+
+commit 16010ff515d72ce98e8ed5ac5e7723b9b4fbac20
+Author: datm <crv@example.com>
+Date:   Wed Oct 8 15:20:36 2025 -0400
+
+    con modulo para registro de procesos
+
+commit c9e66b16adf34022738172a50a4875f0f84956ec
+Author: datm <crv@example.com>
+Date:   Thu Sep 18 14:36:17 2025 -0400
+
+    se agrego funcionalidad de replicar grupo durante regsitro de prepruntos, se modifico nombre de nuevo director, se mejoro obtencion de ultimo numero de operativo para registro de puntos predial y prepredial
+
+commit e28e871f14a8355863aa2f1b15ae01f3400314b6
+Author: datm <crv@example.com>
+Date:   Wed Aug 20 10:18:12 2025 -0400
+
+    se agrego modulo de registro de documentos digitalizados, se mejoro el dashboard
+
+commit 60da49eee9b132832f936718ca7c90a4f3313658
+Author: datm <crv@example.com>
+Date:   Tue Aug 12 11:57:18 2025 -0400
+
+    con graficos mejorados para selecicon de operativos
+
+commit dd327a9a8fdaba1de5dafbeba8c1624ca68c6d1a
+Author: datm <crv@example.com>
+Date:   Tue Jul 22 10:46:54 2025 -0400
+
+    se corrigio bug de registro con apostrofe en SIREFO
+
+commit 07c580491d71543c87cd147b20cd436b27e685ea
+Author: datm <crv@example.com>
+Date:   Tue Jul 15 09:47:43 2025 -0400
+
+    SE MEJORO RESULTADO DE CONSULTA PARA HISTORICO DE INMUEBLE FISCALIZADO, SE AGREGO CAMPO PARA FILTRO POR ACTIVIDAD, SE SUBSANO BUG EN BUSQUEDA DE INMUEBLES EN UF PREDIAL LIST, Y PARA MOSTRAR RESULTADOS FILTRADOS SE USA LOAD EN EL BOOTSTRAPTABLE, SE CORRIGIO BUG EN VISUALIZACION DE FOTOGRAFIA DE INMUEBLE
+
+commit 79b1d8de442b79c7e0f05eb1d0f06d9c3973d7fb
+Author: datm <crv@example.com>
+Date:   Fri Jul 4 19:43:22 2025 -0400
+
+    PROBADO  Y FUNCIONANDO CON PUNTOS EN PREDIAL RENDERIZADOS EN FORMULARIO PREDIAL, ADEMAS DE LOS PREPUNTOS, SE MEJORO REPORTE PDF Y SE AGREGO CODIGO DE SEGURIDAD PARA NUMERO DE INMUEBLE CORRELATIVO
+
+commit 79212397cc8da85bedb6ff1387f4f7d3d9ea96a4
+Author: datm <crv@example.com>
+Date:   Fri Jul 4 01:21:04 2025 -0400
+
+    agregado reporte pdf para predial, se agrego estructura de grupos y operativo, se modifico sql de consulta en reporte y listados con base a operativo ' pendiente modificaiocn de mumero de inmueble por parte de supervisores
+
+commit 864993c1c0a446b7fa2e61a39ae7b662dda0ac1d
+Author: datm <crv@example.com>
+Date:   Fri Jun 27 10:30:47 2025 -0400
+
+    se agrego  boton usar para puntos predefinidos en geoespacial, ademas se mejoro funcionalidad en formulario predial
+
+commit ac9fa4af0b702f8b17dec088311193655ac627d8
+Author: datm <crv@example.com>
+Date:   Mon Jun 23 14:13:35 2025 -0400
+
+    SE AGREGO FUNCIONALIDAD DE MARCAR PINES DE DISTINTOS COLORES, SE MEJORO MOTOR DE BUSQUEDA RESPECTO A VISUALIZACION EN UFPREDIAL
+
+commit 6d4deafec7cb1d841b392a8d4a97f7b4748c6cb9
+Author: datm <crv@example.com>
+Date:   Mon Jun 23 12:13:09 2025 -0400
+
+    AGREGACION DE PUNTOS DE REFERENCIA CON SETEO DE COLORES INDEPENDIENTES
+
+commit 8936743c75d8918545fc866aa52937cc3ad42605
+Author: datm <crv@example.com>
+Date:   Fri Jun 20 16:40:15 2025 -0400
+
+    AGREGADO FUNCIONALIDAD DE AGREGACION DE PUNTOS MANUALES POR FUNCIONARIO PARA PLANEACION DE FISCALIZACION
+
+commit 59d518ce8cf9a872c8d8ff7e21429eabfa309c41
+Author: datm <crv@example.com>
+Date:   Tue Jun 17 10:01:06 2025 -0400
+
+    funcionalidad de busqueda por niveles, previo a adecuar busqueda de puntos con nueva logica
+
+commit e6fe40ab0740606fc54192dab36a0c6af870d4d7
+Author: datm <crv@example.com>
+Date:   Mon Jun 9 12:20:39 2025 -0400
+
+    con funcionalidades de inmuebles y codigos catastrales correctos
+
+commit 21529fd3fc74214eec9512bd3a194929a152b6a4
+Author: datm <crv@example.com>
+Date:   Wed Jun 4 14:27:02 2025 -0400
+
+    funcionando con archivos geojson  para inmuebles y catastro
+
+commit e79c72e28f3765ef2b0c41c05a2f2debc21bb9f1
+Author: datm <crv@example.com>
+Date:   Tue Jun 3 14:04:21 2025 -0400
+
+    hasta este punto, con geojson de muestra funcionando, consulta a backend corriendo correctamente, diferenciando puntos inspeccionados y puntos de geojson
+
+commit 29c7bee210f1fb2de206821791447f69dca80ce1
+Author: datm <crv@example.com>
+Date:   Mon Jun 2 12:09:07 2025 -0400
+
+    con botones de mapa optimizado para touch
+
+commit 768d2cea71767df25809b89908d6d3a9e73f7386
+Author: datm <crv@example.com>
+Date:   Fri May 30 13:42:44 2025 -0400
+
+    mapa con capa obscura en fase de creacion de contorno, con pin azul y efecto de agrupacion latente correcto
+
+commit 299978cf24c5f983229569741293a1e1472eb86e
+Author: datm <crv@example.com>
+Date:   Fri May 30 11:33:37 2025 -0400
+
+    subsanado bug de busqueda, se agrego capa satelital funcionando ok
+
+commit b3393568837c221042ef68df2e56ace1ab997472
+Author: datm <crv@example.com>
+Date:   Wed May 28 13:11:17 2025 -0400
+
+    se subsano pass de aplicacion de gmail vencido, se actualizo el mismo - se creo modulo de registro de puntos georeferenciados con openstreetmap, funcionando correctamente, previo a optimizar consulta de puntos por el area visible
+
+commit 2a3cd32893e84bbff09202c1e89ad3cfb1b22b10
+Author: datm <crv@example.com>
+Date:   Tue Apr 29 08:04:52 2025 -0400
+
+    SE AGREGO LOGICA PARA REGISTRO DE EXENCION DE INMUEBLE Y EXLUSIONES
+
+commit d35b15b938653bb14ae1ff4b5e99867a6658356b
+Author: datm <crv@example.com>
+Date:   Mon Apr 21 16:01:46 2025 -0400
+
+    previo a iniciar exencion inm - se subsano algunos bugs
+
+commit 9d1d599fa437f8bf90fecf5056883f000e6b3cf4
+Author: datm <crv@example.com>
+Date:   Tue Apr 8 16:28:04 2025 -0400
+
+    se arreglo bug de formato de respuesta de ia en biblioteca, se agrego control de estado en tipo de extension en CI, se agrego logica para obtener datos de contribuyente en sirefo
+
+commit 30dd4813626e1c18380b402c2eafff42a67f0e21
+Author: datm <crv@example.com>
+Date:   Fri Mar 28 11:26:05 2025 -0400
+
+    presentado y addicionado escenario de observacion durante revision fisica de documentos, se agrego tambien posibilidad de seleccionar varias placas
+
+commit 83cd1926e8dad3e1e49bef62781b574a9a100fd9
+Author: datm <crv@example.com>
+Date:   Wed Mar 26 10:59:19 2025 -0400
+
+    EXENCION PRESENTADO A DIRECCCION Y JURIDICA
+
+commit 142d4373918868f2d8dd5826da241c3c230b75c3
+Author: datm <crv@example.com>
+Date:   Mon Feb 24 14:50:17 2025 -0400
+
+    SE AGREGARON NUEVOS CAMPOS PARA RETENCIONES EN SIREFO, SE INICIO CON MODULO DE EXENCION Y SE CREO MODULO DE REGISTRO DE USUARIOS TIPO CONTRIBUYENTE. PREVIO A CONTINUAR CON REGISTRO DE ITEMS PARA EXENCION
+
+commit 64147b9724eafe4b58b7951edc3f4c93580d8a1d
+Author: datm <crv@example.com>
+Date:   Wed Feb 5 08:08:57 2025 -0400
+
+    SIRFO PUESTO EN PRODUCCION - COMPLEMENTO IA PARA CITE DESPLEGADO
+
+commit 0855799631bdfffbbb9a8bec305550339dc2e69f
+Author: datm <crv@example.com>
+Date:   Tue Jan 14 10:05:49 2025 -0400
+
+    MODULO CITES EN PRODUCCION UICT UAJ DIR
+
+commit 3ae5da9c13a4959d9b3c25515180e679dfce445d
+Author: datm <crv@example.com>
+Date:   Fri Dec 20 10:59:44 2024 -0400
+
+    HASTA ACA FUNCIONANDO CON ERRORES CONOCIDOS DEVUELTOS POR SERVIDOR SIREFO - TAL CUAL LAS PRUEBAS MANUALES
+
+commit ae4ca1fd6f2d59b5101d1dfdf3d353e142aa2ce3
+Author: datm <crv@example.com>
+Date:   Thu Nov 7 14:41:32 2024 -0400
+
+    Codigo con el cual se presneto a prensa - Se actualizo nombres de atributos en minusculas, se agrego nuevos requisitos se mejoro interactividad con la ia
+
+commit 61f3fc2a5a1253502efad825bd2604ad215dedf8
+Author: datm <crv@example.com>
+Date:   Thu Oct 17 12:27:50 2024 -0400
+
+    PLANTILLAS ACTUALIZADAS PARA CONSUMO DE BASE DE CONOCIMIENTO A TRAVES DE GEMINI
+
+commit 30a8219aa102c2fe67b6033a9e830745f97fbca0
+Author: datm <crv@example.com>
+Date:   Wed Oct 9 08:13:09 2024 -0400
+
+    previo a establecer para produccion
+
+commit e6fc93be92deb47e22b8797ab719f807c14751f0
+Author: datm <crv@example.com>
+Date:   Fri Oct 4 14:06:59 2024 -0400
+
+    se agrego funcionalidad inicial SIREFO, se agrego SIMAT SIIM, bloque de proforma RUAT
+
+commit 1fdaa7a2df153062b7f355cd87f5a7aaf1668d6b
+Author: datm <crv@example.com>
+Date:   Thu Jul 18 09:24:26 2024 -0400
+
+    HASTA AQUI AGREGADO NUEVOS DOCUMENTOS EN TEXTO PLANO  PARA CONSULTA CON IA

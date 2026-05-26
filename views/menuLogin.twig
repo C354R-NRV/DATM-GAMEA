@@ -2,7 +2,7 @@
                 <div class="navbar-nav ms-auto"> 
                     {% if  datSesion.rol != 'CONTRIBUYENTE'%}
                         <a href="home.php" class="nav-item nav-link active">iA</a> 
-                        <a href="citeList.php" class="nav-item nav-link active">CITES</a> 
+                        <a href="citeList.php" class="nav-item nav-link active">CITES</a>
                     {% endif %}
                     <div class="nav-item dropdown">
                         <a href="index.php#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Publicaciones</a>
@@ -21,7 +21,7 @@
                             <a href="index.php#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">UAJ</a>
                             <div class="dropdown-menu bg-light mt-2">  
                                 {% if datSesion.codigo_unidad == 'UAJ-CC' or  datSesion.codigo_unidad == 'SIS'  %}
-                                    <a href="sirefoPanel.php" class="dropdown-item">- SIREFO</a>    
+                                   <a href="sirefoPanel.php" class="dropdown-item">- SIREFO</a>  
                                 {% endif %} 
                                 <a href="archProcesosUaj.php" class="dropdown-item">- Procesos</a>     
                                 <a href="exencionList.php" class="dropdown-item">- Exención</a>     
@@ -54,7 +54,10 @@
                             <a href="index.php#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">GA</a>
                             <div class="dropdown-menu bg-light mt-2">
                                 <a onclick="numeralLiteral()" class="dropdown-item">- A literal</a>
-                                <a href="archPanel.php" class="dropdown-item ">- Archivo Digital</a>
+                                {% if (datSesion.codigo_unidad == 'SIS' ) %}
+                                    <a href="archPanel.php" class="dropdown-item ">- Archivo Digital</a>
+                                {% endif %}
+
                                 <a href="ver.php?id=e2c39295b134a9c6efb1d8851c36d940" class="dropdown-item">- Verifacion de pago</a>
                                 <a onclick="simatSiim()" class="dropdown-item">- SIMAT/SIIM</a> 
                             </div>
